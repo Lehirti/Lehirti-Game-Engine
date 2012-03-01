@@ -6,6 +6,7 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
 import org.lehirti.events.Event;
@@ -43,9 +44,18 @@ public class Main {
       public void keyTyped(final KeyEvent e) {
         final Key key = Key.getByChar(e.getKeyChar());
         if (key != null) {
-          synchronized (LAST_KEY_TYPED_LOCK) {
-            LAST_KEY_TYPED = key;
-            LAST_KEY_TYPED_LOCK.notifyAll();
+          if (key == Key.CTRL_S) {
+            final JFileChooser fc = new JFileChooser();
+            final int returnVal = fc.showOpenDialog(frame);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+              final File file = fc.getSelectedFile();
+              IMAGE_AREA.getImageWrapper().addAlternativeImage(file);
+            }
+          } else {
+            synchronized (LAST_KEY_TYPED_LOCK) {
+              LAST_KEY_TYPED = key;
+              LAST_KEY_TYPED_LOCK.notifyAll();
+            }
           }
         }
         e.consume();

@@ -4,9 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.lehirit.state.GameState;
@@ -24,8 +21,8 @@ public final class ImageWrapper {
     this.key = key;
     this.coreDir = coreDir;
     this.modDir = modDir;
-    this.proxies.addAll(parseAll(this.coreDir));
-    this.proxies.addAll(parseAll(this.modDir));
+    parseAll(this.coreDir);
+    parseAll(this.modDir);
     
     // add "image missing" dummy, if necessary
     if (this.proxies.isEmpty()) {
@@ -33,11 +30,10 @@ public final class ImageWrapper {
     }
   }
   
-  private Collection<? extends ImageProxy> parseAll(final File dir) {
+  private void parseAll(final File dir) {
     if (!dir.isDirectory()) {
-      return Collections.emptyList();
+      return;
     }
-    final Collection<ImageProxy> images = new LinkedList<ImageProxy>();
     final File[] imageProxies = dir.listFiles(new FileFilter() {
       @Override
       public boolean accept(final File pathname) {
@@ -47,13 +43,26 @@ public final class ImageWrapper {
     for (final File imageProxyFile : imageProxies) {
       final ImageProxy imageProxy = ImageProxy.getInstance(imageProxyFile);
       if (imageProxy != null) {
-        images.add(imageProxy);
+        this.proxies.add(imageProxy);
       }
     }
-    return images;
   }
   
   public BufferedImage getRandomImage() {
     return this.proxies.get(GameState.DIE.nextInt(this.proxies.size())).getImage();
   }
+  
+  /**
+   * @param alternativeImageFile
+   * @return image added
+   */
+  public boolean addAlternativeImage(final File alternativeImageFile) {
+    final ImageProxy imageProxy = ImageProxy.createNew(this.modDir, alternativeImageFile);
+    if (imageProxy != null) {
+      this.proxies.add(imageProxy);
+      return true;
+    }
+    return false;
+  }
+  
 }

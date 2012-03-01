@@ -1,6 +1,5 @@
 package org.lehirti.events;
 
-import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.EnumMap;
 import java.util.Map;
@@ -9,6 +8,7 @@ import org.lehirti.Key;
 import org.lehirti.Main;
 import org.lehirti.res.images.ImageCache;
 import org.lehirti.res.images.ImageKey;
+import org.lehirti.res.images.ImageWrapper;
 
 public abstract class EventNode implements Event {
   private final Map<Key, Event> registeredEvents = new EnumMap<Key, Event>(Key.class);
@@ -57,11 +57,11 @@ public abstract class EventNode implements Event {
   }
   
   protected void setImage(final ImageKey key) {
-    final BufferedImage image = ImageCache.getImage(key).getRandomImage();
+    final ImageWrapper image = ImageCache.getImage(key);
     try {
       javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {
-          Main.IMAGE_AREA.setImage(image);
+          Main.IMAGE_AREA.setImageWrapper(image);
           Main.IMAGE_AREA.repaint();
         }
       });

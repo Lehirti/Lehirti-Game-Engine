@@ -7,6 +7,9 @@ import java.lang.ref.SoftReference;
 
 import javax.imageio.ImageIO;
 
+import org.lehirit.util.FileUtils;
+import org.lehirit.util.Hash;
+
 public class ImageProxy {
   private final static File RES_DIR = new File("res");
   
@@ -46,6 +49,39 @@ public class ImageProxy {
       // log file is not a valid image
       return null;
     }
+  }
+  
+  static ImageProxy createNew(final File modDir, final File alternativeImageFile) {
+    if (alternativeImageFile.canRead()) {
+      final String fileNameInResDir = Hash.calculateSHA1TODO(alternativeImageFile);
+      if (!modDir.exists()) {
+        if (!modDir.mkdirs()) {
+          // TODO log failed to create dir
+          return null;
+        }
+      }
+      final String newFileName = fileNameInResDir + getExtension(alternativeImageFile);
+      final File proxyFile = new File(modDir, newFileName + ImageProxy.FILENAME_SUFFIX);
+      try {
+        proxyFile.createNewFile();
+      } catch (final IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      final File resFile = new File(RES_DIR, newFileName);
+      FileUtils.copyFileTODO(alternativeImageFile, resFile);
+      return getInstance(proxyFile);
+    }
+    return null;
+  }
+  
+  private static String getExtension(final File fileName) {
+    final String simpleName = fileName.getName();
+    final int lastIndex = simpleName.lastIndexOf('.');
+    if (lastIndex == -1) {
+      return "";
+    }
+    return simpleName.substring(lastIndex);
   }
   
   public BufferedImage getImage() {

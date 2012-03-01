@@ -2,7 +2,8 @@ package org.lehirti;
 
 public enum Key {
   PREVIOUS('r'),
-  NEXT('f');
+  NEXT('f'),
+  CTRL_S((char) 0x13);
   
   public final char c;
   
