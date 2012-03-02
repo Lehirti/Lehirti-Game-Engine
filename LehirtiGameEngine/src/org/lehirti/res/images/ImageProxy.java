@@ -11,18 +11,14 @@ import org.lehirit.util.FileUtils;
 import org.lehirit.util.Hash;
 
 public class ImageProxy {
-  private final static File RES_DIR = new File("res");
+  private static final String RES = "res";
+  private static final File CORE_RES_DIR = new File(ImageCache.CORE_BASE_DIR, RES);
+  private static final File MOD_RES_DIR = new File(ImageCache.MOD_BASE_DIR, RES);
   
   static final String FILENAME_SUFFIX = ".proxy";
   
   private final File imageFile;
   private SoftReference<BufferedImage> image;
-  
-  ImageProxy(final ImageKey key) {
-    // TODO Auto-generated constructor stub
-    this.imageFile = null;
-    this.image = null;
-  }
   
   private ImageProxy(final File imageProxyFile, final File imageFile, final BufferedImage image) {
     // TODO readImageProxyFile for scaling/alignment/etc
@@ -33,10 +29,13 @@ public class ImageProxy {
   
   static ImageProxy getInstance(final File imageProxyFile) {
     final int realImageFileNamelength = imageProxyFile.getName().length() - FILENAME_SUFFIX.length();
-    final File imageFile = new File(RES_DIR, imageProxyFile.getName().substring(0, realImageFileNamelength));
+    File imageFile = new File(CORE_RES_DIR, imageProxyFile.getName().substring(0, realImageFileNamelength));
     if (!imageFile.exists()) {
-      // TODO log missing image resource
-      return null;
+      imageFile = new File(MOD_RES_DIR, imageProxyFile.getName().substring(0, realImageFileNamelength));
+      if (!imageFile.exists()) {
+        // TODO log missing image resource
+        return null;
+      }
     }
     if (!imageFile.canRead()) {
       // TODO log permission problems
@@ -68,8 +67,13 @@ public class ImageProxy {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      final File resFile = new File(RES_DIR, newFileName);
-      FileUtils.copyFileTODO(alternativeImageFile, resFile);
+      File resFile = new File(CORE_RES_DIR, newFileName);
+      if (!resFile.exists()) {
+        resFile = new File(MOD_RES_DIR, newFileName);
+        if (!resFile.exists()) {
+          FileUtils.copyFileTODO(alternativeImageFile, resFile);
+        }
+      }
       return getInstance(proxyFile);
     }
     return null;

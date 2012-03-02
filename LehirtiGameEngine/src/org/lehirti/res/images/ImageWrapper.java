@@ -16,6 +16,7 @@ public final class ImageWrapper {
   private final File coreDir;
   private final File modDir;
   private final List<ImageProxy> proxies = new ArrayList<ImageProxy>(5);
+  private final BufferedImage nullImage;
   
   public ImageWrapper(final ImageKey key, final File coreDir, final File modDir) {
     this.key = key;
@@ -24,9 +25,10 @@ public final class ImageWrapper {
     parseAll(this.coreDir);
     parseAll(this.modDir);
     
-    // add "image missing" dummy, if necessary
     if (this.proxies.isEmpty()) {
-      this.proxies.add(new ImageProxy(key));
+      this.nullImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+    } else {
+      this.nullImage = null;
     }
   }
   
@@ -49,6 +51,9 @@ public final class ImageWrapper {
   }
   
   public BufferedImage getRandomImage() {
+    if (this.proxies.isEmpty()) {
+      return this.nullImage;
+    }
     return this.proxies.get(GameState.DIE.nextInt(this.proxies.size())).getImage();
   }
   

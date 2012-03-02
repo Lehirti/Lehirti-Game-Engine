@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ImageCache {
-  private final static File CORE_BASE_DIR = new File("core");
-  private final static File MOD_BASE_DIR = new File("mod");
+  final static File CORE_BASE_DIR = new File("core");
+  final static File MOD_BASE_DIR = new File("mod");
   
   private static final Map<ImageKey, ImageWrapper> CACHE = new HashMap<ImageKey, ImageWrapper>();
   
