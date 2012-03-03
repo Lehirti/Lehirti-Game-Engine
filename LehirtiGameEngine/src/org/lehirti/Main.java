@@ -13,7 +13,7 @@ import org.lehirti.events.Event;
 import org.lehirti.gui.ImageArea;
 import org.lehirti.gui.Key;
 import org.lehirti.gui.TextArea;
-import org.lehirti.modules.ModuleInitializer;
+import org.lehirti.state.StaticInitializer;
 import org.lehirti.util.ClassFinder;
 
 public class Main {
@@ -77,7 +77,7 @@ public class Main {
     /*
      * load all modules
      */
-    new ClassFinder().findSubclasses(ModuleInitializer.class.getName());
+    new ClassFinder().findSubclasses(StaticInitializer.class.getName());
     
     javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
       public void run() {

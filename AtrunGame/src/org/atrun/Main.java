@@ -2,6 +2,8 @@ package org.atrun;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.atrun.modules.intro.Intro01;
+
 public class Main extends org.lehirti.Main {
   
   /**
@@ -10,6 +12,8 @@ public class Main extends org.lehirti.Main {
    * @throws InterruptedException
    */
   public static void main(final String[] args) throws InterruptedException, InvocationTargetException {
+    org.lehirti.Main.nextEvent = new Intro01();
+    
     engineMain(args);
   }
   

@@ -6,11 +6,8 @@ import java.util.Map;
 
 import org.lehirti.Main;
 import org.lehirti.gui.Key;
-import org.lehirti.res.images.ImageCache;
-import org.lehirti.res.images.ImageKey;
-import org.lehirti.res.images.ImageWrapper;
 
-public abstract class EventNode implements Event {
+public abstract class EventNode extends AbstractEvent {
   private final Map<Key, Event> registeredEvents = new EnumMap<Key, Event>(Key.class);
   
   /**
@@ -56,28 +53,9 @@ public abstract class EventNode implements Event {
     }
   }
   
-  protected void setImage(final ImageKey key) {
-    final ImageWrapper image = ImageCache.getImage(key);
-    try {
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
-        public void run() {
-          Main.IMAGE_AREA.setImageWrapper(image);
-          Main.IMAGE_AREA.repaint();
-        }
-      });
-    } catch (final InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (final InvocationTargetException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    
-  }
-  
   protected void setInputOption(final Key key, final Event event) {
     this.registeredEvents.put(key, event);
-    addText(key.c + ": " + key.toString());
+    addText(String.valueOf(key.c).toUpperCase() + ": " + key.toString());
   }
   
   public void execute() {
