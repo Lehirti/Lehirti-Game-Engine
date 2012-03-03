@@ -11,8 +11,10 @@ import javax.swing.JFrame;
 
 import org.lehirti.events.Event;
 import org.lehirti.gui.ImageArea;
+import org.lehirti.gui.Key;
 import org.lehirti.gui.TextArea;
-import org.lehirti.modules.intro.Intro01;
+import org.lehirti.modules.ModuleInitializer;
+import org.lehirti.util.ClassFinder;
 
 public class Main {
   private static final String GAME_NAME = "Game";
@@ -20,7 +22,7 @@ public class Main {
   public static TextArea TEXT_AREA;
   public static ImageArea IMAGE_AREA;
   
-  public static Event nextEvent = new Intro01();
+  public static Event nextEvent = null;
   
   public static final Object LAST_KEY_TYPED_LOCK = new Object();
   public static Key LAST_KEY_TYPED;
@@ -71,8 +73,11 @@ public class Main {
     frame.setVisible(true);
   }
   
-  public static void main(final String[] args) throws InterruptedException, InvocationTargetException {
-    System.out.println(new File(".").getAbsolutePath());
+  protected static void engineMain(final String[] args) throws InterruptedException, InvocationTargetException {
+    /*
+     * load all modules
+     */
+    new ClassFinder().findSubclasses(ModuleInitializer.class.getName());
     
     javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
       public void run() {

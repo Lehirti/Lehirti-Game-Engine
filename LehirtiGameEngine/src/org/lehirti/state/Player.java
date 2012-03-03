@@ -1,4 +1,4 @@
-package org.lehirit.state;
+package org.lehirti.state;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

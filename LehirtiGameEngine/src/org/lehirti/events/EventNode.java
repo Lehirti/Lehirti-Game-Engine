@@ -4,8 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.EnumMap;
 import java.util.Map;
 
-import org.lehirti.Key;
 import org.lehirti.Main;
+import org.lehirti.gui.Key;
 import org.lehirti.res.images.ImageCache;
 import org.lehirti.res.images.ImageKey;
 import org.lehirti.res.images.ImageWrapper;

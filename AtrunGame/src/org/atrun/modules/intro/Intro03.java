@@ -1,7 +1,7 @@
-package org.lehirti.modules.intro;
+package org.atrun.modules.intro;
 
-import org.lehirti.Key;
 import org.lehirti.events.EventNode;
+import org.lehirti.gui.Key;
 
 public class Intro03 extends EventNode {
   @Override

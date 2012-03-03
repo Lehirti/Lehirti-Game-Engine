@@ -3,12 +3,13 @@
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
     <target name="create_run_jar">
-        <jar destfile="../../Main.jar" filesetmanifest="mergewithoutmain">
+        <jar destfile="../../../lge/Main.jar" filesetmanifest="mergewithoutmain">
             <manifest>
-                <attribute name="Main-Class" value="org.lehirti.Main"/>
+                <attribute name="Main-Class" value="org.atrun.Main"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset dir="../bin"/>
+            <fileset dir="../../LehirtiGameEngine/bin"/>
         </jar>
     </target>
 </project>

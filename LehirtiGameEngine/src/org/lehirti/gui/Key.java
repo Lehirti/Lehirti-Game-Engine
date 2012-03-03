@@ -1,4 +1,4 @@
-package org.lehirti;
+package org.lehirti.gui;
 
 public enum Key {
   PREVIOUS('r'),

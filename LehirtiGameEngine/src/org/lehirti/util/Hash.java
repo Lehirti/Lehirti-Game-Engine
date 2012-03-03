@@ -1,4 +1,4 @@
-package org.lehirit.util;
+package org.lehirti.util;
 
 import java.io.BufferedInputStream;
 import java.io.File;

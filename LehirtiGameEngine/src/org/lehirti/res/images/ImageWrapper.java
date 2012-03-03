@@ -6,7 +6,7 @@ import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lehirit.state.GameState;
+import org.lehirti.state.GameState;
 
 /**
  * Collection of all image alternatives representing one ImageKey

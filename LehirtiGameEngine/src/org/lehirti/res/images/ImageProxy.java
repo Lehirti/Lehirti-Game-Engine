@@ -7,8 +7,8 @@ import java.lang.ref.SoftReference;
 
 import javax.imageio.ImageIO;
 
-import org.lehirit.util.FileUtils;
-import org.lehirit.util.Hash;
+import org.lehirti.util.FileUtils;
+import org.lehirti.util.Hash;
 
 public class ImageProxy {
   private static final String RES = "res";
