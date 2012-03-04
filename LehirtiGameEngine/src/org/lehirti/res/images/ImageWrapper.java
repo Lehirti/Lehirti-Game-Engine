@@ -15,21 +15,35 @@ public final class ImageWrapper {
   private final ImageKey key;
   private final File coreDir;
   private final File modDir;
-  private final List<ImageProxy> proxies = new ArrayList<ImageProxy>(5);
-  private final BufferedImage nullImage;
+  private final List<ImageProxy> proxies;
+  private ImageProxy image;
   
   public ImageWrapper(final ImageKey key, final File coreDir, final File modDir) {
     this.key = key;
     this.coreDir = coreDir;
     this.modDir = modDir;
+    this.proxies = new ArrayList<ImageProxy>(5);
     parseAll(this.coreDir);
     parseAll(this.modDir);
     
+    choseRandomImage();
+  }
+  
+  private void choseRandomImage() {
     if (this.proxies.isEmpty()) {
-      this.nullImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+      this.image = new ImageProxy();
     } else {
-      this.nullImage = null;
+      this.image = this.proxies.get(Main.DIE.nextInt(this.proxies.size()));
     }
+  }
+  
+  public ImageWrapper(final ImageWrapper other) {
+    this.key = other.key;
+    this.coreDir = other.coreDir;
+    this.modDir = other.modDir;
+    this.proxies = other.proxies;
+    
+    choseRandomImage();
   }
   
   private void parseAll(final File dir) {
@@ -50,11 +64,16 @@ public final class ImageWrapper {
     }
   }
   
-  public BufferedImage getRandomImage() {
-    if (this.proxies.isEmpty()) {
-      return this.nullImage;
-    }
-    return this.proxies.get(Main.DIE.nextInt(this.proxies.size())).getImage();
+  public ImageWrapper copy() {
+    return new ImageWrapper(this);
+  }
+  
+  public BufferedImage getImage() {
+    return this.image.getImage();
+  }
+  
+  public int[] calculateCoordinates(final int width, final int height) {
+    return this.image.calculateCoordinates(width, height);
   }
   
   /**
@@ -65,9 +84,9 @@ public final class ImageWrapper {
     final ImageProxy imageProxy = ImageProxy.createNew(this.modDir, alternativeImageFile);
     if (imageProxy != null) {
       this.proxies.add(imageProxy);
+      this.image = imageProxy;
       return true;
     }
     return false;
   }
-  
 }

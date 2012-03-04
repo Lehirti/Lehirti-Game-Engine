@@ -13,7 +13,7 @@ public abstract class AbstractEvent implements Event {
     try {
       javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {
-          Main.IMAGE_AREA.setImageWrapper(image);
+          Main.IMAGE_AREA.setImage(image);
           Main.IMAGE_AREA.repaint();
         }
       });
@@ -33,7 +33,7 @@ public abstract class AbstractEvent implements Event {
     try {
       javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {
-          Main.IMAGE_AREA.setImageWrapper(image);
+          Main.IMAGE_AREA.setBackgroundImage(image);
           Main.IMAGE_AREA.repaint();
         }
       });

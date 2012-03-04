@@ -12,6 +12,8 @@ import org.lehirti.util.FileUtils;
 import org.lehirti.util.Hash;
 
 public class ImageProxy {
+  private static final BufferedImage NULL_IMAGE = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+  
   private static final String RES = "res";
   private static final File CORE_RES_DIR = new File(ResourceCache.CORE_BASE_DIR, RES);
   private static final File MOD_RES_DIR = new File(ResourceCache.MOD_BASE_DIR, RES);
@@ -26,6 +28,10 @@ public class ImageProxy {
     
     this.imageFile = imageFile;
     this.image = new SoftReference<BufferedImage>(image);
+  }
+  
+  ImageProxy() {
+    this.imageFile = null;
   }
   
   static ImageProxy getInstance(final File imageProxyFile) {
@@ -89,7 +95,11 @@ public class ImageProxy {
     return simpleName.substring(lastIndex);
   }
   
-  public BufferedImage getImage() {
+  BufferedImage getImage() {
+    if (this.imageFile == null) {
+      return NULL_IMAGE;
+    }
+    
     BufferedImage bufferedImage = this.image.get();
     if (bufferedImage == null) {
       try {
@@ -102,5 +112,14 @@ public class ImageProxy {
       }
     }
     return bufferedImage;
+  }
+  
+  int[] calculateCoordinates(final int width, final int height) {
+    final int[] coords = new int[4];
+    coords[0] = 0;
+    coords[1] = 0;
+    coords[2] = width;
+    coords[3] = height;
+    return coords;
   }
 }

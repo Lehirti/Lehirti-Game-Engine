@@ -8,7 +8,8 @@ public class Intro01 extends EventNode {
   @Override
   protected void doEvent() {
     setText("Hallo");
-    setImage(IntroImage.INTRO_01);
+    setBackgroundImage(IntroImage.INTRO_01);
+    setImage(IntroImage.INTRO_02);
     
     setInputOption(Key.NEXT, new Intro02());
   }
