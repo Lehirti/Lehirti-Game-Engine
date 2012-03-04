@@ -3,13 +3,13 @@ package org.lehirti.events;
 import java.lang.reflect.InvocationTargetException;
 
 import org.lehirti.Main;
-import org.lehirti.res.images.ImageCache;
+import org.lehirti.res.ResourceCache;
 import org.lehirti.res.images.ImageKey;
 import org.lehirti.res.images.ImageWrapper;
 
 public abstract class AbstractEvent implements Event {
   protected void setImage(final ImageKey key) {
-    final ImageWrapper image = ImageCache.getImage(key);
+    final ImageWrapper image = ResourceCache.get(key);
     try {
       javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {
@@ -29,7 +29,7 @@ public abstract class AbstractEvent implements Event {
   
   // TODO
   protected void setBackgroundImage(final ImageKey key) {
-    final ImageWrapper image = ImageCache.getImage(key);
+    final ImageWrapper image = ResourceCache.get(key);
     try {
       javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {

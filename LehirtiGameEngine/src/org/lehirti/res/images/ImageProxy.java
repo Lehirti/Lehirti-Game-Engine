@@ -7,13 +7,14 @@ import java.lang.ref.SoftReference;
 
 import javax.imageio.ImageIO;
 
+import org.lehirti.res.ResourceCache;
 import org.lehirti.util.FileUtils;
 import org.lehirti.util.Hash;
 
 public class ImageProxy {
   private static final String RES = "res";
-  private static final File CORE_RES_DIR = new File(ImageCache.CORE_BASE_DIR, RES);
-  private static final File MOD_RES_DIR = new File(ImageCache.MOD_BASE_DIR, RES);
+  private static final File CORE_RES_DIR = new File(ResourceCache.CORE_BASE_DIR, RES);
+  private static final File MOD_RES_DIR = new File(ResourceCache.MOD_BASE_DIR, RES);
   
   static final String FILENAME_SUFFIX = ".proxy";
   
