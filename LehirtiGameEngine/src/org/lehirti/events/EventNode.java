@@ -55,7 +55,7 @@ public abstract class EventNode extends AbstractEvent {
   
   protected void setInputOption(final Key key, final Event event) {
     this.registeredEvents.put(key, event);
-    addText(String.valueOf(key.c).toUpperCase() + ": " + key.toString());
+    addText(String.valueOf(key.mapping).toUpperCase() + ": " + key.toString());
   }
   
   public void execute() {
