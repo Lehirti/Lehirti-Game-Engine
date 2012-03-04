@@ -24,8 +24,8 @@ public interface LocationDispatcher extends StaticInitializer {
    *         if the sum of the probabilities of all non-special events is less than 100, the remaining probability is
    *         allocated to events with probability PROBABILITY_DEFAULT. if there is no such event, the remaining
    *         probability remains unused (chance of "nothing" happening).<br/>
-   *         if the sum of the probabilities of all non-special events is greather than 100, all probabilities are
-   *         scaled back proportionately.
+   *         if the sum of the probabilities of all non-special events is greater than 100, all probabilities are scaled
+   *         back proportionately.
    */
   public abstract Map<Event, Double> getCurrentEvents();
 }

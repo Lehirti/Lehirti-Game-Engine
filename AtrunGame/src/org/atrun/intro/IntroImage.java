@@ -1,4 +1,4 @@
-package org.atrun.modules.intro;
+package org.atrun.intro;
 
 import org.lehirti.res.images.ImageKey;
 

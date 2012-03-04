@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Random;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -26,6 +27,8 @@ public class Main {
   
   public static final Object LAST_KEY_TYPED_LOCK = new Object();
   public static Key LAST_KEY_TYPED;
+  
+  public static final Random DIE = new Random();
   
   private static void createAndShowGUI() {
     

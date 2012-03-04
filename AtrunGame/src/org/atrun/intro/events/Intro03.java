@@ -1,4 +1,4 @@
-package org.atrun.modules.intro;
+package org.atrun.intro.events;
 
 import org.lehirti.events.EventNode;
 import org.lehirti.gui.Key;

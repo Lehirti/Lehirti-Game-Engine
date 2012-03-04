@@ -6,7 +6,7 @@ import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lehirti.state.GameState;
+import org.lehirti.Main;
 
 /**
  * Collection of all image alternatives representing one ImageKey
@@ -54,7 +54,7 @@ public final class ImageWrapper {
     if (this.proxies.isEmpty()) {
       return this.nullImage;
     }
-    return this.proxies.get(GameState.DIE.nextInt(this.proxies.size())).getImage();
+    return this.proxies.get(Main.DIE.nextInt(this.proxies.size())).getImage();
   }
   
   /**
