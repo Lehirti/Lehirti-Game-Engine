@@ -60,6 +60,9 @@ public abstract class EventNode extends AbstractEvent {
   
   public void execute() {
     doEvent();
+    
+    repaintImagesIfNeeded();
+    
     Event event = null;
     while (true) {
       Key key;

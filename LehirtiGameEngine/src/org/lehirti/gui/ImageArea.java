@@ -5,41 +5,24 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JComponent;
 
+import org.lehirti.res.ResourceCache;
+import org.lehirti.res.images.ImageKey;
 import org.lehirti.res.images.ImageWrapper;
 
 public class ImageArea extends JComponent {
+  private static final long serialVersionUID = 1L;
+  
   private static final int WIDTH = 1000;
   private static final int HEIGHT = 800;
   
-  private int scaledWidth;
-  private int scaledHeight;
-  
   private ImageWrapper backgroundImage = null;
   
-  private ImageWrapper image = null;
-  
-  public ImageArea() {
-    
-    // try {
-    // this.image = ImageCache.getImage(IntroImage.INTRO_02);
-    // final int imgWidth = this.image.getWidth();
-    // final int imgHeight = this.image.getHeight();
-    // if ((double) WIDTH / (double) HEIGHT > (double) imgWidth / (double)
-    // imgHeight) {
-    // this.scaledWidth = (int) (HEIGHT * ((double) imgWidth / (double)
-    // imgHeight));
-    // this.scaledHeight = HEIGHT;
-    // } else {
-    // this.scaledWidth = WIDTH;
-    // this.scaledHeight = (int) (WIDTH * ((double) imgHeight) / imgWidth);
-    // }
-    // } catch (final IOException ex) {
-    // // handle exception...
-    // }
-  }
+  private final List<ImageWrapper> foregroundImages = new ArrayList<ImageWrapper>(15);
   
   @Override
   public void paintComponent(final Graphics g) {
@@ -54,10 +37,10 @@ public class ImageArea extends JComponent {
       final int[] coords = this.backgroundImage.calculateCoordinates(getWidth(), getHeight());
       g.drawImage(this.backgroundImage.getImage(), coords[0], coords[1], coords[2], coords[3], null);
     }
-    // 
-    if (this.image != null) {
-      final int[] coords = this.image.calculateCoordinates(getWidth(), getHeight());
-      g.drawImage(this.image.getImage(), coords[0], coords[1], coords[2], coords[3], null);
+    
+    for (final ImageWrapper image : this.foregroundImages) {
+      final int[] coords = image.calculateCoordinates(getWidth(), getHeight());
+      g.drawImage(image.getImage(), coords[0], coords[1], coords[2], coords[3], null);
     }
   }
   
@@ -70,15 +53,33 @@ public class ImageArea extends JComponent {
    * @param backgroundImage
    *          replace current background image with this one (null to remove background image)
    */
-  public void setBackgroundImage(final ImageWrapper backgroundImage) {
-    this.backgroundImage = backgroundImage.copy();
+  public void setBackgroundImage(final ImageKey imageKey) {
+    final ImageWrapper backgroundImage = ResourceCache.get(imageKey);
+    backgroundImage.pinRandomImage();
+    this.backgroundImage = backgroundImage;
   }
   
-  public void setImage(final ImageWrapper image) {
-    this.image = image.copy();
+  public void setImage(final ImageKey imageKey) {
+    this.foregroundImages.clear();
+    addImage(imageKey);
   }
   
-  public ImageWrapper getImageWrapper() {
-    return this.image;
+  public void addImage(final ImageKey imageKey) {
+    final ImageWrapper image = ResourceCache.get(imageKey);
+    image.pinRandomImage();
+    this.foregroundImages.add(image);
+  }
+  
+  public void removeImage(final ImageKey imageKey) {
+    this.foregroundImages.remove(imageKey);
+  }
+  
+  public List<ImageWrapper> getAllImages() {
+    final List<ImageWrapper> allImages = new ArrayList<ImageWrapper>(16);
+    if (this.backgroundImage != null) {
+      allImages.add(this.backgroundImage);
+    }
+    allImages.addAll(this.foregroundImages);
+    return allImages;
   }
 }

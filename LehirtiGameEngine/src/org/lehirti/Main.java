@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Random;
 
 import javax.swing.JFileChooser;
@@ -14,6 +15,7 @@ import org.lehirti.events.Event;
 import org.lehirti.gui.ImageArea;
 import org.lehirti.gui.Key;
 import org.lehirti.gui.TextArea;
+import org.lehirti.res.images.ImageWrapper;
 import org.lehirti.state.StaticInitializer;
 import org.lehirti.util.ClassFinder;
 
@@ -50,11 +52,13 @@ public class Main {
         final Key key = Key.getByChar(e.getKeyChar());
         if (key != null) {
           if (key == Key.CTRL_S) {
+            final List<ImageWrapper> allImages = IMAGE_AREA.getAllImages();
+            final ImageWrapper imageToBeAmmended = selectImage(allImages);
             final JFileChooser fc = new JFileChooser();
             final int returnVal = fc.showOpenDialog(frame);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
               final File file = fc.getSelectedFile();
-              IMAGE_AREA.getImageWrapper().addAlternativeImage(file);
+              imageToBeAmmended.addAlternativeImage(file);
             }
           } else {
             synchronized (LAST_KEY_TYPED_LOCK) {
@@ -64,6 +68,10 @@ public class Main {
           }
         }
         e.consume();
+      }
+      
+      private ImageWrapper selectImage(final List<ImageWrapper> allImages) {
+        return allImages.get(0); // TODO
       }
     });
     

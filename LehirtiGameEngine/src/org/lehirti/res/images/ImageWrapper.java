@@ -26,24 +26,15 @@ public final class ImageWrapper {
     parseAll(this.coreDir);
     parseAll(this.modDir);
     
-    choseRandomImage();
+    pinRandomImage();
   }
   
-  private void choseRandomImage() {
+  public void pinRandomImage() {
     if (this.proxies.isEmpty()) {
       this.image = new ImageProxy();
     } else {
       this.image = this.proxies.get(Main.DIE.nextInt(this.proxies.size()));
     }
-  }
-  
-  public ImageWrapper(final ImageWrapper other) {
-    this.key = other.key;
-    this.coreDir = other.coreDir;
-    this.modDir = other.modDir;
-    this.proxies = other.proxies;
-    
-    choseRandomImage();
   }
   
   private void parseAll(final File dir) {
@@ -62,10 +53,6 @@ public final class ImageWrapper {
         this.proxies.add(imageProxy);
       }
     }
-  }
-  
-  public ImageWrapper copy() {
-    return new ImageWrapper(this);
   }
   
   public BufferedImage getImage() {
@@ -88,5 +75,19 @@ public final class ImageWrapper {
       return true;
     }
     return false;
+  }
+  
+  @Override
+  public int hashCode() {
+    return this.key.hashCode();
+  }
+  
+  @Override
+  public boolean equals(final Object o) {
+    if (!(o instanceof ImageWrapper)) {
+      return false;
+    }
+    final ImageWrapper other = (ImageWrapper) o;
+    return this.key.equals(other.key);
   }
 }

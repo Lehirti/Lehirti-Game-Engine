@@ -29,6 +29,7 @@ public abstract class Location extends AbstractEvent {
   @Override
   public void execute() {
     setBackgroundImage(getBackgroundImageToDisplay());
+    repaintImagesIfNeeded();
     
     final Set<LocationDispatcher> dispatchersForThisLocation = LOCATION_DISPATCHERS.get(this.getClass());
     
@@ -39,11 +40,11 @@ public abstract class Location extends AbstractEvent {
       }
     }
     if (probablityPerEventMap.isEmpty()) {
-      executeNullEvent();
+      scheduleNullEvent();
     }
     final List<Event> probabilityAlwaysEvents = getProbabilityAlwaysEvents(probablityPerEventMap);
     if (!probabilityAlwaysEvents.isEmpty()) {
-      executeRandomProbabilityAlwaysEvent(probabilityAlwaysEvents);
+      scheduleRandomProbabilityAlwaysEvent(probabilityAlwaysEvents);
     } else {
       final Map<Event, Double> eventsToChooseFrom = removeRegularEvents(probablityPerEventMap);
       final double totalProbabilityOfRegularEvents = getTotalProbablility(eventsToChooseFrom.values());
@@ -53,7 +54,7 @@ public abstract class Location extends AbstractEvent {
       } else if (totalProbabilityOfRegularEvents > 100.0D) {
         scaleTotalProbabilityTo100Percent(eventsToChooseFrom, totalProbabilityOfRegularEvents);
       }
-      executeRandomRegularOrDefaultEvent(eventsToChooseFrom);
+      scheduleRandomRegularOrDefaultEvent(eventsToChooseFrom);
     }
   }
   
@@ -109,7 +110,7 @@ public abstract class Location extends AbstractEvent {
     return regularEvents;
   }
   
-  private void executeRandomRegularOrDefaultEvent(final Map<Event, Double> eventsToChooseFrom) {
+  private void scheduleRandomRegularOrDefaultEvent(final Map<Event, Double> eventsToChooseFrom) {
     double remainingProbabilityFromDieRoll = Main.DIE.nextDouble() * 100.0D;
     for (final Map.Entry<Event, Double> entry : eventsToChooseFrom.entrySet()) {
       if (remainingProbabilityFromDieRoll < entry.getValue().doubleValue()) {
@@ -118,10 +119,10 @@ public abstract class Location extends AbstractEvent {
       }
       remainingProbabilityFromDieRoll -= entry.getValue().doubleValue();
     }
-    executeNullEvent();
+    scheduleNullEvent();
   }
   
-  private static void executeRandomProbabilityAlwaysEvent(final List<Event> probabilityAlwaysEvents) {
+  private static void scheduleRandomProbabilityAlwaysEvent(final List<Event> probabilityAlwaysEvents) {
     if (probabilityAlwaysEvents.size() > 1) {
       // TODO log warning; at least one PROBABILITY_ALWAYS has been blocked by another
     }
@@ -138,9 +139,7 @@ public abstract class Location extends AbstractEvent {
     return probAlwaysEvents;
   }
   
-  protected void executeNullEvent() {
-    // TODO abstract?
-  }
+  protected abstract void scheduleNullEvent();
   
   protected abstract ImageKey getBackgroundImageToDisplay();
 }
