@@ -14,7 +14,12 @@ public class Main extends org.lehirti.Main {
   public static void main(final String[] args) throws InterruptedException, InvocationTargetException {
     org.lehirti.Main.nextEvent = new Intro01();
     
-    engineMain(args);
+    new Main().engineMain(args);
+  }
+  
+  @Override
+  protected String getGameName() {
+    return "Game";
   }
   
 }

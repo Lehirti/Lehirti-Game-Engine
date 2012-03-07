@@ -13,6 +13,10 @@ public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
   public final static File CORE_BASE_DIR = new File("core");
   public final static File MOD_BASE_DIR = new File("mod");
   
+  public static final String RES = "res";
+  public static final File CORE_RES_DIR = new File(ResourceCache.CORE_BASE_DIR, RES);
+  public static final File MOD_RES_DIR = new File(ResourceCache.MOD_BASE_DIR, RES);
+  
   private static final ResourceCache<ImageKey, ImageWrapper> IMAGE_CACHE = new ResourceCache<ImageKey, ImageWrapper>() {
     @Override
     protected ImageWrapper getInstance(final ImageKey key, final File coreDir, final File modDir) {

@@ -19,8 +19,7 @@ import org.lehirti.res.images.ImageWrapper;
 import org.lehirti.state.StaticInitializer;
 import org.lehirti.util.ClassFinder;
 
-public class Main {
-  private static final String GAME_NAME = "Game";
+public abstract class Main {
   
   public static TextArea TEXT_AREA;
   public static ImageArea IMAGE_AREA;
@@ -32,9 +31,9 @@ public class Main {
   
   public static final Random DIE = new Random();
   
-  private static void createAndShowGUI() {
+  private void createAndShowGUI() {
     
-    final JFrame frame = new JFrame(GAME_NAME);
+    final JFrame frame = new JFrame(getGameName());
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     
     TEXT_AREA = new TextArea();
@@ -84,7 +83,7 @@ public class Main {
     frame.setVisible(true);
   }
   
-  protected static void engineMain(final String[] args) throws InterruptedException, InvocationTargetException {
+  protected void engineMain(final String[] args) throws InterruptedException, InvocationTargetException {
     /*
      * load all modules
      */
@@ -100,4 +99,6 @@ public class Main {
       nextEvent.execute();
     }
   }
+  
+  abstract protected String getGameName();
 }

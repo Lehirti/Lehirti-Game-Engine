@@ -64,15 +64,15 @@ public class StateObject implements Serializable {
   private static enum OnDiskDelim {
     
     START_BOOL_MAP,
-    // the MUST NOT BE another constant between these two START/END constants
+    // there MUST NOT BE another constant between these two START/END constants
     END_BOOL_MAP,
     
     START_INT_MAP,
-    // the MUST NOT BE another constant between these two START/END constants
+    // there MUST NOT BE another constant between these two START/END constants
     END_INT_MAP,
     
     START_STRING_MAP,
-    // the MUST NOT BE another constant between these two START/END constants
+    // there MUST NOT BE another constant between these two START/END constants
     END_STRING_MAP,
     
     END_STATE_OBJECT;

@@ -17,10 +17,6 @@ import org.lehirti.util.Hash;
 public class ImageProxy {
   private static final BufferedImage NULL_IMAGE = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
   
-  private static final String RES = "res";
-  private static final File CORE_RES_DIR = new File(ResourceCache.CORE_BASE_DIR, RES);
-  private static final File MOD_RES_DIR = new File(ResourceCache.MOD_BASE_DIR, RES);
-  
   static final String FILENAME_SUFFIX = ".proxy";
   
   private static enum PlacementKey {
@@ -103,9 +99,10 @@ public class ImageProxy {
   
   static ImageProxy getInstance(final File imageProxyFile) {
     final int realImageFileNamelength = imageProxyFile.getName().length() - FILENAME_SUFFIX.length();
-    File imageFile = new File(CORE_RES_DIR, imageProxyFile.getName().substring(0, realImageFileNamelength));
+    File imageFile = new File(ResourceCache.CORE_RES_DIR, imageProxyFile.getName()
+        .substring(0, realImageFileNamelength));
     if (!imageFile.exists()) {
-      imageFile = new File(MOD_RES_DIR, imageProxyFile.getName().substring(0, realImageFileNamelength));
+      imageFile = new File(ResourceCache.MOD_RES_DIR, imageProxyFile.getName().substring(0, realImageFileNamelength));
       if (!imageFile.exists()) {
         // TODO log missing image resource
         return null;
@@ -141,9 +138,9 @@ public class ImageProxy {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      File resFile = new File(CORE_RES_DIR, newFileName);
+      File resFile = new File(ResourceCache.CORE_RES_DIR, newFileName);
       if (!resFile.exists()) {
-        resFile = new File(MOD_RES_DIR, newFileName);
+        resFile = new File(ResourceCache.MOD_RES_DIR, newFileName);
         if (!resFile.exists()) {
           FileUtils.copyFileTODO(alternativeImageFile, resFile);
         }

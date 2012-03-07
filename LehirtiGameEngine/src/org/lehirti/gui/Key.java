@@ -1,18 +1,31 @@
 package org.lehirti.gui;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 public enum Key {
-  PREVIOUS('r'),
-  NEXT('f'),
-  CTRL_S((char) 0x13);
+  PREVIOUS('r', true),
+  NEXT('f', true),
+  CTRL_S((char) 0x13, false);
+  
+  private static final List<Key> OPTION_KEYS = new ArrayList<Key>(values().length);
   
   static {
     KeyMapping.store();
+    for (final Key key : values()) {
+      if (key.isOptionKey) {
+        OPTION_KEYS.add(key);
+      }
+    }
   }
   
   public final char mapping;
+  public final boolean isOptionKey;
   
-  private Key(final char defaultMapping) {
+  private Key(final char defaultMapping, final boolean isOptionKey) {
     this.mapping = KeyMapping.getMappingFor(name(), defaultMapping);
+    this.isOptionKey = isOptionKey;
   }
   
   public static Key getByChar(final char mapping) {
@@ -22,5 +35,10 @@ public enum Key {
       }
     }
     return null;
+  }
+  
+  public static List<Key> getOptionKeys() {
+    final List<Key> optionKeys = new LinkedList<Key>(OPTION_KEYS);
+    return optionKeys;
   }
 }
