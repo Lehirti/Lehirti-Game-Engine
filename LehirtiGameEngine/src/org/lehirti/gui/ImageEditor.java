@@ -80,11 +80,13 @@ public class ImageEditor extends JFrame implements ActionListener {
   
   ImageArea imageArea = new ImageArea();
   
+  final ImageArea gameImageArea;
   final List<ImageWrapper> allImages;
   int selectedImageNr = -1;
   int selectedAlternativeNr = -1;
   
-  public ImageEditor(final List<ImageWrapper> allImages) {
+  public ImageEditor(final List<ImageWrapper> allImages, final ImageArea gameImageArea) {
+    this.gameImageArea = gameImageArea;
     this.allImages = allImages;
     if (!this.allImages.isEmpty()) {
       this.selectedImageNr = 0;
@@ -92,7 +94,7 @@ public class ImageEditor extends JFrame implements ActionListener {
     }
     
     this.controls.setLayout(new GridLayout(9, 2));
-    this.controls.setPreferredSize(new Dimension(200, 800));
+    this.controls.setPreferredSize(new Dimension(300, 800));
     this.controls.add(this.alignXlabel);
     this.controls.add(this.alignX);
     this.controls.add(this.alignYlabel);
@@ -147,7 +149,8 @@ public class ImageEditor extends JFrame implements ActionListener {
     
     final ImageWrapper imageWrapper = this.allImages.get(nr);
     this.imageArea.setImage(imageWrapper);
-    this.selectedImage.setText(String.valueOf(nr));
+    this.selectedImage.setText(this.allImages.get(nr).toButtonString());
+    this.selectedImage.setToolTipText(this.allImages.get(nr).toButtonString());
     this.selectedAlternativeNr = imageWrapper.getCurrentImageNr();
     this.selectedAlternative.setText(String.valueOf(this.selectedAlternativeNr));
     final Properties placement = imageWrapper.getPlacement();
@@ -179,11 +182,13 @@ public class ImageEditor extends JFrame implements ActionListener {
       }
     }
     repaint();
+    this.gameImageArea.repaint();
   }
   
-  private String selectNextImage() {
+  private void selectNextImage() {
     if (this.allImages.isEmpty()) {
-      return "NONE AVAILABLE";
+      this.selectedImage.setText("NONE AVAILABLE");
+      return;
     }
     this.selectedImageNr++;
     if (this.selectedImageNr >= this.allImages.size()) {
@@ -192,7 +197,6 @@ public class ImageEditor extends JFrame implements ActionListener {
       // return "ALL";
     }
     setImage(this.selectedImageNr);
-    return String.valueOf(this.selectedImageNr);
   }
   
   public void actionPerformed(final ActionEvent e) {
@@ -231,7 +235,7 @@ public class ImageEditor extends JFrame implements ActionListener {
         updateCanvasAndImageWrapper();
       }
     } else if (e.getSource() == this.selectedImage) {
-      this.selectedImage.setText(selectNextImage());
+      selectNextImage();
     } else if (e.getSource() == this.selectedAlternative) {
       this.allImages.get(this.selectedImageNr).pinNextImage();
       setImage(this.selectedImageNr);
@@ -275,5 +279,6 @@ public class ImageEditor extends JFrame implements ActionListener {
     }
     this.allImages.get(this.selectedImageNr).setPlacement(placement);
     repaint();
+    this.gameImageArea.repaint();
   }
 }

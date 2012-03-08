@@ -50,4 +50,8 @@ public class TextWrapper {
     return this.key.equals(other.key);
   }
   
+  @Override
+  public String toString() {
+    return this.key.getClass().getSimpleName() + "." + this.key.name() + "[" + this.value + "]";
+  }
 }

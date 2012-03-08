@@ -63,12 +63,7 @@ public abstract class Main {
       
       private void editImages() {
         final List<ImageWrapper> allImages = IMAGE_AREA.getAllImages();
-        new ImageEditor(allImages);
-        // final JFileChooser fc = new JFileChooser();
-        // final int returnVal = fc.showOpenDialog(frame);
-        // if (returnVal == JFileChooser.APPROVE_OPTION) {
-        // final File file = fc.getSelectedFile();
-        // }
+        new ImageEditor(allImages, IMAGE_AREA);
       }
     });
     

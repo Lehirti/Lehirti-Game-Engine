@@ -117,4 +117,8 @@ public final class ImageWrapper {
     final ImageWrapper other = (ImageWrapper) o;
     return this.key.equals(other.key);
   }
+  
+  public String toButtonString() {
+    return "<html>" + this.key.getClass().getSimpleName() + "<br/>" + this.key.name() + "</html>";
+  }
 }
