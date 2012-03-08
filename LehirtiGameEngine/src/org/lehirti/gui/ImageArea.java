@@ -74,6 +74,16 @@ public class ImageArea extends JComponent {
     this.foregroundImages.remove(imageKey);
   }
   
+  void setImage(final ImageWrapper images) {
+    this.foregroundImages.clear();
+    this.foregroundImages.add(images);
+  }
+  
+  void setImages(final List<ImageWrapper> allImages) {
+    this.foregroundImages.clear();
+    this.foregroundImages.addAll(allImages);
+  }
+  
   public List<ImageWrapper> getAllImages() {
     final List<ImageWrapper> allImages = new ArrayList<ImageWrapper>(16);
     if (this.backgroundImage != null) {

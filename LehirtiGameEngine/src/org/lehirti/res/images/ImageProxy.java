@@ -19,7 +19,7 @@ public class ImageProxy {
   
   static final String FILENAME_SUFFIX = ".proxy";
   
-  private static enum PlacementKey {
+  public static enum ProxyProps {
     ALIGN_X, // LEFT, CENTER, RIGHT
     ALIGN_Y, // TOP, CENTER, BOTTOM
     POS_X, // double; in percent; left to right
@@ -32,6 +32,7 @@ public class ImageProxy {
   private SoftReference<BufferedImage> image;
   private final int imageSizeX;
   private final int imageSizeY;
+  private Properties placement = new Properties();
   
   private String alignX = null;
   private String alignY = null;
@@ -41,7 +42,7 @@ public class ImageProxy {
   private Double scaleY = null;
   
   private ImageProxy(final File imageProxyFile, final File imageFile, final BufferedImage image) {
-    determinePlacement(imageProxyFile);
+    setPlacement(imageProxyFile);
     
     this.imageFile = imageFile;
     this.image = new SoftReference<BufferedImage>(image);
@@ -55,10 +56,9 @@ public class ImageProxy {
     this.imageSizeY = 100;
   }
   
-  private void determinePlacement(final File imageProxyFile) {
-    final Properties placement = new Properties();
+  private void setPlacement(final File imageProxyFile) {
     try {
-      placement.load(new FileInputStream(imageProxyFile));
+      this.placement.load(new FileInputStream(imageProxyFile));
     } catch (final FileNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -66,13 +66,17 @@ public class ImageProxy {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+    _setPlacement(this.placement);
+  }
+  
+  private void _setPlacement(final Properties placement) {
     
-    this.alignX = placement.getProperty(PlacementKey.ALIGN_X.name(), "CENTER");
-    this.alignY = placement.getProperty(PlacementKey.ALIGN_Y.name(), "CENTER");
-    final String posXString = placement.getProperty(PlacementKey.POS_X.name());
-    final String posYString = placement.getProperty(PlacementKey.POS_Y.name());
-    final String sizeXString = placement.getProperty(PlacementKey.SCALE_X.name());
-    final String sizeYString = placement.getProperty(PlacementKey.SCALE_Y.name());
+    this.alignX = placement.getProperty(ProxyProps.ALIGN_X.name(), "CENTER");
+    this.alignY = placement.getProperty(ProxyProps.ALIGN_Y.name(), "CENTER");
+    final String posXString = placement.getProperty(ProxyProps.POS_X.name());
+    final String posYString = placement.getProperty(ProxyProps.POS_Y.name());
+    final String sizeXString = placement.getProperty(ProxyProps.SCALE_X.name());
+    final String sizeYString = placement.getProperty(ProxyProps.SCALE_Y.name());
     
     if (posXString != null) {
       this.posX = Double.parseDouble(posXString);
@@ -95,6 +99,16 @@ public class ImageProxy {
     if (sizeYString != null) {
       this.scaleY = Double.parseDouble(sizeYString);
     }
+  }
+  
+  public void setPlacement(final Properties placement) {
+    this.placement = placement;
+    _setPlacement(placement);
+    // TODO write .proxy file
+  }
+  
+  public Properties getPlacement() {
+    return this.placement;
   }
   
   static ImageProxy getInstance(final File imageProxyFile) {

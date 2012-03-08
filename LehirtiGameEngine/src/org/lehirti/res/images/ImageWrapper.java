@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.lehirti.Main;
 
@@ -17,6 +18,7 @@ public final class ImageWrapper {
   private final File modDir;
   private final List<ImageProxy> proxies;
   private ImageProxy image;
+  private int currentlyDisplayedImageNr = 0;
   
   public ImageWrapper(final ImageKey key, final File coreDir, final File modDir) {
     this.key = key;
@@ -27,14 +29,6 @@ public final class ImageWrapper {
     parseAll(this.modDir);
     
     pinRandomImage();
-  }
-  
-  public void pinRandomImage() {
-    if (this.proxies.isEmpty()) {
-      this.image = new ImageProxy();
-    } else {
-      this.image = this.proxies.get(Main.DIE.nextInt(this.proxies.size()));
-    }
   }
   
   private void parseAll(final File dir) {
@@ -53,6 +47,37 @@ public final class ImageWrapper {
         this.proxies.add(imageProxy);
       }
     }
+  }
+  
+  public int getCurrentImageNr() {
+    return this.currentlyDisplayedImageNr;
+  }
+  
+  public void pinRandomImage() {
+    if (this.proxies.isEmpty()) {
+      this.image = new ImageProxy();
+    } else {
+      this.currentlyDisplayedImageNr = Main.DIE.nextInt(this.proxies.size());
+      this.image = this.proxies.get(this.currentlyDisplayedImageNr);
+    }
+  }
+  
+  public void pinNextImage() {
+    if (this.proxies.isEmpty()) {
+      return;
+    } else {
+      this.currentlyDisplayedImageNr++;
+      this.currentlyDisplayedImageNr %= this.proxies.size();
+      this.image = this.proxies.get(this.currentlyDisplayedImageNr);
+    }
+  }
+  
+  public void setPlacement(final Properties placement) {
+    this.image.setPlacement(placement);
+  }
+  
+  public Properties getPlacement() {
+    return this.image.getPlacement();
   }
   
   public BufferedImage getImage() {
