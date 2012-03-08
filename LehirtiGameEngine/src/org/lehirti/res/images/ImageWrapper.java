@@ -74,6 +74,7 @@ public final class ImageWrapper {
   
   public void setPlacement(final Properties placement) {
     this.image.setPlacement(placement);
+    this.image.writeProxyFile();
   }
   
   public Properties getPlacement() {
@@ -96,6 +97,7 @@ public final class ImageWrapper {
     final ImageProxy imageProxy = ImageProxy.createNew(this.modDir, alternativeImageFile);
     if (imageProxy != null) {
       this.proxies.add(imageProxy);
+      this.currentlyDisplayedImageNr = this.proxies.size() - 1;
       this.image = imageProxy;
       return true;
     }

@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.Properties;
@@ -32,6 +33,8 @@ public class ImageProxy {
   private SoftReference<BufferedImage> image;
   private final int imageSizeX;
   private final int imageSizeY;
+  private final File modProxyFile;
+  
   private Properties placement = new Properties();
   
   private String alignX = null;
@@ -43,6 +46,8 @@ public class ImageProxy {
   
   private ImageProxy(final File imageProxyFile, final File imageFile, final BufferedImage image) {
     setPlacement(imageProxyFile);
+    this.modProxyFile = new File(imageProxyFile.getAbsolutePath().replaceFirst(
+        ResourceCache.CORE_BASE_DIR.getAbsolutePath(), ResourceCache.MOD_BASE_DIR.getAbsolutePath()));
     
     this.imageFile = imageFile;
     this.image = new SoftReference<BufferedImage>(image);
@@ -52,6 +57,7 @@ public class ImageProxy {
   
   ImageProxy() {
     this.imageFile = null;
+    this.modProxyFile = null;
     this.imageSizeX = 100;
     this.imageSizeY = 100;
   }
@@ -70,6 +76,12 @@ public class ImageProxy {
   }
   
   private void _setPlacement(final Properties placement) {
+    this.alignX = null;
+    this.alignY = null;
+    this.posX = null;
+    this.posY = null;
+    this.scaleX = null;
+    this.scaleY = null;
     
     this.alignX = placement.getProperty(ProxyProps.ALIGN_X.name(), "CENTER");
     this.alignY = placement.getProperty(ProxyProps.ALIGN_Y.name(), "CENTER");
@@ -104,7 +116,18 @@ public class ImageProxy {
   public void setPlacement(final Properties placement) {
     this.placement = placement;
     _setPlacement(placement);
-    // TODO write .proxy file
+  }
+  
+  public void writeProxyFile() {
+    try {
+      this.placement.store(new FileOutputStream(this.modProxyFile), null);
+    } catch (final FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (final IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
   
   public Properties getPlacement() {
@@ -250,7 +273,7 @@ public class ImageProxy {
     coords[1] = determinePosAfterCentered(screenHeight, sizes[1]);
     
     coords[2] = sizes[0];
-    coords[3] = sizes[2];
+    coords[3] = sizes[1];
     return coords;
   }
   
