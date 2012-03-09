@@ -246,6 +246,7 @@ public class ImageEditor extends JFrame implements ActionListener {
         final File file = fc.getSelectedFile();
         this.allImages.get(this.selectedImageNr).addAlternativeImage(file);
       }
+      updateCanvasAndImageWrapper();
     } else {
       updateCanvasAndImageWrapper();
     }

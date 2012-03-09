@@ -9,7 +9,9 @@ import java.util.Map;
 import org.lehirti.Main;
 import org.lehirti.gui.Key;
 import org.lehirti.res.ResourceCache;
+import org.lehirti.res.text.CommonText;
 import org.lehirti.res.text.TextKey;
+import org.lehirti.res.text.TextWrapper;
 
 public abstract class EventNode extends AbstractEvent {
   private final Map<Key, Event> registeredEvents = new EnumMap<Key, Event>(Key.class);
@@ -21,7 +23,7 @@ public abstract class EventNode extends AbstractEvent {
    * 
    * @param text
    */
-  protected void setText(final TextKey text) {
+  protected void setText(final TextWrapper text) {
     try {
       javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {
@@ -37,12 +39,16 @@ public abstract class EventNode extends AbstractEvent {
     }
   }
   
+  protected void setText(final TextKey key) {
+    setText(ResourceCache.get(key));
+  }
+  
   /**
    * append text to text field
    * 
    * @param text
    */
-  protected void addText(final TextKey text) {
+  protected void addText(final TextWrapper text) {
     try {
       javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {
@@ -58,20 +64,8 @@ public abstract class EventNode extends AbstractEvent {
     }
   }
   
-  private void addText(final String text) {
-    try {
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
-        public void run() {
-          Main.TEXT_AREA.setText(Main.TEXT_AREA.getText() + text);
-        }
-      });
-    } catch (final InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (final InvocationTargetException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+  protected void addText(final TextKey key) {
+    addText(ResourceCache.get(key));
   }
   
   protected void addOption(final Key key, final TextKey text, final Event event) {
@@ -83,7 +77,11 @@ public abstract class EventNode extends AbstractEvent {
     }
     
     this.registeredEvents.put(key, event);
-    addText("\n" + key.mapping + " : " + ResourceCache.get(text).getValue());
+    // TODO addText("\n" + key.mapping + " : " + ResourceCache.get(text).getValue());
+    final TextWrapper wrapper = ResourceCache.get(CommonText.KEY_OPTION);
+    wrapper.addParameter(String.valueOf(key.mapping));
+    addText(wrapper);
+    addText(text);
   }
   
   protected void addOption(final TextKey text, final Event event) {
@@ -100,7 +98,11 @@ public abstract class EventNode extends AbstractEvent {
       }
       final Key key = this.availableOptionKeys.remove(0);
       this.registeredEvents.put(key, event);
-      addText("\n" + key.mapping + " : " + ResourceCache.get(text).getValue());
+      // TODO addText("\n" + key.mapping + " : " + ResourceCache.get(text).getValue());
+      final TextWrapper wrapper = ResourceCache.get(CommonText.KEY_OPTION);
+      wrapper.addParameter(String.valueOf(key.mapping));
+      addText(wrapper);
+      addText(text);
     }
   }
   

@@ -1,6 +1,8 @@
 package org.lehirti.res.text;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.lehirti.res.ResourceCache;
 import org.lehirti.util.FileUtils;
@@ -10,6 +12,8 @@ public class TextWrapper {
   private final TextKey key;
   private final File modFile;
   private String value;
+  
+  private final List<String> parameters = new LinkedList<String>();
   
   public TextWrapper(final TextKey key, final File coreDir, final File modDir) {
     this.key = key;
@@ -27,13 +31,28 @@ public class TextWrapper {
     }
   }
   
-  public String getValue() {
+  public String getRawValue() {
     return this.value;
+  }
+  
+  public String getValue() {
+    if (this.parameters.isEmpty()) {
+      return getRawValue();
+    }
+    String val = this.value;
+    for (int i = 0; i < this.parameters.size(); i++) {
+      val = val.replaceAll("\\{" + i + "\\}", this.parameters.get(i));
+    }
+    return val;
   }
   
   public void setValue(final String value) {
     this.value = value;
     FileUtils.writeContentToFile(this.modFile, value);
+  }
+  
+  public void addParameter(final String param) {
+    this.parameters.add(param);
   }
   
   @Override

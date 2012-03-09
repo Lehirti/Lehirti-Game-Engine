@@ -24,13 +24,6 @@ public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
     }
   };
   
-  private static final ResourceCache<TextKey, TextWrapper> TEXT_CACHE = new ResourceCache<TextKey, TextWrapper>() {
-    @Override
-    protected TextWrapper getInstance(final TextKey key, final File coreDir, final File modDir) {
-      return new TextWrapper(key, coreDir, modDir);
-    }
-  };
-  
   private final Map<KEY, VALUE> cache = new HashMap<KEY, VALUE>();
   
   private VALUE _get(final KEY key) {
@@ -44,7 +37,7 @@ public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
     return value;
   }
   
-  private File getDir(final File baseDir, final KEY key) {
+  private static File getDir(final File baseDir, final ResourceKey key) {
     final File moduleDir = new File(baseDir, key.getClass().getName());
     final File keyDir = new File(moduleDir, key.name());
     return keyDir;
@@ -57,6 +50,6 @@ public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
   }
   
   public static final synchronized TextWrapper get(final TextKey key) {
-    return TEXT_CACHE._get(key);
+    return new TextWrapper(key, getDir(CORE_BASE_DIR, key), getDir(MOD_BASE_DIR, key));
   }
 }

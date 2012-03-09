@@ -218,6 +218,15 @@ public class ImageProxy {
   int[] calculateCoordinates(final int screenWidth, final int screenHeight) {
     final int[] coords;
     
+    if (this.imageFile == null) {
+      coords = new int[4];
+      coords[0] = 0;
+      coords[1] = 0;
+      coords[2] = 100;
+      coords[3] = 100;
+      return coords;
+    }
+    
     final double xScale = screenWidth / 100.0D;
     final double yScale = screenHeight / 100.0D;
     

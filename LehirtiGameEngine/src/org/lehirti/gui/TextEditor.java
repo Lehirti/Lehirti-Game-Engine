@@ -35,7 +35,7 @@ public class TextEditor extends JFrame implements ActionListener {
     this.allTexts = gameTextArea.getAllTexts();
     if (!this.allTexts.isEmpty()) {
       this.selectedTextNr = 0;
-      this.textArea.setText(this.allTexts.get(0).getValue());
+      this.textArea.setText(this.allTexts.get(0).getRawValue());
     }
     
     this.controls.setLayout(new GridLayout(2, 1));
@@ -68,7 +68,7 @@ public class TextEditor extends JFrame implements ActionListener {
     if (this.selectedTextNr >= this.allTexts.size()) {
       this.selectedTextNr = 0;
     }
-    this.textArea.setText(this.allTexts.get(this.selectedTextNr).getValue());
+    this.textArea.setText(this.allTexts.get(this.selectedTextNr).getRawValue());
   }
   
   public void actionPerformed(final ActionEvent e) {
@@ -77,5 +77,6 @@ public class TextEditor extends JFrame implements ActionListener {
     } else if (e.getSource() == this.save) {
       this.allTexts.get(this.selectedTextNr).setValue(this.textArea.getText());
     }
+    this.gameTextArea.refresh();
   }
 }

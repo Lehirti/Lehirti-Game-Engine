@@ -1,16 +1,16 @@
 package org.lehirti.gui;
 
 import java.awt.Dimension;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JTextArea;
 
-import org.lehirti.res.ResourceCache;
-import org.lehirti.res.text.TextKey;
 import org.lehirti.res.text.TextWrapper;
 
 public class TextArea extends JTextArea {
+  private final List<TextWrapper> allTexts = new ArrayList<TextWrapper>(25);
+  
   public TextArea() {
     getCaret().setVisible(false);
     setLineWrap(true);
@@ -29,29 +29,25 @@ public class TextArea extends JTextArea {
     return new Dimension(280, 800);
   }
   
-  public void setText(final TextKey key) {
-    setText(ResourceCache.get(key).getValue());
+  public void setText(final TextWrapper text) {
+    this.allTexts.clear();
+    addText(text);
   }
   
-  public void addText(final TextKey key) {
-    setText(getText() + ResourceCache.get(key).getValue());
+  public void addText(final TextWrapper text) {
+    this.allTexts.add(text);
+    refresh();
+  }
+  
+  public void refresh() {
+    final StringBuilder sb = new StringBuilder();
+    for (final TextWrapper text : this.allTexts) {
+      sb.append(text.getValue());
+    }
+    setText(sb.toString());
   }
   
   public List<TextWrapper> getAllTexts() {
-    // TODO
-    final List<TextWrapper> allTexts = new LinkedList<TextWrapper>();
-    allTexts.add(ResourceCache.get(new TextKey() {
-      @Override
-      public String name() {
-        return "TODO Test 1";
-      }
-    }));
-    allTexts.add(ResourceCache.get(new TextKey() {
-      @Override
-      public String name() {
-        return "TODO Test 2";
-      }
-    }));
-    return allTexts;
+    return this.allTexts;
   }
 }
