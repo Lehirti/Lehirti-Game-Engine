@@ -14,6 +14,7 @@ public class TextArea extends JTextArea {
   public TextArea() {
     getCaret().setVisible(false);
     setLineWrap(true);
+    setWrapStyleWord(true);
   }
   
   @Override

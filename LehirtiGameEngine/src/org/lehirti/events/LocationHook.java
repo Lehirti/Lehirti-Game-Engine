@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.lehirti.state.StaticInitializer;
 
-public interface LocationDispatcher extends StaticInitializer {
+public interface LocationHook extends StaticInitializer {
   /**
    * should only be used for one-off events since an event with probability PROBABILITY_ALWAYS will prevent regular
    * events from occurring

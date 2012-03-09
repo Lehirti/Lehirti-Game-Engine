@@ -12,8 +12,12 @@ import org.lehirti.res.ResourceCache;
 import org.lehirti.res.text.CommonText;
 import org.lehirti.res.text.TextKey;
 import org.lehirti.res.text.TextWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class EventNode extends AbstractEvent {
+  private static final Logger LOGGER = LoggerFactory.getLogger(EventNode.class);
+  
   private final Map<Key, Event> registeredEvents = new EnumMap<Key, Event>(Key.class);
   private final List<Key> availableOptionKeys = Key.getOptionKeys();
   private final Map<Event, TextKey> optionsWithArbitraryKey = new LinkedHashMap<Event, TextKey>();
@@ -107,6 +111,7 @@ public abstract class EventNode extends AbstractEvent {
   }
   
   public void execute() {
+    LOGGER.info("Event: {}", getClass().getName());
     doEvent();
     
     addOptionsWithAritraryKeys();

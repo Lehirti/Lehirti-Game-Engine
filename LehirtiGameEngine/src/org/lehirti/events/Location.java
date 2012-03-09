@@ -13,14 +13,19 @@ import java.util.Map.Entry;
 
 import org.lehirti.Main;
 import org.lehirti.res.images.ImageKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class Location extends AbstractEvent {
-  private static final Map<Class<Location>, Set<LocationDispatcher>> LOCATION_DISPATCHERS = new HashMap<Class<Location>, Set<LocationDispatcher>>();
+  private static final Logger LOGGER = LoggerFactory.getLogger(Location.class);
   
-  public static synchronized void registerDispatcher(final Class<Location> location, final LocationDispatcher dispatcher) {
-    Set<LocationDispatcher> dispatchers = LOCATION_DISPATCHERS.get(location);
+  private static final Map<Class<? extends Location>, Set<LocationHook>> LOCATION_DISPATCHERS = new HashMap<Class<? extends Location>, Set<LocationHook>>();
+  
+  public static synchronized void registerDispatcher(final Class<? extends Location> location,
+      final LocationHook dispatcher) {
+    Set<LocationHook> dispatchers = LOCATION_DISPATCHERS.get(location);
     if (dispatchers == null) {
-      dispatchers = new HashSet<LocationDispatcher>();
+      dispatchers = new HashSet<LocationHook>();
       LOCATION_DISPATCHERS.put(location, dispatchers);
     }
     dispatchers.add(dispatcher);
@@ -28,14 +33,16 @@ public abstract class Location extends AbstractEvent {
   
   @Override
   public void execute() {
+    LOGGER.info("Location: {}", getClass().getName());
+    
     setBackgroundImage(getBackgroundImageToDisplay());
     repaintImagesIfNeeded();
     
-    final Set<LocationDispatcher> dispatchersForThisLocation = LOCATION_DISPATCHERS.get(this.getClass());
+    final Set<LocationHook> dispatchersForThisLocation = LOCATION_DISPATCHERS.get(this.getClass());
     
     final Map<Event, Double> probablityPerEventMap = new HashMap<Event, Double>();
     if (dispatchersForThisLocation != null) {
-      for (final LocationDispatcher dispatcher : dispatchersForThisLocation) {
+      for (final LocationHook dispatcher : dispatchersForThisLocation) {
         probablityPerEventMap.putAll(dispatcher.getCurrentEvents());
       }
     }
@@ -102,7 +109,7 @@ public abstract class Location extends AbstractEvent {
     final Iterator<Map.Entry<Event, Double>> itr = probablityPerEventMap.entrySet().iterator();
     while (itr.hasNext()) {
       final Entry<Event, Double> eventEntry = itr.next();
-      if (eventEntry.getValue().doubleValue() > LocationDispatcher.PROBABILITY_DEFAULT + 0.5 /* rounding errors */) {
+      if (eventEntry.getValue().doubleValue() > LocationHook.PROBABILITY_DEFAULT + 0.5 /* rounding errors */) {
         regularEvents.put(eventEntry.getKey(), eventEntry.getValue());
         itr.remove();
       }
@@ -132,7 +139,7 @@ public abstract class Location extends AbstractEvent {
   private static List<Event> getProbabilityAlwaysEvents(final Map<Event, Double> probablityPerEventMap) {
     final List<Event> probAlwaysEvents = new LinkedList<Event>();
     for (final Map.Entry<Event, Double> entry : probablityPerEventMap.entrySet()) {
-      if (entry.getValue().doubleValue() < LocationDispatcher.PROBABILITY_ALWAYS + 0.5 /* rounding errors */) {
+      if (entry.getValue().doubleValue() < LocationHook.PROBABILITY_ALWAYS + 0.5 /* rounding errors */) {
         probAlwaysEvents.add(entry.getKey());
       }
     }
