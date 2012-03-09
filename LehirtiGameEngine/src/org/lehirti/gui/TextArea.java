@@ -1,11 +1,14 @@
 package org.lehirti.gui;
 
 import java.awt.Dimension;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JTextArea;
 
 import org.lehirti.res.ResourceCache;
 import org.lehirti.res.text.TextKey;
+import org.lehirti.res.text.TextWrapper;
 
 public class TextArea extends JTextArea {
   public TextArea() {
@@ -32,5 +35,23 @@ public class TextArea extends JTextArea {
   
   public void addText(final TextKey key) {
     setText(getText() + ResourceCache.get(key).getValue());
+  }
+  
+  public List<TextWrapper> getAllTexts() {
+    // TODO
+    final List<TextWrapper> allTexts = new LinkedList<TextWrapper>();
+    allTexts.add(ResourceCache.get(new TextKey() {
+      @Override
+      public String name() {
+        return "TODO Test 1";
+      }
+    }));
+    allTexts.add(ResourceCache.get(new TextKey() {
+      @Override
+      public String name() {
+        return "TODO Test 2";
+      }
+    }));
+    return allTexts;
   }
 }

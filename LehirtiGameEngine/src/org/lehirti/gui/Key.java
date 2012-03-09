@@ -7,7 +7,8 @@ import java.util.List;
 public enum Key {
   PREVIOUS('r', true),
   NEXT('f', true),
-  CTRL_S((char) 0x13, false);
+  CTRL_I((char) 0x09, false),
+  CTRL_T((char) 0x14, false);
   
   private static final List<Key> OPTION_KEYS = new ArrayList<Key>(values().length);
   

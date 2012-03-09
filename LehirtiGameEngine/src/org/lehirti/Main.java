@@ -14,6 +14,7 @@ import org.lehirti.gui.ImageArea;
 import org.lehirti.gui.ImageEditor;
 import org.lehirti.gui.Key;
 import org.lehirti.gui.TextArea;
+import org.lehirti.gui.TextEditor;
 import org.lehirti.res.images.ImageWrapper;
 import org.lehirti.state.StaticInitializer;
 import org.lehirti.util.ClassFinder;
@@ -49,8 +50,10 @@ public abstract class Main {
       public void keyTyped(final KeyEvent e) {
         final Key key = Key.getByChar(e.getKeyChar());
         if (key != null) {
-          if (key == Key.CTRL_S) {
+          if (key == Key.CTRL_I) {
             editImages();
+          } else if (key == Key.CTRL_T) {
+            editTexts();
           } else {
             synchronized (LAST_KEY_TYPED_LOCK) {
               LAST_KEY_TYPED = key;
@@ -64,6 +67,10 @@ public abstract class Main {
       private void editImages() {
         final List<ImageWrapper> allImages = IMAGE_AREA.getAllImages();
         new ImageEditor(allImages, IMAGE_AREA);
+      }
+      
+      private void editTexts() {
+        new TextEditor(TEXT_AREA);
       }
     });
     
