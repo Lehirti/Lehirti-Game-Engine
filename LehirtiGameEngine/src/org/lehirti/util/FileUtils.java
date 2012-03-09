@@ -14,6 +14,9 @@ import java.nio.channels.FileChannel;
 public class FileUtils {
   public static void copyFileTODO(final File sourceFile, final File destFile) {
     try {
+      if (!destFile.getParentFile().exists()) {
+        destFile.getParentFile().mkdirs();
+      }
       copyFile(sourceFile, destFile);
     } catch (final IOException e) {
       throw new RuntimeException(e);

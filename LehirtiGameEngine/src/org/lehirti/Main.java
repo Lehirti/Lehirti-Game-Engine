@@ -18,8 +18,11 @@ import org.lehirti.gui.TextEditor;
 import org.lehirti.res.images.ImageWrapper;
 import org.lehirti.state.StaticInitializer;
 import org.lehirti.util.ClassFinder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class Main {
+  private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
   
   public static TextArea TEXT_AREA;
   public static ImageArea IMAGE_AREA;
@@ -94,6 +97,8 @@ public abstract class Main {
         createAndShowGUI();
       }
     });
+    
+    LOGGER.info("Game started.");
     
     while (true) {
       nextEvent.execute();

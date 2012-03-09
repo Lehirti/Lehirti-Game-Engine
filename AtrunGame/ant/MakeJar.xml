@@ -10,6 +10,8 @@
             </manifest>
             <fileset dir="../bin"/>
             <fileset dir="../../LehirtiGameEngine/bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="../../LehirtiGameEngine/lib/slf4j-api-1.6.4.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="../../LehirtiGameEngine/lib/slf4j-jdk14-1.6.4.jar"/>
         </jar>
     </target>
 </project>
