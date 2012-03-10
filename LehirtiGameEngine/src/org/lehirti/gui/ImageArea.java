@@ -5,6 +5,10 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +18,10 @@ import org.lehirti.res.ResourceCache;
 import org.lehirti.res.images.ImageKey;
 import org.lehirti.res.images.ImageWrapper;
 
-public class ImageArea extends JComponent {
+public class ImageArea extends JComponent implements Externalizable {
   private static final long serialVersionUID = 1L;
+  
+  private static final String IMAGE_AREA_END_OBJECT = "IMAGE_AREA_END_OBJECT";
   
   private static final int WIDTH = 1000;
   private static final int HEIGHT = 800;
@@ -23,6 +29,71 @@ public class ImageArea extends JComponent {
   private ImageWrapper backgroundImage = null;
   
   private final List<ImageWrapper> foregroundImages = new ArrayList<ImageWrapper>(15);
+  
+  @Override
+  public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+    final long serialVersionUniqueID = in.readLong();
+    if (serialVersionUniqueID == 1L) {
+      readExternal1(in);
+    } else {
+      throw new RuntimeException("Unknown StateObject serialVersionUID: " + serialVersionUniqueID);
+    }
+  }
+  
+  private void readExternal1(final ObjectInput in) throws ClassNotFoundException, IOException {
+    this.backgroundImage = null;
+    this.foregroundImages.clear();
+    
+    final boolean hasBackgroundImage = in.readBoolean();
+    if (hasBackgroundImage) {
+      final String className = (String) in.readObject();
+      final ImageKey backgroundImageKey = readImageKey(in, className);
+      if (backgroundImageKey != null) {
+        setBackgroundImage(backgroundImageKey);
+      }
+    }
+    String className = (String) in.readObject();
+    while (!className.equals(IMAGE_AREA_END_OBJECT)) {
+      final ImageKey imgKey = readImageKey(in, className);
+      if (imgKey != null) {
+        addImage(imgKey);
+      }
+      className = (String) in.readObject();
+    }
+    repaint();
+  }
+  
+  private static ImageKey readImageKey(final ObjectInput in, final String className) throws ClassNotFoundException,
+      IOException {
+    final String key = (String) in.readObject();
+    try {
+      return (ImageKey) Enum.valueOf((Class<? extends Enum>) Class.forName(className), key);
+    } catch (final ClassNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;
+  }
+  
+  @Override
+  public void writeExternal(final ObjectOutput out) throws IOException {
+    out.writeLong(serialVersionUID);
+    if (this.backgroundImage != null) {
+      out.writeBoolean(true);
+      writeImageKey(out, this.backgroundImage.getKey());
+    } else {
+      out.writeBoolean(false);
+    }
+    for (final ImageWrapper img : this.foregroundImages) {
+      writeImageKey(out, img.getKey());
+    }
+    out.writeObject(IMAGE_AREA_END_OBJECT);
+  }
+  
+  private static void writeImageKey(final ObjectOutput out, final ImageKey key) throws IOException {
+    out.writeObject(key.getClass().getName());
+    out.writeObject(key.name());
+  }
   
   @Override
   public void paintComponent(final Graphics g) {

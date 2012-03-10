@@ -104,6 +104,10 @@ public final class ImageWrapper {
     return false;
   }
   
+  public ImageKey getKey() {
+    return this.key;
+  }
+  
   @Override
   public int hashCode() {
     return this.key.hashCode();

@@ -15,7 +15,6 @@ public class Intro01 extends EventNode {
   protected void doEvent() {
     setText(Text.MAIN);
     setBackgroundImage(IntroImage.INTRO_01);
-    setImage(IntroImage.INTRO_02);
     
     addOption(Key.NEXT, Text.OPTION_NEXT, new Intro02());
   }
