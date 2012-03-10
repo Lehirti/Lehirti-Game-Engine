@@ -3,9 +3,12 @@ package org.lehirti;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
+import java.util.Vector;
 
 import javax.swing.JFrame;
 
@@ -23,6 +26,8 @@ import org.slf4j.LoggerFactory;
 
 public abstract class Main {
   private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+  
+  private static final String VERSION_FILE_LOCATION = "version";
   
   public static TextArea TEXT_AREA;
   public static ImageArea IMAGE_AREA;
@@ -87,10 +92,15 @@ public abstract class Main {
   }
   
   protected void engineMain(final String[] args) throws InterruptedException, InvocationTargetException {
+    logVersion();
+    
     /*
      * load all modules
      */
-    new ClassFinder().findSubclasses(StaticInitializer.class.getName());
+    final Vector<Class<?>> modules = new ClassFinder().findSubclasses(StaticInitializer.class.getName());
+    for (final Class<?> module : modules) {
+      LOGGER.debug("Loaded module: {}", module.getName());
+    }
     
     javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
       public void run() {
@@ -98,11 +108,25 @@ public abstract class Main {
       }
     });
     
-    LOGGER.info("Game started.");
+    LOGGER.info("{} started.", getGameName());
     
     while (true) {
       nextEvent.execute();
     }
+  }
+  
+  private void logVersion() {
+    final InputStream versionInputStream = ClassLoader.getSystemResourceAsStream(VERSION_FILE_LOCATION);
+    final Properties versionProps = new Properties();
+    try {
+      versionProps.load(versionInputStream);
+    } catch (final Exception e) {
+      LOGGER.info(getGameName() + " Development Version");
+      return;
+    }
+    
+    LOGGER.info(getGameName() + " " + versionProps.getProperty("number") + " " + versionProps.getProperty("flavor")
+        + " Build " + versionProps.getProperty("build") + " " + versionProps.getProperty("date"));
   }
   
   abstract protected String getGameName();

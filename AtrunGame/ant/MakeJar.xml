@@ -3,15 +3,15 @@
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
     <target name="create_run_jar">
-        <propertyfile file="version">
-            <entry key="date" type="date" value="now"/>
-            <entry key="number" value="0.0.1"/>
-            <entry key="flavor" type="string" default="anonymous"/>
-            <entry key="build" type="int" default="0" operation="+"/>
-        </propertyfile>
         <apply executable="check_workspace_clean.sh" osfamily="unix" failonerror="true">
             <fileset dir="."/>
         </apply>
+        <propertyfile file="version">
+            <entry key="date" type="date" value="now"/>
+            <entry key="number" type="string" default="0.0.1"/>
+            <entry key="flavor" type="string" default="anonymous"/>
+            <entry key="build" type="int" default="0" operation="+"/>
+        </propertyfile>
         <jar destfile="../../../lge/Main.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="org.atrun.Main"/>
