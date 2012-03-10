@@ -12,7 +12,7 @@ public class Main extends org.lehirti.Main {
    * @throws InterruptedException
    */
   public static void main(final String[] args) throws InterruptedException, InvocationTargetException {
-    org.lehirti.Main.nextEvent = new Intro01();
+    org.lehirti.Main.currentEvent = new Intro01();
     
     new Main().engineMain(args);
   }

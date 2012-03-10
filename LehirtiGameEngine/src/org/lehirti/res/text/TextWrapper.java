@@ -71,6 +71,6 @@ public class TextWrapper {
   
   @Override
   public String toString() {
-    return this.key.getClass().getSimpleName() + "." + this.key.name() + "[" + this.value + "]";
+    return this.key.getClass().getSimpleName() + "." + this.key.name() + "[" + getValue() + "]";
   }
 }

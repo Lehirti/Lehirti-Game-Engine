@@ -1,21 +1,41 @@
 package org.lehirti.state;
 
+import java.io.Externalizable;
 import java.io.IOException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-public class StateObject implements Serializable {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class StateObject implements Externalizable {
   private static final long serialVersionUID = 1L;
+  
+  private static final Logger LOGGER = LoggerFactory.getLogger(StateObject.class);
   
   private static final StateObject INSTANCE = new StateObject();
   
-  // TODO turn into SortedMap
-  private final Map<BoolState, Boolean> BOOL_MAP = new HashMap<BoolState, Boolean>();
-  private final Map<IntState, Integer> INT_MAP = new HashMap<IntState, Integer>();
-  private final Map<StringState, String> STRING_MAP = new HashMap<StringState, String>();
+  private static final Comparator<State> SORTER = new Comparator<State>() {
+    
+    @Override
+    public int compare(final State o1, final State o2) {
+      if (o1.getClass().equals(o2.getClass())) {
+        return o1.name().compareTo(o2.name());
+      }
+      return o1.getClass().getName().compareTo(o2.getClass().getName());
+    }
+    
+  };
+  
+  private final SortedMap<BoolState, Boolean> BOOL_MAP = new TreeMap<BoolState, Boolean>(SORTER);
+  private final SortedMap<IntState, Integer> INT_MAP = new TreeMap<IntState, Integer>(SORTER);
+  private final SortedMap<StringState, String> STRING_MAP = new TreeMap<StringState, String>(SORTER);
   
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // static getters for all state
@@ -61,6 +81,25 @@ public class StateObject implements Serializable {
   // Save/Load
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
+  public static void save(final ObjectOutputStream oos) {
+    try {
+      oos.writeObject(INSTANCE);
+    } catch (final IOException e) {
+      LOGGER.error("Unable to save state", e);
+    }
+  }
+  
+  public static void load(final ObjectInputStream ois) {
+    try {
+      ois.readObject();
+    } catch (final IOException e) {
+      LOGGER.error("Unable to load state", e);
+    } catch (final ClassNotFoundException e) {
+      LOGGER.error("Unable to load state", e);
+    }
+    
+  }
+  
   private static enum OnDiskDelim {
     
     START_BOOL_MAP,
@@ -91,7 +130,8 @@ public class StateObject implements Serializable {
     }
   }
   
-  private void writeObject(final ObjectOutputStream out) throws IOException {
+  @Override
+  public void writeExternal(final ObjectOutput out) throws IOException {
     out.writeLong(serialVersionUID);
     out.writeObject(OnDiskDelim.START_BOOL_MAP.name());
     writeMap(out, this.BOOL_MAP);
@@ -102,11 +142,10 @@ public class StateObject implements Serializable {
     out.writeObject(OnDiskDelim.START_STRING_MAP.name());
     writeMap(out, this.STRING_MAP);
     out.writeObject(OnDiskDelim.END_STRING_MAP.name());
-    out.writeObject(OnDiskDelim.END_STATE_OBJECT);
+    out.writeObject(OnDiskDelim.END_STATE_OBJECT.name());
   }
   
-  private void writeMap(final ObjectOutputStream out, final Map<? extends State, ? extends Object> map)
-      throws IOException {
+  private void writeMap(final ObjectOutput out, final Map<? extends State, ? extends Object> map) throws IOException {
     for (final Map.Entry<? extends State, ? extends Object> entry : map.entrySet()) {
       out.writeObject(entry.getKey().getClass().getName());
       out.writeObject(entry.getKey().name());
@@ -114,7 +153,8 @@ public class StateObject implements Serializable {
     }
   }
   
-  private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+  @Override
+  public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
     final long version = in.readLong();
     if (version == 1L) {
       readObject1(in);
@@ -123,7 +163,11 @@ public class StateObject implements Serializable {
     }
   }
   
-  private void readObject1(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+  private void readObject1(final ObjectInput in) throws IOException, ClassNotFoundException {
+    INSTANCE.BOOL_MAP.clear();
+    INSTANCE.INT_MAP.clear();
+    INSTANCE.STRING_MAP.clear();
+    
     OnDiskDelim delim;
     while ((delim = OnDiskDelim.valueOf((String) in.readObject())) != OnDiskDelim.END_STATE_OBJECT) {
       readMap(in, delim);
@@ -131,8 +175,7 @@ public class StateObject implements Serializable {
   }
   
   @SuppressWarnings("unchecked")
-  private void readMap(final ObjectInputStream in, final OnDiskDelim startDelim) throws IOException,
-      ClassNotFoundException {
+  private void readMap(final ObjectInput in, final OnDiskDelim startDelim) throws IOException, ClassNotFoundException {
     String className;
     final OnDiskDelim endDelim = startDelim.getNext();
     while (!endDelim.name().equals((className = (String) in.readObject()))) {
@@ -143,21 +186,20 @@ public class StateObject implements Serializable {
         final State key = (State) Enum.valueOf((Class<? extends Enum>) Class.forName(className), keyName);
         switch (startDelim) {
         case START_BOOL_MAP:
-          this.BOOL_MAP.put((BoolState) key, (Boolean) value);
+          INSTANCE.BOOL_MAP.put((BoolState) key, (Boolean) value);
           break;
         case START_INT_MAP:
-          this.INT_MAP.put((IntState) key, (Integer) value);
+          INSTANCE.INT_MAP.put((IntState) key, (Integer) value);
           break;
         case START_STRING_MAP:
-          this.STRING_MAP.put((StringState) key, (String) value);
+          INSTANCE.STRING_MAP.put((StringState) key, (String) value);
           break;
         default:
           throw new RuntimeException("Unknown OnDiskDelim: " + startDelim.name());
         }
       } catch (final RuntimeException e) {
-        // state key probably does not exist anymore; TODO log as warn and continue
+        LOGGER.warn("Ignoring unkown state {}.{}={}", new Object[] { className, keyName, value });
       }
     }
-    
   }
 }

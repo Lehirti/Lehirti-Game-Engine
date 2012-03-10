@@ -15,6 +15,6 @@ public class DrostalToVogard extends Location {
   
   @Override
   protected void scheduleNullEvent() {
-    Main.nextEvent = new Intro01();
+    Main.currentEvent = new Intro01();
   }
 }

@@ -3,6 +3,7 @@ package org.lehirti.events;
 import java.lang.reflect.InvocationTargetException;
 
 import org.lehirti.Main;
+import org.lehirti.gui.Key;
 import org.lehirti.res.images.ImageKey;
 
 public abstract class AbstractEvent implements Event {
@@ -40,5 +41,10 @@ public abstract class AbstractEvent implements Event {
         e.printStackTrace();
       }
     }
+  }
+  
+  @Override
+  public boolean handle(final Key key) {
+    return false;
   }
 }

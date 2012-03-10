@@ -1,10 +1,11 @@
 package org.lehirti.events;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.lehirti.Main;
 import org.lehirti.gui.Key;
@@ -12,13 +13,17 @@ import org.lehirti.res.ResourceCache;
 import org.lehirti.res.text.CommonText;
 import org.lehirti.res.text.TextKey;
 import org.lehirti.res.text.TextWrapper;
+import org.lehirti.state.BoolState;
+import org.lehirti.state.IntState;
+import org.lehirti.state.StateObject;
+import org.lehirti.state.StringState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class EventNode extends AbstractEvent {
   private static final Logger LOGGER = LoggerFactory.getLogger(EventNode.class);
   
-  private final Map<Key, Event> registeredEvents = new EnumMap<Key, Event>(Key.class);
+  private final ConcurrentMap<Key, Event> registeredEvents = new ConcurrentHashMap<Key, Event>();
   private final List<Key> availableOptionKeys = Key.getOptionKeys();
   private final Map<Event, TextKey> optionsWithArbitraryKey = new LinkedHashMap<Event, TextKey>();
   
@@ -118,26 +123,57 @@ public abstract class EventNode extends AbstractEvent {
     
     repaintImagesIfNeeded();
     
-    Event event = null;
-    while (true) {
-      Key key;
-      synchronized (Main.LAST_KEY_TYPED_LOCK) {
-        while ((key = Main.LAST_KEY_TYPED) == null) {
-          try {
-            Main.LAST_KEY_TYPED_LOCK.wait();
-          } catch (final InterruptedException e) {
-            e.printStackTrace();
-          }
+    synchronized (this) {
+      while (Main.currentEvent == this) {
+        try {
+          wait();
+        } catch (final InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
         }
-        Main.LAST_KEY_TYPED = null;
-      }
-      
-      event = this.registeredEvents.get(key);
-      if (event != null) {
-        break;
       }
     }
-    Main.nextEvent = event;
+  }
+  
+  protected static boolean is(final BoolState key) {
+    return StateObject.is(key);
+  }
+  
+  protected static int get(final IntState key) {
+    return StateObject.get(key);
+  }
+  
+  protected static String get(final StringState key) {
+    return StateObject.get(key);
+  }
+  
+  protected static void set(final BoolState key, final boolean value) {
+    StateObject.set(key, value);
+  }
+  
+  protected static void set(final IntState key, final int value) {
+    StateObject.set(key, value);
+  }
+  
+  protected static void change(final IntState key, final int change) {
+    set(key, get(key) + change);
+  }
+  
+  protected static void set(final StringState key, final String value) {
+    StateObject.set(key, value);
+  }
+  
+  @Override
+  public boolean handle(final Key key) {
+    final Event event = this.registeredEvents.get(key);
+    if (event != null) {
+      Main.currentEvent = event;
+      synchronized (this) {
+        notifyAll();
+      }
+      return true;
+    }
+    return false;
   }
   
   protected abstract void doEvent();

@@ -121,7 +121,7 @@ public abstract class Location extends AbstractEvent {
     double remainingProbabilityFromDieRoll = Main.DIE.nextDouble() * 100.0D;
     for (final Map.Entry<Event, Double> entry : eventsToChooseFrom.entrySet()) {
       if (remainingProbabilityFromDieRoll < entry.getValue().doubleValue()) {
-        Main.nextEvent = entry.getKey();
+        Main.currentEvent = entry.getKey();
         return;
       }
       remainingProbabilityFromDieRoll -= entry.getValue().doubleValue();
@@ -133,7 +133,7 @@ public abstract class Location extends AbstractEvent {
     if (probabilityAlwaysEvents.size() > 1) {
       // TODO log warning; at least one PROBABILITY_ALWAYS has been blocked by another
     }
-    Main.nextEvent = probabilityAlwaysEvents.get(Main.DIE.nextInt(probabilityAlwaysEvents.size()));
+    Main.currentEvent = probabilityAlwaysEvents.get(Main.DIE.nextInt(probabilityAlwaysEvents.size()));
   }
   
   private static List<Event> getProbabilityAlwaysEvents(final Map<Event, Double> probablityPerEventMap) {
