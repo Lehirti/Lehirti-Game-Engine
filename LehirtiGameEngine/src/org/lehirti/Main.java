@@ -125,6 +125,7 @@ public abstract class Main {
       ois = new ObjectInputStream(fis);
       StateObject.load(ois);
       IMAGE_AREA.readExternal(ois);
+      TEXT_AREA.readExternal(ois);
     } catch (final FileNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -163,6 +164,7 @@ public abstract class Main {
       oos = new ObjectOutputStream(fos);
       StateObject.save(oos);
       IMAGE_AREA.writeExternal(oos);
+      TEXT_AREA.writeExternal(oos);
     } catch (final FileNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

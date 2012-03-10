@@ -1,6 +1,10 @@
 package org.lehirti.gui;
 
 import java.awt.Dimension;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +12,9 @@ import javax.swing.JTextArea;
 
 import org.lehirti.res.text.TextWrapper;
 
-public class TextArea extends JTextArea {
+public class TextArea extends JTextArea implements Externalizable {
+  private static final long serialVersionUID = 1L;
+  
   private final List<TextWrapper> allTexts = new ArrayList<TextWrapper>(25);
   
   public TextArea() {
@@ -50,5 +56,23 @@ public class TextArea extends JTextArea {
   
   public List<TextWrapper> getAllTexts() {
     return this.allTexts;
+  }
+  
+  @Override
+  public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+    this.allTexts.clear();
+    final int nrOfTexts = in.readInt();
+    for (int i = 0; i < nrOfTexts; i++) {
+      this.allTexts.add((TextWrapper) in.readObject());
+    }
+    refresh();
+  }
+  
+  @Override
+  public void writeExternal(final ObjectOutput out) throws IOException {
+    out.writeInt(this.allTexts.size());
+    for (final TextWrapper text : this.allTexts) {
+      out.writeObject(text);
+    }
   }
 }

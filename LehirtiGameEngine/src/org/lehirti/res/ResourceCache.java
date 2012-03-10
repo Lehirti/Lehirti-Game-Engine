@@ -50,6 +50,6 @@ public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
   }
   
   public static final synchronized TextWrapper get(final TextKey key) {
-    return new TextWrapper(key, getDir(CORE_BASE_DIR, key), getDir(MOD_BASE_DIR, key));
+    return new TextWrapper(key);
   }
 }
