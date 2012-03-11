@@ -18,6 +18,9 @@ public class ConsoleLogFormatter extends Formatter {
       buf.append(": ");
     }
     buf.append(formatMessage(rec));
+    if (rec.getThrown() != null) {
+      buf.append(rec.getThrown().toString());
+    }
     // buf.append(" ");
     // buf.append(calcDate(rec.getMillis()));
     // buf.append(" <");

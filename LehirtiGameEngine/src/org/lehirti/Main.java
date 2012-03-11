@@ -71,7 +71,7 @@ public abstract class Main {
           
           // let current event handle key event first
           if (getCurrentEvent() != null) {
-            if (getCurrentEvent().handle(key)) {
+            if (getCurrentEvent().handleKeyEvent(key)) {
               // current event did use the key, so this key is "used up"
               return;
             }
@@ -126,6 +126,8 @@ public abstract class Main {
       StateObject.load(ois);
       IMAGE_AREA.readExternal(ois);
       TEXT_AREA.readExternal(ois);
+      
+      LOGGER.info("Game loaded");
     } catch (final FileNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -165,6 +167,8 @@ public abstract class Main {
       StateObject.save(oos);
       IMAGE_AREA.writeExternal(oos);
       TEXT_AREA.writeExternal(oos);
+      
+      LOGGER.info("Game saved");
     } catch (final FileNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

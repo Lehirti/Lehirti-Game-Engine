@@ -164,7 +164,7 @@ public abstract class EventNode extends AbstractEvent {
   }
   
   @Override
-  public boolean handle(final Key key) {
+  public boolean handleKeyEvent(final Key key) {
     final Event event = this.registeredEvents.get(key);
     if (event != null) {
       Main.currentEvent = event;

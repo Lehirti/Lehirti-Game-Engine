@@ -5,5 +5,5 @@ import org.lehirti.gui.Key;
 public interface Event {
   public void execute();
   
-  public boolean handle(Key key);
+  public boolean handleKeyEvent(Key key);
 }

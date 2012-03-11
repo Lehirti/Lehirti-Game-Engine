@@ -44,7 +44,7 @@ public abstract class AbstractEvent implements Event {
   }
   
   @Override
-  public boolean handle(final Key key) {
+  public boolean handleKeyEvent(final Key key) {
     return false;
   }
 }
