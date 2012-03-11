@@ -47,4 +47,25 @@ public abstract class AbstractEvent implements Event {
   public boolean handleKeyEvent(final Key key) {
     return false;
   }
+  
+  @Override
+  public boolean isLoadSavePoint() {
+    return false;
+  }
+  
+  @Override
+  public void resumeFromSavePoint() {
+    throw new UnsupportedOperationException(
+        "Event "
+            + this.getClass().getName()
+            + " has no save point from which it could resume. It should never have been saved. This is a program bug. We apologize for the inconvenience.");
+  }
+  
+  @Override
+  public void newEventHasBeenLoaded() {
+    throw new UnsupportedOperationException(
+        "Event "
+            + this.getClass().getName()
+            + " is not in a state from which it can resume a newly loaded game. This is a program bug. We apologize for the inconvenience.");
+  }
 }

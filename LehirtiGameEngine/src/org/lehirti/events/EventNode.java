@@ -1,5 +1,9 @@
 package org.lehirti.events;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,12 +24,16 @@ import org.lehirti.state.StringState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class EventNode extends AbstractEvent {
+public abstract class EventNode extends AbstractEvent implements Externalizable {
+  private static final long serialVersionUID = 1L;
   private static final Logger LOGGER = LoggerFactory.getLogger(EventNode.class);
   
   private final ConcurrentMap<Key, Event> registeredEvents = new ConcurrentHashMap<Key, Event>();
-  private final List<Key> availableOptionKeys = Key.getOptionKeys();
-  private final Map<Event, TextKey> optionsWithArbitraryKey = new LinkedHashMap<Event, TextKey>();
+  private transient final List<Key> availableOptionKeys = Key.getOptionKeys();
+  private transient final Map<Event, TextKey> optionsWithArbitraryKey = new LinkedHashMap<Event, TextKey>();
+  
+  private transient boolean canBeSaved = false;
+  private transient boolean newEventHasBeenLoaded = false;
   
   /**
    * clear text field and set new text
@@ -123,15 +131,56 @@ public abstract class EventNode extends AbstractEvent {
     
     repaintImagesIfNeeded();
     
+    resumeFromSavePoint();
+  }
+  
+  @Override
+  public synchronized boolean isLoadSavePoint() {
+    return this.canBeSaved;
+  }
+  
+  @Override
+  public synchronized void newEventHasBeenLoaded() {
+    this.newEventHasBeenLoaded = true;
+  }
+  
+  @Override
+  public void resumeFromSavePoint() {
+    this.canBeSaved = true;
+    LOGGER.debug("Savepoint reached.");
     synchronized (this) {
       while (Main.currentEvent == this) {
         try {
           wait();
+          if (this.newEventHasBeenLoaded) {
+            Main.currentEvent.resumeFromSavePoint();
+          }
         } catch (final InterruptedException e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
         }
       }
+    }
+  }
+  
+  @Override
+  public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+    final int nrOfEvents = in.readInt();
+    for (int i = 0; i < nrOfEvents; i++) {
+      final String name = (String) in.readObject();
+      final Key key = Key.valueOf(name);
+      final Event event = (Event) in.readObject();
+      this.registeredEvents.put(key, event);
+    }
+    
+  }
+  
+  @Override
+  public void writeExternal(final ObjectOutput out) throws IOException {
+    out.writeInt(this.registeredEvents.size());
+    for (final Map.Entry<Key, Event> entry : this.registeredEvents.entrySet()) {
+      out.writeObject(entry.getKey().name());
+      out.writeObject(entry.getValue());
     }
   }
   

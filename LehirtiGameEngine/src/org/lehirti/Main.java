@@ -37,12 +37,12 @@ public abstract class Main {
   
   private static final String VERSION_FILE_LOCATION = "version";
   
+  public static final Random DIE = new Random();
+  
   public static TextArea TEXT_AREA;
   public static ImageArea IMAGE_AREA;
   
   public static volatile Event currentEvent = null;
-  
-  public static final Random DIE = new Random();
   
   private void createAndShowGUI() {
     
@@ -60,7 +60,8 @@ public abstract class Main {
       }
       
       @Override
-      public void keyTyped(final KeyEvent e) {
+      public synchronized void keyTyped(final KeyEvent e) {
+        // note the synchronized: making sure to only proccess one key event at a time
         try {
           final Key key = Key.getByChar(e.getKeyChar());
           
@@ -121,11 +122,22 @@ public abstract class Main {
     FileInputStream fis = null;
     ObjectInputStream ois = null;
     try {
+      if (currentEvent == null || !currentEvent.isLoadSavePoint()) {
+        LOGGER.warn("Another game cannot be loaded right now"); // better notification for user
+        return;
+      }
+      
       fis = new FileInputStream(sav);
       ois = new ObjectInputStream(fis);
       StateObject.load(ois);
       IMAGE_AREA.readExternal(ois);
       TEXT_AREA.readExternal(ois);
+      final Event oldEvent = currentEvent;
+      currentEvent = (Event) ois.readObject();
+      synchronized (oldEvent) {
+        oldEvent.newEventHasBeenLoaded();
+        oldEvent.notifyAll();
+      }
       
       LOGGER.info("Game loaded");
     } catch (final FileNotFoundException e) {
@@ -162,11 +174,17 @@ public abstract class Main {
     FileOutputStream fos = null;
     ObjectOutputStream oos = null;
     try {
+      if (currentEvent == null || !currentEvent.isLoadSavePoint()) {
+        LOGGER.warn("The game cannot be saved right now"); // better notification for user
+        return;
+      }
+      
       fos = new FileOutputStream(sav);
       oos = new ObjectOutputStream(fos);
       StateObject.save(oos);
       IMAGE_AREA.writeExternal(oos);
       TEXT_AREA.writeExternal(oos);
+      oos.writeObject(currentEvent);
       
       LOGGER.info("Game saved");
     } catch (final FileNotFoundException e) {
