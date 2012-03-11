@@ -7,26 +7,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.lehirti.Main;
+import org.lehirti.state.StateObject;
+import org.lehirti.util.PathFinder;
 
 /**
  * Collection of all image alternatives representing one ImageKey
  */
 public final class ImageWrapper {
   private final ImageKey key;
-  private final File coreDir;
-  private final File modDir;
   private final List<ImageProxy> proxies;
   private ImageProxy image;
   private int currentlyDisplayedImageNr = 0;
   
-  public ImageWrapper(final ImageKey key, final File coreDir, final File modDir) {
+  public ImageWrapper(final ImageKey key) {
     this.key = key;
-    this.coreDir = coreDir;
-    this.modDir = modDir;
     this.proxies = new ArrayList<ImageProxy>(5);
-    parseAll(this.coreDir);
-    parseAll(this.modDir);
+    parseAll(PathFinder.getCoreImageProxyFile(key));
+    parseAll(PathFinder.getModImageProxyFile(key));
     
     pinRandomImage();
   }
@@ -38,7 +35,7 @@ public final class ImageWrapper {
     final File[] imageProxies = dir.listFiles(new FileFilter() {
       @Override
       public boolean accept(final File pathname) {
-        return pathname.getName().endsWith(ImageProxy.FILENAME_SUFFIX);
+        return pathname.getName().endsWith(PathFinder.PROXY_FILENAME_SUFFIX);
       }
     });
     for (final File imageProxyFile : imageProxies) {
@@ -57,7 +54,7 @@ public final class ImageWrapper {
     if (this.proxies.isEmpty()) {
       this.image = new ImageProxy();
     } else {
-      this.currentlyDisplayedImageNr = Main.DIE.nextInt(this.proxies.size());
+      this.currentlyDisplayedImageNr = StateObject.DIE.nextInt(this.proxies.size());
       this.image = this.proxies.get(this.currentlyDisplayedImageNr);
     }
   }
@@ -94,7 +91,7 @@ public final class ImageWrapper {
    * @return image added
    */
   public boolean addAlternativeImage(final File alternativeImageFile) {
-    final ImageProxy imageProxy = ImageProxy.createNew(this.modDir, alternativeImageFile);
+    final ImageProxy imageProxy = ImageProxy.createNew(PathFinder.getModImageProxyFile(this.key), alternativeImageFile);
     if (imageProxy != null) {
       this.proxies.add(imageProxy);
       this.currentlyDisplayedImageNr = this.proxies.size() - 1;

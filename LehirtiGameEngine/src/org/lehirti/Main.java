@@ -14,7 +14,6 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Properties;
-import java.util.Random;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -29,15 +28,12 @@ import org.lehirti.res.images.ImageWrapper;
 import org.lehirti.state.StateObject;
 import org.lehirti.state.StaticInitializer;
 import org.lehirti.util.ClassFinder;
+import org.lehirti.util.PathFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class Main {
   private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
-  
-  private static final String VERSION_FILE_LOCATION = "version";
-  
-  public static final Random DIE = new Random();
   
   public static TextArea TEXT_AREA;
   public static ImageArea IMAGE_AREA;
@@ -242,7 +238,8 @@ public abstract class Main {
   }
   
   private void logVersion() {
-    final InputStream versionInputStream = ClassLoader.getSystemResourceAsStream(VERSION_FILE_LOCATION);
+    final InputStream versionInputStream = ClassLoader.getSystemResourceAsStream(PathFinder
+        .getLocationOfVerionsFileOnClasspath());
     final Properties versionProps = new Properties();
     try {
       versionProps.load(versionInputStream);

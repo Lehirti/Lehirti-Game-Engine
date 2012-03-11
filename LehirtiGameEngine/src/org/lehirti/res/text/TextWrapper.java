@@ -8,15 +8,14 @@ import java.io.ObjectOutput;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.lehirti.res.ResourceCache;
 import org.lehirti.util.FileUtils;
+import org.lehirti.util.PathFinder;
 
 public class TextWrapper implements Externalizable {
   private static final long serialVersionUID = 1L;
   
   private TextKey key;
-  private File modFile;
-  private String value;
+  private String rawValue; // as stored on disc; may be different from what's displayed on screen
   
   private final List<String> parameters = new LinkedList<String>();
   
@@ -27,28 +26,28 @@ public class TextWrapper implements Externalizable {
   public TextWrapper(final TextKey key) {
     this.key = key;
     // for now, store text directly in the res dir
-    this.modFile = new File(ResourceCache.MOD_RES_DIR, key.getClass().getName() + "." + key.name());
-    if (this.modFile.canRead()) {
-      this.value = FileUtils.readContentAsString(this.modFile);
+    final File modFile = PathFinder.getModFile(this.key);
+    if (modFile.canRead()) {
+      this.rawValue = FileUtils.readContentAsString(modFile);
     } else {
-      final File coreFile = new File(ResourceCache.CORE_RES_DIR, key.getClass().getName() + "." + key.name());
+      final File coreFile = PathFinder.getCoreFile(this.key);
       if (coreFile.canRead()) {
-        this.value = FileUtils.readContentAsString(coreFile);
+        this.rawValue = FileUtils.readContentAsString(coreFile);
       } else {
-        this.value = key.getClass().getName() + "." + key.name() + ": No resource found!";
+        this.rawValue = key.getClass().getName() + "." + key.name() + ": No resource found!";
       }
     }
   }
   
   public String getRawValue() {
-    return this.value;
+    return this.rawValue;
   }
   
   public String getValue() {
     if (this.parameters.isEmpty()) {
       return getRawValue();
     }
-    String val = this.value;
+    String val = this.rawValue;
     for (int i = 0; i < this.parameters.size(); i++) {
       val = val.replaceAll("\\{" + i + "\\}", this.parameters.get(i));
     }
@@ -56,8 +55,8 @@ public class TextWrapper implements Externalizable {
   }
   
   public void setValue(final String value) {
-    this.value = value;
-    FileUtils.writeContentToFile(this.modFile, value);
+    this.rawValue = value;
+    FileUtils.writeContentToFile(PathFinder.getModFile(this.key), value);
   }
   
   public void addParameter(final String param) {
@@ -88,8 +87,7 @@ public class TextWrapper implements Externalizable {
     final String className = (String) in.readObject();
     final String name = (String) in.readObject();
     this.key = (TextKey) Enum.valueOf((Class<? extends Enum>) Class.forName(className), name);
-    this.modFile = new File(ResourceCache.MOD_RES_DIR, this.key.getClass().getName() + "." + this.key.name());
-    this.value = (String) in.readObject();
+    this.rawValue = (String) in.readObject();
     final int nrOfParams = in.readInt();
     this.parameters.clear();
     for (int i = 0; i < nrOfParams; i++) {
@@ -101,7 +99,7 @@ public class TextWrapper implements Externalizable {
   public void writeExternal(final ObjectOutput out) throws IOException {
     out.writeObject(this.key.getClass().getName());
     out.writeObject(this.key.name());
-    out.writeObject(this.value);
+    out.writeObject(this.rawValue);
     out.writeInt(this.parameters.size());
     for (final String param : this.parameters) {
       out.writeObject(param);

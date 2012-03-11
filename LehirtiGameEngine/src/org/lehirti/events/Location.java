@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 
 import org.lehirti.Main;
 import org.lehirti.res.images.ImageKey;
+import org.lehirti.state.StateObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,7 +119,7 @@ public abstract class Location extends AbstractEvent {
   }
   
   private void scheduleRandomRegularOrDefaultEvent(final Map<Event, Double> eventsToChooseFrom) {
-    double remainingProbabilityFromDieRoll = Main.DIE.nextDouble() * 100.0D;
+    double remainingProbabilityFromDieRoll = StateObject.DIE.nextDouble() * 100.0D;
     for (final Map.Entry<Event, Double> entry : eventsToChooseFrom.entrySet()) {
       if (remainingProbabilityFromDieRoll < entry.getValue().doubleValue()) {
         Main.currentEvent = entry.getKey();
@@ -133,7 +134,7 @@ public abstract class Location extends AbstractEvent {
     if (probabilityAlwaysEvents.size() > 1) {
       // TODO log warning; at least one PROBABILITY_ALWAYS has been blocked by another
     }
-    Main.currentEvent = probabilityAlwaysEvents.get(Main.DIE.nextInt(probabilityAlwaysEvents.size()));
+    Main.currentEvent = probabilityAlwaysEvents.get(StateObject.DIE.nextInt(probabilityAlwaysEvents.size()));
   }
   
   private static List<Event> getProbabilityAlwaysEvents(final Map<Event, Double> probablityPerEventMap) {

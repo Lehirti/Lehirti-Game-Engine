@@ -8,6 +8,7 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -18,6 +19,8 @@ public class StateObject implements Externalizable {
   private static final long serialVersionUID = 1L;
   
   private static final Logger LOGGER = LoggerFactory.getLogger(StateObject.class);
+  
+  public static final Random DIE = new Random();
   
   private static final StateObject INSTANCE = new StateObject();
   

@@ -11,14 +11,12 @@ import java.util.Properties;
 
 import javax.imageio.ImageIO;
 
-import org.lehirti.res.ResourceCache;
 import org.lehirti.util.FileUtils;
 import org.lehirti.util.Hash;
+import org.lehirti.util.PathFinder;
 
 public class ImageProxy {
   private static final BufferedImage NULL_IMAGE = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-  
-  static final String FILENAME_SUFFIX = ".proxy";
   
   public static enum ProxyProps {
     ALIGN_X, // LEFT, CENTER, RIGHT
@@ -46,8 +44,7 @@ public class ImageProxy {
   
   private ImageProxy(final File imageProxyFile, final File imageFile, final BufferedImage image) {
     setPlacement(imageProxyFile);
-    this.modProxyFile = new File(imageProxyFile.getAbsolutePath().replaceFirst(
-        ResourceCache.CORE_BASE_DIR.getAbsolutePath(), ResourceCache.MOD_BASE_DIR.getAbsolutePath()));
+    this.modProxyFile = PathFinder.toModFile(imageProxyFile);
     
     this.imageFile = imageFile;
     this.image = new SoftReference<BufferedImage>(image);
@@ -135,19 +132,16 @@ public class ImageProxy {
   }
   
   static ImageProxy getInstance(final File imageProxyFile) {
-    final int realImageFileNamelength = imageProxyFile.getName().length() - FILENAME_SUFFIX.length();
-    File imageFile = new File(ResourceCache.CORE_RES_DIR, imageProxyFile.getName()
-        .substring(0, realImageFileNamelength));
-    if (!imageFile.exists()) {
-      imageFile = new File(ResourceCache.MOD_RES_DIR, imageProxyFile.getName().substring(0, realImageFileNamelength));
-      if (!imageFile.exists()) {
+    
+    File imageFile = PathFinder.imageProxyToCoreReal(imageProxyFile);
+    if (!imageFile.canRead()) {
+      // real image is not readable in core sub-directory
+      imageFile = PathFinder.toModFile(imageFile);
+      if (!imageFile.canRead()) {
+        // real image is not readable in mod sub-directory
         // TODO log missing image resource
         return null;
       }
-    }
-    if (!imageFile.canRead()) {
-      // TODO log permission problems
-      return null;
     }
     try {
       final BufferedImage image = ImageIO.read(imageFile);
@@ -168,16 +162,17 @@ public class ImageProxy {
         }
       }
       final String newFileName = fileNameInResDir + getExtension(alternativeImageFile);
-      final File proxyFile = new File(modDir, newFileName + ImageProxy.FILENAME_SUFFIX);
+      final File proxyFile = PathFinder.getProxyFile(modDir, newFileName);
       try {
         proxyFile.createNewFile();
       } catch (final IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      File resFile = new File(ResourceCache.CORE_RES_DIR, newFileName);
+      
+      File resFile = PathFinder.getCoreImageFile(newFileName);
       if (!resFile.exists()) {
-        resFile = new File(ResourceCache.MOD_RES_DIR, newFileName);
+        resFile = PathFinder.getModImageFile(newFileName);
         if (!resFile.exists()) {
           FileUtils.copyFileTODO(alternativeImageFile, resFile);
         }
