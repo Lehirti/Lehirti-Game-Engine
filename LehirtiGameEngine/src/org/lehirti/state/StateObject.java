@@ -37,7 +37,7 @@ public class StateObject implements Externalizable {
   };
   
   private final SortedMap<BoolState, Boolean> BOOL_MAP = new TreeMap<BoolState, Boolean>(SORTER);
-  private final SortedMap<IntState, Integer> INT_MAP = new TreeMap<IntState, Integer>(SORTER);
+  private final SortedMap<IntState, Long> INT_MAP = new TreeMap<IntState, Long>(SORTER);
   private final SortedMap<StringState, String> STRING_MAP = new TreeMap<StringState, String>(SORTER);
   
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,16 +56,16 @@ public class StateObject implements Externalizable {
     INSTANCE.BOOL_MAP.put(key, Boolean.valueOf(value));
   }
   
-  public static int get(final IntState key) {
-    Integer value = INSTANCE.INT_MAP.get(key);
+  public static long get(final IntState key) {
+    Long value = INSTANCE.INT_MAP.get(key);
     if (value == null) {
       value = key.defaultValue();
     }
     return value.intValue();
   }
   
-  public static void set(final IntState key, final int value) {
-    INSTANCE.INT_MAP.put(key, Integer.valueOf(value));
+  public static void set(final IntState key, final long value) {
+    INSTANCE.INT_MAP.put(key, Long.valueOf(value));
   }
   
   public static String get(final StringState key) {
@@ -192,7 +192,7 @@ public class StateObject implements Externalizable {
           INSTANCE.BOOL_MAP.put((BoolState) key, (Boolean) value);
           break;
         case START_INT_MAP:
-          INSTANCE.INT_MAP.put((IntState) key, (Integer) value);
+          INSTANCE.INT_MAP.put((IntState) key, (Long) value);
           break;
         case START_STRING_MAP:
           INSTANCE.STRING_MAP.put((StringState) key, (String) value);

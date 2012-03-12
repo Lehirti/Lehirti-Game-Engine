@@ -8,6 +8,11 @@ public enum Key {
   PREVIOUS('r', true),
   NEXT('f', true),
   
+  NORTH('w', true),
+  EAST('d', true),
+  SOUTH('s', true),
+  WEST('a', true),
+  
   // image and text editors
   CTRL_I((char) 0x09, false),
   CTRL_T((char) 0x14, false),

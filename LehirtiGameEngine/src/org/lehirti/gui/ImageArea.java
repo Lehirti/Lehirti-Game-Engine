@@ -136,6 +136,9 @@ public class ImageArea extends JComponent implements Externalizable {
   }
   
   public void addImage(final ImageKey imageKey) {
+    if (imageKey == null) {
+      return;
+    }
     final ImageWrapper image = ResourceCache.get(imageKey);
     image.pinRandomImage();
     this.foregroundImages.add(image);

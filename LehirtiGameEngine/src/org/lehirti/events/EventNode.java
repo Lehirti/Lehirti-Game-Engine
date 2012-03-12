@@ -40,7 +40,7 @@ public abstract class EventNode extends AbstractEvent implements Externalizable 
    * 
    * @param text
    */
-  protected void setText(final TextWrapper text) {
+  private void setText(final TextWrapper text) {
     try {
       javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {
@@ -65,7 +65,7 @@ public abstract class EventNode extends AbstractEvent implements Externalizable 
    * 
    * @param text
    */
-  protected void addText(final TextWrapper text) {
+  private void addText(final TextWrapper text) {
     try {
       javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {
@@ -188,7 +188,7 @@ public abstract class EventNode extends AbstractEvent implements Externalizable 
     return StateObject.is(key);
   }
   
-  protected static int get(final IntState key) {
+  protected static long get(final IntState key) {
     return StateObject.get(key);
   }
   
@@ -200,11 +200,11 @@ public abstract class EventNode extends AbstractEvent implements Externalizable 
     StateObject.set(key, value);
   }
   
-  protected static void set(final IntState key, final int value) {
+  protected static void set(final IntState key, final long value) {
     StateObject.set(key, value);
   }
   
-  protected static void change(final IntState key, final int change) {
+  protected static void change(final IntState key, final long change) {
     set(key, get(key) + change);
   }
   

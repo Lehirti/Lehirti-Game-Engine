@@ -9,14 +9,14 @@ public class LocationTracker extends StateObject {
   public static enum Int implements IntState {
     BEEN_TO_INTRO_04(0);
     
-    private final int defaultValue;
+    private final Long defaultValue;
     
-    private Int(final int defaultValue) {
-      this.defaultValue = Integer.valueOf(defaultValue);
+    private Int(final long defaultValue) {
+      this.defaultValue = Long.valueOf(defaultValue);
     }
     
     @Override
-    public Integer defaultValue() {
+    public Long defaultValue() {
       return this.defaultValue;
     }
   }

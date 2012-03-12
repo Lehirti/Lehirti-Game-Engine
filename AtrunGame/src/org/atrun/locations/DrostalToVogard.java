@@ -1,6 +1,6 @@
 package org.atrun.locations;
 
-import org.atrun.backgrounds.Background;
+import org.atrun.images.Background;
 import org.atrun.intro.events.Intro01;
 import org.lehirti.Main;
 import org.lehirti.events.Location;
