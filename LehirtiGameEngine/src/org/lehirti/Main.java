@@ -33,6 +33,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class Main {
+  static {
+    final File logsDir = new File("logs");
+    if (!logsDir.mkdirs()) {
+      System.err.println("Could not create logs dir " + logsDir.getAbsolutePath());
+    }
+    System.setProperty("java.util.logging.config.file", "config/logging.properties");
+  }
+  
   private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
   
   public static TextArea TEXT_AREA;
