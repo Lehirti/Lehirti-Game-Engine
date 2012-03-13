@@ -9,15 +9,19 @@ import java.util.Properties;
 
 import org.lehirti.state.StateObject;
 import org.lehirti.util.PathFinder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Collection of all image alternatives representing one ImageKey
  */
 public final class ImageWrapper {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ImageWrapper.class);
+  
   private final ImageKey key;
   private final List<ImageProxy> proxies;
   private ImageProxy image;
-  private int currentlyDisplayedImageNr = 0;
+  private int currentlyDisplayedImageNr = -1;
   
   public ImageWrapper(final ImageKey key) {
     this.key = key;
@@ -96,7 +100,10 @@ public final class ImageWrapper {
       this.proxies.add(imageProxy);
       this.currentlyDisplayedImageNr = this.proxies.size() - 1;
       this.image = imageProxy;
+      LOGGER.info("New image {} added to {}", alternativeImageFile.getAbsolutePath(), toString());
       return true;
+    } else {
+      LOGGER.error("Failed to create new image from " + alternativeImageFile.getAbsolutePath());
     }
     return false;
   }
@@ -117,6 +124,11 @@ public final class ImageWrapper {
     }
     final ImageWrapper other = (ImageWrapper) o;
     return this.key.equals(other.key);
+  }
+  
+  @Override
+  public String toString() {
+    return this.key.getClass().getSimpleName() + "." + this.key.name();
   }
   
   public String toButtonString() {

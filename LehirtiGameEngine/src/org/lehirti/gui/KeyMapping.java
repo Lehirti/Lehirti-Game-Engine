@@ -1,11 +1,9 @@
 package org.lehirti.gui;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Properties;
+
+import org.lehirti.util.FileUtils;
 
 public final class KeyMapping {
   private static File PROPS_FILE = new File("config/KeyMapping.properties");
@@ -16,15 +14,7 @@ public final class KeyMapping {
     if (PROPS == null) {
       PROPS = new Properties();
       if (PROPS_FILE.canRead()) {
-        try {
-          PROPS.load(new FileInputStream(PROPS_FILE));
-        } catch (final FileNotFoundException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        } catch (final IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
+        FileUtils.readPropsFromFile(PROPS, PROPS_FILE);
       }
     }
     final String keyMapping = (String) PROPS.get(keyName);
@@ -43,19 +33,11 @@ public final class KeyMapping {
         parent.mkdirs();
       }
     }
-    try {
-      PROPS = new Properties();
-      for (final Key key : Key.values()) {
-        PROPS.setProperty(key.name(), String.valueOf(key.mapping));
-      }
-      PROPS.store(new FileOutputStream(PROPS_FILE),
-          "Changes to this file will only take effect after an application restart.");
-    } catch (final FileNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (final IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    PROPS = new Properties();
+    for (final Key key : Key.values()) {
+      PROPS.setProperty(key.name(), String.valueOf(key.mapping));
     }
+    FileUtils.writePropsToFile(PROPS, PROPS_FILE,
+        "Changes to this file will only take effect after an application restart.");
   }
 }

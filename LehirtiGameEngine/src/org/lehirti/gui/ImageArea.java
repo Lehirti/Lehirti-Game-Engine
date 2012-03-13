@@ -17,9 +17,13 @@ import javax.swing.JComponent;
 import org.lehirti.res.ResourceCache;
 import org.lehirti.res.images.ImageKey;
 import org.lehirti.res.images.ImageWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ImageArea extends JComponent implements Externalizable {
   private static final long serialVersionUID = 1L;
+  
+  private static final Logger LOGGER = LoggerFactory.getLogger(ImageArea.class);
   
   private static final String IMAGE_AREA_END_OBJECT = "IMAGE_AREA_END_OBJECT";
   
@@ -69,8 +73,7 @@ public class ImageArea extends JComponent implements Externalizable {
     try {
       return (ImageKey) Enum.valueOf((Class<? extends Enum>) Class.forName(className), key);
     } catch (final ClassNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      LOGGER.warn("Failed to reconstruct ImageKey from className " + className + " and key " + key, e);
     }
     return null;
   }

@@ -48,11 +48,10 @@ public abstract class EventNode extends AbstractEvent implements Externalizable 
         }
       });
     } catch (final InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
+      throw new ThreadDeath();
     } catch (final InvocationTargetException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      LOGGER.error("InvocationTargetException trying to set text to text area", e);
     }
   }
   
@@ -73,11 +72,10 @@ public abstract class EventNode extends AbstractEvent implements Externalizable 
         }
       });
     } catch (final InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
+      throw new ThreadDeath();
     } catch (final InvocationTargetException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      LOGGER.error("InvocationTargetException trying to add text to text area", e);
     }
   }
   
@@ -88,13 +86,12 @@ public abstract class EventNode extends AbstractEvent implements Externalizable 
   protected void addOption(final Key key, final TextKey text, final Event event) {
     final boolean keyIsAvailable = this.availableOptionKeys.remove(key);
     if (!keyIsAvailable) {
-      // TODO LOG warning
+      LOGGER.warn("Requested option key {} not available; using arbitrary option key instead.", key.name());
       addOption(text, event);
       return;
     }
     
     this.registeredEvents.put(key, event);
-    // TODO addText("\n" + key.mapping + " : " + ResourceCache.get(text).getValue());
     final TextWrapper wrapper = ResourceCache.get(CommonText.KEY_OPTION);
     wrapper.addParameter(String.valueOf(key.mapping));
     addText(wrapper);
@@ -110,12 +107,11 @@ public abstract class EventNode extends AbstractEvent implements Externalizable 
       final Event event = entry.getKey();
       final TextKey text = entry.getValue();
       if (this.availableOptionKeys.isEmpty()) {
-        // TODO LOG error
+        LOGGER.error("No more option keys available; dropping option " + ResourceCache.get(text).getValue());
         continue;
       }
       final Key key = this.availableOptionKeys.remove(0);
       this.registeredEvents.put(key, event);
-      // TODO addText("\n" + key.mapping + " : " + ResourceCache.get(text).getValue());
       final TextWrapper wrapper = ResourceCache.get(CommonText.KEY_OPTION);
       wrapper.addParameter(String.valueOf(key.mapping));
       addText(wrapper);
@@ -156,8 +152,8 @@ public abstract class EventNode extends AbstractEvent implements Externalizable 
             Main.currentEvent.resumeFromSavePoint();
           }
         } catch (final InterruptedException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+          LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
+          throw new ThreadDeath();
         }
       }
     }

@@ -122,7 +122,7 @@ public abstract class Main {
   }
   
   protected void loadGame() {
-    final File sav = new File("save"); // TODO
+    final File sav = new File("save"); // TODO save file name
     FileInputStream fis = null;
     ObjectInputStream ois = null;
     try {
@@ -145,36 +145,31 @@ public abstract class Main {
       
       LOGGER.info("Game loaded");
     } catch (final FileNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      LOGGER.error("Savegame " + sav.getAbsolutePath() + " not found for loading", e);
     } catch (final IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      LOGGER.error("IOException tryting to load from " + sav.getAbsolutePath(), e);
     } catch (final ClassNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      LOGGER.error("Savegame " + sav.getAbsolutePath() + " incompatible with current program version.", e);
     } finally {
       if (ois != null) {
         try {
           ois.close();
         } catch (final IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+          LOGGER.warn("Failed to close object input stream for " + sav.getAbsolutePath(), e);
         }
       }
       if (fis != null) {
         try {
           fis.close();
         } catch (final IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+          LOGGER.warn("Failed to close file input stream for " + sav.getAbsolutePath(), e);
         }
       }
     }
   }
   
   protected void saveGame() {
-    final File sav = new File("save"); // TODO
+    final File sav = new File("save"); // TODO save file name
     FileOutputStream fos = null;
     ObjectOutputStream oos = null;
     try {
@@ -192,26 +187,22 @@ public abstract class Main {
       
       LOGGER.info("Game saved");
     } catch (final FileNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      LOGGER.error("Savegame " + sav.getAbsolutePath() + " not found for saving", e);
     } catch (final IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      LOGGER.error("IOException tryting to save to " + sav.getAbsolutePath(), e);
     } finally {
       if (oos != null) {
         try {
           oos.close();
         } catch (final IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+          LOGGER.warn("Failed to close object output stream for " + sav.getAbsolutePath(), e);
         }
       }
       if (fos != null) {
         try {
           fos.close();
         } catch (final IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+          LOGGER.warn("Failed to close file output stream for " + sav.getAbsolutePath(), e);
         }
       }
     }

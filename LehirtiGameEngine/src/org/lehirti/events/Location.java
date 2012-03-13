@@ -132,7 +132,7 @@ public abstract class Location extends AbstractEvent {
   
   private static void scheduleRandomProbabilityAlwaysEvent(final List<Event> probabilityAlwaysEvents) {
     if (probabilityAlwaysEvents.size() > 1) {
-      // TODO log warning; at least one PROBABILITY_ALWAYS has been blocked by another
+      LOGGER.warn(probabilityAlwaysEvents.size() + " events with probabilty \"ALWAYS\". Only one will occur.");
     }
     Main.currentEvent = probabilityAlwaysEvents.get(StateObject.DIE.nextInt(probabilityAlwaysEvents.size()));
   }

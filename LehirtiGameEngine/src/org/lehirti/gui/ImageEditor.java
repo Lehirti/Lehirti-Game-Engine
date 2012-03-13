@@ -18,12 +18,18 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.lehirti.res.images.ImageWrapper;
 import org.lehirti.res.images.ImageProxy.ProxyProps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ImageEditor extends JFrame implements ActionListener {
   private static final long serialVersionUID = 1L;
+  
+  private static final Logger LOGGER = LoggerFactory.getLogger(ImageEditor.class);
   
   private final class NumericalInputVerifier extends InputVerifier {
     private final ImageEditor imgEditor;
@@ -50,6 +56,41 @@ public class ImageEditor extends JFrame implements ActionListener {
       }
     }
     
+  }
+  
+  private final class NumericalInputChangeListener implements DocumentListener {
+    JTextField textField;
+    
+    public NumericalInputChangeListener(final JTextField field) {
+      this.textField = field;
+    }
+    
+    @Override
+    public void changedUpdate(final DocumentEvent e) {
+      update();
+    }
+    
+    @Override
+    public void insertUpdate(final DocumentEvent e) {
+      update();
+    }
+    
+    @Override
+    public void removeUpdate(final DocumentEvent e) {
+      update();
+    }
+    
+    private final void update() {
+      try {
+        if (this.textField.getText().trim().length() == 0) {
+          this.textField.setText("");
+        }
+        Double.valueOf(this.textField.getText()).doubleValue();
+        ImageEditor.this.updateCanvasAndImageWrapper();
+      } catch (final RuntimeException e) {
+        // user typed non-numerical values in text field
+      }
+    }
   }
   
   JPanel all = new JPanel();
@@ -102,15 +143,19 @@ public class ImageEditor extends JFrame implements ActionListener {
     this.controls.add(this.posXlabel);
     this.controls.add(this.posX);
     this.posX.setInputVerifier(new NumericalInputVerifier(this));
+    this.posX.getDocument().addDocumentListener(new NumericalInputChangeListener(this.posX));
     this.controls.add(this.posYlabel);
     this.controls.add(this.posY);
     this.posY.setInputVerifier(new NumericalInputVerifier(this));
+    this.posY.getDocument().addDocumentListener(new NumericalInputChangeListener(this.posY));
     this.controls.add(this.scaleXlabel);
     this.controls.add(this.scaleX);
     this.scaleX.setInputVerifier(new NumericalInputVerifier(this));
+    this.scaleX.getDocument().addDocumentListener(new NumericalInputChangeListener(this.scaleX));
     this.controls.add(this.scaleYlabel);
     this.controls.add(this.scaleY);
     this.scaleY.setInputVerifier(new NumericalInputVerifier(this));
+    this.scaleY.getDocument().addDocumentListener(new NumericalInputChangeListener(this.scaleY));
     this.controls.add(this.selectedImageLabel);
     this.controls.add(this.selectedImage);
     this.controls.add(this.selectedAlternativeLabel);
@@ -138,6 +183,8 @@ public class ImageEditor extends JFrame implements ActionListener {
   }
   
   private void setImage(final int nr) {
+    LOGGER.debug("setImage({});", nr);
+    
     this.alignX.setText("");
     this.alignY.setText("");
     this.posX.setText("");
@@ -192,9 +239,7 @@ public class ImageEditor extends JFrame implements ActionListener {
     }
     this.selectedImageNr++;
     if (this.selectedImageNr >= this.allImages.size()) {
-      this.selectedImageNr = 0; // -1;
-      // TODO
-      // return "ALL";
+      this.selectedImageNr = 0;
     }
     setImage(this.selectedImageNr);
   }
@@ -235,16 +280,25 @@ public class ImageEditor extends JFrame implements ActionListener {
         updateCanvasAndImageWrapper();
       }
     } else if (e.getSource() == this.selectedImage) {
+      LOGGER.debug("selectNextImage()");
       selectNextImage();
     } else if (e.getSource() == this.selectedAlternative) {
+      LOGGER.debug("selectNextAlternative()");
       this.allImages.get(this.selectedImageNr).pinNextImage();
       setImage(this.selectedImageNr);
     } else if (e.getSource() == this.newAlternative) {
+      LOGGER.debug("addAlternative()");
       final JFileChooser fc = new JFileChooser();
       final int returnVal = fc.showOpenDialog(this);
       if (returnVal == JFileChooser.APPROVE_OPTION) {
+        LOGGER.debug("file selected");
         final File file = fc.getSelectedFile();
         this.allImages.get(this.selectedImageNr).addAlternativeImage(file);
+        this.selectedAlternativeNr = this.allImages.get(this.selectedImageNr).getCurrentImageNr();
+        this.selectedAlternative.setText(String.valueOf(this.selectedAlternativeNr));
+        setImage(this.selectedImageNr);
+      } else {
+        LOGGER.debug("aborted");
       }
       updateCanvasAndImageWrapper();
     } else {
@@ -253,6 +307,7 @@ public class ImageEditor extends JFrame implements ActionListener {
   }
   
   private void updateCanvasAndImageWrapper() {
+    LOGGER.debug("updateCanvasAndImageWrapper");
     final Properties placement = new Properties();
     final String alignXstring = this.alignX.getText();
     if (!alignXstring.equals("")) {

@@ -5,8 +5,12 @@ import java.lang.reflect.InvocationTargetException;
 import org.lehirti.Main;
 import org.lehirti.gui.Key;
 import org.lehirti.res.images.ImageKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractEvent implements Event {
+  private static final Logger LOGGER = LoggerFactory.getLogger(AbstractEvent.class);
+  
   private boolean repaintNeeded = false;
   
   protected void setImage(final ImageKey key) {
@@ -34,11 +38,10 @@ public abstract class AbstractEvent implements Event {
           }
         });
       } catch (final InterruptedException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
+        throw new ThreadDeath();
       } catch (final InvocationTargetException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        LOGGER.error("InvocationTargetException trying to repaint image area", e);
       }
     }
   }

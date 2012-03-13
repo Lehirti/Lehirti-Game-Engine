@@ -2,9 +2,6 @@ package org.lehirti.res.images;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.Properties;
@@ -14,8 +11,12 @@ import javax.imageio.ImageIO;
 import org.lehirti.util.FileUtils;
 import org.lehirti.util.Hash;
 import org.lehirti.util.PathFinder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ImageProxy {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ImageProxy.class);
+  
   private static final BufferedImage NULL_IMAGE = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
   
   public static enum ProxyProps {
@@ -60,15 +61,8 @@ public class ImageProxy {
   }
   
   private void setPlacement(final File imageProxyFile) {
-    try {
-      this.placement.load(new FileInputStream(imageProxyFile));
-    } catch (final FileNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (final IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    this.placement.clear();
+    FileUtils.readPropsFromFile(this.placement, imageProxyFile);
     _setPlacement(this.placement);
   }
   
@@ -116,15 +110,7 @@ public class ImageProxy {
   }
   
   public void writeProxyFile() {
-    try {
-      this.placement.store(new FileOutputStream(this.modProxyFile), null);
-    } catch (final FileNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (final IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    FileUtils.writePropsToFile(this.placement, this.modProxyFile, null);
   }
   
   public Properties getPlacement() {
@@ -139,7 +125,7 @@ public class ImageProxy {
       imageFile = PathFinder.toModFile(imageFile);
       if (!imageFile.canRead()) {
         // real image is not readable in mod sub-directory
-        // TODO log missing image resource
+        LOGGER.warn("Cannot read actual image file for proxy " + imageProxyFile.getAbsolutePath());
         return null;
       }
     }
@@ -147,34 +133,53 @@ public class ImageProxy {
       final BufferedImage image = ImageIO.read(imageFile);
       return new ImageProxy(imageProxyFile, imageFile, image);
     } catch (final IOException ex) {
-      // log file is not a valid image
+      LOGGER.warn("Cannot read actual image file " + imageFile.getAbsolutePath()
+          + ". It seems not be a known image file format.", ex);
       return null;
     }
   }
   
+  /**
+   * @param modDir
+   * @param alternativeImageFile
+   * @return null, if it fails to create new file
+   */
   static ImageProxy createNew(final File modDir, final File alternativeImageFile) {
     if (alternativeImageFile.canRead()) {
-      final String fileNameInResDir = Hash.calculateSHA1TODO(alternativeImageFile);
-      if (!modDir.exists()) {
+      final String fileNameInResDir = Hash.calculateSHA1(alternativeImageFile);
+      if (fileNameInResDir == null) {
+        LOGGER.error("Unable to determine filename for new file");
+        return null;
+      }
+      if (!modDir.isDirectory()) {
         if (!modDir.mkdirs()) {
-          // TODO log failed to create dir
+          LOGGER.error("Unable to create required directory " + modDir.getAbsolutePath());
           return null;
         }
       }
       final String newFileName = fileNameInResDir + getExtension(alternativeImageFile);
       final File proxyFile = PathFinder.getProxyFile(modDir, newFileName);
       try {
-        proxyFile.createNewFile();
+        if (!proxyFile.canRead()) {
+          if (!proxyFile.createNewFile()) {
+            LOGGER.error("Cannot create proxy file " + proxyFile.getAbsolutePath());
+            return null;
+          }
+        }
       } catch (final IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        LOGGER.error("Cannot create proxy file " + proxyFile.getAbsolutePath(), e);
+        return null;
       }
       
       File resFile = PathFinder.getCoreImageFile(newFileName);
       if (!resFile.exists()) {
         resFile = PathFinder.getModImageFile(newFileName);
         if (!resFile.exists()) {
-          FileUtils.copyFileTODO(alternativeImageFile, resFile);
+          if (!FileUtils.copyFile(alternativeImageFile, resFile)) {
+            LOGGER.error("Failed to copy " + alternativeImageFile.getAbsolutePath() + " to "
+                + resFile.getAbsolutePath());
+            return null;
+          }
         }
       }
       return getInstance(proxyFile);
@@ -202,9 +207,8 @@ public class ImageProxy {
         bufferedImage = ImageIO.read(this.imageFile);
         this.image = new SoftReference<BufferedImage>(bufferedImage);
       } catch (final IOException e) {
-        // reading image used to work and now it doesn't anymore?
-        // TODO return dummy image; log error
-        e.printStackTrace();
+        LOGGER.error("Failed to read previously readable image " + this.imageFile.getAbsolutePath(), e);
+        return NULL_IMAGE;
       }
     }
     return bufferedImage;
