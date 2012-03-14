@@ -120,9 +120,12 @@ public class ImageProxy {
   static ImageProxy getInstance(final File imageProxyFile) {
     
     File imageFile = PathFinder.imageProxyToCoreReal(imageProxyFile);
+    LOGGER.debug("core/res file location: {}", imageFile.getAbsolutePath());
     if (!imageFile.canRead()) {
       // real image is not readable in core sub-directory
+      LOGGER.debug("{} not found; trying mod location.", imageFile.getAbsolutePath());
       imageFile = PathFinder.toModFile(imageFile);
+      LOGGER.debug("mod/res file location: {}", imageFile.getAbsolutePath());
       if (!imageFile.canRead()) {
         // real image is not readable in mod sub-directory
         LOGGER.warn("Cannot read actual image file for proxy " + imageProxyFile.getAbsolutePath());
@@ -130,6 +133,7 @@ public class ImageProxy {
       }
     }
     try {
+      LOGGER.debug("Reading image file {}", imageFile.getAbsolutePath());
       final BufferedImage image = ImageIO.read(imageFile);
       return new ImageProxy(imageProxyFile, imageFile, image);
     } catch (final IOException ex) {

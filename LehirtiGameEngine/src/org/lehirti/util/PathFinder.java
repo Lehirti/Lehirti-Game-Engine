@@ -4,13 +4,19 @@ import java.io.File;
 
 import org.lehirti.res.images.ImageKey;
 import org.lehirti.res.text.TextKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PathFinder {
+  private static final Logger LOGGER = LoggerFactory.getLogger(PathFinder.class);
+  
   private static final String VERSION_FILE_LOCATION = "version";
   
   private static final String RES = "res";
   
   private static final File CORE_BASE_DIR = new File("core");
+  private static final String CORE_BASE_DIR_ABSOLUTE_PATH = CORE_BASE_DIR.getAbsolutePath();
+  private static final int CORE_BASE_DIR_LENGTH = CORE_BASE_DIR_ABSOLUTE_PATH.length();
   private static final File MOD_BASE_DIR = new File("mod");
   
   private static final File CORE_RES_DIR = new File(PathFinder.CORE_BASE_DIR, RES);
@@ -42,6 +48,7 @@ public class PathFinder {
   
   public static File getCoreImageFile(final String imageBaseName) {
     final File tmp = new File(CORE_RES_DIR, imageBaseName.substring(0, 2));
+    LOGGER.debug("core/res file dir: {}", tmp.getAbsolutePath());
     return new File(tmp, imageBaseName);
   }
   
@@ -61,8 +68,11 @@ public class PathFinder {
    *         </p>
    */
   public static File toModFile(final File coreFile) {
-    return new File(coreFile.getAbsolutePath().replaceFirst(CORE_BASE_DIR.getAbsolutePath(),
-        MOD_BASE_DIR.getAbsolutePath()));
+    if (coreFile.getAbsolutePath().startsWith(CORE_BASE_DIR_ABSOLUTE_PATH)) {
+      final String relPath = coreFile.getAbsolutePath().substring(CORE_BASE_DIR_LENGTH);
+      return new File(MOD_BASE_DIR.getAbsolutePath() + relPath);
+    }
+    return coreFile;
   }
   
   /**

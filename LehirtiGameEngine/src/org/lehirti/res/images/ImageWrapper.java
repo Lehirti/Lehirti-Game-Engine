@@ -25,6 +25,7 @@ public final class ImageWrapper {
   
   public ImageWrapper(final ImageKey key) {
     this.key = key;
+    LOGGER.debug("Creating new ImageWrapper for {}", toString());
     this.proxies = new ArrayList<ImageProxy>(5);
     parseAll(PathFinder.getCoreImageProxyFile(key));
     parseAll(PathFinder.getModImageProxyFile(key));
@@ -43,8 +44,10 @@ public final class ImageWrapper {
       }
     });
     for (final File imageProxyFile : imageProxies) {
+      LOGGER.debug("Trying to add image proxy {}", imageProxyFile.getAbsolutePath());
       final ImageProxy imageProxy = ImageProxy.getInstance(imageProxyFile);
       if (imageProxy != null) {
+        LOGGER.debug("Adding image proxy {} to {}", imageProxyFile.getAbsolutePath(), toString());
         this.proxies.add(imageProxy);
       }
     }
@@ -59,6 +62,7 @@ public final class ImageWrapper {
       this.image = new ImageProxy();
     } else {
       this.currentlyDisplayedImageNr = StateObject.DIE.nextInt(this.proxies.size());
+      LOGGER.debug("Pin image {} alternative {}", toString(), this.currentlyDisplayedImageNr);
       this.image = this.proxies.get(this.currentlyDisplayedImageNr);
     }
   }

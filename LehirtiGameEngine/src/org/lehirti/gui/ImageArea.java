@@ -128,6 +128,7 @@ public class ImageArea extends JComponent implements Externalizable {
    *          replace current background image with this one (null to remove background image)
    */
   public void setBackgroundImage(final ImageKey imageKey) {
+    LOGGER.debug("Setting background image to {}", imageKey);
     final ImageWrapper backgroundImage = ResourceCache.get(imageKey);
     backgroundImage.pinRandomImage();
     this.backgroundImage = backgroundImage;
