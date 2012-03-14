@@ -1,6 +1,8 @@
 package org.atrun.maze.state;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import org.atrun.maze.res.MazeImage;
 import org.lehirti.state.IntState;
@@ -8,6 +10,12 @@ import org.lehirti.state.StateObject;
 
 public class MazeState extends StateObject {
   private static final long serialVersionUID = 1L;
+  
+  private static boolean initialized = false; // TODO game loading
+  
+  private static int MAZE_SIZE = MazeImage.values().length;
+  
+  private static final int[][] MAZE_PATHS = new int[MAZE_SIZE][4];
   
   public static enum Int implements IntState {
     MAZE_LAYOUT(0),
@@ -25,45 +33,81 @@ public class MazeState extends StateObject {
     }
   }
   
-  private static long getCurrentPosition() {
-    return get(Int.CURRENT_POSITION_IN_MAZE) + get(Int.MAZE_LAYOUT);
+  private static void init() {
+    if (initialized) {
+      return;
+    }
+    
+    // TODO MAZE_SIZE == 0 case
+    
+    // always use the same seed to always make the same maze
+    final Random mazeDie = new Random(get(Int.MAZE_LAYOUT));
+    
+    // create one cycle containing all nodes to make sure the entire maze is connected
+    final Set<Integer> availableNodes = new HashSet<Integer>();
+    for (int i = 0; i < MAZE_SIZE; i++) {
+      availableNodes.add(Integer.valueOf(i));
+    }
+    
+    for (int i = 0; i < MAZE_SIZE; i++) {
+      for (int j = 0; j < 4; j++) {
+        MAZE_PATHS[i][j] = -1;
+      }
+    }
+    
+    final int startNode;
+    int nextNode;
+    int currentNode = startNode = mazeDie.nextInt(MAZE_SIZE);
+    availableNodes.remove(Integer.valueOf(currentNode));
+    while (!availableNodes.isEmpty()) {
+      nextNode = mazeDie.nextInt(MAZE_SIZE);
+      while (!availableNodes.remove(Integer.valueOf(nextNode))) {
+        nextNode = (nextNode + 1) % MAZE_SIZE;
+      }
+      final int direction = mazeDie.nextInt(4);
+      MAZE_PATHS[currentNode][direction] = nextNode; // going from current node to direction will lead to nextNode
+      
+      currentNode = nextNode;
+    }
+    MAZE_PATHS[currentNode][mazeDie.nextInt(4)] = startNode; // close the cycle
+    
+    // for the rest of paths choose random locations
+    for (int i = 0; i < MAZE_SIZE; i++) {
+      for (int j = 0; j < 4; j++) {
+        if (MAZE_PATHS[i][j] == -1) {
+          MAZE_PATHS[i][j] = mazeDie.nextInt(MAZE_SIZE);
+        }
+      }
+    }
+    
+    initialized = true;
+  }
+  
+  private static int getCurrentPosition() {
+    return (int) (Math.abs(get(Int.CURRENT_POSITION_IN_MAZE)) % MAZE_SIZE);
+  }
+  
+  private static int go(final int direction) {
+    init();
+    final int pos = getCurrentPosition();
+    final int newPos = MAZE_PATHS[pos][direction];
+    set(Int.CURRENT_POSITION_IN_MAZE, newPos);
+    return newPos;
   }
   
   public static int goNorth() {
-    final long pos = getCurrentPosition();
-    final Random mazeDie = new Random(pos);
-    final int newPos = mazeDie.nextInt(MazeImage.values().length);
-    set(Int.CURRENT_POSITION_IN_MAZE, newPos);
-    return newPos;
+    return go(0);
   }
   
   public static int goEast() {
-    final long pos = getCurrentPosition();
-    final Random mazeDie = new Random(pos);
-    mazeDie.nextInt();
-    final int newPos = mazeDie.nextInt(MazeImage.values().length);
-    set(Int.CURRENT_POSITION_IN_MAZE, newPos);
-    return newPos;
+    return go(1);
   }
   
   public static int goSouth() {
-    final long pos = getCurrentPosition();
-    final Random mazeDie = new Random(pos);
-    mazeDie.nextInt();
-    mazeDie.nextInt();
-    final int newPos = mazeDie.nextInt(MazeImage.values().length);
-    set(Int.CURRENT_POSITION_IN_MAZE, newPos);
-    return newPos;
+    return go(2);
   }
   
   public static int goWest() {
-    final long pos = getCurrentPosition();
-    final Random mazeDie = new Random(pos);
-    mazeDie.nextInt();
-    mazeDie.nextInt();
-    mazeDie.nextInt();
-    final int newPos = mazeDie.nextInt(MazeImage.values().length);
-    set(Int.CURRENT_POSITION_IN_MAZE, newPos);
-    return newPos;
+    return go(3);
   }
 }

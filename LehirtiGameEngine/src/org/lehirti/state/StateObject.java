@@ -7,10 +7,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +35,10 @@ public class StateObject implements Externalizable {
     
   };
   
-  private final SortedMap<BoolState, Boolean> BOOL_MAP = new TreeMap<BoolState, Boolean>(SORTER);
-  private final SortedMap<IntState, Long> INT_MAP = new TreeMap<IntState, Long>(SORTER);
-  private final SortedMap<StringState, String> STRING_MAP = new TreeMap<StringState, String>(SORTER);
+  // SortedMap produces class cast exceptions
+  private final Map<BoolState, Boolean> BOOL_MAP = new LinkedHashMap<BoolState, Boolean>();
+  private final Map<IntState, Long> INT_MAP = new LinkedHashMap<IntState, Long>();
+  private final Map<StringState, String> STRING_MAP = new LinkedHashMap<StringState, String>();
   
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // static getters for all state

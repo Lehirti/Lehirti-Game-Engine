@@ -20,9 +20,9 @@ public abstract class MazeEvent extends EventNode {
     setImage(MazeImage.values()[currentPosition]);
     setText(MazeText.values()[currentPosition]);
     
-    addOption(Key.NEXT, Text.NORTH, new GoNorth());
-    addOption(Key.NEXT, Text.EAST, new GoEast());
-    addOption(Key.NEXT, Text.SOUTH, new GoSouth());
-    addOption(Key.NEXT, Text.WEST, new GoWest());
+    addOption(Key.NORTH, Text.NORTH, new GoNorth());
+    addOption(Key.EAST, Text.EAST, new GoEast());
+    addOption(Key.SOUTH, Text.SOUTH, new GoSouth());
+    addOption(Key.WEST, Text.WEST, new GoWest());
   }
 }
