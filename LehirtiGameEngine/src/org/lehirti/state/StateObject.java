@@ -6,6 +6,7 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,6 +39,7 @@ public class StateObject implements Externalizable {
   // SortedMap produces class cast exceptions
   private final Map<BoolState, Boolean> BOOL_MAP = new LinkedHashMap<BoolState, Boolean>();
   private final Map<IntState, Long> INT_MAP = new LinkedHashMap<IntState, Long>();
+  private final Map<ObjState, Serializable> OBJ_MAP = new LinkedHashMap<ObjState, Serializable>();
   private final Map<StringState, String> STRING_MAP = new LinkedHashMap<StringState, String>();
   
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,6 +68,18 @@ public class StateObject implements Externalizable {
   
   public static void set(final IntState key, final long value) {
     INSTANCE.INT_MAP.put(key, Long.valueOf(value));
+  }
+  
+  public static Serializable get(final ObjState key) {
+    Serializable value = INSTANCE.OBJ_MAP.get(key);
+    if (value == null) {
+      value = key.defaultValue();
+    }
+    return value;
+  }
+  
+  public static void set(final ObjState key, final Serializable value) {
+    INSTANCE.OBJ_MAP.put(key, value);
   }
   
   public static String get(final StringState key) {
@@ -113,6 +127,10 @@ public class StateObject implements Externalizable {
     // there MUST NOT BE another constant between these two START/END constants
     END_INT_MAP,
     
+    START_OBJ_MAP,
+    // there MUST NOT BE another constant between these two START/END constants
+    END_OBJ_MAP,
+    
     START_STRING_MAP,
     // there MUST NOT BE another constant between these two START/END constants
     END_STRING_MAP,
@@ -142,6 +160,9 @@ public class StateObject implements Externalizable {
     out.writeObject(OnDiskDelim.START_INT_MAP.name());
     writeMap(out, this.INT_MAP);
     out.writeObject(OnDiskDelim.END_INT_MAP.name());
+    out.writeObject(OnDiskDelim.START_OBJ_MAP.name());
+    writeMap(out, this.OBJ_MAP);
+    out.writeObject(OnDiskDelim.END_OBJ_MAP.name());
     out.writeObject(OnDiskDelim.START_STRING_MAP.name());
     writeMap(out, this.STRING_MAP);
     out.writeObject(OnDiskDelim.END_STRING_MAP.name());
@@ -169,6 +190,7 @@ public class StateObject implements Externalizable {
   private void readObject1(final ObjectInput in) throws IOException, ClassNotFoundException {
     INSTANCE.BOOL_MAP.clear();
     INSTANCE.INT_MAP.clear();
+    INSTANCE.OBJ_MAP.clear();
     INSTANCE.STRING_MAP.clear();
     
     OnDiskDelim delim;
@@ -193,6 +215,9 @@ public class StateObject implements Externalizable {
           break;
         case START_INT_MAP:
           INSTANCE.INT_MAP.put((IntState) key, (Long) value);
+          break;
+        case START_OBJ_MAP:
+          INSTANCE.OBJ_MAP.put((ObjState) key, (Serializable) value);
           break;
         case START_STRING_MAP:
           INSTANCE.STRING_MAP.put((StringState) key, (String) value);

@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public abstract class Main {
   static {
     final File logsDir = new File("logs");
-    if (!logsDir.mkdirs()) {
+    if (!logsDir.exists() && !logsDir.mkdirs()) {
       System.err.println("Could not create logs dir " + logsDir.getAbsolutePath());
     }
     System.setProperty("java.util.logging.config.file", "config/logging.properties");

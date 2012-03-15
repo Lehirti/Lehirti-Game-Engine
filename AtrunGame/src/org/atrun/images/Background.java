@@ -4,5 +4,6 @@ import org.lehirti.res.images.ImageKey;
 
 public enum Background implements ImageKey {
   DROSTAL_TO_VOGARD,
-  ENTER_MAZE;
+  ENTER_MAZE,
+  LEAVE_MAZE;
 }

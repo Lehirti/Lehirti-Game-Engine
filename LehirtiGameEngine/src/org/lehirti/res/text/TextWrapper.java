@@ -34,7 +34,7 @@ public class TextWrapper implements Externalizable {
       if (coreFile.canRead()) {
         this.rawValue = FileUtils.readContentAsString(coreFile);
       } else {
-        this.rawValue = key.getClass().getName() + "." + key.name() + ": No resource found!";
+        this.rawValue = key.getClass().getName() + "." + key.name() + ": No resource found!\n";
       }
     }
   }

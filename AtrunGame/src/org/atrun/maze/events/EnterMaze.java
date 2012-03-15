@@ -26,7 +26,7 @@ public class EnterMaze extends EventNode {
     }
     
     // enter maze at random point
-    set(MazeState.Int.CURRENT_POSITION_IN_MAZE, StateObject.DIE.nextLong());
+    MazeState.setCurrentPosition(StateObject.DIE.nextLong());
     
     setBackgroundImage(Background.ENTER_MAZE);
     setImage(null);

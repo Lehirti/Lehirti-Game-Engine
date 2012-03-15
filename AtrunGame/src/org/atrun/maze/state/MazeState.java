@@ -1,11 +1,13 @@
 package org.atrun.maze.state;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
 import org.atrun.maze.res.MazeImage;
 import org.lehirti.state.IntState;
+import org.lehirti.state.ObjState;
 import org.lehirti.state.StateObject;
 
 public class MazeState extends StateObject {
@@ -16,6 +18,16 @@ public class MazeState extends StateObject {
   private static int MAZE_SIZE = MazeImage.values().length;
   
   private static final int[][] MAZE_PATHS = new int[MAZE_SIZE][4];
+  
+  public static enum Obj implements ObjState {
+    VISITED_MAZE_LOCATIONS;
+    
+    @Override
+    public Serializable defaultValue() {
+      return null;
+    }
+    
+  }
   
   public static enum Int implements IntState {
     MAZE_LAYOUT(0),
@@ -83,6 +95,28 @@ public class MazeState extends StateObject {
     initialized = true;
   }
   
+  public static int setCurrentPosition(final long currentPosition) {
+    final int pos = (int) (Math.abs(currentPosition) % MAZE_SIZE);
+    set(Int.CURRENT_POSITION_IN_MAZE, pos);
+    boolean[] visitedMazeLocations = (boolean[]) get(Obj.VISITED_MAZE_LOCATIONS);
+    if (visitedMazeLocations == null) {
+      visitedMazeLocations = new boolean[MAZE_SIZE];
+      set(Obj.VISITED_MAZE_LOCATIONS, visitedMazeLocations);
+    }
+    visitedMazeLocations[pos] = true;
+    return pos;
+  }
+  
+  public static boolean isCompletelyExplored() {
+    final boolean[] visitedMazeLocations = (boolean[]) get(Obj.VISITED_MAZE_LOCATIONS);
+    for (int i = 0; i < MAZE_SIZE; i++) {
+      if (visitedMazeLocations[i] == false) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
   private static int getCurrentPosition() {
     return (int) (Math.abs(get(Int.CURRENT_POSITION_IN_MAZE)) % MAZE_SIZE);
   }
@@ -91,8 +125,7 @@ public class MazeState extends StateObject {
     init();
     final int pos = getCurrentPosition();
     final int newPos = MAZE_PATHS[pos][direction];
-    set(Int.CURRENT_POSITION_IN_MAZE, newPos);
-    return newPos;
+    return setCurrentPosition(newPos);
   }
   
   public static int goNorth() {
