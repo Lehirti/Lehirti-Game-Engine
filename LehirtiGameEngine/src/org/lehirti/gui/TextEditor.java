@@ -8,11 +8,13 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import org.lehirti.res.text.TextWrapper;
+import org.lehirti.util.PathFinder;
 
 public class TextEditor extends JFrame implements ActionListener {
   private static final long serialVersionUID = 1L;
@@ -20,8 +22,9 @@ public class TextEditor extends JFrame implements ActionListener {
   JPanel all = new JPanel();
   
   JPanel controls = new JPanel();
-  
+  final JComboBox contentDir;
   JButton next = new JButton("Next");
+  
   JButton save = new JButton("Save");
   
   JTextArea textArea = new JTextArea();
@@ -37,10 +40,15 @@ public class TextEditor extends JFrame implements ActionListener {
       this.selectedTextNr = 0;
       this.textArea.setText(this.allTexts.get(0).getRawValue());
     }
+    this.textArea.setLineWrap(true);
+    this.textArea.setWrapStyleWord(true);
     
-    this.controls.setLayout(new GridLayout(2, 1));
+    this.contentDir = new JComboBox(PathFinder.getContentDirs());
+    
+    this.controls.setLayout(new GridLayout(3, 1));
     this.controls.setPreferredSize(new Dimension(300, 800));
     this.controls.add(this.next);
+    this.controls.add(this.contentDir);
     this.controls.add(this.save);
     
     this.all.setLayout(new BorderLayout());
@@ -75,7 +83,8 @@ public class TextEditor extends JFrame implements ActionListener {
     if (e.getSource() == this.next) {
       selectNextText();
     } else if (e.getSource() == this.save) {
-      this.allTexts.get(this.selectedTextNr).setValue(this.textArea.getText());
+      final String contentDir = (String) this.contentDir.getSelectedItem();
+      this.allTexts.get(this.selectedTextNr).setValue(this.textArea.getText(), contentDir); // TODO selected content dir
     }
     this.gameTextArea.refresh();
   }

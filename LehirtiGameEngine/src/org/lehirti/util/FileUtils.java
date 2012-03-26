@@ -1,5 +1,6 @@
 package org.lehirti.util;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,8 +10,12 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +60,47 @@ public class FileUtils {
     }
   }
   
+  private static boolean copyFile(final InputStream srcInputStream, final File destFile) {
+    if (!destFile.getParentFile().exists()) {
+      if (!destFile.getParentFile().mkdirs()) {
+        LOGGER.error("Unable to create directory " + destFile.getParentFile().getAbsolutePath());
+        return false;
+      }
+    }
+    
+    try {
+      return copyStream(srcInputStream, new BufferedOutputStream(new FileOutputStream(destFile)));
+    } catch (final FileNotFoundException e) {
+      LOGGER.error("Unable to create " + destFile.getAbsolutePath(), e);
+      return false;
+    }
+  }
+  
+  public static final boolean copyStream(final InputStream in, final OutputStream out) {
+    final byte[] buffer = new byte[4096];
+    int len;
+    try {
+      while ((len = in.read(buffer)) >= 0) {
+        out.write(buffer, 0, len);
+      }
+    } catch (final IOException e) {
+      LOGGER.error("Failed to tranfer data between streams", e);
+      return false;
+    } finally {
+      try {
+        in.close();
+      } catch (final IOException e) {
+        LOGGER.error("Failed to close input stream", e);
+      }
+      try {
+        out.close();
+      } catch (final IOException e) {
+        LOGGER.error("Failed to close output stream", e);
+      }
+    }
+    return true;
+  }
+  
   public static String readContentAsString(final File file) {
     char[] buffer = null;
     
@@ -80,6 +126,13 @@ public class FileUtils {
   }
   
   public static void writeContentToFile(final File file, final String value) {
+    if (!file.getParentFile().exists()) {
+      if (!file.getParentFile().mkdirs()) {
+        LOGGER.error("Cannot write to file " + file.getAbsolutePath() + " because parent dir could not be created.");
+        return;
+      }
+    }
+    
     BufferedWriter writer = null;
     try {
       writer = new BufferedWriter(new FileWriter(file));
@@ -139,5 +192,45 @@ public class FileUtils {
       }
     }
     return false;
+  }
+  
+  public static boolean deleteRecursive(final File f) {
+    if (f.isDirectory()) {
+      for (final File c : f.listFiles()) {
+        if (!deleteRecursive(c)) {
+          return false;
+        }
+      }
+    }
+    if (!f.delete()) {
+      return false;
+    }
+    return true;
+  }
+  
+  public static boolean unpack(final ZipEntry elementToUnpack, final ZipFile zipFile) {
+    if (elementToUnpack.isDirectory()) {
+      return true;
+    }
+    final String nameOfElementToUnpack = elementToUnpack.getName();
+    final File destFile = new File(nameOfElementToUnpack);
+    final File parent = destFile.getParentFile();
+    if (!parent.exists()) {
+      if (!parent.mkdirs()) {
+        LOGGER.error("Failed to create parent directory for " + nameOfElementToUnpack);
+        return false;
+      }
+    }
+    try {
+      final InputStream zipFileEntryContentStream = zipFile.getInputStream(elementToUnpack);
+      final boolean success = copyFile(zipFileEntryContentStream, destFile);
+      if (!success) {
+        LOGGER.error("Failed to unpack {} to {}", elementToUnpack.getName(), destFile.getAbsolutePath());
+      }
+      return success;
+    } catch (final IOException e) {
+      LOGGER.error("Failed to read " + nameOfElementToUnpack + " from " + zipFile.getName(), e);
+      return false;
+    }
   }
 }

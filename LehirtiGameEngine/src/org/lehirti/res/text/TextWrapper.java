@@ -54,9 +54,9 @@ public class TextWrapper implements Externalizable {
     return val;
   }
   
-  public void setValue(final String value) {
+  public void setValue(final String value, final String contentDir) {
     this.rawValue = value;
-    FileUtils.writeContentToFile(PathFinder.getModFile(this.key), value);
+    FileUtils.writeContentToFile(PathFinder.getModFile(this.key, contentDir), value);
   }
   
   public void addParameter(final String param) {

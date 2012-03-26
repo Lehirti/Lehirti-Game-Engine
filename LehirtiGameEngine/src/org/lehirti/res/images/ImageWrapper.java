@@ -2,7 +2,6 @@ package org.lehirti.res.images;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -27,22 +26,13 @@ public final class ImageWrapper {
     this.key = key;
     LOGGER.debug("Creating new ImageWrapper for {}", toString());
     this.proxies = new ArrayList<ImageProxy>(5);
-    parseAll(PathFinder.getCoreImageProxyFile(key));
-    parseAll(PathFinder.getModImageProxyFile(key));
+    parseAll(PathFinder.getCoreImageProxyFiles(key));
+    parseAll(PathFinder.getModImageProxyFiles(key));
     
     pinRandomImage();
   }
   
-  private void parseAll(final File dir) {
-    if (!dir.isDirectory()) {
-      return;
-    }
-    final File[] imageProxies = dir.listFiles(new FileFilter() {
-      @Override
-      public boolean accept(final File pathname) {
-        return pathname.getName().endsWith(PathFinder.PROXY_FILENAME_SUFFIX);
-      }
-    });
+  private void parseAll(final File[] imageProxies) {
     for (final File imageProxyFile : imageProxies) {
       LOGGER.debug("Trying to add image proxy {}", imageProxyFile.getAbsolutePath());
       final ImageProxy imageProxy = ImageProxy.getInstance(imageProxyFile);
@@ -96,10 +86,12 @@ public final class ImageWrapper {
   
   /**
    * @param alternativeImageFile
+   * @param contentDir
    * @return image added
    */
-  public boolean addAlternativeImage(final File alternativeImageFile) {
-    final ImageProxy imageProxy = ImageProxy.createNew(PathFinder.getModImageProxyFile(this.key), alternativeImageFile);
+  public boolean addAlternativeImage(final File alternativeImageFile, final String contentDir) {
+    final ImageProxy imageProxy = ImageProxy.createNew(PathFinder.getModImageProxyFile(this.key, contentDir),
+        alternativeImageFile);
     if (imageProxy != null) {
       this.proxies.add(imageProxy);
       this.currentlyDisplayedImageNr = this.proxies.size() - 1;

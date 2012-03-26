@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 
 import javax.swing.InputVerifier;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -23,6 +24,7 @@ import javax.swing.event.DocumentListener;
 
 import org.lehirti.res.images.ImageWrapper;
 import org.lehirti.res.images.ImageProxy.ProxyProps;
+import org.lehirti.util.PathFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,6 +119,7 @@ public class ImageEditor extends JFrame implements ActionListener {
   JButton selectedAlternative = new JButton();
   
   JLabel newAlternativeLabel = new JLabel("Alternative");
+  final JComboBox contentDir;
   JButton newAlternative = new JButton("Add");
   
   ImageArea imageArea = new ImageArea();
@@ -134,7 +137,9 @@ public class ImageEditor extends JFrame implements ActionListener {
       setImage(0);
     }
     
-    this.controls.setLayout(new GridLayout(9, 2));
+    this.contentDir = new JComboBox(PathFinder.getContentDirs());
+    
+    this.controls.setLayout(new GridLayout(10, 2));
     this.controls.setPreferredSize(new Dimension(300, 800));
     this.controls.add(this.alignXlabel);
     this.controls.add(this.alignX);
@@ -160,6 +165,8 @@ public class ImageEditor extends JFrame implements ActionListener {
     this.controls.add(this.selectedImage);
     this.controls.add(this.selectedAlternativeLabel);
     this.controls.add(this.selectedAlternative);
+    this.controls.add(new JLabel());
+    this.controls.add(this.contentDir);
     this.controls.add(this.newAlternativeLabel);
     this.controls.add(this.newAlternative);
     
@@ -293,7 +300,8 @@ public class ImageEditor extends JFrame implements ActionListener {
       if (returnVal == JFileChooser.APPROVE_OPTION) {
         LOGGER.debug("file selected");
         final File file = fc.getSelectedFile();
-        this.allImages.get(this.selectedImageNr).addAlternativeImage(file);
+        final String contentDir = (String) this.contentDir.getSelectedItem();
+        this.allImages.get(this.selectedImageNr).addAlternativeImage(file, contentDir);
         this.selectedAlternativeNr = this.allImages.get(this.selectedImageNr).getCurrentImageNr();
         this.selectedAlternative.setText(String.valueOf(this.selectedAlternativeNr));
         setImage(this.selectedImageNr);
