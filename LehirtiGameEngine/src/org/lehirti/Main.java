@@ -30,6 +30,7 @@ import org.lehirti.state.StateObject;
 import org.lehirti.state.StaticInitializer;
 import org.lehirti.util.ClassFinder;
 import org.lehirti.util.ContentUtils;
+import org.lehirti.util.LogUtils;
 import org.lehirti.util.PathFinder;
 import org.lehirti.util.ContentUtils.CheckResult;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ public abstract class Main {
     if (!logsDir.exists() && !logsDir.mkdirs()) {
       System.err.println("Could not create logs dir " + logsDir.getAbsolutePath());
     }
+    LogUtils.createDefaultLogConfigFileIfMissing();
     System.setProperty("java.util.logging.config.file", "config/logging.properties");
   }
   

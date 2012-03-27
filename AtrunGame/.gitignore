@@ -1,5 +1,5 @@
-/core/res
-/mod/res
+/core
+/mod
 /bin
 /config/KeyMapping.properties
 /ant/version

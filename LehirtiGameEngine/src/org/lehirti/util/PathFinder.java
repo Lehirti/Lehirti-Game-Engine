@@ -60,6 +60,7 @@ public class PathFinder {
     if (file == null) {
       final String dirName = key.getClass().getPackage().getName();
       final String fileName = key.getClass().getName().substring(dirName.length() + 1) + "." + key.name();
+      file = new File(new File("main", dirName), fileName);
       for (final File dir : dirs) {
         final File parentDir = new File(dir, dirName);
         file = new File(parentDir, fileName);
