@@ -126,11 +126,14 @@ public class ContentUtils {
    * @return all available zip files for contentKey; newest first
    */
   private static SortedMap<Integer, ZipFile> getContentZipFiles(final String contentKey) {
+    LOGGER.debug("Getting zip files for {}", contentKey);
     final SortedMap<Integer, ZipFile> map = new TreeMap<Integer, ZipFile>(Collections.reverseOrder());
-    final File rootDir = new File("");
+    final File rootDir = new File(".");
+    LOGGER.debug("Looking for zip files in {}", rootDir.getAbsolutePath());
     final File[] contentZipFiles = rootDir.listFiles(new FilenameFilter() {
       @Override
       public boolean accept(final File dir, final String name) {
+        LOGGER.debug("Checking name {}", name);
         return name.startsWith(contentKey) && name.endsWith(".zip");
       }
     });
