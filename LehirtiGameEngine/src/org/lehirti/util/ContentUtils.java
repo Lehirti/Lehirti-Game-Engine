@@ -42,11 +42,11 @@ public class ContentUtils {
   public static void rebuild(final String contentKey, final Integer requiredVersion) {
     LOGGER.info("START: Rebuilding {}-{}", contentKey, requiredVersion);
     final File coreDir = PathFinder.getCoreContentDir(contentKey);
-    if (!FileUtils.deleteRecursive(coreDir)) {
+    if (coreDir.exists() && !FileUtils.deleteRecursive(coreDir)) {
       LOGGER.error("Failed to delete old " + coreDir.getAbsolutePath());
     }
     
-    final SortedMap<Integer, ZipFile> contentZipFiles = getContentZipFiles(contentKey);
+    final SortedMap<Integer, ZipFile> contentZipFiles = getContentZipFiles(contentKey, new File("."));
     final ZipFile reqVerZipFile = contentZipFiles.remove(requiredVersion);
     
     boolean anErrorHasOccurred = false;
@@ -104,9 +104,10 @@ public class ContentUtils {
         LOGGER.error("Failed to delete manifest file " + manifestFile.getAbsolutePath()
             + " after rebuilt has finished with errors.");
       }
+      LOGGER.info("FINISHED with ERRORS: Rebuilding {}-{}", contentKey, requiredVersion);
+    } else {
+      LOGGER.info("FINISHED: Rebuilding {}-{}", contentKey, requiredVersion);
     }
-    
-    LOGGER.info("FINISHED: Rebuilding {}-{}", contentKey, requiredVersion);
   }
   
   private static boolean extractFrom(final String filePath, final SortedMap<Integer, ZipFile> contentZipFiles) {
@@ -123,12 +124,12 @@ public class ContentUtils {
   
   /**
    * @param contentKey
+   * @param rootDir
    * @return all available zip files for contentKey; newest first
    */
-  private static SortedMap<Integer, ZipFile> getContentZipFiles(final String contentKey) {
+  public static SortedMap<Integer, ZipFile> getContentZipFiles(final String contentKey, final File rootDir) {
     LOGGER.debug("Getting zip files for {}", contentKey);
     final SortedMap<Integer, ZipFile> map = new TreeMap<Integer, ZipFile>(Collections.reverseOrder());
-    final File rootDir = new File(".");
     LOGGER.debug("Looking for zip files in {}", rootDir.getAbsolutePath());
     final File[] contentZipFiles = rootDir.listFiles(new FilenameFilter() {
       @Override
