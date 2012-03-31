@@ -84,7 +84,7 @@ public class TextEditor extends JFrame implements ActionListener {
       selectNextText();
     } else if (e.getSource() == this.save) {
       final String contentDir = (String) this.contentDir.getSelectedItem();
-      this.allTexts.get(this.selectedTextNr).setValue(this.textArea.getText(), contentDir); // TODO selected content dir
+      this.allTexts.get(this.selectedTextNr).setValue(this.textArea.getText(), contentDir);
     }
     this.gameTextArea.refresh();
   }

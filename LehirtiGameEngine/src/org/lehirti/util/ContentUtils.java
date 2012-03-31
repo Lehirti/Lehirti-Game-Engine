@@ -69,7 +69,7 @@ public class ContentUtils {
       } else {
         if (nextElement.getName().endsWith(PathFinder.PROXY_FILENAME_SUFFIX)) {
           final File imageFile = PathFinder.imageProxyToCoreReal(new File(nextElement.getName()));
-          requiredResources.add(imageFile.getPath());
+          requiredResources.add(imageFile.getPath().replaceAll("\\\\", "/"));
         } else if (nextElement.getName().indexOf("res") != -1) {
           foundResources.add(nextElement.getName());
         }
