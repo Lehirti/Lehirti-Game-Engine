@@ -13,6 +13,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.atrun.C;
 import org.lehirti.util.ContentUtils;
 import org.lehirti.util.PathFinder;
 
@@ -23,22 +24,23 @@ public final class ExportCoreContent {
   
   public static void main(final String[] args) throws IOException {
     System.out.println("START " + ExportCoreContent.class.getSimpleName());
-    for (final File dir : CORE_DIR.listFiles()) {
+    for (final C content : C.values()) {
+      final File dir = new File(CORE_DIR, content.name());
       if (dir.getName().equals("res") || !dir.isDirectory()) {
         System.out.println("Skipping " + dir.getAbsolutePath());
         continue;
       }
-      export(dir);
+      export(dir, content.requiredVersion);
     }
     
     System.out.println("FINISHED " + ExportCoreContent.class.getSimpleName());
   }
   
-  private static void export(final File dir) throws IOException {
+  private static void export(final File dir, final int versionNumber) throws IOException {
     System.out.println("START exporting " + dir.getAbsolutePath());
     
     final String name = dir.getName();
-    final File destZipFile = new File(DEST_DIR, name + "-1.zip"); // TODO -1
+    final File destZipFile = new File(DEST_DIR, name + "-" + versionNumber + ".zip");
     System.out.println("Target " + destZipFile.getAbsolutePath());
     
     final SortedMap<Integer, ZipFile> contentZipFiles = ContentUtils.getContentZipFiles(name, DEST_DIR);
@@ -47,7 +49,7 @@ public final class ExportCoreContent {
     final Iterator<Map.Entry<Integer, ZipFile>> itr = contentZipFiles.entrySet().iterator();
     while (itr.hasNext()) {
       final Entry<Integer, ZipFile> entry = itr.next();
-      if (entry.getKey().intValue() >= 1) { // TODO 1
+      if (entry.getKey().intValue() >= versionNumber) {
         entry.getValue().close();
         itr.remove();
       }
@@ -56,7 +58,7 @@ public final class ExportCoreContent {
     final ZipOutputStream out = new ZipOutputStream(new FileOutputStream(destZipFile));
     
     // Make manifest
-    final ZipEntry entry = new ZipEntry("core/manifest/" + name + "-1"); // TODO -1
+    final ZipEntry entry = new ZipEntry("core/manifest/" + name + "-" + versionNumber);
     out.putNextEntry(entry);
     
     exportDir(dir, out, contentZipFiles);
@@ -88,9 +90,7 @@ public final class ExportCoreContent {
         }
         in.close();
         if (f.getName().endsWith(PathFinder.PROXY_FILENAME_SUFFIX)) {
-          final String imageBaseName = f.getName().substring(0,
-              f.getName().length() - PathFinder.PROXY_FILENAME_SUFFIX.length());
-          final File imageFile = PathFinder.getCoreImageFile(imageBaseName);
+          final File imageFile = PathFinder.imageProxyToCoreReal(f);
           final ZipEntry imageZipEntry = new ZipEntry(imageFile.getPath());
           if (!imageIsContainedInOlderZipFile(imageZipEntry, contentZipFiles)) {
             final File correctedPathImageFile = new File(ROOT_DIR, imageFile.getPath());

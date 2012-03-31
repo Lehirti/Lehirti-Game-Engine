@@ -1,19 +1,19 @@
 package org.lehirti.util;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.lehirti.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,12 +21,17 @@ public class ContentUtils {
   private static final Logger LOGGER = LoggerFactory.getLogger(ContentUtils.class);
   
   public static enum CheckResult {
+    DEV_ENVIRONMENT,
     OK,
     NEEDS_UPDATE,
     MISSING;
   }
   
   public static CheckResult check(final String contentKey, final int requiredVersion) {
+    if (Main.IS_DEVELOPMENT_VERSION) {
+      return CheckResult.DEV_ENVIRONMENT;
+    }
+    
     final File manifestFile = PathFinder.getManifest(contentKey, requiredVersion);
     if (manifestFile.exists()) {
       return CheckResult.OK;
@@ -51,6 +56,9 @@ public class ContentUtils {
     
     boolean anErrorHasOccurred = false;
     
+    final Set<String> requiredResources = new LinkedHashSet<String>();
+    final Set<String> foundResources = new LinkedHashSet<String>();
+    
     // unpack newest content version zip file
     final Enumeration<? extends ZipEntry> entries = reqVerZipFile.entries();
     while (entries.hasMoreElements()) {
@@ -58,6 +66,13 @@ public class ContentUtils {
       if (!FileUtils.unpack(nextElement, reqVerZipFile)) {
         anErrorHasOccurred = true;
         LOGGER.error("ERROR: Rebuilding {}-{}: Failed to unpack " + nextElement.getName(), contentKey, requiredVersion);
+      } else {
+        if (nextElement.getName().endsWith(PathFinder.PROXY_FILENAME_SUFFIX)) {
+          final File imageFile = PathFinder.imageProxyToCoreReal(new File(nextElement.getName()));
+          requiredResources.add(imageFile.getPath());
+        } else if (nextElement.getName().indexOf("res") != -1) {
+          foundResources.add(nextElement.getName());
+        }
       }
     }
     
@@ -67,28 +82,15 @@ public class ContentUtils {
       LOGGER.warn("Failed to close " + reqVerZipFile.getName(), e);
     }
     
-    // now, read manifest and fill the gaps with older content files
-    final File manifestFile = PathFinder.getManifest(contentKey, requiredVersion.intValue());
-    BufferedReader reader;
-    try {
-      reader = new BufferedReader(new FileReader(manifestFile));
-    } catch (final FileNotFoundException e) {
-      LOGGER.error("Manifest file " + manifestFile.getAbsolutePath() + " not found");
-      return;
-    }
+    requiredResources.removeAll(foundResources);
+    // now, we need to read all the resources that are not in the newest content pack from older content packs
     
-    try {
-      String filePath;
-      while ((filePath = reader.readLine()) != null) {
-        final boolean success = extractFrom(filePath, contentZipFiles);
-        if (!success) {
-          anErrorHasOccurred = true;
-          LOGGER.error("Failed to extract " + filePath + " from older content zip files");
-        }
+    for (final String requiredPath : requiredResources) {
+      final boolean success = extractFrom(requiredPath, contentZipFiles);
+      if (!success) {
+        anErrorHasOccurred = true;
+        LOGGER.error("Failed to extract " + requiredPath + " from older content zip files");
       }
-    } catch (final IOException e) {
-      anErrorHasOccurred = true;
-      LOGGER.error("Error reading manifest file " + manifestFile.getAbsolutePath());
     }
     
     for (final ZipFile zipFile : contentZipFiles.values()) {
@@ -100,6 +102,7 @@ public class ContentUtils {
     }
     
     if (anErrorHasOccurred) {
+      final File manifestFile = PathFinder.getManifest(contentKey, requiredVersion.intValue());
       if (!manifestFile.delete()) {
         LOGGER.error("Failed to delete manifest file " + manifestFile.getAbsolutePath()
             + " after rebuilt has finished with errors.");

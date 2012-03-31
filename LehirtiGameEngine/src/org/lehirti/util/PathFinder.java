@@ -25,7 +25,7 @@ public class PathFinder {
   private static final int CORE_BASE_DIR_LENGTH = CORE_BASE_DIR_ABSOLUTE_PATH.length();
   private static final File MOD_BASE_DIR = new File("mod");
   
-  private static final File MANIFEST_DIR = new File(RES, "manifest");
+  private static final File MANIFEST_DIR = new File(CORE_BASE_DIR, "manifest");
   
   private static final List<File> CORE_CONTENT_DIRS = new ArrayList<File>(25);
   private static final List<File> MOD_CONTENT_DIRS = new ArrayList<File>(25);

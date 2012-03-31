@@ -13,7 +13,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -29,10 +28,8 @@ import org.lehirti.res.images.ImageWrapper;
 import org.lehirti.state.StateObject;
 import org.lehirti.state.StaticInitializer;
 import org.lehirti.util.ClassFinder;
-import org.lehirti.util.ContentUtils;
 import org.lehirti.util.LogUtils;
 import org.lehirti.util.PathFinder;
-import org.lehirti.util.ContentUtils.CheckResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +47,8 @@ public abstract class Main {
   
   public static TextArea TEXT_AREA;
   public static ImageArea IMAGE_AREA;
+  
+  public static boolean IS_DEVELOPMENT_VERSION = false;
   
   public static volatile Event currentEvent = null;
   
@@ -220,6 +219,8 @@ public abstract class Main {
   protected void engineMain(final String[] args) throws InterruptedException, InvocationTargetException {
     readVersion();
     
+    readContent();
+    
     /*
      * load all modules
      */
@@ -249,39 +250,15 @@ public abstract class Main {
       versionProps.load(versionInputStream);
     } catch (final Exception e) {
       LOGGER.info(getGameName() + " Development Version");
-      // TODO
-      PathFinder.registerContentDir("main");
-      PathFinder.registerContentDir("duckgirls");
+      IS_DEVELOPMENT_VERSION = true;
       return;
     }
     
     LOGGER.info(getGameName() + " " + versionProps.getProperty("flavor") + " Build "
         + versionProps.getProperty("build") + " " + versionProps.getProperty("date"));
-    
-    for (final Map.Entry<Object, Object> prop : versionProps.entrySet()) {
-      String key = (String) prop.getKey();
-      if (key.startsWith("content-")) {
-        key = key.substring("content-".length());
-        final String value = (String) prop.getValue();
-        final Integer intValue = Integer.valueOf(value);
-        final CheckResult result = ContentUtils.check(key, intValue.intValue());
-        switch (result) {
-        case OK:
-          LOGGER.info("Content " + key + "-" + intValue + " is present.");
-          PathFinder.registerContentDir(key);
-          break;
-        case NEEDS_UPDATE:
-          LOGGER.info("Content " + key + "-" + intValue + " needs updating.");
-          ContentUtils.rebuild(key, intValue);
-          PathFinder.registerContentDir(key);
-          break;
-        case MISSING:
-          LOGGER.info("Content " + key + "-" + intValue
-              + " is not present. You need to download the content pack, if you want this particular content.");
-        }
-      }
-    }
   }
+  
+  abstract protected void readContent();
   
   abstract protected String getGameName();
 }
