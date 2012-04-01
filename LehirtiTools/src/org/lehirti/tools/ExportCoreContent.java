@@ -13,14 +13,14 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import org.atrun.C;
-import org.lehirti.util.ContentUtils;
-import org.lehirti.util.PathFinder;
+import org.lehirti.engine.util.ContentUtils;
+import org.lehirti.engine.util.PathFinder;
+import org.lehirti.mindcraft.C;
 
 public final class ExportCoreContent {
-  private static final File ROOT_DIR = new File("../AtrunGame");
+  private static final File ROOT_DIR = new File("../Mindcraft");
   private static final File CORE_DIR = new File(ROOT_DIR, "core");
-  private static final File DEST_DIR = new File("../../lehirti_release");
+  private static final File DEST_DIR = new File("../../mindcraft");
   
   public static void main(final String[] args) throws IOException {
     System.out.println("START " + ExportCoreContent.class.getSimpleName());

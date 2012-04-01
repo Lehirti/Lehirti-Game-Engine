@@ -1,6 +1,6 @@
 package org.atrun.maze.res;
 
-import org.lehirti.res.images.ImageKey;
+import org.lehirti.engine.res.images.ImageKey;
 
 public enum MazeImage implements ImageKey {
   DREAM_000,

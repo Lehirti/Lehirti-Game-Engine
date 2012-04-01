@@ -1,6 +1,6 @@
 package org.atrun.images;
 
-import org.lehirti.res.images.ImageKey;
+import org.lehirti.engine.res.images.ImageKey;
 
 public enum Background implements ImageKey {
   DROSTAL_TO_VOGARD,

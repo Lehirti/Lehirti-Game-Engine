@@ -1,6 +1,6 @@
 package org.atrun.maze.res;
 
-import org.lehirti.res.text.TextKey;
+import org.lehirti.engine.res.text.TextKey;
 
 public enum MazeText implements TextKey {
   DREAM_000,

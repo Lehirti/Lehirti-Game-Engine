@@ -3,9 +3,9 @@ package org.atrun.maze.events;
 import org.atrun.maze.res.MazeImage;
 import org.atrun.maze.res.MazeText;
 import org.atrun.maze.state.MazeState;
-import org.lehirti.events.EventNode;
-import org.lehirti.gui.Key;
-import org.lehirti.res.text.TextKey;
+import org.lehirti.engine.events.EventNode;
+import org.lehirti.engine.gui.Key;
+import org.lehirti.engine.res.text.TextKey;
 
 public abstract class MazeEvent extends EventNode {
   private static final long serialVersionUID = 1L;

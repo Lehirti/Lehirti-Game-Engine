@@ -2,10 +2,10 @@ package org.atrun.maze.events;
 
 import org.atrun.images.Background;
 import org.atrun.maze.state.MazeState;
-import org.lehirti.events.EventNode;
-import org.lehirti.gui.Key;
-import org.lehirti.res.text.TextKey;
-import org.lehirti.state.StateObject;
+import org.lehirti.engine.events.EventNode;
+import org.lehirti.engine.gui.Key;
+import org.lehirti.engine.res.text.TextKey;
+import org.lehirti.engine.state.StateObject;
 
 public class EnterMaze extends EventNode {
   private static final long serialVersionUID = 1L;

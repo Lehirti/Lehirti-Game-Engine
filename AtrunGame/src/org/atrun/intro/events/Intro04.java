@@ -1,9 +1,9 @@
 package org.atrun.intro.events;
 
 import org.atrun.intro.state.LocationTracker.Int;
-import org.lehirti.events.EventNode;
-import org.lehirti.gui.Key;
-import org.lehirti.res.text.TextKey;
+import org.lehirti.engine.events.EventNode;
+import org.lehirti.engine.gui.Key;
+import org.lehirti.engine.res.text.TextKey;
 
 public class Intro04 extends EventNode {
   public static enum Text implements TextKey {

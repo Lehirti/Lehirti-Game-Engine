@@ -5,9 +5,9 @@ import java.util.Map;
 
 import org.atrun.locations.DrostalToVogard;
 import org.atrun.maze.events.EnterMaze;
-import org.lehirti.events.Event;
-import org.lehirti.events.Location;
-import org.lehirti.events.LocationHook;
+import org.lehirti.engine.events.Event;
+import org.lehirti.engine.events.Location;
+import org.lehirti.engine.events.LocationHook;
 
 public class DrostalToVogardHook implements LocationHook {
   static {

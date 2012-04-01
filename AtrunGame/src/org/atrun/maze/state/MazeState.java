@@ -6,9 +6,9 @@ import java.util.Random;
 import java.util.Set;
 
 import org.atrun.maze.res.MazeImage;
-import org.lehirti.state.IntState;
-import org.lehirti.state.ObjState;
-import org.lehirti.state.StateObject;
+import org.lehirti.engine.state.IntState;
+import org.lehirti.engine.state.ObjState;
+import org.lehirti.engine.state.StateObject;
 
 public class MazeState extends StateObject {
   private static final long serialVersionUID = 1L;

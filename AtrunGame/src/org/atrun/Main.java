@@ -3,13 +3,13 @@ package org.atrun;
 import java.lang.reflect.InvocationTargetException;
 
 import org.atrun.maze.events.EnterMaze;
-import org.lehirti.util.ContentUtils;
-import org.lehirti.util.PathFinder;
-import org.lehirti.util.ContentUtils.CheckResult;
+import org.lehirti.engine.util.ContentUtils;
+import org.lehirti.engine.util.PathFinder;
+import org.lehirti.engine.util.ContentUtils.CheckResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Main extends org.lehirti.Main {
+public class Main extends org.lehirti.engine.Main {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
   
@@ -19,7 +19,7 @@ public class Main extends org.lehirti.Main {
    * @throws InterruptedException
    */
   public static void main(final String[] args) throws InterruptedException, InvocationTargetException {
-    org.lehirti.Main.currentEvent = new EnterMaze();
+    org.lehirti.engine.Main.currentEvent = new EnterMaze();
     
     new Main().engineMain(args);
   }

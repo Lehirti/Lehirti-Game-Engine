@@ -2,9 +2,9 @@ package org.atrun.locations;
 
 import org.atrun.images.Background;
 import org.atrun.intro.events.Intro01;
-import org.lehirti.Main;
-import org.lehirti.events.Location;
-import org.lehirti.res.images.ImageKey;
+import org.lehirti.engine.Main;
+import org.lehirti.engine.events.Location;
+import org.lehirti.engine.res.images.ImageKey;
 
 public class DrostalToVogard extends Location {
   
