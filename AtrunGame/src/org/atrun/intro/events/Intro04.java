@@ -17,7 +17,7 @@ public class Intro04 extends EventNode {
     
     setText(Text.MAIN);
     
-    addOption(Key.NEXT, Text.OPTION_NEXT, new Intro01());
+    addOption(Key.OPTION_02, Text.OPTION_NEXT, new Intro01());
   }
   
 }

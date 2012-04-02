@@ -6,18 +6,24 @@ import org.lehirti.mindcraft.images.Background;
 
 public class HomeVillage extends EventNode {
   public static enum Text implements TextKey {
-    EXPLANATION,
-    OPTION_MASTURBATE,
-    OPTION_LEAVE_HOUSE
+    MAIN,
+    OPTION_GO_HOME,
+    OPTION_VISIT_HEALER,
+    OPTION_VISIT_MARKET,
+    OPTION_VISIT_NEXT_DOOR_NEIGHBOUR,
+    OPTION_VISIT_BATHHOUSE;
   }
   
   @Override
   protected void doEvent() {
-    setText(Text.EXPLANATION);
-    setBackgroundImage(Background.VILLAGE_HOME_INSIDE);
+    setText(Text.MAIN);
+    setBackgroundImage(Background.HOME_VILLAGE);
     setImage(null);
     
-    addOption(Text.OPTION_MASTURBATE, new Masturbate());
-    addOption(Text.OPTION_LEAVE_HOUSE, new HomeVillage());
+    addOption(Text.OPTION_GO_HOME, new HomeVillage()); // TODO
+    addOption(Text.OPTION_VISIT_HEALER, new Healer());
+    addOption(Text.OPTION_VISIT_MARKET, new HomeVillage()); // TODO
+    addOption(Text.OPTION_VISIT_NEXT_DOOR_NEIGHBOUR, new HomeVillage()); // TODO
+    addOption(Text.OPTION_VISIT_BATHHOUSE, new Bathhouse());
   }
 }

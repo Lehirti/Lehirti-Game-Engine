@@ -5,13 +5,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 public enum Key {
-  PREVIOUS('r', true),
-  NEXT('f', true),
-  
-  NORTH('w', true),
-  EAST('d', true),
-  SOUTH('s', true),
-  WEST('a', true),
+  OPTION_01('a', true),
+  OPTION_02('s', true),
+  OPTION_03('d', true),
+  OPTION_04('f', true),
+  OPTION_05('q', true),
+  OPTION_06('w', true),
+  OPTION_07('e', true),
+  OPTION_08('r', true),
   
   // image and text editors
   CTRL_I((char) 0x09, false),

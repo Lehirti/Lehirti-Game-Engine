@@ -157,6 +157,14 @@ public abstract class EventNode extends AbstractEvent implements Externalizable 
         }
       }
     }
+    cleanUp();
+  }
+  
+  /**
+   * can be overwritten by subclasses to do clean up work after the event is over and user input has been processed
+   */
+  protected void cleanUp() {
+    // empty in this base class
   }
   
   @Override

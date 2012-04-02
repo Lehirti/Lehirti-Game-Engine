@@ -32,7 +32,7 @@ public class EnterMaze extends EventNode {
     setImage(null);
     setText(Text.MAIN);
     
-    addOption(Key.NEXT, Text.OPTION_ENTER, new GoNorth());
+    addOption(Key.OPTION_02, Text.OPTION_ENTER, new GoNorth());
   }
   
 }

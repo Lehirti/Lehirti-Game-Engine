@@ -1,7 +1,6 @@
 package org.lehirti.mindcraft.intro;
 
 import org.lehirti.engine.events.EventNode;
-import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.mindcraft.images.TiffaniaWestwood;
 
@@ -16,6 +15,6 @@ public class Night1 extends EventNode {
     setText(Text.ELF);
     setImage(TiffaniaWestwood.NIGHT_01);
     
-    addOption(Key.NEXT, Text.OPTION_NEXT, new Morning1());
+    addOption(Text.OPTION_NEXT, new Morning1());
   }
 }

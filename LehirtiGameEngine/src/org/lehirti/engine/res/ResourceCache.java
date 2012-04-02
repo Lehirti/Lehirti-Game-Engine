@@ -34,6 +34,9 @@ public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
   }
   
   public static final synchronized TextWrapper get(final TextKey key) {
+    if (key == null) {
+      return null;
+    }
     return new TextWrapper(key);
   }
 }

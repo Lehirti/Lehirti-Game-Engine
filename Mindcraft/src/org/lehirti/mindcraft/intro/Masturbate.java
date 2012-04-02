@@ -13,6 +13,7 @@ public class Masturbate extends EventNode {
   protected void doEvent() {
     setText(Text.TEXT);
     setImage(Intro.MASTURBATE);
+    set(Bool.HAS_MASTURBATED_IN_THE_MORNING, true);
     
     addOption(Text.OPTION_LEAVE_HOUSE, new HomeVillage());
   }

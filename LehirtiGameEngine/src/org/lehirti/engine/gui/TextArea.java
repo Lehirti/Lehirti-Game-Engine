@@ -42,7 +42,9 @@ public class TextArea extends JTextArea implements Externalizable {
   }
   
   public void addText(final TextWrapper text) {
-    this.allTexts.add(text);
+    if (text != null) {
+      this.allTexts.add(text);
+    }
     refresh();
   }
   
