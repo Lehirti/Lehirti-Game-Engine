@@ -22,6 +22,15 @@
             <zipfileset excludes="META-INF/**" src="../../LehirtiGameEngine/lib/slf4j-api-1.6.4.jar"/>
             <zipfileset excludes="META-INF/**" src="../../LehirtiGameEngine/lib/slf4j-jdk14-1.6.4.jar"/>
         </jar>
+        <java classname="org.lehirti.tools.ExportCoreContent">
+            <classpath>
+                <pathelement path="../../LehirtiTools/bin"/>
+                <pathelement path="../../LehirtiGameEngine/bin"/>
+                <pathelement path="../bin"/>
+                <pathelement location="../../LehirtiGameEngine/lib/slf4j-api-1.6.4.jar"/>
+                <pathelement location="../../LehirtiGameEngine/lib/slf4j-jdk14-1.6.4.jar"/>
+            </classpath>
+        </java>
         <apply executable="tag_git_repo_with_build_id.sh" osfamily="unix" failonerror="true">
             <fileset dir="."/>
         </apply>

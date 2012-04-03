@@ -1,11 +1,11 @@
 package org.lehirti.mindcraft.intro;
 
 import org.lehirti.engine.res.images.ImageKey;
-import org.lehirti.engine.res.text.TextKey;
 
-public enum Intro implements ImageKey, TextKey {
+public enum Intro implements ImageKey {
   MASTURBATE,
   THREE_GIRLS_IN_BATHHOUSE,
   BLOWJOB_IN_BATHHOUSE,
-  GUYS_ONLY_IN_BATHHOUSE;
+  GUYS_ONLY_IN_BATHHOUSE,
+  FUTA_DAY_IN_BATHHOUSE;
 }

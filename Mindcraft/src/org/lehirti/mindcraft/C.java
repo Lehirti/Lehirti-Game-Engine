@@ -1,7 +1,7 @@
 package org.lehirti.mindcraft;
 
 public enum C {
-  MAIN(1),
+  MAIN(2),
   DUCKGIRLS(1);
   
   public final int requiredVersion;
