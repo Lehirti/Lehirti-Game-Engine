@@ -4,7 +4,7 @@
     <!--ANT 1.7 is required                                        -->
     <target name="create_run_jar">
         <apply executable="check_workspace_clean.sh" osfamily="unix" failonerror="true">
-            <fileset dir="."/>
+            <fileset dir="." includes="version"/>
         </apply>
         <propertyfile file="version">
             <entry key="date" type="date" value="now"/>
@@ -32,7 +32,10 @@
             </classpath>
         </java>
         <apply executable="tag_git_repo_with_build_id.sh" osfamily="unix" failonerror="true">
-            <fileset dir="."/>
+            <fileset dir="." includes="version"/>
+        </apply>
+        <apply executable="add_version_number_to_jar.sh" osfamily="unix" failonerror="false">
+            <fileset dir="." includes="version"/>
         </apply>
     </target>
 </project>
