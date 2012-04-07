@@ -7,8 +7,7 @@ import org.lehirti.mindcraft.images.Background;
 public class Morning1 extends EventNode {
   public static enum Text implements TextKey {
     EXPLANATION,
-    OPTION_MASTURBATE,
-    OPTION_LEAVE_HOUSE
+    OPTION_MASTURBATE
   }
   
   @Override
@@ -18,6 +17,6 @@ public class Morning1 extends EventNode {
     setImage(null);
     
     addOption(Text.OPTION_MASTURBATE, new Masturbate());
-    addOption(Text.OPTION_LEAVE_HOUSE, new HomeVillage());
+    addOption(HealerHut.Text.VISIT_HEALER, new HealerHut());
   }
 }

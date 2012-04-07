@@ -21,7 +21,6 @@ public class HomeVillage extends EventNode {
     setImage(null);
     
     addOption(Text.OPTION_GO_HOME, new HomeVillage()); // TODO
-    addOption(Text.OPTION_VISIT_HEALER, new Healer());
     addOption(Text.OPTION_VISIT_MARKET, new HomeVillage()); // TODO
     addOption(Text.OPTION_VISIT_NEXT_DOOR_NEIGHBOUR, new HomeVillage()); // TODO
     addOption(Text.OPTION_VISIT_BATHHOUSE, new Bathhouse());
