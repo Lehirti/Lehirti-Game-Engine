@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,7 @@ public class StateObject implements Externalizable {
   private final Map<IntState, Long> INT_MAP = new LinkedHashMap<IntState, Long>();
   private final Map<ObjState, Serializable> OBJ_MAP = new LinkedHashMap<ObjState, Serializable>();
   private final Map<StringState, String> STRING_MAP = new LinkedHashMap<StringState, String>();
+  private final Map<Class<?>, Enum<?>> PER_CLASS_STATE_MAP = new LinkedHashMap<Class<?>, Enum<?>>();
   
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // static getters for all state
@@ -94,6 +96,14 @@ public class StateObject implements Externalizable {
     INSTANCE.STRING_MAP.put(key, value);
   }
   
+  public static Enum<?> get(final Class<?> clazz) {
+    return INSTANCE.PER_CLASS_STATE_MAP.get(clazz);
+  }
+  
+  public static void set(final Class<?> clazz, final Enum<?> value) {
+    INSTANCE.PER_CLASS_STATE_MAP.put(clazz, value);
+  }
+  
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Save/Load
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,6 +145,10 @@ public class StateObject implements Externalizable {
     // there MUST NOT BE another constant between these two START/END constants
     END_STRING_MAP,
     
+    START_PER_CLASS_STATE_MAP,
+    // there MUST NOT BE another constant between these two START/END constants
+    END_PER_CLASS_STATE_MAP,
+    
     END_STATE_OBJECT;
     
     public OnDiskDelim getNext() {
@@ -143,8 +157,12 @@ public class StateObject implements Externalizable {
         return END_BOOL_MAP;
       case START_INT_MAP:
         return END_INT_MAP;
+      case START_OBJ_MAP:
+        return END_OBJ_MAP;
       case START_STRING_MAP:
         return END_STRING_MAP;
+      case START_PER_CLASS_STATE_MAP:
+        return END_PER_CLASS_STATE_MAP;
       default:
         throw new RuntimeException("No clearly defined next delim for: " + this.name());
       }
@@ -166,7 +184,19 @@ public class StateObject implements Externalizable {
     out.writeObject(OnDiskDelim.START_STRING_MAP.name());
     writeMap(out, this.STRING_MAP);
     out.writeObject(OnDiskDelim.END_STRING_MAP.name());
+    out.writeObject(OnDiskDelim.START_PER_CLASS_STATE_MAP.name());
+    writePerClassMap(out, this.PER_CLASS_STATE_MAP);
+    out.writeObject(OnDiskDelim.END_PER_CLASS_STATE_MAP.name());
     out.writeObject(OnDiskDelim.END_STATE_OBJECT.name());
+  }
+  
+  private void writePerClassMap(final ObjectOutput out, final Map<Class<?>, Enum<?>> map) throws IOException {
+    for (final Entry<Class<?>, Enum<?>> entry : map.entrySet()) {
+      out.writeObject(entry.getKey().getClass().getName());
+      final Enum<?> value = entry.getValue();
+      out.writeObject(value.getClass().getName());
+      out.writeObject(value.name());
+    }
   }
   
   private void writeMap(final ObjectOutput out, final Map<? extends State, ? extends Object> map) throws IOException {
@@ -192,6 +222,7 @@ public class StateObject implements Externalizable {
     INSTANCE.INT_MAP.clear();
     INSTANCE.OBJ_MAP.clear();
     INSTANCE.STRING_MAP.clear();
+    INSTANCE.PER_CLASS_STATE_MAP.clear();
     
     OnDiskDelim delim;
     while ((delim = OnDiskDelim.valueOf((String) in.readObject())) != OnDiskDelim.END_STATE_OBJECT) {
@@ -203,30 +234,45 @@ public class StateObject implements Externalizable {
   private void readMap(final ObjectInput in, final OnDiskDelim startDelim) throws IOException, ClassNotFoundException {
     String className;
     final OnDiskDelim endDelim = startDelim.getNext();
-    while (!endDelim.name().equals((className = (String) in.readObject()))) {
-      final String keyName = (String) in.readObject();
-      final Object value = in.readObject();
-      
-      try {
-        final State key = (State) Enum.valueOf((Class<? extends Enum>) Class.forName(className), keyName);
-        switch (startDelim) {
-        case START_BOOL_MAP:
-          INSTANCE.BOOL_MAP.put((BoolState) key, (Boolean) value);
-          break;
-        case START_INT_MAP:
-          INSTANCE.INT_MAP.put((IntState) key, (Long) value);
-          break;
-        case START_OBJ_MAP:
-          INSTANCE.OBJ_MAP.put((ObjState) key, (Serializable) value);
-          break;
-        case START_STRING_MAP:
-          INSTANCE.STRING_MAP.put((StringState) key, (String) value);
-          break;
-        default:
-          throw new RuntimeException("Unknown OnDiskDelim: " + startDelim.name());
+    if (startDelim == OnDiskDelim.START_PER_CLASS_STATE_MAP) {
+      while (!endDelim.name().equals((className = (String) in.readObject()))) {
+        final String valueClassName = (String) in.readObject();
+        final String valueName = (String) in.readObject();
+        final Class<?> key;
+        try {
+          key = Class.forName(className);
+          final Enum<?> value = Enum.valueOf((Class<? extends Enum>) Class.forName(valueClassName), valueName);
+          this.PER_CLASS_STATE_MAP.put(key, value);
+        } catch (final RuntimeException e) {
+          LOGGER.warn("Ignoring state " + valueClassName + "." + valueName + " for class " + className, e);
         }
-      } catch (final RuntimeException e) {
-        LOGGER.warn("Ignoring unkown state {}.{}={}", new Object[] { className, keyName, value });
+      }
+    } else {
+      while (!endDelim.name().equals((className = (String) in.readObject()))) {
+        final String keyName = (String) in.readObject();
+        final Object value = in.readObject();
+        
+        try {
+          final State key = (State) Enum.valueOf((Class<? extends Enum>) Class.forName(className), keyName);
+          switch (startDelim) {
+          case START_BOOL_MAP:
+            INSTANCE.BOOL_MAP.put((BoolState) key, (Boolean) value);
+            break;
+          case START_INT_MAP:
+            INSTANCE.INT_MAP.put((IntState) key, (Long) value);
+            break;
+          case START_OBJ_MAP:
+            INSTANCE.OBJ_MAP.put((ObjState) key, (Serializable) value);
+            break;
+          case START_STRING_MAP:
+            INSTANCE.STRING_MAP.put((StringState) key, (String) value);
+            break;
+          default:
+            throw new RuntimeException("Unknown OnDiskDelim: " + startDelim.name());
+          }
+        } catch (final RuntimeException e) {
+          LOGGER.warn("Ignoring unkown state {}.{}={}", new Object[] { className, keyName, value });
+        }
       }
     }
   }

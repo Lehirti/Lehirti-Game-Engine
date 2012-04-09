@@ -3,8 +3,9 @@ package org.lehirti.mindcraft.intro;
 import org.lehirti.engine.state.BoolState;
 
 public enum Bool implements BoolState {
-  HAS_MASTURBATED_IN_THE_MORNING,
+  YOU_ARE_HORNY,
   GOT_BLOWJOB_IN_BATHHOUSE,
+  MARKET_SELLER_FUCKED,
   HEALER_KNOWS_ABOUT_ELF;
   
   @Override

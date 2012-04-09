@@ -3,18 +3,18 @@ package org.lehirti.mindcraft.intro;
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
-import org.lehirti.mindcraft.images.TiffaniaWestwood;
 
-public class Night1 extends EventNode {
+public class Masturbate2 extends EventNode {
   public static enum Text implements TextKey {
-    DREAM1
+    TEXT
   }
   
   @Override
   protected void doEvent() {
-    setText(Text.DREAM1);
-    setImage(TiffaniaWestwood.NIGHT_01);
+    setText(Text.TEXT);
+    setImage(Intro.MASTURBATE);
+    set(Bool.YOU_ARE_HORNY, false);
     
-    addOption(CommonText.OPTION_NEXT, new Morning1());
+    addOption(CommonText.LEAVE_HOUSE, new HomeVillage());
   }
 }

@@ -15,8 +15,8 @@ public class DrostalToVogardHook implements LocationHook {
   }
   
   @Override
-  public Map<Event, Double> getCurrentEvents() {
-    final Map<Event, Double> map = new HashMap<Event, Double>();
+  public Map<Event<?>, Double> getCurrentEvents() {
+    final Map<Event<?>, Double> map = new HashMap<Event<?>, Double>();
     map.put(new Intro04(), Double.valueOf(50));
     map.put(new EnterMaze(), Double.valueOf(50));
     return map;

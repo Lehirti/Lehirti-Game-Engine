@@ -17,7 +17,7 @@ import org.lehirti.engine.state.StateObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class Location extends AbstractEvent {
+public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STATE> {
   private static final Logger LOGGER = LoggerFactory.getLogger(Location.class);
   
   private static final Map<Class<? extends Location>, Set<LocationHook>> LOCATION_DISPATCHERS = new HashMap<Class<? extends Location>, Set<LocationHook>>();

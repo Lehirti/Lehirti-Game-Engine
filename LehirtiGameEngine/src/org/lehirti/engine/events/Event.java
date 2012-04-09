@@ -2,7 +2,10 @@ package org.lehirti.engine.events;
 
 import org.lehirti.engine.gui.Key;
 
-public interface Event {
+public interface Event<STATE extends Enum<?>> {
+  public static enum NullState {
+  }
+  
   public void execute();
   
   public boolean handleKeyEvent(Key key);
@@ -21,4 +24,8 @@ public interface Event {
    * must be implemented by Events that return true to canBeSaved();
    */
   public void newEventHasBeenLoaded();
+  
+  public STATE getEventState();
+  
+  public void setEventState(STATE newState);
 }

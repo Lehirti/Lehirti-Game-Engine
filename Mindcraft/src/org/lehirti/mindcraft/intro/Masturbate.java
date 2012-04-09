@@ -12,7 +12,7 @@ public class Masturbate extends EventNode {
   protected void doEvent() {
     setText(Text.TEXT);
     setImage(Intro.MASTURBATE);
-    set(Bool.HAS_MASTURBATED_IN_THE_MORNING, true);
+    set(Bool.YOU_ARE_HORNY, false);
     
     addOption(HealerHut.Text.VISIT_HEALER, new HealerHut());
   }

@@ -24,13 +24,13 @@ import org.lehirti.engine.state.StringState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class EventNode extends AbstractEvent implements Externalizable {
+public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STATE> implements Externalizable {
   private static final long serialVersionUID = 1L;
   private static final Logger LOGGER = LoggerFactory.getLogger(EventNode.class);
   
-  private final ConcurrentMap<Key, Event> registeredEvents = new ConcurrentHashMap<Key, Event>();
+  private final ConcurrentMap<Key, Event<?>> registeredEvents = new ConcurrentHashMap<Key, Event<?>>();
   private transient final List<Key> availableOptionKeys = Key.getOptionKeys();
-  private transient final Map<Event, TextKey> optionsWithArbitraryKey = new LinkedHashMap<Event, TextKey>();
+  private transient final Map<Event<?>, TextKey> optionsWithArbitraryKey = new LinkedHashMap<Event<?>, TextKey>();
   
   private transient boolean canBeSaved = false;
   private transient boolean newEventHasBeenLoaded = false;
@@ -83,7 +83,7 @@ public abstract class EventNode extends AbstractEvent implements Externalizable 
     addText(ResourceCache.get(key));
   }
   
-  protected void addOption(final Key key, final TextKey text, final Event event) {
+  protected void addOption(final Key key, final TextKey text, final Event<?> event) {
     final boolean keyIsAvailable = this.availableOptionKeys.remove(key);
     if (!keyIsAvailable) {
       LOGGER.warn("Requested option key {} not available; using arbitrary option key instead.", key.name());
@@ -98,13 +98,13 @@ public abstract class EventNode extends AbstractEvent implements Externalizable 
     addText(text);
   }
   
-  protected void addOption(final TextKey text, final Event event) {
+  protected void addOption(final TextKey text, final Event<?> event) {
     this.optionsWithArbitraryKey.put(event, text);
   }
   
   private void addOptionsWithAritraryKeys() {
-    for (final Map.Entry<Event, TextKey> entry : this.optionsWithArbitraryKey.entrySet()) {
-      final Event event = entry.getKey();
+    for (final Map.Entry<Event<?>, TextKey> entry : this.optionsWithArbitraryKey.entrySet()) {
+      final Event<?> event = entry.getKey();
       final TextKey text = entry.getValue();
       if (this.availableOptionKeys.isEmpty()) {
         LOGGER.error("No more option keys available; dropping option " + ResourceCache.get(text).getValue());
@@ -173,7 +173,7 @@ public abstract class EventNode extends AbstractEvent implements Externalizable 
     for (int i = 0; i < nrOfEvents; i++) {
       final String name = (String) in.readObject();
       final Key key = Key.valueOf(name);
-      final Event event = (Event) in.readObject();
+      final Event<?> event = (Event<?>) in.readObject();
       this.registeredEvents.put(key, event);
     }
     
@@ -182,7 +182,7 @@ public abstract class EventNode extends AbstractEvent implements Externalizable 
   @Override
   public void writeExternal(final ObjectOutput out) throws IOException {
     out.writeInt(this.registeredEvents.size());
-    for (final Map.Entry<Key, Event> entry : this.registeredEvents.entrySet()) {
+    for (final Map.Entry<Key, Event<?>> entry : this.registeredEvents.entrySet()) {
       out.writeObject(entry.getKey().name());
       out.writeObject(entry.getValue());
     }
@@ -218,7 +218,7 @@ public abstract class EventNode extends AbstractEvent implements Externalizable 
   
   @Override
   public boolean handleKeyEvent(final Key key) {
-    final Event event = this.registeredEvents.get(key);
+    final Event<?> event = this.registeredEvents.get(key);
     if (event != null) {
       Main.currentEvent = event;
       synchronized (this) {

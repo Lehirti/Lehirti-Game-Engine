@@ -5,10 +5,11 @@ import java.lang.reflect.InvocationTargetException;
 import org.lehirti.engine.Main;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImageKey;
+import org.lehirti.engine.state.StateObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractEvent implements Event {
+public abstract class AbstractEvent<STATE extends Enum<?>> implements Event<STATE> {
   private static final Logger LOGGER = LoggerFactory.getLogger(AbstractEvent.class);
   
   private boolean repaintNeeded = false;
@@ -70,5 +71,17 @@ public abstract class AbstractEvent implements Event {
         "Event "
             + this.getClass().getName()
             + " is not in a state from which it can resume a newly loaded game. This is a program bug. We apologize for the inconvenience.");
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  public STATE getEventState() {
+    return (STATE) StateObject.get(getClass());
+  }
+  
+  @Override
+  public void setEventState(final STATE newState) {
+    StateObject.set(getClass(), newState);
+    
   }
 }

@@ -27,5 +27,5 @@ public interface LocationHook extends StaticInitializer {
    *         if the sum of the probabilities of all non-special events is greater than 100, all probabilities are scaled
    *         back proportionately.
    */
-  public abstract Map<Event, Double> getCurrentEvents();
+  public abstract Map<Event<?>, Double> getCurrentEvents();
 }

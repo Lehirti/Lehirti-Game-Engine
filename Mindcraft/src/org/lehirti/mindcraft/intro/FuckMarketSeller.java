@@ -4,13 +4,14 @@ import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.res.text.CommonText;
 
-public class BathhouseBlowjob extends EventNode<NullState> {
+public class FuckMarketSeller extends EventNode<NullState> {
+  
   @Override
   protected void doEvent() {
-    setImage(Intro.BLOWJOB_IN_BATHHOUSE);
-    setText(Intro.BLOWJOB_IN_BATHHOUSE);
-    set(Bool.GOT_BLOWJOB_IN_BATHHOUSE, true);
-    
+    setImage(Intro.MARKET_SELLER);
+    setText(Intro.MARKET_SELLER);
+    set(Bool.YOU_ARE_HORNY, false);
+    set(Bool.MARKET_SELLER_FUCKED, true);
     addOption(CommonText.OPTION_LEAVE, new HomeVillage());
   }
 }
