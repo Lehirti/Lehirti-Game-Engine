@@ -192,7 +192,7 @@ public class StateObject implements Externalizable {
   
   private void writePerClassMap(final ObjectOutput out, final Map<Class<?>, Enum<?>> map) throws IOException {
     for (final Entry<Class<?>, Enum<?>> entry : map.entrySet()) {
-      out.writeObject(entry.getKey().getClass().getName());
+      out.writeObject(entry.getKey().getName());
       final Enum<?> value = entry.getValue();
       out.writeObject(value.getClass().getName());
       out.writeObject(value.name());
@@ -242,7 +242,7 @@ public class StateObject implements Externalizable {
         try {
           key = Class.forName(className);
           final Enum<?> value = Enum.valueOf((Class<? extends Enum>) Class.forName(valueClassName), valueName);
-          this.PER_CLASS_STATE_MAP.put(key, value);
+          INSTANCE.PER_CLASS_STATE_MAP.put(key, value);
         } catch (final RuntimeException e) {
           LOGGER.warn("Ignoring state " + valueClassName + "." + valueName + " for class " + className, e);
         }
