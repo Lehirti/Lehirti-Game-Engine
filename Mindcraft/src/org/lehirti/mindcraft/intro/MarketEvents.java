@@ -17,7 +17,9 @@ public class MarketEvents implements LocationHook {
   public Map<Event<?>, Double> getCurrentEvents() {
     final Map<Event<?>, Double> events = new HashMap<Event<?>, Double>();
     if (StateObject.is(Bool.YOU_ARE_HORNY)) {
-      events.put(new FuckMarketSeller(), Double.valueOf(50.0d));
+      if (!StateObject.is(Bool.MARKET_SELLER_FUCKED)) {
+        events.put(new FuckMarketSeller(), Double.valueOf(50.0d));
+      }
       events.put(new FuckRandomMarketGoer(), Double.valueOf(100.0d));
     } else {
       events.put(new MeetRandomMarketGoer(), Double.valueOf(100.0d));

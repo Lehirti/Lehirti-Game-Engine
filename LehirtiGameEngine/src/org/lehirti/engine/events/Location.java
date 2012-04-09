@@ -1,5 +1,6 @@
 package org.lehirti.engine.events;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,7 +18,7 @@ import org.lehirti.engine.state.StateObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STATE> {
+public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STATE> implements Serializable {
   private static final Logger LOGGER = LoggerFactory.getLogger(Location.class);
   
   private static final Map<Class<? extends Location>, Set<LocationHook>> LOCATION_DISPATCHERS = new HashMap<Class<? extends Location>, Set<LocationHook>>();

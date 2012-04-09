@@ -10,6 +10,7 @@ public class BathhouseBlowjob extends EventNode<NullState> {
     setImage(Intro.BLOWJOB_IN_BATHHOUSE);
     setText(Intro.BLOWJOB_IN_BATHHOUSE);
     set(Bool.GOT_BLOWJOB_IN_BATHHOUSE, true);
+    set(Bool.YOU_ARE_HORNY, false);
     
     addOption(CommonText.OPTION_LEAVE, new HomeVillage());
   }

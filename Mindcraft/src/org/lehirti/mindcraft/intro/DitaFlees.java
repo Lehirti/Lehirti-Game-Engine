@@ -16,6 +16,6 @@ public class DitaFlees extends EventNode<NullState> {
     setText(Text.MAIN);
     setImage(Dita.RUNS_AWAY);
     
-    addOption(Text.RUN_AFTER_HER, new HealerHut()); // TODO
+    addOption(Text.RUN_AFTER_HER, new FuckDitaInWoods());
   }
 }

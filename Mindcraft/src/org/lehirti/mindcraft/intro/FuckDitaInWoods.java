@@ -6,16 +6,17 @@ import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.mindcraft.images.Dita;
 
-public class DitaIsAroused extends EventNode<NullState> {
+public class FuckDitaInWoods extends EventNode<NullState> {
   public static enum Text implements TextKey {
     MAIN
   }
   
   @Override
   protected void doEvent() {
+    setBackgroundImage(null);
     setText(Text.MAIN);
-    setImage(Dita.IS_AROUSED);
+    setImage(Dita.FUCKED_IN_WOODS);
     
-    addOption(CommonText.OPTION_LEAVE, new HomeVillage());
+    addOption(CommonText.OPTION_NEXT, new DitaTransformsIntoTiffania());
   }
 }
