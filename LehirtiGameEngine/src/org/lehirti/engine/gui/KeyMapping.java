@@ -6,7 +6,7 @@ import java.util.Properties;
 import org.lehirti.engine.util.FileUtils;
 
 public final class KeyMapping {
-  private static File PROPS_FILE = new File("config/KeyMapping.properties");
+  private static File PROPS_FILE = new File("config/" + KeyMapping.class.getSimpleName() + ".properties");
   
   private static Properties PROPS = null;
   

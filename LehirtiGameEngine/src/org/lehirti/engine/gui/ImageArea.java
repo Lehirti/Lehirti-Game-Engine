@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -32,6 +33,39 @@ public class ImageArea extends JComponent implements Externalizable {
   private ImageWrapper backgroundImage = null;
   
   private final List<ImageWrapper> foregroundImages = new ArrayList<ImageWrapper>(15);
+  
+  private final Object interpolation;
+  private final Object renderQuality;
+  private final Object antiAliasing;
+  
+  public ImageArea() {
+    final String interpolation = DisplayOptions.getDisplayOptionFor("INTERPOLATION", "BICUBIC");
+    if ("NEAREST_NEIGHBOR".equals(interpolation)) {
+      this.interpolation = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;
+    } else if ("BILINEAR".equals(interpolation)) {
+      this.interpolation = RenderingHints.VALUE_INTERPOLATION_BILINEAR;
+    } else {
+      this.interpolation = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
+    }
+    
+    final String renderQuality = DisplayOptions.getDisplayOptionFor("RENDERING", "QUALITY");
+    if ("SPEED".equals(renderQuality)) {
+      this.renderQuality = RenderingHints.VALUE_RENDER_SPEED;
+    } else if ("DEFAULT".equals(renderQuality)) {
+      this.renderQuality = RenderingHints.VALUE_RENDER_DEFAULT;
+    } else {
+      this.renderQuality = RenderingHints.VALUE_RENDER_QUALITY;
+    }
+    
+    final String antiAliasing = DisplayOptions.getDisplayOptionFor("ANTIALIASING", "ON");
+    if ("DEFAULT".equals(antiAliasing)) {
+      this.antiAliasing = RenderingHints.VALUE_ANTIALIAS_DEFAULT;
+    } else if ("OF".equals(antiAliasing)) {
+      this.antiAliasing = RenderingHints.VALUE_ANTIALIAS_OFF;
+    } else {
+      this.antiAliasing = RenderingHints.VALUE_ANTIALIAS_ON;
+    }
+  }
   
   @Override
   public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
@@ -102,9 +136,9 @@ public class ImageArea extends JComponent implements Externalizable {
     final Graphics2D g2d = (Graphics2D) g;
     g2d.setComposite(AlphaComposite.SrcAtop);
     
-    // g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-    // g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-    // g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, this.interpolation);
+    g2d.setRenderingHint(RenderingHints.KEY_RENDERING, this.renderQuality);
+    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, this.antiAliasing);
     
     if (this.backgroundImage != null) {
       final int[] coords = this.backgroundImage.calculateCoordinates(getWidth(), getHeight());

@@ -50,7 +50,7 @@ public abstract class Main {
   
   public static boolean IS_DEVELOPMENT_VERSION = false;
   
-  public static volatile Event currentEvent = null;
+  public static volatile Event<?> currentEvent = null;
   
   private void createAndShowGUI() {
     
@@ -140,8 +140,8 @@ public abstract class Main {
       StateObject.load(ois);
       IMAGE_AREA.readExternal(ois);
       TEXT_AREA.readExternal(ois);
-      final Event oldEvent = currentEvent;
-      currentEvent = (Event) ois.readObject();
+      final Event<?> oldEvent = currentEvent;
+      currentEvent = (Event<?>) ois.readObject();
       synchronized (oldEvent) {
         oldEvent.newEventHasBeenLoaded();
         oldEvent.notifyAll();
@@ -212,7 +212,7 @@ public abstract class Main {
     }
   }
   
-  protected Event getCurrentEvent() {
+  protected Event<?> getCurrentEvent() {
     return Main.currentEvent;
   }
   
