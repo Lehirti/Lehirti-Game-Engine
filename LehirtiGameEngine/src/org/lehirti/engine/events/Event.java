@@ -1,6 +1,9 @@
 package org.lehirti.engine.events;
 
+import java.util.Collection;
+
 import org.lehirti.engine.gui.Key;
+import org.lehirti.engine.res.images.ImageKey;
 
 public interface Event<STATE extends Enum<?>> {
   public static enum NullState {
@@ -28,4 +31,6 @@ public interface Event<STATE extends Enum<?>> {
   public STATE getEventState();
   
   public void setEventState(STATE newState);
+  
+  public Collection<ImageKey> getAllUsedImages();
 }

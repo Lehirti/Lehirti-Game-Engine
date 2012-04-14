@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.concurrent.BlockingQueue;
 
 import javax.swing.JFrame;
 
@@ -24,6 +25,8 @@ import org.lehirti.engine.gui.ImageEditor;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.gui.TextArea;
 import org.lehirti.engine.gui.TextEditor;
+import org.lehirti.engine.res.ResourceCache;
+import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.images.ImageWrapper;
 import org.lehirti.engine.state.StateObject;
 import org.lehirti.engine.state.StaticInitializer;
@@ -220,6 +223,26 @@ public abstract class Main {
     readVersion();
     
     readContent();
+    
+    // start background daemon thread to preload next images
+    final Thread backgroundImageLoader = new Thread(new Runnable() {
+      
+      @Override
+      public void run() {
+        final BlockingQueue<ImageKey> imagesToPreload = ResourceCache.getImagesToPreload();
+        try {
+          while (true) {
+            final ImageKey nextImageToPreload = imagesToPreload.take();
+            ResourceCache.cache(nextImageToPreload);
+          }
+        } catch (final InterruptedException e) {
+          LOGGER.warn("Thread " + Thread.currentThread().getName() + " has been interrupted and is terminating.", e);
+          return;
+        }
+      }
+    }, "BackgroundImageLoader");
+    backgroundImageLoader.setDaemon(true);
+    backgroundImageLoader.start();
     
     /*
      * load all modules

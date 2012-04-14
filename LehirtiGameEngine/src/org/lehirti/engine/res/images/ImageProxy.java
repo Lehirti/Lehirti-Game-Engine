@@ -6,8 +6,7 @@ import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.Properties;
 
-import javax.imageio.ImageIO;
-
+import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.util.FileUtils;
 import org.lehirti.engine.util.Hash;
 import org.lehirti.engine.util.PathFinder;
@@ -132,15 +131,9 @@ public class ImageProxy {
         return null;
       }
     }
-    try {
-      LOGGER.debug("Reading image file {}", imageFile.getAbsolutePath());
-      final BufferedImage image = ImageIO.read(imageFile);
-      return new ImageProxy(imageProxyFile, imageFile, image);
-    } catch (final IOException ex) {
-      LOGGER.warn("Cannot read actual image file " + imageFile.getAbsolutePath()
-          + ". It seems not be a known image file format.", ex);
-      return null;
-    }
+    LOGGER.debug("Reading image file {}", imageFile.getAbsolutePath());
+    final BufferedImage image = ResourceCache.getRawImage(imageFile);
+    return new ImageProxy(imageProxyFile, imageFile, image);
   }
   
   /**
@@ -201,27 +194,27 @@ public class ImageProxy {
   }
   
   BufferedImage getImage() {
-    final long start = System.currentTimeMillis();
-    try {
-      if (this.imageFile == null) {
-        return NULL_IMAGE;
-      }
-      
-      BufferedImage bufferedImage = this.image.get();
-      if (bufferedImage == null) {
-        try {
-          bufferedImage = ImageIO.read(this.imageFile);
-          this.image = new SoftReference<BufferedImage>(bufferedImage);
-        } catch (final IOException e) {
-          LOGGER.error("Failed to read previously readable image " + this.imageFile.getAbsolutePath(), e);
-          return NULL_IMAGE;
-        }
-      }
-      return bufferedImage;
-    } finally {
-      final long finished = System.currentTimeMillis();
-      LOGGER.debug("Time to load image {}: {} ms", this.imageFile.getAbsolutePath(), finished - start);
+    if (this.imageFile == null) {
+      return NULL_IMAGE;
     }
+    
+    BufferedImage bufferedImage = this.image.get();
+    if (bufferedImage == null) {
+      bufferedImage = ResourceCache.getRawImage(this.imageFile);
+      if (bufferedImage == null) {
+        LOGGER.error("Failed to read previously readable image " + this.imageFile.getAbsolutePath());
+        return NULL_IMAGE;
+      } else {
+        this.image = new SoftReference<BufferedImage>(bufferedImage);
+      }
+    }
+    return bufferedImage;
+  }
+  
+  public void cache() {
+    final BufferedImage bufferedImage = getImage();
+    ResourceCache.cacheRawImage(this.imageFile, bufferedImage);
+    
   }
   
   int[] calculateCoordinates(final int screenWidth, final int screenHeight) {

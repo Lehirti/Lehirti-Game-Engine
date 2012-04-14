@@ -1,11 +1,12 @@
 package org.lehirti.mindcraft.intro;
 
 import org.lehirti.engine.events.EventNode;
+import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.mindcraft.images.TiffaniaWestwood;
 
-public class Night1 extends EventNode {
+public class Night1 extends EventNode<NullState> {
   public static enum Text implements TextKey {
     DREAM1
   }

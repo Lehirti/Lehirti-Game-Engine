@@ -19,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STATE> implements Serializable {
+  private static final long serialVersionUID = 1L;
+  
   private static final Logger LOGGER = LoggerFactory.getLogger(Location.class);
   
   private static final Map<Class<? extends Location<?>>, Set<LocationHook>> LOCATION_DISPATCHERS = new HashMap<Class<? extends Location<?>>, Set<LocationHook>>();
@@ -62,6 +64,13 @@ public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STAT
         this.nextEvent = getRandomRegularOrDefaultEvent(eventsToChooseFrom);
       }
     }
+  }
+  
+  @Override
+  public Collection<ImageKey> getAllUsedImages() {
+    final Set<ImageKey> usedImages = new HashSet<ImageKey>();
+    usedImages.add(getBackgroundImageToDisplay());
+    return usedImages;
   }
   
   @Override

@@ -1,14 +1,37 @@
 package org.lehirti.engine.res;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import javax.imageio.ImageIO;
 
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.images.ImageWrapper;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCache.class);
+  
+  private static final Map<String, BufferedImage> RAW_IMAGE_CACHE = new LinkedHashMap<String, BufferedImage>() {
+    private static final long serialVersionUID = 1L;
+    
+    @Override
+    protected boolean removeEldestEntry(final Map.Entry<String, BufferedImage> eldest) {
+      return size() > 50; // TODO make cache size configurable
+    }
+  };
+  
+  private static final BlockingQueue<ImageKey> IMAGES_TO_PRELOAD = new LinkedBlockingQueue<ImageKey>();
+  
   private static final ResourceCache<ImageKey, ImageWrapper> IMAGE_CACHE = new ResourceCache<ImageKey, ImageWrapper>() {
     @Override
     protected ImageWrapper getInstance(final ImageKey key) {
@@ -38,5 +61,38 @@ public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
       return null;
     }
     return new TextWrapper(key);
+  }
+  
+  public static void cacheRawImage(final File imageFile, final BufferedImage bufferedImage) {
+    synchronized (RAW_IMAGE_CACHE) {
+      RAW_IMAGE_CACHE.put(imageFile.getName(), bufferedImage);
+    }
+  }
+  
+  public static BufferedImage getRawImage(final File imageFile) {
+    synchronized (RAW_IMAGE_CACHE) {
+      BufferedImage bufferedImage = RAW_IMAGE_CACHE.get(imageFile.getName());
+      if (bufferedImage != null) {
+        return bufferedImage;
+      } else {
+        try {
+          bufferedImage = ImageIO.read(imageFile);
+          RAW_IMAGE_CACHE.put(imageFile.getName(), bufferedImage);
+          return bufferedImage;
+        } catch (final IOException e) {
+          LOGGER.error("Failed to read image " + imageFile.getAbsolutePath(), e);
+          return null;
+        }
+      }
+    }
+  }
+  
+  public static void cache(final ImageKey imageKey) {
+    final ImageWrapper imageWrapper = get(imageKey);
+    imageWrapper.cache();
+  }
+  
+  public static BlockingQueue<ImageKey> getImagesToPreload() {
+    return IMAGES_TO_PRELOAD;
   }
 }

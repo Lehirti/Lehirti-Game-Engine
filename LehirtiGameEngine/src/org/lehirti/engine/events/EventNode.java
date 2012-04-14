@@ -5,15 +5,19 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.lehirti.engine.Main;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.ResourceCache;
+import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
@@ -121,7 +125,7 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
   
   public void execute() {
     LOGGER.info("Event: {}", getClass().getName());
-    loadImages();
+    stopBackgroundLoadingOfImages();
     
     doEvent();
     
@@ -129,14 +133,25 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
     
     repaintImagesIfNeeded();
     
+    backgroundLoadNextImages();
+    
     resumeFromSavePoint();
   }
   
-  /*
-   * to be overwritten by subclasses
-   */
-  protected void loadImages() {
-    
+  @Override
+  public Collection<ImageKey> getAllUsedImages() {
+    return Collections.emptySet(); // TODO remove
+  }
+  
+  private void stopBackgroundLoadingOfImages() {
+    ResourceCache.getImagesToPreload().clear();
+  }
+  
+  private void backgroundLoadNextImages() {
+    final BlockingQueue<ImageKey> imagePreloadQueue = ResourceCache.getImagesToPreload();
+    for (final Event<?> possibleNextEvent : this.registeredEvents.values()) {
+      imagePreloadQueue.addAll(possibleNextEvent.getAllUsedImages());
+    }
   }
   
   @Override

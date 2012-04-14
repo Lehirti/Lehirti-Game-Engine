@@ -39,7 +39,7 @@ public class ImageArea extends JComponent implements Externalizable {
   private final Object antiAliasing;
   
   public ImageArea() {
-    final String interpolation = DisplayOptions.getDisplayOptionFor("INTERPOLATION", "BICUBIC");
+    final String interpolation = DisplayOptions.getDisplayOptionFor("INTERPOLATION", "BILINEAR");
     if ("NEAREST_NEIGHBOR".equals(interpolation)) {
       this.interpolation = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;
     } else if ("BILINEAR".equals(interpolation)) {
@@ -48,7 +48,7 @@ public class ImageArea extends JComponent implements Externalizable {
       this.interpolation = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
     }
     
-    final String renderQuality = DisplayOptions.getDisplayOptionFor("RENDERING", "QUALITY");
+    final String renderQuality = DisplayOptions.getDisplayOptionFor("RENDERING", "DEFAULT");
     if ("SPEED".equals(renderQuality)) {
       this.renderQuality = RenderingHints.VALUE_RENDER_SPEED;
     } else if ("DEFAULT".equals(renderQuality)) {
@@ -57,7 +57,7 @@ public class ImageArea extends JComponent implements Externalizable {
       this.renderQuality = RenderingHints.VALUE_RENDER_QUALITY;
     }
     
-    final String antiAliasing = DisplayOptions.getDisplayOptionFor("ANTIALIASING", "ON");
+    final String antiAliasing = DisplayOptions.getDisplayOptionFor("ANTIALIASING", "OFF");
     if ("DEFAULT".equals(antiAliasing)) {
       this.antiAliasing = RenderingHints.VALUE_ANTIALIAS_DEFAULT;
     } else if ("OF".equals(antiAliasing)) {

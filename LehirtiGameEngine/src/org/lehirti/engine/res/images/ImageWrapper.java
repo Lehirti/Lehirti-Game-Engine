@@ -130,4 +130,10 @@ public final class ImageWrapper {
   public String toButtonString() {
     return "<html>" + this.key.getClass().getSimpleName() + "<br/>" + this.key.name() + "</html>";
   }
+  
+  public void cache() {
+    for (final ImageProxy proxy : this.proxies) {
+      proxy.cache();
+    }
+  }
 }

@@ -7,6 +7,7 @@ import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.mindcraft.images.Background;
 
 public class Market extends Location<NullState> {
+  private static final long serialVersionUID = 1L;
   
   @Override
   protected ImageKey getBackgroundImageToDisplay() {
