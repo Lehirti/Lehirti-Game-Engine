@@ -2,7 +2,7 @@ package org.atrun.locations;
 
 import org.atrun.images.Background;
 import org.atrun.intro.events.Intro01;
-import org.lehirti.engine.Main;
+import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.Location;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.res.images.ImageKey;
@@ -15,7 +15,7 @@ public class DrostalToVogard extends Location<NullState> {
   }
   
   @Override
-  protected void scheduleNullEvent() {
-    Main.currentEvent = new Intro01();
+  protected Event<?> getNullEvent() {
+    return new Intro01();
   }
 }

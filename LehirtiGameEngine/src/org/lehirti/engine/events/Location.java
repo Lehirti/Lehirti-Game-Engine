@@ -21,9 +21,9 @@ import org.slf4j.LoggerFactory;
 public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STATE> implements Serializable {
   private static final Logger LOGGER = LoggerFactory.getLogger(Location.class);
   
-  private static final Map<Class<? extends Location>, Set<LocationHook>> LOCATION_DISPATCHERS = new HashMap<Class<? extends Location>, Set<LocationHook>>();
+  private static final Map<Class<? extends Location<?>>, Set<LocationHook>> LOCATION_DISPATCHERS = new HashMap<Class<? extends Location<?>>, Set<LocationHook>>();
   
-  public static synchronized void registerDispatcher(final Class<? extends Location> location,
+  public static synchronized void registerDispatcher(final Class<? extends Location<?>> location,
       final LocationHook dispatcher) {
     Set<LocationHook> dispatchers = LOCATION_DISPATCHERS.get(location);
     if (dispatchers == null) {
@@ -33,6 +33,37 @@ public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STAT
     dispatchers.add(dispatcher);
   }
   
+  private final Event<?> nextEvent;
+  
+  public Location() {
+    final Set<LocationHook> dispatchersForThisLocation = LOCATION_DISPATCHERS.get(this.getClass());
+    
+    final Map<Event<?>, Double> probablityPerEventMap = new HashMap<Event<?>, Double>();
+    if (dispatchersForThisLocation != null) {
+      for (final LocationHook dispatcher : dispatchersForThisLocation) {
+        probablityPerEventMap.putAll(dispatcher.getCurrentEvents());
+      }
+    }
+    if (probablityPerEventMap.isEmpty()) {
+      this.nextEvent = getNullEvent();
+    } else {
+      final List<Event<?>> probabilityAlwaysEvents = getProbabilityAlwaysEvents(probablityPerEventMap);
+      if (!probabilityAlwaysEvents.isEmpty()) {
+        this.nextEvent = getRandomProbabilityAlwaysEvent(probabilityAlwaysEvents);
+      } else {
+        final Map<Event<?>, Double> eventsToChooseFrom = removeRegularEvents(probablityPerEventMap);
+        final double totalProbabilityOfRegularEvents = getTotalProbablility(eventsToChooseFrom.values());
+        if (totalProbabilityOfRegularEvents < 100.0D) {
+          eventsToChooseFrom.putAll(getDefaultEvents(probablityPerEventMap.keySet(),
+              100.0D - totalProbabilityOfRegularEvents));
+        } else if (totalProbabilityOfRegularEvents > 100.0D) {
+          scaleTotalProbabilityTo100Percent(eventsToChooseFrom, totalProbabilityOfRegularEvents);
+        }
+        this.nextEvent = getRandomRegularOrDefaultEvent(eventsToChooseFrom);
+      }
+    }
+  }
+  
   @Override
   public void execute() {
     LOGGER.info("Location: {}", getClass().getName());
@@ -40,31 +71,7 @@ public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STAT
     setBackgroundImage(getBackgroundImageToDisplay());
     repaintImagesIfNeeded();
     
-    final Set<LocationHook> dispatchersForThisLocation = LOCATION_DISPATCHERS.get(this.getClass());
-    
-    final Map<Event, Double> probablityPerEventMap = new HashMap<Event, Double>();
-    if (dispatchersForThisLocation != null) {
-      for (final LocationHook dispatcher : dispatchersForThisLocation) {
-        probablityPerEventMap.putAll(dispatcher.getCurrentEvents());
-      }
-    }
-    if (probablityPerEventMap.isEmpty()) {
-      scheduleNullEvent();
-    }
-    final List<Event> probabilityAlwaysEvents = getProbabilityAlwaysEvents(probablityPerEventMap);
-    if (!probabilityAlwaysEvents.isEmpty()) {
-      scheduleRandomProbabilityAlwaysEvent(probabilityAlwaysEvents);
-    } else {
-      final Map<Event, Double> eventsToChooseFrom = removeRegularEvents(probablityPerEventMap);
-      final double totalProbabilityOfRegularEvents = getTotalProbablility(eventsToChooseFrom.values());
-      if (totalProbabilityOfRegularEvents < 100.0D) {
-        eventsToChooseFrom.putAll(getDefaultEvents(probablityPerEventMap.keySet(),
-            100.0D - totalProbabilityOfRegularEvents));
-      } else if (totalProbabilityOfRegularEvents > 100.0D) {
-        scaleTotalProbabilityTo100Percent(eventsToChooseFrom, totalProbabilityOfRegularEvents);
-      }
-      scheduleRandomRegularOrDefaultEvent(eventsToChooseFrom);
-    }
+    Main.currentEvent = this.nextEvent;
   }
   
   /**
@@ -74,21 +81,22 @@ public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STAT
    * @param events
    * @param totalProbabilityOfEvents
    */
-  private static void scaleTotalProbabilityTo100Percent(final Map<Event, Double> events,
+  private static void scaleTotalProbabilityTo100Percent(final Map<Event<?>, Double> events,
       final double totalProbabilityOfEvents) {
     final double scalingFactor = 100.0D / totalProbabilityOfEvents;
-    for (final Map.Entry<Event, Double> entry : events.entrySet()) {
+    for (final Map.Entry<Event<?>, Double> entry : events.entrySet()) {
       entry.setValue(Double.valueOf(entry.getValue().doubleValue() * scalingFactor));
     }
   }
   
-  private static Map<Event, Double> getDefaultEvents(final Set<Event> defaultEvents, final double remainingProbability) {
+  private static Map<Event<?>, Double> getDefaultEvents(final Set<Event<?>> defaultEvents,
+      final double remainingProbability) {
     if (defaultEvents.isEmpty()) {
       return Collections.emptyMap();
     }
     final Double probabilityPerDefaultEvent = Double.valueOf(remainingProbability / defaultEvents.size());
-    final Map<Event, Double> defaultEventsMap = new HashMap<Event, Double>();
-    for (final Event defaultEvent : defaultEvents) {
+    final Map<Event<?>, Double> defaultEventsMap = new HashMap<Event<?>, Double>();
+    for (final Event<?> defaultEvent : defaultEvents) {
       defaultEventsMap.put(defaultEvent, probabilityPerDefaultEvent);
     }
     return defaultEventsMap;
@@ -106,11 +114,11 @@ public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STAT
    * @param probablityPerEventMap
    * @return regular events
    */
-  private static Map<Event, Double> removeRegularEvents(final Map<Event, Double> probablityPerEventMap) {
-    final Map<Event, Double> regularEvents = new HashMap<Event, Double>();
-    final Iterator<Map.Entry<Event, Double>> itr = probablityPerEventMap.entrySet().iterator();
+  private static Map<Event<?>, Double> removeRegularEvents(final Map<Event<?>, Double> probablityPerEventMap) {
+    final Map<Event<?>, Double> regularEvents = new HashMap<Event<?>, Double>();
+    final Iterator<Map.Entry<Event<?>, Double>> itr = probablityPerEventMap.entrySet().iterator();
     while (itr.hasNext()) {
-      final Entry<Event, Double> eventEntry = itr.next();
+      final Entry<Event<?>, Double> eventEntry = itr.next();
       if (eventEntry.getValue().doubleValue() > LocationHook.PROBABILITY_DEFAULT + 0.5 /* rounding errors */) {
         regularEvents.put(eventEntry.getKey(), eventEntry.getValue());
         itr.remove();
@@ -119,28 +127,27 @@ public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STAT
     return regularEvents;
   }
   
-  private void scheduleRandomRegularOrDefaultEvent(final Map<Event, Double> eventsToChooseFrom) {
+  private Event<?> getRandomRegularOrDefaultEvent(final Map<Event<?>, Double> eventsToChooseFrom) {
     double remainingProbabilityFromDieRoll = StateObject.DIE.nextDouble() * 100.0D;
-    for (final Map.Entry<Event, Double> entry : eventsToChooseFrom.entrySet()) {
+    for (final Map.Entry<Event<?>, Double> entry : eventsToChooseFrom.entrySet()) {
       if (remainingProbabilityFromDieRoll < entry.getValue().doubleValue()) {
-        Main.currentEvent = entry.getKey();
-        return;
+        return entry.getKey();
       }
       remainingProbabilityFromDieRoll -= entry.getValue().doubleValue();
     }
-    scheduleNullEvent();
+    return getNullEvent();
   }
   
-  private static void scheduleRandomProbabilityAlwaysEvent(final List<Event> probabilityAlwaysEvents) {
+  private static Event<?> getRandomProbabilityAlwaysEvent(final List<Event<?>> probabilityAlwaysEvents) {
     if (probabilityAlwaysEvents.size() > 1) {
       LOGGER.warn(probabilityAlwaysEvents.size() + " events with probabilty \"ALWAYS\". Only one will occur.");
     }
-    Main.currentEvent = probabilityAlwaysEvents.get(StateObject.DIE.nextInt(probabilityAlwaysEvents.size()));
+    return probabilityAlwaysEvents.get(StateObject.DIE.nextInt(probabilityAlwaysEvents.size()));
   }
   
-  private static List<Event> getProbabilityAlwaysEvents(final Map<Event, Double> probablityPerEventMap) {
-    final List<Event> probAlwaysEvents = new LinkedList<Event>();
-    for (final Map.Entry<Event, Double> entry : probablityPerEventMap.entrySet()) {
+  private static List<Event<?>> getProbabilityAlwaysEvents(final Map<Event<?>, Double> probablityPerEventMap) {
+    final List<Event<?>> probAlwaysEvents = new LinkedList<Event<?>>();
+    for (final Map.Entry<Event<?>, Double> entry : probablityPerEventMap.entrySet()) {
       if (entry.getValue().doubleValue() < LocationHook.PROBABILITY_ALWAYS + 0.5 /* rounding errors */) {
         probAlwaysEvents.add(entry.getKey());
       }
@@ -148,7 +155,7 @@ public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STAT
     return probAlwaysEvents;
   }
   
-  protected abstract void scheduleNullEvent();
+  protected abstract Event<?> getNullEvent();
   
   protected abstract ImageKey getBackgroundImageToDisplay();
 }

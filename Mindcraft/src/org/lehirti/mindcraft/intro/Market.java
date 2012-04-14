@@ -1,6 +1,6 @@
 package org.lehirti.mindcraft.intro;
 
-import org.lehirti.engine.Main;
+import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.Location;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.res.images.ImageKey;
@@ -14,7 +14,7 @@ public class Market extends Location<NullState> {
   }
   
   @Override
-  protected void scheduleNullEvent() {
-    Main.currentEvent = new HomeVillage();
+  protected Event<?> getNullEvent() {
+    return new HomeVillage();
   }
 }

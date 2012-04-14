@@ -201,21 +201,27 @@ public class ImageProxy {
   }
   
   BufferedImage getImage() {
-    if (this.imageFile == null) {
-      return NULL_IMAGE;
-    }
-    
-    BufferedImage bufferedImage = this.image.get();
-    if (bufferedImage == null) {
-      try {
-        bufferedImage = ImageIO.read(this.imageFile);
-        this.image = new SoftReference<BufferedImage>(bufferedImage);
-      } catch (final IOException e) {
-        LOGGER.error("Failed to read previously readable image " + this.imageFile.getAbsolutePath(), e);
+    final long start = System.currentTimeMillis();
+    try {
+      if (this.imageFile == null) {
         return NULL_IMAGE;
       }
+      
+      BufferedImage bufferedImage = this.image.get();
+      if (bufferedImage == null) {
+        try {
+          bufferedImage = ImageIO.read(this.imageFile);
+          this.image = new SoftReference<BufferedImage>(bufferedImage);
+        } catch (final IOException e) {
+          LOGGER.error("Failed to read previously readable image " + this.imageFile.getAbsolutePath(), e);
+          return NULL_IMAGE;
+        }
+      }
+      return bufferedImage;
+    } finally {
+      final long finished = System.currentTimeMillis();
+      LOGGER.debug("Time to load image {}: {} ms", this.imageFile.getAbsolutePath(), finished - start);
     }
-    return bufferedImage;
   }
   
   int[] calculateCoordinates(final int screenWidth, final int screenHeight) {

@@ -121,6 +121,8 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
   
   public void execute() {
     LOGGER.info("Event: {}", getClass().getName());
+    loadImages();
+    
     doEvent();
     
     addOptionsWithAritraryKeys();
@@ -128,6 +130,13 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
     repaintImagesIfNeeded();
     
     resumeFromSavePoint();
+  }
+  
+  /*
+   * to be overwritten by subclasses
+   */
+  protected void loadImages() {
+    
   }
   
   @Override
