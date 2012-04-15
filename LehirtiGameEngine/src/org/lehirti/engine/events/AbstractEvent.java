@@ -17,7 +17,11 @@ public abstract class AbstractEvent<STATE extends Enum<?>> implements Event<STAT
   protected void setImage(final ImageKey key) {
     Main.IMAGE_AREA.setImage(key);
     this.repaintNeeded = true;
-    
+  }
+  
+  protected void addImage(final ImageKey key) {
+    Main.IMAGE_AREA.addImage(key);
+    this.repaintNeeded = true;
   }
   
   protected void setBackgroundImage(final ImageKey key) {

@@ -4,10 +4,11 @@ import org.atrun.maze.res.MazeImage;
 import org.atrun.maze.res.MazeText;
 import org.atrun.maze.state.MazeState;
 import org.lehirti.engine.events.EventNode;
+import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.text.TextKey;
 
-public abstract class MazeEvent extends EventNode {
+public abstract class MazeEvent extends EventNode<NullState> {
   private static final long serialVersionUID = 1L;
   
   public static enum Text implements TextKey {

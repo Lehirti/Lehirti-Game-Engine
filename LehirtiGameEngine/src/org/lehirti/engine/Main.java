@@ -233,6 +233,7 @@ public abstract class Main {
         try {
           while (true) {
             final ImageKey nextImageToPreload = imagesToPreload.take();
+            LOGGER.info("Caching image " + nextImageToPreload.getClass().getName() + "." + nextImageToPreload.name());
             ResourceCache.cache(nextImageToPreload);
           }
         } catch (final InterruptedException e) {

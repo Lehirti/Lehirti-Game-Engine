@@ -3,16 +3,23 @@ package org.atrun.maze.events;
 import org.atrun.images.Background;
 import org.atrun.maze.state.MazeState;
 import org.lehirti.engine.events.EventNode;
+import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
+import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.state.StateObject;
 
-public class EnterMaze extends EventNode {
+public class EnterMaze extends EventNode<NullState> {
   private static final long serialVersionUID = 1L;
   
   public static enum Text implements TextKey {
     MAIN,
     OPTION_ENTER
+  }
+  
+  @Override
+  protected ImgChange updateImageArea() {
+    return ImgChange.setBGAndFG(Background.ENTER_MAZE);
   }
   
   @Override
@@ -28,11 +35,8 @@ public class EnterMaze extends EventNode {
     // enter maze at random point
     MazeState.setCurrentPosition(StateObject.DIE.nextLong());
     
-    setBackgroundImage(Background.ENTER_MAZE);
-    setImage(null);
     setText(Text.MAIN);
     
     addOption(Key.OPTION_02, Text.OPTION_ENTER, new GoNorth());
   }
-  
 }

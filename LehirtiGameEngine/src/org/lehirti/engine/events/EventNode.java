@@ -6,10 +6,11 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -18,6 +19,7 @@ import org.lehirti.engine.Main;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.images.ImageKey;
+import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
@@ -127,6 +129,8 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
     LOGGER.info("Event: {}", getClass().getName());
     stopBackgroundLoadingOfImages();
     
+    performImageAreaUpdates();
+    
     doEvent();
     
     addOptionsWithAritraryKeys();
@@ -138,9 +142,44 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
     resumeFromSavePoint();
   }
   
+  private void performImageAreaUpdates() {
+    final ImgChange change = updateImageArea();
+    if (change.isUpdateBackground()) {
+      setBackgroundImage(change.getBackground());
+    }
+    if (change.isClearForeground()) {
+      setImage(null);
+    }
+    for (final ImageKey imageToRemove : change.getRemovedFGImages()) {
+      removeImage(imageToRemove);
+    }
+    for (final ImageKey image : change.getAddedFGImages()) {
+      addImage(image);
+    }
+  }
+  
+  /**
+   * to be overwritten by subclasses to update the images display on screen; this method is called before doEvent();
+   * <b>this method may be called even if the event is not executed, so don't do anything but return a ImgChange
+   * object</b>
+   */
+  
+  abstract protected ImgChange updateImageArea();
+  
   @Override
-  public Collection<ImageKey> getAllUsedImages() {
-    return Collections.emptySet(); // TODO remove
+  public final Collection<ImageKey> getAllUsedImages() {
+    final ImgChange change = updateImageArea();
+    final Set<ImageKey> allUsedImages = new HashSet<ImageKey>();
+    if (change.isUpdateBackground()) {
+      final ImageKey background = change.getBackground();
+      if (background != null) {
+        allUsedImages.add(background);
+      }
+    }
+    for (final ImageKey fg : change.getAddedFGImages()) {
+      allUsedImages.add(fg);
+    }
+    return allUsedImages;
   }
   
   private void stopBackgroundLoadingOfImages() {

@@ -2,13 +2,20 @@ package org.atrun.intro.events;
 
 import org.atrun.intro.state.LocationTracker.Int;
 import org.lehirti.engine.events.EventNode;
+import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
+import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextKey;
 
-public class Intro04 extends EventNode {
+public class Intro04 extends EventNode<NullState> {
   public static enum Text implements TextKey {
     MAIN,
     OPTION_NEXT
+  }
+  
+  @Override
+  protected ImgChange updateImageArea() {
+    return ImgChange.nullChange();
   }
   
   @Override

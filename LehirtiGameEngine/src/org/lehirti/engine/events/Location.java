@@ -70,6 +70,7 @@ public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STAT
   public Collection<ImageKey> getAllUsedImages() {
     final Set<ImageKey> usedImages = new HashSet<ImageKey>();
     usedImages.add(getBackgroundImageToDisplay());
+    usedImages.addAll(this.nextEvent.getAllUsedImages());
     return usedImages;
   }
   

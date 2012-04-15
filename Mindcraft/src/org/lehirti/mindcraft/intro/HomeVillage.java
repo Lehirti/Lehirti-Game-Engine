@@ -2,6 +2,7 @@ package org.lehirti.mindcraft.intro;
 
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Event.NullState;
+import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.mindcraft.images.Background;
 
@@ -16,10 +17,13 @@ public class HomeVillage extends EventNode<NullState> {
   }
   
   @Override
+  protected ImgChange updateImageArea() {
+    return ImgChange.setBGAndFG(Background.HOME_VILLAGE);
+  }
+  
+  @Override
   protected void doEvent() {
     setText(Text.MAIN);
-    setBackgroundImage(Background.HOME_VILLAGE);
-    setImage(null);
     
     addOption(Text.OPTION_GO_HOME, new Home1());
     addOption(Text.OPTION_VISIT_MARKET, new Market());

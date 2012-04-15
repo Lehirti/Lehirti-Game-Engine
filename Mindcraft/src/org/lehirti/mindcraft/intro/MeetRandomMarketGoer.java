@@ -3,6 +3,7 @@ package org.lehirti.mindcraft.intro;
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.res.images.ImageKey;
+import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.state.StateObject;
 
@@ -12,10 +13,19 @@ public class MeetRandomMarketGoer extends EventNode<NullState> {
     TWO
   }
   
+  private int choice = -1;
+  
+  @Override
+  protected synchronized ImgChange updateImageArea() {
+    if (this.choice == -1) {
+      this.choice = StateObject.DIE.nextInt(MarketGoer.values().length);
+    }
+    return ImgChange.setFG(MarketGoer.values()[this.choice]);
+  }
+  
   @Override
   protected void doEvent() {
-    final ImageKey key = MarketGoer.values()[StateObject.DIE.nextInt(MarketGoer.values().length)];
-    setImage(key);
+    final ImageKey key = MarketGoer.values()[this.choice];
     setText(key);
     addOption(CommonText.OPTION_LEAVE, new HomeVillage());
   }
