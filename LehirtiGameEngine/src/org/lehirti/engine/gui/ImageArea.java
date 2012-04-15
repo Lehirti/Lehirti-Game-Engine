@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.image.VolatileImage;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -29,6 +30,8 @@ public class ImageArea extends JComponent implements Externalizable {
   
   private static final int WIDTH = 1000;
   private static final int HEIGHT = 800;
+  
+  private VolatileImage backBuffer;
   
   private ImageWrapper backgroundImage = null;
   
@@ -133,22 +136,35 @@ public class ImageArea extends JComponent implements Externalizable {
   
   @Override
   public void paintComponent(final Graphics g) {
-    final Graphics2D g2d = (Graphics2D) g;
-    g2d.setComposite(AlphaComposite.SrcAtop);
-    
-    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, this.interpolation);
-    g2d.setRenderingHint(RenderingHints.KEY_RENDERING, this.renderQuality);
-    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, this.antiAliasing);
-    
-    if (this.backgroundImage != null) {
-      final int[] coords = this.backgroundImage.calculateCoordinates(getWidth(), getHeight());
-      g.drawImage(this.backgroundImage.getImage(), coords[0], coords[1], coords[2], coords[3], null);
-    }
-    
-    for (final ImageWrapper image : this.foregroundImages) {
-      final int[] coords = image.calculateCoordinates(getWidth(), getHeight());
-      g.drawImage(image.getImage(), coords[0], coords[1], coords[2], coords[3], null);
-    }
+    do {
+      if (this.backBuffer != null) {
+        this.backBuffer.flush();
+        this.backBuffer = null;
+      }
+      this.backBuffer = createVolatileImage(getWidth(), getHeight());
+      
+      // rendering to the back buffer:
+      final Graphics2D g2d = (Graphics2D) this.backBuffer.getGraphics();
+      g2d.setComposite(AlphaComposite.SrcAtop);
+      
+      g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, this.interpolation);
+      g2d.setRenderingHint(RenderingHints.KEY_RENDERING, this.renderQuality);
+      g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, this.antiAliasing);
+      
+      if (this.backgroundImage != null) {
+        final int[] coords = this.backgroundImage.calculateCoordinates(getWidth(), getHeight());
+        g2d.drawImage(this.backgroundImage.getImage(), coords[0], coords[1], coords[2], coords[3], null);
+      }
+      
+      for (final ImageWrapper image : this.foregroundImages) {
+        final int[] coords = image.calculateCoordinates(getWidth(), getHeight());
+        g2d.drawImage(image.getImage(), coords[0], coords[1], coords[2], coords[3], null);
+      }
+      
+      // copy to front buffer
+      g.drawImage(this.backBuffer, 0, 0, this);
+      
+    } while (this.backBuffer.contentsLost());
   }
   
   @Override
