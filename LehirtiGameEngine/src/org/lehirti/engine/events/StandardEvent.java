@@ -38,10 +38,6 @@ public class StandardEvent extends EventNode<NullState> implements Externalizabl
     out.writeObject(this.nextEvent);
   }
   
-  public StandardEvent(final ImageKey image, final Event<?> nextEvent) {
-    this(image, image, nextEvent);
-  }
-  
   public StandardEvent(final ImageKey image, final TextKey text, final Event<?> nextEvent) {
     this.image = image;
     this.text = text;

@@ -5,10 +5,11 @@ import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
+import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.state.StateObject;
 
 public class MeetRandomMarketGoer extends EventNode<NullState> {
-  public static enum MarketGoer implements ImageKey {
+  public static enum MarketGoer implements ImageKey, TextKey {
     ONE,
     TWO
   }
@@ -25,7 +26,7 @@ public class MeetRandomMarketGoer extends EventNode<NullState> {
   
   @Override
   protected void doEvent() {
-    final ImageKey key = MarketGoer.values()[this.choice];
+    final TextKey key = MarketGoer.values()[this.choice];
     setText(key);
     addOption(CommonText.OPTION_LEAVE, new HomeVillage());
   }

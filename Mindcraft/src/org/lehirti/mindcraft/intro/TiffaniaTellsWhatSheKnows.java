@@ -3,24 +3,23 @@ package org.lehirti.mindcraft.intro;
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.res.images.ImgChange;
-import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.mindcraft.images.TiffaniaWestwood;
 
-public class DitaTransformsIntoTiffania extends EventNode<NullState> {
+public class TiffaniaTellsWhatSheKnows extends EventNode<NullState> {
   public static enum Text implements TextKey {
-    MAIN
+    EXPLANATION
   }
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setBGAndFG(null, TiffaniaWestwood.MIND_CONTROLLED_IN_THE_WOODS);
+    return ImgChange.setFG(TiffaniaWestwood.TALKS_TO_YOU);
   }
   
   @Override
   protected void doEvent() {
-    setText(Text.MAIN);
+    setText(Text.EXPLANATION);
     
-    addOption(CommonText.OPTION_NEXT, new TiffaniaTurnsBackToNormal());
+    addOption(HealerHut.Text.VISIT_HEALER, new HealerHut());
   }
 }
