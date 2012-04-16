@@ -63,7 +63,7 @@ public class ImageArea extends JComponent implements Externalizable {
     final String antiAliasing = DisplayOptions.getDisplayOptionFor("ANTIALIASING", "OFF");
     if ("DEFAULT".equals(antiAliasing)) {
       this.antiAliasing = RenderingHints.VALUE_ANTIALIAS_DEFAULT;
-    } else if ("OF".equals(antiAliasing)) {
+    } else if ("OFF".equals(antiAliasing)) {
       this.antiAliasing = RenderingHints.VALUE_ANTIALIAS_OFF;
     } else {
       this.antiAliasing = RenderingHints.VALUE_ANTIALIAS_ON;
