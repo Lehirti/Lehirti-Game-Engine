@@ -6,6 +6,7 @@ import org.atrun.maze.state.MazeState;
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
+import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextKey;
 
 public abstract class MazeEvent extends EventNode<NullState> {
@@ -19,9 +20,12 @@ public abstract class MazeEvent extends EventNode<NullState> {
     LEAVE;
   }
   
-  void doEventMain(final int currentPosition) {
-    setImage(MazeImage.values()[currentPosition]);
-    setText(MazeText.values()[currentPosition]);
+  ImgChange updateImageArea(final int mazePositionForThisEvent) {
+    return ImgChange.setFG(MazeImage.values()[mazePositionForThisEvent]);
+  }
+  
+  void doEventMain(final int mazePositionForThisEvent) {
+    setText(MazeText.values()[mazePositionForThisEvent]);
     
     if (MazeState.isCompletelyExplored()) {
       addOption(Key.OPTION_02, Text.LEAVE, new LeaveMaze());

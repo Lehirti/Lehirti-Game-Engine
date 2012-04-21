@@ -121,26 +121,46 @@ public class MazeState extends StateObject {
     return (int) (Math.abs(get(Int.CURRENT_POSITION_IN_MAZE)) % MAZE_SIZE);
   }
   
-  private static int go(final int direction) {
+  private static int go(final int direction, final boolean go) {
     init();
     final int pos = getCurrentPosition();
     final int newPos = MAZE_PATHS[pos][direction];
-    return setCurrentPosition(newPos);
+    if (go) {
+      return setCurrentPosition(newPos);
+    } else {
+      return newPos;
+    }
   }
   
   public static int goNorth() {
-    return go(0);
+    return go(0, true);
   }
   
   public static int goEast() {
-    return go(1);
+    return go(1, true);
   }
   
   public static int goSouth() {
-    return go(2);
+    return go(2, true);
   }
   
   public static int goWest() {
-    return go(3);
+    return go(3, true);
+  }
+  
+  public static int lookNorth() {
+    return go(0, false);
+  }
+  
+  public static int lookEast() {
+    return go(1, false);
+  }
+  
+  public static int lookSouth() {
+    return go(2, false);
+  }
+  
+  public static int lookWest() {
+    return go(3, false);
   }
 }
