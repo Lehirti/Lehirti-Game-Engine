@@ -20,7 +20,7 @@ import org.lehirti.mindcraft.C;
 public final class ExportCoreContent {
   private static final File ROOT_DIR = new File("..");
   private static final File CORE_DIR = new File(ROOT_DIR, "core");
-  private static final File DEST_DIR = new File("../../../mindcraft");
+  private static final File DEST_DIR = new File("../../../luckysurvivor");
   
   public static void main(final String[] args) throws IOException {
     System.out.println("START " + ExportCoreContent.class.getSimpleName());
