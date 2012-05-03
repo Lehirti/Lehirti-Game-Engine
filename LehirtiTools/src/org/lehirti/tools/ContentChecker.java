@@ -10,7 +10,7 @@ import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.util.ClassFinder;
 import org.lehirti.engine.util.PathFinder;
-import org.lehirti.mindcraft.C;
+import org.lehirti.luckysurvivor.C;
 
 public final class ContentChecker {
   public static void main(final String[] args) {

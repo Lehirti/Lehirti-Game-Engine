@@ -15,7 +15,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.lehirti.engine.util.ContentUtils;
 import org.lehirti.engine.util.PathFinder;
-import org.lehirti.mindcraft.C;
+import org.lehirti.luckysurvivor.C;
 
 public final class ExportCoreContent {
   private static final File ROOT_DIR = new File("..");
