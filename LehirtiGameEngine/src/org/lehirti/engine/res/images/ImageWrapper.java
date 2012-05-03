@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.lehirti.engine.res.ResourceState;
 import org.lehirti.engine.state.StateObject;
 import org.lehirti.engine.util.PathFinder;
 import org.slf4j.Logger;
@@ -22,25 +23,52 @@ public final class ImageWrapper {
   private ImageProxy image;
   private int currentlyDisplayedImageNr = -1;
   
+  private final ResourceState state;
+  private final int nCore;
+  private final int nMod;
+  
   public ImageWrapper(final ImageKey key) {
     this.key = key;
     LOGGER.debug("Creating new ImageWrapper for {}", toString());
     this.proxies = new ArrayList<ImageProxy>(5);
-    parseAll(PathFinder.getCoreImageProxyFiles(key));
-    parseAll(PathFinder.getModImageProxyFiles(key));
+    this.nCore = parseAll(PathFinder.getCoreImageProxyFiles(key));
+    this.nMod = parseAll(PathFinder.getModImageProxyFiles(key));
+    
+    if (this.nCore > 0) {
+      this.state = ResourceState.CORE;
+    } else if (this.nMod > 0) {
+      this.state = ResourceState.MOD;
+    } else {
+      this.state = ResourceState.MISSING;
+    }
     
     pinRandomImage();
   }
   
-  private void parseAll(final File[] imageProxies) {
+  private int parseAll(final File[] imageProxies) {
+    int ret = 0;
     for (final File imageProxyFile : imageProxies) {
       LOGGER.debug("Trying to add image proxy {}", imageProxyFile.getAbsolutePath());
       final ImageProxy imageProxy = ImageProxy.getInstance(imageProxyFile);
       if (imageProxy != null) {
         LOGGER.debug("Adding image proxy {} to {}", imageProxyFile.getAbsolutePath(), toString());
         this.proxies.add(imageProxy);
+        ret++;
       }
     }
+    return ret;
+  }
+  
+  public ResourceState getResourceState() {
+    return this.state;
+  }
+  
+  public int getNrOfCoreImages() {
+    return this.nCore;
+  }
+  
+  public int getNrOfModImages() {
+    return this.nMod;
   }
   
   public int getCurrentImageNr() {

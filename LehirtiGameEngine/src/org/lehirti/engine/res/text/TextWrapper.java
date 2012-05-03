@@ -8,6 +8,7 @@ import java.io.ObjectOutput;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.lehirti.engine.res.ResourceState;
 import org.lehirti.engine.util.FileUtils;
 import org.lehirti.engine.util.PathFinder;
 
@@ -19,8 +20,11 @@ public class TextWrapper implements Externalizable {
   
   private final List<String> parameters = new LinkedList<String>();
   
+  private final ResourceState state;
+  
   // for saving/loading
   public TextWrapper() {
+    this.state = ResourceState.LOADED;
   }
   
   public TextWrapper(final TextKey key) {
@@ -29,18 +33,25 @@ public class TextWrapper implements Externalizable {
     final File modFile = PathFinder.getModFile(this.key);
     if (modFile.canRead()) {
       this.rawValue = FileUtils.readContentAsString(modFile);
+      this.state = ResourceState.MOD;
     } else {
       final File coreFile = PathFinder.getCoreFile(this.key);
       if (coreFile.canRead()) {
         this.rawValue = FileUtils.readContentAsString(coreFile);
+        this.state = ResourceState.CORE;
       } else {
         this.rawValue = "TODO: " + key.getClass().getSimpleName() + "." + key.name() + "\n\n";
+        this.state = ResourceState.MISSING;
       }
     }
   }
   
   public String getRawValue() {
     return this.rawValue;
+  }
+  
+  public ResourceState getResourceState() {
+    return this.state;
   }
   
   public String getValue() {
