@@ -3,26 +3,26 @@ package org.lehirti.mindcraft.intro;
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.res.images.ImgChange;
+import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.mindcraft.images.TiffaniaWestwood;
 
-public class TiffaniaTellsWhatSheKnows extends EventNode<NullState> {
+public class Night3 extends EventNode<NullState> {
   public static enum Text implements TextKey {
-    EXPLANATION,
-    OPTION_HEAD_BACK_TO_HOME_VILLAGE;
+    DREAM2
   }
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setFG(TiffaniaWestwood.TALKS_TO_YOU_IN_THE_WOODS);
+    return ImgChange.setBGAndFG(null, TiffaniaWestwood.NIGHT_02);
   }
   
   @Override
   protected void doEvent() {
-    setText(Text.EXPLANATION);
+    setText(Text.DREAM2);
     
-    set(Bool.TIFFANIA_HAS_TOLD_YOU_ALL_SHE_KNOWS, true);
+    // TODO
     
-    addOption(Text.OPTION_HEAD_BACK_TO_HOME_VILLAGE, new HomeVillage());
+    addOption(CommonText.OPTION_NEXT, new Morning2());
   }
 }

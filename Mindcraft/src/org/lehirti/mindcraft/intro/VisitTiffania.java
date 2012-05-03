@@ -1,6 +1,7 @@
 package org.lehirti.mindcraft.intro;
 
 import org.lehirti.engine.events.EventNode;
+import org.lehirti.engine.events.StandardEvent;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
@@ -10,7 +11,9 @@ import org.lehirti.mindcraft.images.TiffaniaWestwood;
 
 public class VisitTiffania extends EventNode<NullState> {
   public static enum Text implements TextKey {
-    MAIN
+    MAIN,
+    OPTION_FUCK_HER,
+    OPTION_RECEIVE_TITJOB
   }
   
   @Override
@@ -22,7 +25,10 @@ public class VisitTiffania extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.MAIN);
     
-    // TODO: options
+    addOption(Text.OPTION_FUCK_HER, new StandardEvent(TiffaniaWestwood.FUCK_HER_INHOUSE, CommonText.OPTION_NEXT,
+        new VisitTiffania()));
+    addOption(Text.OPTION_RECEIVE_TITJOB, new StandardEvent(TiffaniaWestwood.TITJOB_INHOUSE, CommonText.OPTION_NEXT,
+        new VisitTiffania()));
     addOption(CommonText.OPTION_LEAVE, new HomeVillage());
   }
 }

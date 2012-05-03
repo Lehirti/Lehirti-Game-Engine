@@ -13,7 +13,7 @@ public class Masturbate2 extends EventNode<NullState> {
   
   @Override
   protected void doEvent() {
-    setText(Masturbate.Text.TEXT);
+    setText(Intro.MASTURBATE);
     set(Bool.YOU_ARE_HORNY, false);
     
     addOption(CommonText.LEAVE_HOUSE, new HomeVillage());

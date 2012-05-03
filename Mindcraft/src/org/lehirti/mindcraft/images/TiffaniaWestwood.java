@@ -8,5 +8,8 @@ public enum TiffaniaWestwood implements ImageKey {
   MIND_CONTROLLED_IN_THE_WOODS,
   ON_HER_KNEES,
   TITJOB,
-  TALKS_TO_YOU;
+  TALKS_TO_YOU_IN_THE_WOODS,
+  TALKS_TO_YOU,
+  FUCK_HER_INHOUSE,
+  TITJOB_INHOUSE;
 }

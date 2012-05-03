@@ -30,7 +30,7 @@ public class HomeVillage extends EventNode<NullState> {
     
     addOption(Text.OPTION_GO_HOME, new Home1());
     addOption(Text.OPTION_VISIT_MARKET, new Market());
-    if (is(TiffaniaTurnsBackToNormal.Bool.TIFFANIA_HAS_TOLD_YOU_ALL_SHE_KNOWS)) {
+    if (is(Bool.TIFFANIA_HAS_TOLD_YOU_ALL_SHE_KNOWS)) {
       addOption(Text.OPTION_VISIT_TIFFANIA, new VisitTiffania());
       addOption(Text.OPTION_LEAVE_FOR_THE_CAPITOL, new HomeVillageToCapitol());
     } else {
