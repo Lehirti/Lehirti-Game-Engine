@@ -2,6 +2,7 @@ package org.lehirti.luckysurvivor.intro;
 
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Event.NullState;
+import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextKey;
 
@@ -20,6 +21,6 @@ public class PlaneInThunderstorm extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.PLANE_IN_THUNDERSTORM);
     
-    addOption(Text.OPTION_SECURE_OWN_MASK, new TheCrash());
+    addOption(Key.OPTION_WEST, Text.OPTION_SECURE_OWN_MASK, new TheCrash());
   }
 }

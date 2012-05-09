@@ -2,6 +2,7 @@ package org.lehirti.luckysurvivor.intro;
 
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Event.NullState;
+import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextKey;
 
@@ -20,6 +21,6 @@ public class Bus extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.BUS_DESCRIPTION);
     
-    addOption(Text.OPTION_ENTER_PLANE, new BoardPlane());
+    addOption(Key.OPTION_ENTER, Text.OPTION_ENTER_PLANE, new BoardPlane());
   }
 }

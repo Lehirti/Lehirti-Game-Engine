@@ -122,7 +122,7 @@ public class ImageEditor extends JFrame implements ActionListener {
   final JComboBox contentDir;
   JButton newAlternative = new JButton("Add");
   
-  ImageArea imageArea = new ImageArea();
+  ImageArea imageArea = new ImageArea(16.0, 12.0, 12.0, 9.0);
   
   final ImageArea gameImageArea;
   final List<ImageWrapper> allImages;

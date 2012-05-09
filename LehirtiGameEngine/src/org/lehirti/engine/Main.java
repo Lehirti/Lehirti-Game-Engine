@@ -1,6 +1,7 @@
 package org.lehirti.engine;
 
-import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
@@ -23,6 +24,7 @@ import org.lehirti.engine.events.Event;
 import org.lehirti.engine.gui.ImageArea;
 import org.lehirti.engine.gui.ImageEditor;
 import org.lehirti.engine.gui.Key;
+import org.lehirti.engine.gui.OptionArea;
 import org.lehirti.engine.gui.TextArea;
 import org.lehirti.engine.gui.TextEditor;
 import org.lehirti.engine.res.ResourceCache;
@@ -48,8 +50,15 @@ public abstract class Main {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
   
+  public static JFrame MAIN_WINDOW;
+  
+  private static final double SCREEN_X = 64.0;
+  private static final double SCREEN_Y = 48.0;
+  
   public static TextArea TEXT_AREA;
   public static ImageArea IMAGE_AREA;
+  public static OptionArea OPTION_AREA;
+  public static TextArea STATS_AREA;
   
   public static boolean IS_DEVELOPMENT_VERSION = false;
   
@@ -57,10 +66,11 @@ public abstract class Main {
   
   private void createAndShowGUI() {
     
-    final JFrame frame = new JFrame(getGameName());
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    Main.MAIN_WINDOW = new JFrame(getGameName());
+    MAIN_WINDOW.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    MAIN_WINDOW.getContentPane().setLayout(new GridBagLayout());
     
-    TEXT_AREA = new TextArea();
+    TEXT_AREA = new TextArea(SCREEN_X, SCREEN_Y, 16.0, 36.0);
     TEXT_AREA.addKeyListener(new KeyListener() {
       @Override
       public void keyPressed(final KeyEvent e) {
@@ -119,13 +129,44 @@ public abstract class Main {
       }
     });
     
-    IMAGE_AREA = new ImageArea();
+    IMAGE_AREA = new ImageArea(SCREEN_X, SCREEN_Y, 48.0, 36.0);
     
-    frame.getContentPane().add(IMAGE_AREA, BorderLayout.CENTER);
-    frame.getContentPane().add(TEXT_AREA, BorderLayout.EAST);
+    STATS_AREA = new TextArea(SCREEN_X, SCREEN_Y, 64.0, 6.0);
     
-    frame.pack();
-    frame.setVisible(true);
+    OPTION_AREA = new OptionArea(SCREEN_X, SCREEN_Y, 64.0, 6.0, 4, 3);
+    
+    GridBagConstraints c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 0;
+    c.gridwidth = 1;
+    c.gridheight = 1;
+    MAIN_WINDOW.getContentPane().add(IMAGE_AREA, c);
+    
+    c = new GridBagConstraints();
+    c.gridx = 1;
+    c.gridy = 0;
+    c.gridwidth = 1;
+    c.gridheight = 1;
+    MAIN_WINDOW.getContentPane().add(TEXT_AREA, c);
+    
+    c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 1;
+    c.gridwidth = 2;
+    c.gridheight = 1;
+    MAIN_WINDOW.getContentPane().add(STATS_AREA, c);
+    
+    c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 2;
+    c.gridwidth = 2;
+    c.gridheight = 1;
+    MAIN_WINDOW.getContentPane().add(OPTION_AREA, c);
+    
+    STATS_AREA.setText("STATS_AREA (TODO ;)");
+    
+    MAIN_WINDOW.pack();
+    MAIN_WINDOW.setVisible(true);
   }
   
   protected void loadGame() {

@@ -1,23 +1,29 @@
 package org.lehirti.engine.gui;
 
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.swing.JTextArea;
+import javax.swing.JComponent;
 
+import org.lehirti.engine.res.ResourceCache;
+import org.lehirti.engine.res.text.CommonText;
+import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TextArea extends JTextArea implements Externalizable {
+public class OptionArea extends JComponent implements Externalizable {
   private static final long serialVersionUID = 1L;
   
-  private static final Logger LOGGER = LoggerFactory.getLogger(TextArea.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(OptionArea.class);
   
   private final List<TextWrapper> allTexts = new ArrayList<TextWrapper>(25);
   
@@ -26,23 +32,35 @@ public class TextArea extends JTextArea implements Externalizable {
   private final double sizeX;
   private final double sizeY;
   
-  public TextArea(final double screenX, final double screenY, final double sizeX, final double sizeY) {
+  private final int cols;
+  private final int rows;
+  
+  private final Map<Key, TextWrapper> options = new EnumMap<Key, TextWrapper>(Key.class);
+  
+  public OptionArea(final double screenX, final double screenY, final double sizeX, final double sizeY, final int cols,
+      final int rows) {
     this.screenX = screenX;
     this.screenY = screenY;
     this.sizeX = sizeX;
     this.sizeY = sizeY;
-    
-    getCaret().setVisible(false);
-    setLineWrap(true);
-    setWrapStyleWord(true);
+    this.cols = cols;
+    this.rows = rows;
   }
   
   @Override
-  public void repaint() {
-    if (getCaret() != null) {
-      getCaret().setVisible(false);
+  public void paintComponent(final Graphics g) {
+    final Dimension size = getSize();
+    final Dimension sizeOfOneOptionField = new Dimension(size.width / this.cols, size.height / this.rows);
+    for (final Map.Entry<Key, TextWrapper> option : this.options.entrySet()) {
+      final Key key = option.getKey();
+      final TextWrapper wrapper = ResourceCache.get(CommonText.KEY_OPTION);
+      wrapper.addParameter(String.valueOf(key.mapping));
+      final TextWrapper text = option.getValue();
+      final String assembledOptionString = wrapper.getValue() + text.getValue();
+      final int x = key.col * sizeOfOneOptionField.width;
+      final int y = (int) ((key.row + 0.8) * sizeOfOneOptionField.height);
+      g.drawString(assembledOptionString, x, y);
     }
-    super.repaint();
   }
   
   @Override
@@ -78,26 +96,6 @@ public class TextArea extends JTextArea implements Externalizable {
     return new Dimension((int) width, (int) height);
   }
   
-  public void setText(final TextWrapper text) {
-    this.allTexts.clear();
-    addText(text);
-  }
-  
-  public void addText(final TextWrapper text) {
-    if (text != null) {
-      this.allTexts.add(text);
-    }
-    refresh();
-  }
-  
-  public void refresh() {
-    final StringBuilder sb = new StringBuilder();
-    for (final TextWrapper text : this.allTexts) {
-      sb.append(text.getValue());
-    }
-    setText(sb.toString());
-  }
-  
   public List<TextWrapper> getAllTexts() {
     return this.allTexts;
   }
@@ -109,7 +107,6 @@ public class TextArea extends JTextArea implements Externalizable {
     for (int i = 0; i < nrOfTexts; i++) {
       this.allTexts.add((TextWrapper) in.readObject());
     }
-    refresh();
   }
   
   @Override
@@ -118,5 +115,16 @@ public class TextArea extends JTextArea implements Externalizable {
     for (final TextWrapper text : this.allTexts) {
       out.writeObject(text);
     }
+  }
+  
+  public void clearOptions() {
+    this.options.clear();
+    repaint();
+  }
+  
+  // TODO: error on non-option keys
+  public void setOption(final TextKey text, final Key key) {
+    this.options.put(key, ResourceCache.get(text));
+    repaint();
   }
 }

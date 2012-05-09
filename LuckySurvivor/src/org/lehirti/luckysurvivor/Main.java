@@ -26,7 +26,7 @@ public class Main extends org.lehirti.engine.Main {
   
   @Override
   protected String getGameName() {
-    return "Mindcraft";
+    return "[WIP] Lucky Survivor";
   }
   
   @Override

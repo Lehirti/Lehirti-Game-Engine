@@ -28,20 +28,27 @@ public class ImageArea extends JComponent implements Externalizable {
   
   private static final String IMAGE_AREA_END_OBJECT = "IMAGE_AREA_END_OBJECT";
   
-  private static final int WIDTH = 1000;
-  private static final int HEIGHT = 800;
-  
   private VolatileImage backBuffer;
   
   private ImageWrapper backgroundImage = null;
   
   private final List<ImageWrapper> foregroundImages = new ArrayList<ImageWrapper>(15);
   
+  private final double screenX;
+  private final double screenY;
+  private final double sizeX;
+  private final double sizeY;
+  
   private final Object interpolation;
   private final Object renderQuality;
   private final Object antiAliasing;
   
-  public ImageArea() {
+  public ImageArea(final double screenX, final double screenY, final double sizeX, final double sizeY) {
+    this.screenX = screenX;
+    this.screenY = screenY;
+    this.sizeX = sizeX;
+    this.sizeY = sizeY;
+    
     final String interpolation = DisplayOptions.getDisplayOptionFor("INTERPOLATION", "BILINEAR");
     if ("NEAREST_NEIGHBOR".equals(interpolation)) {
       this.interpolation = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;
@@ -168,8 +175,36 @@ public class ImageArea extends JComponent implements Externalizable {
   }
   
   @Override
+  public Dimension getMinimumSize() {
+    return getPreferredSize();
+  }
+  
+  @Override
+  public Dimension getMaximumSize() {
+    return getPreferredSize();
+  }
+  
+  @Override
   public Dimension getPreferredSize() {
-    return new Dimension(WIDTH, HEIGHT);
+    final Dimension size = getParent().getSize();
+    double width = size.width;
+    double height = size.height;
+    if (width < 640) {
+      width = 640;
+    }
+    if (height < 640) {
+      height = 640;
+    }
+    
+    final double baseSizeX = width / this.screenX;
+    final double baseSizeY = height / this.screenY;
+    final double baseSize = baseSizeX < baseSizeY ? baseSizeX : baseSizeY;
+    
+    width = baseSize * this.sizeX;
+    height = baseSize * this.sizeY;
+    
+    LOGGER.info("preferredSize: " + width + " " + height);
+    return new Dimension((int) width, (int) height);
   }
   
   /**

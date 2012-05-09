@@ -2,6 +2,7 @@ package org.lehirti.luckysurvivor.intro;
 
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Event.NullState;
+import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
@@ -22,6 +23,6 @@ public class TheCrash extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.THE_CRASH);
     
-    addOption(CommonText.OPTION_NEXT, new AreaCrash1_1());
+    addOption(Key.OPTION_WEST, CommonText.OPTION_NEXT, new AreaCrash1_1());
   }
 }

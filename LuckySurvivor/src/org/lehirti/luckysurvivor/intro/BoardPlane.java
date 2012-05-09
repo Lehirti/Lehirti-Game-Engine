@@ -3,6 +3,7 @@ package org.lehirti.luckysurvivor.intro;
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.TextOnlyEvent;
 import org.lehirti.engine.events.Event.NullState;
+import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextKey;
 
@@ -26,8 +27,10 @@ public class BoardPlane extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.PLANE_DESCRIPTION);
     
-    addOption(Text.OPTION_TRY_SLEEP, new TextOnlyEvent(Text.TRY_SLEEP, new PlaneInThunderstorm()));
-    addOption(Text.OPTION_START_CONVERSATION, new TextOnlyEvent(Text.START_CONVERSATION, new PlaneInThunderstorm()));
-    addOption(Text.OPTION_ASK_FOR_OTHER_SEAT, new TextOnlyEvent(Text.ASK_FOR_OTHER_SEAT, new PlaneInThunderstorm()));
+    addOption(Key.OPTION_WEST, Text.OPTION_TRY_SLEEP, new TextOnlyEvent(Text.TRY_SLEEP, new PlaneInThunderstorm()));
+    addOption(Key.OPTION_SOUTH, Text.OPTION_START_CONVERSATION, new TextOnlyEvent(Text.START_CONVERSATION,
+        new PlaneInThunderstorm()));
+    addOption(Key.OPTION_EAST, Text.OPTION_ASK_FOR_OTHER_SEAT, new TextOnlyEvent(Text.ASK_FOR_OTHER_SEAT,
+        new PlaneInThunderstorm()));
   }
 }

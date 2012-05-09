@@ -3,6 +3,7 @@ package org.lehirti.luckysurvivor.crashsite;
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.TextOnlyEvent;
 import org.lehirti.engine.events.Event.NullState;
+import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextKey;
 
@@ -26,10 +27,10 @@ public class CrashSite1_1 extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.DESCRIPTION);
     
-    addOption(Text.OPTION_LOOK_FOR_OTHER_SURVIVORS,
-        new TextOnlyEvent(Text.LOOK_FOR_OTHER_SURVIVORS, new CrashSite1_1()));
-    addOption(Text.OPTION_REST, new TextOnlyEvent(Text.REST, new CrashSite1_1()));
-    // TODO addOption(Text.OPTION_LEAVE_THE_AREA, new CrashSite1_1());
-    addOption(Text.OPTION_ENTER_FUSELAGE, new AreaCrash1_2());
+    addOption(Key.OPTION_NORTH, Text.OPTION_LOOK_FOR_OTHER_SURVIVORS, new TextOnlyEvent(Text.LOOK_FOR_OTHER_SURVIVORS,
+        new CrashSite1_1()));
+    addOption(Key.OPTION_WEST, Text.OPTION_REST, new TextOnlyEvent(Text.REST, new CrashSite1_1()));
+    // TODO addOption(Key.OPTION_W, Text.OPTION_LEAVE_THE_AREA, new CrashSite1_1());
+    addOption(Key.OPTION_ENTER, Text.OPTION_ENTER_FUSELAGE, new AreaCrash1_2());
   }
 }

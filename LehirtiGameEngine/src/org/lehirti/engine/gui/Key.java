@@ -5,22 +5,26 @@ import java.util.LinkedList;
 import java.util.List;
 
 public enum Key {
-  OPTION_01('a', true),
-  OPTION_02('s', true),
-  OPTION_03('d', true),
-  OPTION_04('f', true),
-  OPTION_05('q', true),
-  OPTION_06('w', true),
-  OPTION_07('e', true),
-  OPTION_08('r', true),
+  OPTION_Q('q', 0, 0),
+  OPTION_LEAVE('w', 1, 0),
+  OPTION_NORTH('e', 2, 0),
+  OPTION_ENTER('r', 3, 0),
+  OPTION_A('a', 0, 1),
+  OPTION_WEST('s', 1, 1),
+  OPTION_SOUTH('d', 2, 1),
+  OPTION_EAST('f', 3, 1),
+  OPTION_Z('z', 0, 2),
+  OPTION_X('x', 1, 2),
+  OPTION_C('c', 2, 2),
+  OPTION_V('v', 3, 2),
   
   // image and text editors
-  CTRL_I((char) 0x09, false),
-  CTRL_T((char) 0x14, false),
+  CTRL_I((char) 0x09),
+  CTRL_T((char) 0x14),
   
   // save and load
-  CTRL_S((char) 0x13, false),
-  CTRL_L((char) 0x0c, false);
+  CTRL_S((char) 0x13),
+  CTRL_L((char) 0x0c);
   
   private static final List<Key> OPTION_KEYS = new ArrayList<Key>(values().length);
   
@@ -35,10 +39,21 @@ public enum Key {
   
   public final char mapping;
   public final boolean isOptionKey;
+  public final int col;
+  public final int row;
   
-  private Key(final char defaultMapping, final boolean isOptionKey) {
+  private Key(final char defaultMapping, final int col, final int row) {
     this.mapping = KeyMapping.getMappingFor(name(), defaultMapping);
-    this.isOptionKey = isOptionKey;
+    this.isOptionKey = true;
+    this.col = col;
+    this.row = row;
+  }
+  
+  private Key(final char defaultMapping) {
+    this.mapping = KeyMapping.getMappingFor(name(), defaultMapping);
+    this.isOptionKey = false;
+    this.col = -1;
+    this.row = -1;
   }
   
   public static Key getByChar(final char mapping) {

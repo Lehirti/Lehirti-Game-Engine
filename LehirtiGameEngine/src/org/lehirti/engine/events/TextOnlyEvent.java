@@ -6,6 +6,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import org.lehirti.engine.events.Event.NullState;
+import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
@@ -48,6 +49,6 @@ public class TextOnlyEvent extends EventNode<NullState> implements Externalizabl
   protected void doEvent() {
     setText(this.text);
     
-    addOption(CommonText.OPTION_NEXT, this.nextEvent);
+    addOption(Key.OPTION_ENTER, CommonText.OPTION_NEXT, this.nextEvent);
   }
 }

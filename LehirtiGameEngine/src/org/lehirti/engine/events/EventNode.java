@@ -20,7 +20,6 @@ import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.images.ImgChange;
-import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.state.BoolState;
@@ -85,6 +84,36 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
     }
   }
   
+  private void clearOptions() {
+    try {
+      javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
+        public void run() {
+          Main.OPTION_AREA.clearOptions();
+        }
+      });
+    } catch (final InterruptedException e) {
+      LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
+      throw new ThreadDeath();
+    } catch (final InvocationTargetException e) {
+      LOGGER.error("InvocationTargetException trying to add text to text area", e);
+    }
+  }
+  
+  private void setOption(final TextKey text, final Key key) {
+    try {
+      javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
+        public void run() {
+          Main.OPTION_AREA.setOption(text, key);
+        }
+      });
+    } catch (final InterruptedException e) {
+      LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
+      throw new ThreadDeath();
+    } catch (final InvocationTargetException e) {
+      LOGGER.error("InvocationTargetException trying to add text to text area", e);
+    }
+  }
+  
   protected void addText(final TextKey key) {
     addText(ResourceCache.get(key));
   }
@@ -97,18 +126,14 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
       return;
     }
     
-    this.registeredEvents.put(key, event);
-    final TextWrapper wrapper = ResourceCache.get(CommonText.KEY_OPTION);
-    wrapper.addParameter(String.valueOf(key.mapping));
-    addText(wrapper);
-    addText(text);
+    addOption(text, key, event);
   }
   
   protected void addOption(final TextKey text, final Event<?> event) {
     this.optionsWithArbitraryKey.put(event, text);
   }
   
-  private void addOptionsWithAritraryKeys() {
+  private void addOptionsWithArbitraryKeys() {
     for (final Map.Entry<Event<?>, TextKey> entry : this.optionsWithArbitraryKey.entrySet()) {
       final Event<?> event = entry.getKey();
       final TextKey text = entry.getValue();
@@ -117,12 +142,14 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
         continue;
       }
       final Key key = this.availableOptionKeys.remove(0);
-      this.registeredEvents.put(key, event);
-      final TextWrapper wrapper = ResourceCache.get(CommonText.KEY_OPTION);
-      wrapper.addParameter(String.valueOf(key.mapping));
-      addText(wrapper);
-      addText(text);
+      
+      addOption(text, key, event);
     }
+  }
+  
+  private void addOption(final TextKey text, final Key key, final Event<?> event) {
+    this.registeredEvents.put(key, event);
+    setOption(text, key);
   }
   
   public void execute() {
@@ -131,9 +158,11 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
     
     performImageAreaUpdates();
     
+    clearOptions();
+    
     doEvent();
     
-    addOptionsWithAritraryKeys();
+    addOptionsWithArbitraryKeys();
     
     repaintImagesIfNeeded();
     

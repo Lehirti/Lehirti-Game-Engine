@@ -37,6 +37,6 @@ public class EnterMaze extends EventNode<NullState> {
     
     setText(Text.MAIN);
     
-    addOption(Key.OPTION_02, Text.OPTION_ENTER, new GoNorth());
+    addOption(Key.OPTION_LEAVE, Text.OPTION_ENTER, new GoNorth());
   }
 }

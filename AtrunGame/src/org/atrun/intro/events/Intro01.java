@@ -22,6 +22,6 @@ public class Intro01 extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.MAIN);
     
-    addOption(Key.OPTION_02, Text.OPTION_NEXT, new Intro02());
+    addOption(Key.OPTION_LEAVE, Text.OPTION_NEXT, new Intro02());
   }
 }

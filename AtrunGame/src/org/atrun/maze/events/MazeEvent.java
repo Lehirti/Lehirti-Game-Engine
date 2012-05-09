@@ -28,12 +28,12 @@ public abstract class MazeEvent extends EventNode<NullState> {
     setText(MazeText.values()[mazePositionForThisEvent]);
     
     if (MazeState.isCompletelyExplored()) {
-      addOption(Key.OPTION_02, Text.LEAVE, new LeaveMaze());
+      addOption(Key.OPTION_LEAVE, Text.LEAVE, new LeaveMaze());
     } else {
-      addOption(Key.OPTION_03, Text.NORTH, new GoNorth());
-      addOption(Key.OPTION_04, Text.EAST, new GoEast());
-      addOption(Key.OPTION_05, Text.SOUTH, new GoSouth());
-      addOption(Key.OPTION_06, Text.WEST, new GoWest());
+      addOption(Key.OPTION_NORTH, Text.NORTH, new GoNorth());
+      addOption(Key.OPTION_ENTER, Text.EAST, new GoEast());
+      addOption(Key.OPTION_A, Text.SOUTH, new GoSouth());
+      addOption(Key.OPTION_WEST, Text.WEST, new GoWest());
     }
   }
 }
