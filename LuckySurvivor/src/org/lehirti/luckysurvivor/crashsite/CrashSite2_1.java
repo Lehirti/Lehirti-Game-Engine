@@ -1,27 +1,26 @@
-package org.lehirti.luckysurvivor.intro;
+package org.lehirti.luckysurvivor.crashsite;
 
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextKey;
-import org.lehirti.luckysurvivor.crashsite.AreaCrash1_1;
+import org.lehirti.luckysurvivor.planearea.OutsidePlane;
 
-public class TheCrash extends EventNode<NullState> {
+public class CrashSite2_1 extends EventNode<NullState> {
   public static enum Text implements TextKey {
-    THE_CRASH,
-    OPTION_TUG_YOUR_HEAD;
+    DESCRIPTION,
+    OPTION_GET_UP;
   }
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setBG(IntroImage.THE_CRASH);
+    return ImgChange.setBG(AreaCrash.OUTSIDE_PLANE_MORNING);
   }
   
   @Override
   protected void doEvent() {
-    setText(Text.THE_CRASH);
-    
-    addOption(Key.OPTION_WEST, Text.OPTION_TUG_YOUR_HEAD, new AreaCrash1_1());
+    setText(Text.DESCRIPTION);
+    addOption(Key.OPTION_ENTER, Text.OPTION_GET_UP, new OutsidePlane());
   }
 }
