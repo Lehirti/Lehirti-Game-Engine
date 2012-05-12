@@ -92,7 +92,9 @@ public class OptionArea extends JComponent implements Externalizable {
     width = baseSize * this.sizeX;
     height = baseSize * this.sizeY;
     
-    LOGGER.info("preferredSize: " + width + " " + height);
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace("preferredSize: " + width + " " + height);
+    }
     return new Dimension((int) width, (int) height);
   }
   
