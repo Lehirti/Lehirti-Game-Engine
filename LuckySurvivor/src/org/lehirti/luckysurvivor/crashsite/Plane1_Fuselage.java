@@ -9,7 +9,7 @@ import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.state.BoolState;
 
-public class AreaCrash1_2 extends EventNode<NullState> {
+public class Plane1_Fuselage extends EventNode<NullState> {
   public static enum Text implements TextKey {
     DESCRIPTION,
     OPTION_GO_TO_COCKPIT,
@@ -28,7 +28,7 @@ public class AreaCrash1_2 extends EventNode<NullState> {
   }
   
   public static enum Bool implements BoolState {
-    HAS_LOOKED_FOR_SURVIVORS_AT_CRASH_AREA_1_2,
+    HAS_LOOKED_FOR_SURVIVORS,
     HAS_HELPED_OTHERS_OUT_OF_PLANE;
     
     @Override
@@ -39,34 +39,34 @@ public class AreaCrash1_2 extends EventNode<NullState> {
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setBG(AreaCrash.INSIDE_FUSELAGE);
+    return ImgChange.setBG(CrashSite.INSIDE_FUSELAGE);
   }
   
   @Override
   protected void doEvent() {
     setText(Text.DESCRIPTION);
     
-    addOption(Key.OPTION_NORTH, Text.OPTION_GO_TO_COCKPIT, new Cockpit());
+    addOption(Key.OPTION_NORTH, Text.OPTION_GO_TO_COCKPIT, new Plane1_Cockpit());
     
-    if (is(Bool.HAS_LOOKED_FOR_SURVIVORS_AT_CRASH_AREA_1_2)) {
+    if (is(Bool.HAS_LOOKED_FOR_SURVIVORS)) {
       addOption(Key.OPTION_WEST, Text.OPTION_LOOK_FOR_MORE_SURVIVORS, new TextOnlyEvent(Text.LOOK_FOR_MORE_SURVIVORS,
-          new AreaCrash1_2()));
+          new Plane1_Fuselage()));
     } else {
       addOption(Key.OPTION_WEST, Text.OPTION_LOOK_FOR_OTHER_SURVIVORS, new SetFlagEvent(
-          Bool.HAS_LOOKED_FOR_SURVIVORS_AT_CRASH_AREA_1_2, Text.LOOK_FOR_OTHER_SURVIVORS, new AreaCrash1_2()));
+          Bool.HAS_LOOKED_FOR_SURVIVORS, Text.LOOK_FOR_OTHER_SURVIVORS, new Plane1_Fuselage()));
     }
     
     addOption(Key.OPTION_SOUTH, Text.OPTION_SEARCH_RUBBLE_FOR_USEFULL_STUFF, new TextOnlyEvent(
-        Text.SEARCH_RUBBLE_FOR_USEFULL_STUFF, new AreaCrash1_2()));
+        Text.SEARCH_RUBBLE_FOR_USEFULL_STUFF, new Plane1_Fuselage()));
     
-    if (is(Bool.HAS_LOOKED_FOR_SURVIVORS_AT_CRASH_AREA_1_2)) {
+    if (is(Bool.HAS_LOOKED_FOR_SURVIVORS)) {
       addOption(Key.OPTION_EAST, Text.OPTION_HELP_FELLOW_SURVIVORS_OUT_OF_PLANE, new SetFlagEvent(
-          Bool.HAS_HELPED_OTHERS_OUT_OF_PLANE, Text.HELP_FELLOW_SURVIVORS_OUT_OF_PLANE, new AreaCrash1_2()));
+          Bool.HAS_HELPED_OTHERS_OUT_OF_PLANE, Text.HELP_FELLOW_SURVIVORS_OUT_OF_PLANE, new Plane1_Fuselage()));
     }
     
-    addOption(Key.OPTION_LEAVE, Text.OPTION_LEAVE_PLANE, new TextOnlyEvent(Text.LEAVE_PLANE, new CrashSite1_1()));
+    addOption(Key.OPTION_LEAVE, Text.OPTION_LEAVE_PLANE, new TextOnlyEvent(Text.LEAVE_PLANE, new Outside1()));
     
     addOption(Key.OPTION_ENTER, Text.OPTION_GO_BACK_TO_YOUR_SEAT, new TextOnlyEvent(Text.GO_BACK_TO_YOUR_SEAT,
-        new AreaCrash1_1()));
+        new Plane1_YourSeat()));
   }
 }

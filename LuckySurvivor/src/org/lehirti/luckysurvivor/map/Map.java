@@ -17,7 +17,7 @@ import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.luckysurvivor.cliffnorth.MapToCliffNorth;
 import org.lehirti.luckysurvivor.cliffsouth.MapToCliffSouth;
 import org.lehirti.luckysurvivor.cliffwest.MapToCliffWest;
-import org.lehirti.luckysurvivor.crashsite.CrashSiteLocationFactory;
+import org.lehirti.luckysurvivor.crashsite.Outside2;
 import org.lehirti.luckysurvivor.jungle1uphill.MapToJungle1Uphill;
 import org.lehirti.luckysurvivor.jungle2uphill.MapToJungle2Uphill;
 import org.lehirti.luckysurvivor.lookouthill.MapToLookoutHill;
@@ -25,7 +25,7 @@ import org.lehirti.luckysurvivor.peninsulabasinjungle.MapToPeninsulaBasinJungle;
 
 public class Map extends EventNode<NullState> {
   public static enum Location implements TextKey, ImageKey {
-    CRASH_SITE(new CrashSiteLocationFactory()),
+    CRASH_SITE(new StaticEventFactory(Outside2.class)),
     CLIFF_WEST(new StaticEventFactory(MapToCliffWest.class)),
     JUNGLE_1_UPHILL(new StaticEventFactory(MapToJungle1Uphill.class)),
     CLIFF_NORTH(new StaticEventFactory(MapToCliffNorth.class)),

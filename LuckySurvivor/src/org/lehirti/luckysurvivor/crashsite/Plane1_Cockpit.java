@@ -7,7 +7,7 @@ import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextKey;
 
-public class Cockpit extends EventNode<NullState> {
+public class Plane1_Cockpit extends EventNode<NullState> {
   public static enum Text implements TextKey {
     DESCRIPTION,
     OPTION_CARRY_PILOTS_OUTSIDE,
@@ -21,7 +21,7 @@ public class Cockpit extends EventNode<NullState> {
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setBG(AreaCrash.COCKPIT);
+    return ImgChange.setBG(CrashSite.COCKPIT);
   }
   
   @Override
@@ -29,12 +29,12 @@ public class Cockpit extends EventNode<NullState> {
     setText(Text.DESCRIPTION);
     
     addOption(Key.OPTION_NORTH, Text.OPTION_CARRY_PILOTS_OUTSIDE, new TextOnlyEvent(Text.CARRY_PILOTS_OUTSIDE,
-        new Cockpit()));
+        new Plane1_Cockpit()));
     addOption(Key.OPTION_WEST, Text.OPTION_TRY_SALVAGE_ELECTRONICS, new TextOnlyEvent(Text.TRY_SALVALGE_ELECTRONICS,
-        new Cockpit()));
+        new Plane1_Cockpit()));
     addOption(Key.OPTION_SOUTH, Text.OPTION_LOOK_FOR_ANYTHING_USEFUL, new TextOnlyEvent(Text.LOOK_FOR_ANYTHING_USEFUL,
-        new Cockpit()));
+        new Plane1_Cockpit()));
     
-    addOption(Key.OPTION_LEAVE, Text.OPTION_GO_BACK_TO_FUSELAGE, new AreaCrash1_2());
+    addOption(Key.OPTION_LEAVE, Text.OPTION_GO_BACK_TO_FUSELAGE, new Plane1_Fuselage());
   }
 }
