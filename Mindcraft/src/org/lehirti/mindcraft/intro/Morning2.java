@@ -24,6 +24,6 @@ public class Morning2 extends EventNode<NullState> {
     set(Bool.YOU_ARE_HORNY, true);
     
     addOption(Text.OPTION_MASTURBATE, new Masturbate2());
-    addOption(CommonText.LEAVE_HOUSE, new HomeVillage());
+    addOption(CommonText.OPTION_LEAVE_HOUSE, new HomeVillage());
   }
 }

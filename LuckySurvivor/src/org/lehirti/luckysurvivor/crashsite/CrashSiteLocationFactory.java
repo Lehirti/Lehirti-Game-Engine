@@ -1,12 +1,10 @@
-package org.lehirti.luckysurvivor.map;
+package org.lehirti.luckysurvivor.crashsite;
 
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.EventFactory;
 import org.lehirti.engine.state.StateObject;
-import org.lehirti.luckysurvivor.planearea.Bool;
-import org.lehirti.luckysurvivor.planearea.CrashSiteAfterCrash;
 
-public final class CliffWestLocationFactory implements EventFactory {
+public final class CrashSiteLocationFactory implements EventFactory {
   
   @Override
   public Event<?> getInstance() {

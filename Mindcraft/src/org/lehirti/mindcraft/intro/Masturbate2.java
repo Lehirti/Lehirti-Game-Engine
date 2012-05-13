@@ -16,6 +16,6 @@ public class Masturbate2 extends EventNode<NullState> {
     setText(Intro.MASTURBATE);
     set(Bool.YOU_ARE_HORNY, false);
     
-    addOption(CommonText.LEAVE_HOUSE, new HomeVillage());
+    addOption(CommonText.OPTION_LEAVE_HOUSE, new HomeVillage());
   }
 }

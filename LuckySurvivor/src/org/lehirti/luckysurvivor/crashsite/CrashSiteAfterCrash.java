@@ -1,4 +1,4 @@
-package org.lehirti.luckysurvivor.planearea;
+package org.lehirti.luckysurvivor.crashsite;
 
 import org.lehirti.engine.events.AlternativeTextEvent;
 import org.lehirti.engine.events.EventNode;
@@ -6,10 +6,8 @@ import org.lehirti.engine.events.TextOnlyEvent;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
+import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
-import org.lehirti.luckysurvivor.crashsite.AreaCrash1_2;
-import org.lehirti.luckysurvivor.crashsite.CrashSite2_1;
-import org.lehirti.luckysurvivor.crashsite.AreaCrash1_2.Bool;
 import org.lehirti.luckysurvivor.map.Map;
 import org.lehirti.luckysurvivor.map.Map.Location;
 
@@ -36,7 +34,6 @@ public class CrashSiteAfterCrash extends EventNode<NullState> {
     
     OPTION_REST,
     REST,
-    OPTION_LEAVE_THE_AREA,
     LEAVE_THE_AREA,
     OPTION_ENTER_FUSELAGE,
     ENTER_FUSELAGE;
@@ -44,14 +41,14 @@ public class CrashSiteAfterCrash extends EventNode<NullState> {
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setBG(PlaneArea.OUTSIDE_PLANE);
+    return ImgChange.setBG(AreaCrash.OUTSIDE_PLANE);
   }
   
   @Override
   protected void doEvent() {
     setText(Text.DESCRIPTION);
     
-    if (is(Bool.HAS_HELPED_OTHERS_OUT_OF_PLANE)) {
+    if (is(AreaCrash1_2.Bool.HAS_HELPED_OTHERS_OUT_OF_PLANE)) {
       addOption(Key.OPTION_NORTH, Text.OPTION_LOOK_FOR_OTHER_SURVIVORS, new AlternativeTextEvent(
           new CrashSiteAfterCrash(), Text.LOOK_FOR_OTHER_SURVIVORS, Text.LOOK_FOR_OTHER_SURVIVORS_ALT_1,
           Text.LOOK_FOR_OTHER_SURVIVORS_ALT_2, Text.LOOK_FOR_OTHER_SURVIVORS_ALT_HAS_HELPED_1,
@@ -73,7 +70,7 @@ public class CrashSiteAfterCrash extends EventNode<NullState> {
     addOption(Key.OPTION_ENTER, Text.OPTION_ENTER_FUSELAGE, new TextOnlyEvent(Text.ENTER_FUSELAGE, new AreaCrash1_2()));
     addOption(Key.OPTION_WEST, Text.OPTION_REST, new TextOnlyEvent(Text.REST, new CrashSite2_1()));
     
-    addOption(Key.OPTION_LEAVE, Text.OPTION_LEAVE_THE_AREA, new TextOnlyEvent(Text.LEAVE_THE_AREA, new Map(
+    addOption(Key.OPTION_LEAVE, CommonText.OPTION_LEAVE_AREA, new TextOnlyEvent(Text.LEAVE_THE_AREA, new Map(
         Location.CRASH_SITE)));
   }
 }

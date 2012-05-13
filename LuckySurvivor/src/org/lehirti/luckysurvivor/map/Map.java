@@ -7,23 +7,32 @@ import static org.lehirti.luckysurvivor.map.Map.PathDescription.*;
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.EventFactory;
 import org.lehirti.engine.events.EventNode;
+import org.lehirti.engine.events.StaticEventFactory;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
+import org.lehirti.luckysurvivor.cliffnorth.MapToCliffNorth;
+import org.lehirti.luckysurvivor.cliffsouth.MapToCliffSouth;
+import org.lehirti.luckysurvivor.cliffwest.MapToCliffWest;
+import org.lehirti.luckysurvivor.crashsite.CrashSiteLocationFactory;
+import org.lehirti.luckysurvivor.jungle1uphill.MapToJungle1Uphill;
+import org.lehirti.luckysurvivor.jungle2uphill.MapToJungle2Uphill;
+import org.lehirti.luckysurvivor.lookouthill.MapToLookoutHill;
+import org.lehirti.luckysurvivor.peninsulabasinjungle.MapToPeninsulaBasinJungle;
 
 public class Map extends EventNode<NullState> {
   public static enum Location implements TextKey, ImageKey {
     CRASH_SITE(new CrashSiteLocationFactory()),
-    CLIFF_WEST(new CliffWestLocationFactory()),
-    JUNGLE_1_UPHILL(new Jungle1UphillLocationFactory()),
-    CLIFF_NORTH(new CliffNorthLocationFactory()),
-    LOOKOUT_HILL(new LookoutHillLocationFactory()),
-    CLIFF_SOUTH(new CliffSouthLocationFactory()),
-    JUNGLE_2_UPHILL(new Jungle2UphillLocationFactory()),
-    PENINSULA_BASIN_JUNGLE(new PeninsulaBasinJungleLocationFactory());
+    CLIFF_WEST(new StaticEventFactory(MapToCliffWest.class)),
+    JUNGLE_1_UPHILL(new StaticEventFactory(MapToJungle1Uphill.class)),
+    CLIFF_NORTH(new StaticEventFactory(MapToCliffNorth.class)),
+    LOOKOUT_HILL(new StaticEventFactory(MapToLookoutHill.class)),
+    CLIFF_SOUTH(new StaticEventFactory(MapToCliffSouth.class)),
+    JUNGLE_2_UPHILL(new StaticEventFactory(MapToJungle2Uphill.class)),
+    PENINSULA_BASIN_JUNGLE(new StaticEventFactory(MapToPeninsulaBasinJungle.class));
     
     private final EventFactory locationEventFactory;
     
@@ -39,17 +48,43 @@ public class Map extends EventNode<NullState> {
   public static enum PathDescription implements TextKey {
     CLIFF_WEST_2_CRASH_SITE,
     CRASH_SITE_2_CLIFF_WEST,
+    
     JUNGLE_1_UPHILL_2_CRASH_SITE,
     CRASH_SITE_2_JUNGLE_1_UPHILL,
+    
     LOOKOUT_HILL_2_CRASH_SITE,
-    CRASH_SITE_2_LOOKOUT_HILL;
+    CRASH_SITE_2_LOOKOUT_HILL,
+    
+    CLIFF_NORTH_2_JUNGLE_1_UPHILL,
+    JUNGLE_1_UPHILL_2_CLIFF_NORTH,
+    
+    LOOKOUT_HILL_2_CLIFF_SOUTH,
+    CLIFF_SOUTH_2_LOOKOUT_HILL,
+    
+    CRASH_SITE_2_JUNGLE_2_UPHILL,
+    JUNGLE_2_UPHILL_2_CRASH_SITE,
+    
+    JUNGLE_2_UPHILL_2_PENINSULA_BASIN_JUNGLE,
+    PENINSULA_BASIN_JUNGLE_2_JUNGLE_2_UPHILL,
+    
+    JUNGLE_1_UPHILL_2_PENINSULA_BASIN_JUNGLE,
+    PENINSULA_BASIN_JUNGLE_2_JUNGLE_1_UPHILL,
+    
+    LOOKOUT_HILL_2_PENINSULA_BASIN_JUNGLE,
+    PENINSULA_BASIN_JUNGLE_2_LOOKOUT_HILL,
   }
   
   // TODO travel time/fatigue
   public static enum Path implements TextKey, ImageKey {
     CLIFF_WEST___CRASH_SITE(CLIFF_WEST, OPTION_EAST, CLIFF_WEST_2_CRASH_SITE, OPTION_WEST, CRASH_SITE_2_CLIFF_WEST, CRASH_SITE),
     JUNGLE_1_UPHILL___CRASH_SITE(JUNGLE_1_UPHILL, OPTION_SOUTH, JUNGLE_1_UPHILL_2_CRASH_SITE, OPTION_NORTH, CRASH_SITE_2_JUNGLE_1_UPHILL, CRASH_SITE),
-    CRASH_SITE___LOOKOUT_HILL(CRASH_SITE, OPTION_SOUTH, CRASH_SITE_2_LOOKOUT_HILL, OPTION_NORTH, LOOKOUT_HILL_2_CRASH_SITE, LOOKOUT_HILL);
+    CRASH_SITE___LOOKOUT_HILL(CRASH_SITE, OPTION_SOUTH, CRASH_SITE_2_LOOKOUT_HILL, OPTION_NORTH, LOOKOUT_HILL_2_CRASH_SITE, LOOKOUT_HILL),
+    CLIFF_NORTH___JUNGLE_1_UPHILL(CLIFF_NORTH, OPTION_SOUTH, CLIFF_NORTH_2_JUNGLE_1_UPHILL, OPTION_NORTH, JUNGLE_1_UPHILL_2_CLIFF_NORTH, JUNGLE_1_UPHILL),
+    LOOKOUT_HILL___CLIFF_SOUTH(LOOKOUT_HILL, OPTION_SOUTH, LOOKOUT_HILL_2_CLIFF_SOUTH, OPTION_NORTH, CLIFF_SOUTH_2_LOOKOUT_HILL, CLIFF_SOUTH),
+    CRASH_SITE___JUNGLE_2_UPHILL(CRASH_SITE, OPTION_EAST, CRASH_SITE_2_JUNGLE_2_UPHILL, OPTION_WEST, JUNGLE_2_UPHILL_2_CRASH_SITE, JUNGLE_2_UPHILL),
+    JUNGLE_2_UPHILL___PENINSULA_BASIN_JUNGLE(JUNGLE_2_UPHILL, OPTION_EAST, JUNGLE_2_UPHILL_2_PENINSULA_BASIN_JUNGLE, OPTION_WEST, PENINSULA_BASIN_JUNGLE_2_JUNGLE_2_UPHILL, PENINSULA_BASIN_JUNGLE),
+    JUNGLE_1_UPHILL___PENINSULA_BASIN_JUNGLE(JUNGLE_1_UPHILL, OPTION_EAST, JUNGLE_1_UPHILL_2_PENINSULA_BASIN_JUNGLE, OPTION_NORTH, PENINSULA_BASIN_JUNGLE_2_JUNGLE_1_UPHILL, PENINSULA_BASIN_JUNGLE),
+    LOOKOUT_HILL___PENINSULA_BASIN_JUNGLE(LOOKOUT_HILL, OPTION_EAST, LOOKOUT_HILL_2_PENINSULA_BASIN_JUNGLE, OPTION_SOUTH, PENINSULA_BASIN_JUNGLE_2_LOOKOUT_HILL, PENINSULA_BASIN_JUNGLE), ;
     
     public final Location loc1;
     public final Location loc2;

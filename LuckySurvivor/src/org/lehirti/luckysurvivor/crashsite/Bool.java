@@ -1,4 +1,4 @@
-package org.lehirti.luckysurvivor.planearea;
+package org.lehirti.luckysurvivor.crashsite;
 
 import org.lehirti.engine.state.BoolState;
 
