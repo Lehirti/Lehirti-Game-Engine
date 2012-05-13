@@ -1,7 +1,7 @@
 package org.lehirti.luckysurvivor;
 
 public enum C {
-  MAIN(4);
+  MAIN(5);
   
   public final int requiredVersion;
   public boolean available = false;
