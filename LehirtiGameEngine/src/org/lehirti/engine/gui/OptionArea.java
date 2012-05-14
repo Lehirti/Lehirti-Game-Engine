@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JComponent;
 
@@ -24,8 +25,6 @@ public class OptionArea extends JComponent implements Externalizable {
   private static final long serialVersionUID = 1L;
   
   private static final Logger LOGGER = LoggerFactory.getLogger(OptionArea.class);
-  
-  private final List<TextWrapper> allTexts = new ArrayList<TextWrapper>(25);
   
   private final double screenX;
   private final double screenY;
@@ -98,24 +97,25 @@ public class OptionArea extends JComponent implements Externalizable {
     return new Dimension((int) width, (int) height);
   }
   
-  public List<TextWrapper> getAllTexts() {
-    return this.allTexts;
+  public List<TextWrapper> getAllOptions() {
+    return new ArrayList<TextWrapper>(this.options.values());
   }
   
   @Override
   public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-    this.allTexts.clear();
+    this.options.clear();
     final int nrOfTexts = in.readInt();
     for (int i = 0; i < nrOfTexts; i++) {
-      this.allTexts.add((TextWrapper) in.readObject());
+      this.options.put((Key) in.readObject(), (TextWrapper) in.readObject());
     }
   }
   
   @Override
   public void writeExternal(final ObjectOutput out) throws IOException {
-    out.writeInt(this.allTexts.size());
-    for (final TextWrapper text : this.allTexts) {
-      out.writeObject(text);
+    out.writeInt(this.options.size());
+    for (final Entry<Key, TextWrapper> entry : this.options.entrySet()) {
+      out.writeObject(entry.getKey());
+      out.writeObject(entry.getValue());
     }
   }
   

@@ -125,7 +125,7 @@ public abstract class Main {
       }
       
       private void editTexts() {
-        new TextEditor(TEXT_AREA);
+        new TextEditor(TEXT_AREA, OPTION_AREA);
       }
     });
     

@@ -30,15 +30,23 @@ public class TextEditor extends JFrame implements ActionListener {
   JTextArea textArea = new JTextArea();
   
   final TextArea gameTextArea;
+  final OptionArea gameOptionArea;
   final List<TextWrapper> allTexts;
+  final List<TextWrapper> allOptions;
   int selectedTextNr = -1;
+  int selectedOptionNr = -1;
   
-  public TextEditor(final TextArea gameTextArea) {
+  public TextEditor(final TextArea gameTextArea, final OptionArea gameOptionArea) {
     this.gameTextArea = gameTextArea;
+    this.gameOptionArea = gameOptionArea;
     this.allTexts = gameTextArea.getAllTexts();
+    this.allOptions = gameOptionArea.getAllOptions();
     if (!this.allTexts.isEmpty()) {
       this.selectedTextNr = 0;
       this.textArea.setText(this.allTexts.get(0).getRawValue());
+    } else if (!this.allOptions.isEmpty()) {
+      this.selectedOptionNr = 0;
+      this.textArea.setText(this.allOptions.get(0).getRawValue());
     }
     this.textArea.setLineWrap(true);
     this.textArea.setWrapStyleWord(true);
@@ -67,25 +75,81 @@ public class TextEditor extends JFrame implements ActionListener {
     setVisible(true);
   }
   
-  private void selectNextText() {
-    if (this.allTexts.isEmpty()) {
-      setTitle("No Text available");
-      return;
+  private void selectNext() {
+    if (this.selectedTextNr != -1) {
+      if (!selectNextText()) {
+        if (!selectFirstOption()) {
+          selectFirstText();
+        }
+      }
+    } else if (this.selectedOptionNr != -1) {
+      if (!selectNextOption()) {
+        if (!selectFirstText()) {
+          selectFirstOption();
+        }
+      }
+    } else {
+      if (this.allTexts.isEmpty()) {
+        setTitle("No Text available");
+        return;
+      }
     }
+  }
+  
+  private boolean selectFirstOption() {
+    if (this.allOptions.isEmpty()) {
+      return false;
+    }
+    this.selectedOptionNr = 0;
+    this.textArea.setText(this.allOptions.get(this.selectedOptionNr).getRawValue());
+    return true;
+  }
+  
+  private boolean selectFirstText() {
+    if (this.allTexts.isEmpty()) {
+      return false;
+    }
+    this.selectedTextNr = 0;
+    this.textArea.setText(this.allTexts.get(this.selectedTextNr).getRawValue());
+    return true;
+  }
+  
+  private boolean selectNextOption() {
+    this.selectedOptionNr++;
+    if (this.selectedOptionNr >= this.allOptions.size()) {
+      this.selectedOptionNr = -1;
+      return false;
+    }
+    this.textArea.setText(this.allOptions.get(this.selectedOptionNr).getRawValue());
+    return true;
+  }
+  
+  private boolean selectNextText() {
     this.selectedTextNr++;
     if (this.selectedTextNr >= this.allTexts.size()) {
-      this.selectedTextNr = 0;
+      this.selectedTextNr = -1;
+      return false;
     }
     this.textArea.setText(this.allTexts.get(this.selectedTextNr).getRawValue());
+    return true;
   }
   
   public void actionPerformed(final ActionEvent e) {
     if (e.getSource() == this.next) {
-      selectNextText();
+      selectNext();
     } else if (e.getSource() == this.save) {
       final String contentDir = (String) this.contentDir.getSelectedItem();
-      this.allTexts.get(this.selectedTextNr).setValue(this.textArea.getText(), contentDir);
+      TextWrapper textWrapper = null;
+      if (this.selectedTextNr != -1) {
+        textWrapper = this.allTexts.get(this.selectedTextNr);
+      } else if (this.selectedOptionNr != -1) {
+        textWrapper = this.allOptions.get(this.selectedOptionNr);
+      }
+      if (textWrapper != null) {
+        textWrapper.setValue(this.textArea.getText(), contentDir);
+      }
     }
     this.gameTextArea.refresh();
+    this.gameOptionArea.repaint();
   }
 }
