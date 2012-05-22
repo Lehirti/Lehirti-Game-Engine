@@ -3,9 +3,9 @@ package org.lehirti.luckysurvivor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.lehirti.engine.util.ContentUtils;
-import org.lehirti.engine.util.PathFinder;
 import org.lehirti.engine.util.ContentUtils.CheckResult;
-import org.lehirti.luckysurvivor.intro.Airport;
+import org.lehirti.engine.util.PathFinder;
+import org.lehirti.luckysurvivor.intro.Startscreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ public class Main extends org.lehirti.engine.Main {
    * @throws InterruptedException
    */
   public static void main(final String[] args) throws InterruptedException, InvocationTargetException {
-    org.lehirti.engine.Main.currentEvent = new Airport();
+    org.lehirti.engine.Main.currentEvent = new Startscreen();
     
     new Main().engineMain(args);
   }
