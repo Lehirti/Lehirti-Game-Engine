@@ -18,8 +18,8 @@ public final class ContentChecker {
       PathFinder.registerContentDir(content.name());
     }
     
-    int nCore = 0;
-    int nMod = 0;
+    int iCore = 0;
+    int iMod = 0;
     final Vector<Class<?>> imageEnums = new ClassFinder().findSubclasses(ImageKey.class.getName());
     for (final Class<?> imageEnum : imageEnums) {
       final ImageKey[] imageKeys = (ImageKey[]) imageEnum.getEnumConstants();
@@ -28,16 +28,16 @@ public final class ContentChecker {
         if (imageWrapper.getResourceState() == ResourceState.MISSING) {
           System.out.println(ResourceState.MISSING + " image: " + imageWrapper.toString());
         } else {
-          nCore += imageWrapper.getNrOfCoreImages();
-          nMod += imageWrapper.getNrOfModImages();
+          iCore += imageWrapper.getNrOfCoreImages();
+          iMod += imageWrapper.getNrOfModImages();
         }
       }
     }
     
     System.out.println();
-    System.out.println(nCore + " core images.");
-    System.out.println(nMod + " mod images.");
     
+    int tCore = 0;
+    int tMod = 0;
     final Vector<Class<?>> textEnums = new ClassFinder().findSubclasses(TextKey.class.getName());
     for (final Class<?> textEnum : textEnums) {
       final TextKey[] textKeys = (TextKey[]) textEnum.getEnumConstants();
@@ -45,10 +45,19 @@ public final class ContentChecker {
         final TextWrapper textWrapper = ResourceCache.get(key);
         if (textWrapper.getResourceState() == ResourceState.MISSING) {
           System.out.println(ResourceState.MISSING + " text: " + key.getClass().getName() + "." + key.name());
+        } else if (textWrapper.getResourceState() == ResourceState.CORE) {
+          tCore++;
+        } else if (textWrapper.getResourceState() == ResourceState.MOD) {
+          tMod++;
         }
       }
     }
     
+    System.out.println();
+    System.out.println(iCore + " core images.");
+    System.out.println(iMod + " mod images.");
+    System.out.println(tCore + " core texts.");
+    System.out.println(tMod + " mod texts.");
     System.out.println("DONE.");
   }
 }
