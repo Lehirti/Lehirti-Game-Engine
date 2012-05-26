@@ -122,6 +122,9 @@ public class ImageEditor extends JFrame implements ActionListener {
   final JComboBox contentDir;
   JButton newAlternative = new JButton("Add");
   
+  JLabel deleteLabel = new JLabel("Mark as");
+  JButton delete = new JButton("Deleted");
+  
   ImageArea imageArea = new ImageArea(16.0, 12.0, 12.0, 9.0);
   
   final ImageArea gameImageArea;
@@ -139,7 +142,7 @@ public class ImageEditor extends JFrame implements ActionListener {
     
     this.contentDir = new JComboBox(PathFinder.getContentDirs());
     
-    this.controls.setLayout(new GridLayout(10, 2));
+    this.controls.setLayout(new GridLayout(11, 2));
     this.controls.setPreferredSize(new Dimension(300, 800));
     this.controls.add(this.alignXlabel);
     this.controls.add(this.alignX);
@@ -169,6 +172,8 @@ public class ImageEditor extends JFrame implements ActionListener {
     this.controls.add(this.contentDir);
     this.controls.add(this.newAlternativeLabel);
     this.controls.add(this.newAlternative);
+    this.controls.add(this.deleteLabel);
+    this.controls.add(this.delete);
     
     this.all.setLayout(new BorderLayout());
     this.all.add(this.controls, BorderLayout.EAST);
@@ -181,6 +186,7 @@ public class ImageEditor extends JFrame implements ActionListener {
     this.selectedImage.addActionListener(this);
     this.selectedAlternative.addActionListener(this);
     this.newAlternative.addActionListener(this);
+    this.delete.addActionListener(this);
     
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     
@@ -309,6 +315,13 @@ public class ImageEditor extends JFrame implements ActionListener {
         LOGGER.debug("aborted");
       }
       updateCanvasAndImageWrapper();
+    } else if (e.getSource() == this.delete) {
+      LOGGER.debug("delete()");
+      final ImageWrapper imageWrapper = this.allImages.get(this.selectedImageNr);
+      imageWrapper.removeAlternativeImage(this.selectedAlternativeNr);
+      // TODO
+      repaint();
+      this.gameImageArea.repaint();
     } else {
       updateCanvasAndImageWrapper();
     }

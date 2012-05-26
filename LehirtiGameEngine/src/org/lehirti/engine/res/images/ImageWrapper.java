@@ -31,8 +31,23 @@ public final class ImageWrapper {
     this.key = key;
     LOGGER.debug("Creating new ImageWrapper for {}", toString());
     this.proxies = new ArrayList<ImageProxy>(5);
-    this.nCore = parseAll(PathFinder.getCoreImageProxyFiles(key));
-    this.nMod = parseAll(PathFinder.getModImageProxyFiles(key));
+    final File[] coreImageProxyFiles = PathFinder.getCoreImageProxyFiles(key);
+    final File[] modImageProxyFiles = PathFinder.getModImageProxyFiles(key);
+    
+    // remove core files that are shadowed by mod files (e.g. core files that are marked as deleted)
+    for (int i = 0; i < coreImageProxyFiles.length; i++) {
+      final File file = coreImageProxyFiles[i];
+      final String simpleCoreFileName = file.getName();
+      for (final File modFile : modImageProxyFiles) {
+        if (modFile.getName().equals(simpleCoreFileName)) {
+          coreImageProxyFiles[i] = null;
+          break;
+        }
+      }
+    }
+    
+    this.nCore = parseAll(coreImageProxyFiles);
+    this.nMod = parseAll(modImageProxyFiles);
     
     if (this.nCore > 0) {
       this.state = ResourceState.CORE;
@@ -48,6 +63,9 @@ public final class ImageWrapper {
   private int parseAll(final File[] imageProxies) {
     int ret = 0;
     for (final File imageProxyFile : imageProxies) {
+      if (imageProxyFile == null) {
+        continue;
+      }
       LOGGER.debug("Trying to add image proxy {}", imageProxyFile.getAbsolutePath());
       final ImageProxy imageProxy = ImageProxy.getInstance(imageProxyFile);
       if (imageProxy != null) {
@@ -130,6 +148,15 @@ public final class ImageWrapper {
       LOGGER.error("Failed to create new image from " + alternativeImageFile.getAbsolutePath());
     }
     return false;
+  }
+  
+  public void removeAlternativeImage(final int alternativeImageNr) {
+    final ImageProxy removed = this.proxies.remove(alternativeImageNr);
+    this.currentlyDisplayedImageNr = this.proxies.size() - 1;
+    this.image = new ImageProxy();
+    removed.setDeleted();
+    pinNextImage();
+    LOGGER.info("Image {} removed from {}", removed.toString(), toString());
   }
   
   public ImageKey getKey() {

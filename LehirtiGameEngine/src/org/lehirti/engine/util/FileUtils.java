@@ -175,6 +175,12 @@ public class FileUtils {
   public static boolean writePropsToFile(final Properties properties, final File file, final String comments) {
     FileOutputStream fos = null;
     try {
+      final File parent = file.getParentFile();
+      if (!parent.isDirectory()) {
+        if (!parent.mkdirs()) {
+          LOGGER.error("Unable to create " + parent.getAbsolutePath());
+        }
+      }
       fos = new FileOutputStream(file);
       properties.store(fos, comments);
       return true;

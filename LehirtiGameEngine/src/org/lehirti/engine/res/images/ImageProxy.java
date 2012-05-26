@@ -117,6 +117,9 @@ public class ImageProxy {
   }
   
   static ImageProxy getInstance(final File imageProxyFile) {
+    if (isMarkedAsDeleted(imageProxyFile)) {
+      return null;
+    }
     
     File imageFile = PathFinder.imageProxyToCoreReal(imageProxyFile);
     LOGGER.debug("core/res file location: {}", imageFile.getAbsolutePath());
@@ -134,6 +137,12 @@ public class ImageProxy {
     LOGGER.debug("Reading image file {}", imageFile.getAbsolutePath());
     final BufferedImage image = ResourceCache.getRawImage(imageFile);
     return new ImageProxy(imageProxyFile, imageFile, image);
+  }
+  
+  private static boolean isMarkedAsDeleted(final File imageProxyFile) {
+    final Properties props = new Properties();
+    FileUtils.readPropsFromFile(props, imageProxyFile);
+    return props.containsKey("Deleted");
   }
   
   /**
@@ -452,5 +461,12 @@ public class ImageProxy {
     final double maxXFactor = remainingScreenX / (double) this.imageSizeX;
     final double maxYFactor = remainingScreenY / (double) this.imageSizeY;
     return maxXFactor < maxYFactor ? maxXFactor : maxYFactor;
+  }
+  
+  public void setDeleted() {
+    final Properties deletedPlacement = new Properties();
+    deletedPlacement.put("Deleted", "true");
+    setPlacement(deletedPlacement);
+    writeProxyFile();
   }
 }
