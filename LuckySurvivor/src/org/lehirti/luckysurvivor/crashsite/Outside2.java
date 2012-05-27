@@ -50,7 +50,7 @@ public class Outside2 extends EventNode<NullState> {
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setBG(CrashSite.OUTSIDE_PLANE);
+    return ImgChange.setBGAndFG(CrashSite.OUTSIDE_PLANE_NON_BURNING);
   }
   
   @Override

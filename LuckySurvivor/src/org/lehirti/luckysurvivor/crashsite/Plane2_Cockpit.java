@@ -26,7 +26,7 @@ public class Plane2_Cockpit extends EventNode<NullState> {
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setBG(CrashSite.COCKPIT);
+    return ImgChange.setBG(CrashSite.COCKPIT_NON_BURNING);
   }
   
   @Override
@@ -46,6 +46,6 @@ public class Plane2_Cockpit extends EventNode<NullState> {
     addOption(Key.OPTION_SOUTH, Text.OPTION_LOOK_FOR_ANYTHING_USEFUL, new TextOnlyEvent(Text.LOOK_FOR_ANYTHING_USEFUL,
         new Plane2_Cockpit()));
     
-    addOption(Key.OPTION_LEAVE, Text.OPTION_GO_BACK_TO_FUSELAGE, new Plane1_Fuselage());
+    addOption(Key.OPTION_LEAVE, Text.OPTION_GO_BACK_TO_FUSELAGE, new Plane2_Fuselage());
   }
 }

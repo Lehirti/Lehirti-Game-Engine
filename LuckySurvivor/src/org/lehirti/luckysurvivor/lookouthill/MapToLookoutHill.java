@@ -1,7 +1,7 @@
 package org.lehirti.luckysurvivor.lookouthill;
 
 import org.lehirti.engine.events.EventNode;
-import org.lehirti.engine.events.SetFlagEvent;
+import org.lehirti.engine.events.SetFlagTextOnlyEvent;
 import org.lehirti.engine.events.TextOnlyEvent;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
@@ -46,7 +46,7 @@ public class MapToLookoutHill extends EventNode<NullState> {
       addOption(Key.OPTION_NORTH, Text.OPTION_DRING_FROM_SPRING, new TextOnlyEvent(Text.DRING_FROM_SPRING,
           new MapToLookoutHill()));
     } else {
-      addOption(Key.OPTION_NORTH, Text.OPTION_SEARCH_FOR_WATER, new SetFlagEvent(Bool.HAS_FOUND_SPRING,
+      addOption(Key.OPTION_NORTH, Text.OPTION_SEARCH_FOR_WATER, new SetFlagTextOnlyEvent(Bool.HAS_FOUND_SPRING,
           Text.SEARCH_FOR_WATER, new MapToLookoutHill()));
     }
     addOption(Key.OPTION_SOUTH, Text.OPTION_SEARCH_SOMETHING_TO_EAT, new TextOnlyEvent(Text.SEARCH_SOMETHING_TO_EAT,

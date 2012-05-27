@@ -1,7 +1,7 @@
 package org.lehirti.luckysurvivor.crashsite;
 
 import org.lehirti.engine.events.EventNode;
-import org.lehirti.engine.events.SetFlagEvent;
+import org.lehirti.engine.events.SetFlagTextOnlyEvent;
 import org.lehirti.engine.events.TextOnlyEvent;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
@@ -61,7 +61,7 @@ public class Plane2_Fuselage extends EventNode<NullState> {
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setBG(CrashSite.INSIDE_FUSELAGE);
+    return ImgChange.setBG(CrashSite.INSIDE_FUSELAGE_NON_BURNING);
   }
   
   @Override
@@ -71,7 +71,7 @@ public class Plane2_Fuselage extends EventNode<NullState> {
     if (is(Bool.HAS_LOOKED_FOR_SURVIVORS)) {
       addOption(Key.OPTION_NORTH, Text.OPTION_TRY_TO_FREE_TRAPPED_WOMAN, new FreeTrappedWoman());
     } else {
-      addOption(Key.OPTION_NORTH, Text.OPTION_LOOK_FOR_OTHER_SURVIVORS, new SetFlagEvent(Bool.HAS_LOOKED_FOR_SURVIVORS,
+      addOption(Key.OPTION_NORTH, Text.OPTION_LOOK_FOR_OTHER_SURVIVORS, new SetFlagTextOnlyEvent(Bool.HAS_LOOKED_FOR_SURVIVORS,
           Text.LOOK_FOR_OTHER_SURVIVORS, new Plane2_Fuselage()));
     }
     
@@ -85,27 +85,27 @@ public class Plane2_Fuselage extends EventNode<NullState> {
     
     if (is(Bool.FUSELAGE_EXAMINED)) {
       if (is(Bool.RUBBLE_CLEARED) && is(Bool.HULL_SEALED)) {
-        addOption(Key.OPTION_A, Text.OPTION_USE_FUSELAGE_AS_SHELTER, new SetFlagEvent(
+        addOption(Key.OPTION_A, Text.OPTION_USE_FUSELAGE_AS_SHELTER, new SetFlagTextOnlyEvent(
             org.lehirti.luckysurvivor.crashsite.Bool.SHELTER_HAS_BEEN_BUILT, Text.USE_FUSELAGE_AS_SHELTER,
             new Shelter()));
       } else {
         if (!is(Bool.RUBBLE_CLEARED)) {
-          addOption(Key.OPTION_A, Text.OPTION_CLEAR_RUBBLE, new SetFlagEvent(Bool.RUBBLE_CLEARED, Text.CLEAR_RUBBLE,
+          addOption(Key.OPTION_A, Text.OPTION_CLEAR_RUBBLE, new SetFlagTextOnlyEvent(Bool.RUBBLE_CLEARED, Text.CLEAR_RUBBLE,
               new Plane2_Fuselage()));
         }
         if (!is(Bool.HULL_SEALED)) {
-          addOption(Key.OPTION_X, Text.OPTION_SEAL_HULL, new SetFlagEvent(Bool.HULL_SEALED, Text.SEAL_HULL,
+          addOption(Key.OPTION_X, Text.OPTION_SEAL_HULL, new SetFlagTextOnlyEvent(Bool.HULL_SEALED, Text.SEAL_HULL,
               new Plane2_Fuselage()));
         }
       }
       
     } else {
-      addOption(Key.OPTION_A, Text.OPTION_EXAMINE_FUSELAGE, new SetFlagEvent(Bool.FUSELAGE_EXAMINED,
+      addOption(Key.OPTION_A, Text.OPTION_EXAMINE_FUSELAGE, new SetFlagTextOnlyEvent(Bool.FUSELAGE_EXAMINED,
           Text.EXAMINE_FUSELAGE, new Plane2_Fuselage()));
     }
     
     addOption(Key.OPTION_V, Text.OPTION_GO_TO_COCKPIT, new Plane2_Cockpit());
     
-    addOption(Key.OPTION_LEAVE, Text.OPTION_LEAVE_PLANE, new TextOnlyEvent(Text.LEAVE_PLANE, new Outside1()));
+    addOption(Key.OPTION_LEAVE, Text.OPTION_LEAVE_PLANE, new TextOnlyEvent(Text.LEAVE_PLANE, new Outside2()));
   }
 }

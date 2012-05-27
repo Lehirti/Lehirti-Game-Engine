@@ -2,6 +2,8 @@ package org.lehirti.luckysurvivor.crashsite;
 
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.SetFlagEvent;
+import org.lehirti.engine.events.SetFlagTextOnlyEvent;
+import org.lehirti.engine.events.StandardEvent;
 import org.lehirti.engine.events.TextOnlyEvent;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
@@ -49,18 +51,18 @@ public class Plane1_Fuselage extends EventNode<NullState> {
     addOption(Key.OPTION_NORTH, Text.OPTION_GO_TO_COCKPIT, new Plane1_Cockpit());
     
     if (is(Bool.HAS_LOOKED_FOR_SURVIVORS)) {
-      addOption(Key.OPTION_WEST, Text.OPTION_LOOK_FOR_MORE_SURVIVORS, new TextOnlyEvent(Text.LOOK_FOR_MORE_SURVIVORS,
-          new Plane1_Fuselage()));
+      addOption(Key.OPTION_WEST, Text.OPTION_LOOK_FOR_MORE_SURVIVORS, new StandardEvent(
+          CrashSite.LOOK_FOR_SURVIVORS_AFTER_CRASH, Text.LOOK_FOR_MORE_SURVIVORS, new Plane1_Fuselage()));
     } else {
-      addOption(Key.OPTION_WEST, Text.OPTION_LOOK_FOR_OTHER_SURVIVORS, new SetFlagEvent(
-          Bool.HAS_LOOKED_FOR_SURVIVORS, Text.LOOK_FOR_OTHER_SURVIVORS, new Plane1_Fuselage()));
+      addOption(Key.OPTION_WEST, Text.OPTION_LOOK_FOR_OTHER_SURVIVORS, new SetFlagEvent(Bool.HAS_LOOKED_FOR_SURVIVORS,
+          CrashSite.LOOK_FOR_SURVIVORS_AFTER_CRASH, Text.LOOK_FOR_OTHER_SURVIVORS, new Plane1_Fuselage()));
     }
     
     addOption(Key.OPTION_SOUTH, Text.OPTION_SEARCH_RUBBLE_FOR_USEFULL_STUFF, new TextOnlyEvent(
         Text.SEARCH_RUBBLE_FOR_USEFULL_STUFF, new Plane1_Fuselage()));
     
     if (is(Bool.HAS_LOOKED_FOR_SURVIVORS)) {
-      addOption(Key.OPTION_EAST, Text.OPTION_HELP_FELLOW_SURVIVORS_OUT_OF_PLANE, new SetFlagEvent(
+      addOption(Key.OPTION_EAST, Text.OPTION_HELP_FELLOW_SURVIVORS_OUT_OF_PLANE, new SetFlagTextOnlyEvent(
           Bool.HAS_HELPED_OTHERS_OUT_OF_PLANE, Text.HELP_FELLOW_SURVIVORS_OUT_OF_PLANE, new Plane1_Fuselage()));
     }
     
