@@ -9,7 +9,6 @@ import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.state.BoolState;
-import org.lehirti.luckysurvivor.cliffsouth.MapToCliffSouth;
 import org.lehirti.luckysurvivor.map.Map;
 import org.lehirti.luckysurvivor.map.Map.Location;
 
@@ -45,10 +44,10 @@ public class MapToJungle1Uphill extends EventNode<NullState> {
     
     if (is(Bool.HAS_EXAMINED_GROUND)) {
       addOption(Key.OPTION_NORTH, Text.OPTION_BURY_THE_DEAD, new TextOnlyEvent(Text.BURY_THE_DEAD,
-          new MapToCliffSouth()));
+          new MapToJungle1Uphill()));
     } else {
       addOption(Key.OPTION_NORTH, Text.OPTION_EXAMINE_THE_GROUND, new SetFlagTextOnlyEvent(Bool.HAS_EXAMINED_GROUND,
-          Text.EXAMINE_THE_GROUND, new MapToCliffSouth()));
+          Text.EXAMINE_THE_GROUND, new MapToJungle1Uphill()));
     }
     
     addOption(Key.OPTION_SOUTH, Text.OPTION_SEARCH_FOR_SOMETHING_TO_EAT, new TextOnlyEvent(
