@@ -6,5 +6,6 @@ public enum CommonText implements TextKey {
   OPTION_NEXT,
   OPTION_LEAVE_HOUSE,
   OPTION_EXPLORE_AREA,
-  OPTION_LEAVE_AREA;
+  OPTION_LEAVE_AREA,
+  INVENTORY;
 }

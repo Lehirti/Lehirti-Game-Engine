@@ -38,10 +38,10 @@ public class StateObject implements Externalizable {
   };
   
   // SortedMap produces class cast exceptions
-  private final Map<BoolState, Boolean> BOOL_MAP = new LinkedHashMap<BoolState, Boolean>();
-  private final Map<IntState, Long> INT_MAP = new LinkedHashMap<IntState, Long>();
-  private final Map<ObjState, Serializable> OBJ_MAP = new LinkedHashMap<ObjState, Serializable>();
-  private final Map<StringState, String> STRING_MAP = new LinkedHashMap<StringState, String>();
+  private final Map<BoolState, Boolean> BOOL_MAP = new InventoryMap<BoolState, Boolean>();
+  private final Map<IntState, Long> INT_MAP = new InventoryMap<IntState, Long>();
+  private final Map<ObjState, Serializable> OBJ_MAP = new InventoryMap<ObjState, Serializable>();
+  private final Map<StringState, String> STRING_MAP = new InventoryMap<StringState, String>();
   private final Map<Class<?>, Enum<?>> PER_CLASS_STATE_MAP = new LinkedHashMap<Class<?>, Enum<?>>();
   
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

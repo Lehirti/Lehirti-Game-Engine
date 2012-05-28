@@ -1,5 +1,6 @@
 package org.lehirti.engine;
 
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
@@ -30,6 +31,7 @@ import org.lehirti.engine.gui.TextEditor;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.images.ImageWrapper;
+import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.state.StateObject;
 import org.lehirti.engine.state.StaticInitializer;
 import org.lehirti.engine.util.ClassFinder;
@@ -57,6 +59,7 @@ public abstract class Main {
   
   public static TextArea TEXT_AREA;
   public static ImageArea IMAGE_AREA;
+  public static TextArea INVENTORY_AREA;
   public static OptionArea OPTION_AREA;
   public static TextArea STATS_AREA;
   
@@ -110,6 +113,10 @@ public abstract class Main {
             saveGame();
           } else if (key == Key.CTRL_L) {
             loadGame();
+          } else if (key == Key.SHOW_MAIN) {
+            showInMainWindow(IMAGE_AREA);
+          } else if (key == Key.SHOW_INVENTORY) {
+            showInMainWindow(INVENTORY_AREA);
           } else {
             // key known to the game, but currently not assigned (e.g. one of the option keys)
           }
@@ -117,6 +124,20 @@ public abstract class Main {
           e.consume();
         }
         
+      }
+      
+      private void showInMainWindow(final Component component) {
+        MAIN_WINDOW.getContentPane().remove(IMAGE_AREA);
+        MAIN_WINDOW.getContentPane().remove(INVENTORY_AREA);
+        
+        final GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        MAIN_WINDOW.getContentPane().add(component, c);
+        MAIN_WINDOW.validate();
+        MAIN_WINDOW.repaint();
       }
       
       private void editImages() {
@@ -130,6 +151,8 @@ public abstract class Main {
     });
     
     IMAGE_AREA = new ImageArea(SCREEN_X, SCREEN_Y, 48.0, 36.0);
+    
+    INVENTORY_AREA = new TextArea(SCREEN_X, SCREEN_Y, 48.0, 36.0);
     
     STATS_AREA = new TextArea(SCREEN_X, SCREEN_Y, 64.0, 6.0);
     
@@ -164,6 +187,8 @@ public abstract class Main {
     MAIN_WINDOW.getContentPane().add(OPTION_AREA, c);
     
     STATS_AREA.setText("STATS_AREA (TODO ;)");
+    
+    INVENTORY_AREA.setText(ResourceCache.get(CommonText.INVENTORY));
     
     MAIN_WINDOW.pack();
     MAIN_WINDOW.setVisible(true);

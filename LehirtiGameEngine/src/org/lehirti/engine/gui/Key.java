@@ -18,6 +18,10 @@ public enum Key {
   OPTION_C('c', 2, 2),
   OPTION_V('v', 3, 2),
   
+  // 
+  SHOW_MAIN('1'),
+  SHOW_INVENTORY('2'),
+  
   // image and text editors
   CTRL_I((char) 0x09),
   CTRL_T((char) 0x14),
