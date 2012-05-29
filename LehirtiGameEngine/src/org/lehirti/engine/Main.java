@@ -63,6 +63,8 @@ public abstract class Main {
   public static OptionArea OPTION_AREA;
   public static TextArea STATS_AREA;
   
+  private static Component currentlyShownInMain;
+  
   public static boolean IS_DEVELOPMENT_VERSION = false;
   
   public static volatile Event<?> currentEvent = null;
@@ -127,8 +129,8 @@ public abstract class Main {
       }
       
       private void showInMainWindow(final Component component) {
-        MAIN_WINDOW.getContentPane().remove(IMAGE_AREA);
-        MAIN_WINDOW.getContentPane().remove(INVENTORY_AREA);
+        MAIN_WINDOW.getContentPane().remove(currentlyShownInMain);
+        currentlyShownInMain = component;
         
         final GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -146,7 +148,11 @@ public abstract class Main {
       }
       
       private void editTexts() {
-        new TextEditor(TEXT_AREA, OPTION_AREA);
+        if (currentlyShownInMain == INVENTORY_AREA) {
+          new TextEditor(INVENTORY_AREA, new OptionArea(0, 0, 0, 0, 0, 0));
+        } else {
+          new TextEditor(TEXT_AREA, OPTION_AREA);
+        }
       }
     });
     
@@ -164,6 +170,7 @@ public abstract class Main {
     c.gridwidth = 1;
     c.gridheight = 1;
     MAIN_WINDOW.getContentPane().add(IMAGE_AREA, c);
+    currentlyShownInMain = IMAGE_AREA;
     
     c = new GridBagConstraints();
     c.gridx = 1;
