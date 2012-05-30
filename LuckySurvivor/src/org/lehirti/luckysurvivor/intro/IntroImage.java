@@ -8,5 +8,6 @@ public enum IntroImage implements ImageKey {
   BUS,
   INSIDE_PLANE,
   PLANE_IN_THUNDERSTORM,
-  THE_CRASH;
+  THE_CRASH,
+  FUCK_STEWARDESS;
 }

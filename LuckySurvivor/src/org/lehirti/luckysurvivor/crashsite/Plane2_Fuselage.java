@@ -51,7 +51,8 @@ public class Plane2_Fuselage extends EventNode<NullState> {
     HAS_STRATCHER,
     FUSELAGE_EXAMINED,
     RUBBLE_CLEARED,
-    HULL_SEALED;
+    HULL_SEALED,
+    WOMAN_FREED;
     
     @Override
     public Boolean defaultValue() {
@@ -69,10 +70,12 @@ public class Plane2_Fuselage extends EventNode<NullState> {
     setText(Text.DESCRIPTION);
     
     if (is(Bool.HAS_LOOKED_FOR_SURVIVORS)) {
-      addOption(Key.OPTION_NORTH, Text.OPTION_TRY_TO_FREE_TRAPPED_WOMAN, new FreeTrappedWoman());
+      if (!is(Bool.WOMAN_FREED)) {
+        addOption(Key.OPTION_NORTH, Text.OPTION_TRY_TO_FREE_TRAPPED_WOMAN, new FreeTrappedWoman());
+      }
     } else {
-      addOption(Key.OPTION_NORTH, Text.OPTION_LOOK_FOR_OTHER_SURVIVORS, new SetFlagTextOnlyEvent(Bool.HAS_LOOKED_FOR_SURVIVORS,
-          Text.LOOK_FOR_OTHER_SURVIVORS, new Plane2_Fuselage()));
+      addOption(Key.OPTION_NORTH, Text.OPTION_LOOK_FOR_OTHER_SURVIVORS, new SetFlagTextOnlyEvent(
+          Bool.HAS_LOOKED_FOR_SURVIVORS, Text.LOOK_FOR_OTHER_SURVIVORS, new Plane2_Fuselage()));
     }
     
     addOption(Key.OPTION_SOUTH, Text.OPTION_RECOVER_BODIES_FROM_WRECKAGE, new RecoverBodiesFromPlane());
@@ -90,8 +93,8 @@ public class Plane2_Fuselage extends EventNode<NullState> {
             new Shelter()));
       } else {
         if (!is(Bool.RUBBLE_CLEARED)) {
-          addOption(Key.OPTION_A, Text.OPTION_CLEAR_RUBBLE, new SetFlagTextOnlyEvent(Bool.RUBBLE_CLEARED, Text.CLEAR_RUBBLE,
-              new Plane2_Fuselage()));
+          addOption(Key.OPTION_A, Text.OPTION_CLEAR_RUBBLE, new SetFlagTextOnlyEvent(Bool.RUBBLE_CLEARED,
+              Text.CLEAR_RUBBLE, new Plane2_Fuselage()));
         }
         if (!is(Bool.HULL_SEALED)) {
           addOption(Key.OPTION_X, Text.OPTION_SEAL_HULL, new SetFlagTextOnlyEvent(Bool.HULL_SEALED, Text.SEAL_HULL,

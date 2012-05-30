@@ -11,7 +11,7 @@ public class SearchFuselageForSomethingUsefull extends Location<NullState> {
   
   @Override
   protected ImageKey getBackgroundImageToDisplay() {
-    return CrashSite.INSIDE_FUSELAGE;
+    return CrashSite.INSIDE_FUSELAGE_NON_BURNING;
   }
   
   @Override

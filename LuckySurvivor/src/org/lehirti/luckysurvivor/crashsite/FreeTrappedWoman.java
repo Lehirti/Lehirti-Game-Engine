@@ -22,6 +22,7 @@ public class FreeTrappedWoman extends EventNode<NullState> {
   protected void doEvent() {
     if (is(Bool.HAS_METAL_STRUT)) {
       setText(Text.FREE_WOMAN_WITH_METAL_STRUT);
+      set(Plane2_Fuselage.Bool.WOMAN_FREED, true);
     } else {
       setText(Text.FREE_WOMAN_WITHOUT_METAL_STRUT);
     }
