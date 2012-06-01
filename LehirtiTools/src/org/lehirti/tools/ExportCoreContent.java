@@ -5,8 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
@@ -21,6 +23,7 @@ public final class ExportCoreContent {
   private static final File ROOT_DIR = new File("..");
   private static final File CORE_DIR = new File(ROOT_DIR, "core");
   private static final File DEST_DIR = new File("../../../luckysurvivor");
+  private static final Set<String> NEW_ZIP_ENTRIES = new HashSet<String>();
   
   public static void main(final String[] args) throws IOException {
     System.out.println("START " + ExportCoreContent.class.getSimpleName());
@@ -38,6 +41,7 @@ public final class ExportCoreContent {
   
   private static void export(final File dir, final int versionNumber) throws IOException {
     System.out.println("START exporting " + dir.getAbsolutePath());
+    NEW_ZIP_ENTRIES.clear();
     
     final String name = dir.getName();
     final File destZipFile = new File(DEST_DIR, name + "-" + versionNumber + ".zip");
@@ -92,7 +96,9 @@ public final class ExportCoreContent {
         if (f.getName().endsWith(PathFinder.PROXY_FILENAME_SUFFIX)) {
           final File imageFile = PathFinder.imageProxyToCoreReal(f);
           final ZipEntry imageZipEntry = new ZipEntry(imageFile.getPath());
-          if (!imageIsContainedInOlderZipFile(imageZipEntry, contentZipFiles)) {
+          if (!imageIsContainedInOlderZipFile(imageZipEntry, contentZipFiles)
+              && !NEW_ZIP_ENTRIES.contains(imageFile.getPath())) {
+            NEW_ZIP_ENTRIES.add(imageFile.getPath());
             final File correctedPathImageFile = new File(ROOT_DIR, imageFile.getPath());
             System.out.println("Adding ZipEntry " + imageZipEntry.getName());
             out.putNextEntry(imageZipEntry);
