@@ -15,6 +15,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.lehirti.engine.res.images.ImageProxy;
 import org.lehirti.engine.util.ContentUtils;
 import org.lehirti.engine.util.PathFinder;
 import org.lehirti.luckysurvivor.C;
@@ -24,9 +25,15 @@ public final class ExportCoreContent {
   private static final File CORE_DIR = new File(ROOT_DIR, "core");
   private static final File DEST_DIR = new File("../../../luckysurvivor");
   private static final Set<String> NEW_ZIP_ENTRIES = new HashSet<String>();
+  private static int errors = 0;
   
   public static void main(final String[] args) throws IOException {
     System.out.println("START " + ExportCoreContent.class.getSimpleName());
+    
+    System.out.println("START deleting image proxies that are marked as deleted.");
+    deleteDeletedImageProxiesRecursive(CORE_DIR);
+    System.out.println("FINISHED deleting image proxies that are marked as deleted.");
+    
     for (final C content : C.values()) {
       final File dir = new File(CORE_DIR, content.name());
       if (dir.getName().equals("res") || !dir.isDirectory()) {
@@ -36,7 +43,27 @@ public final class ExportCoreContent {
       export(dir, content.requiredVersion);
     }
     
+    if (errors > 0) {
+      System.out.println(errors + " ERRORS have occurred.");
+    }
+    
     System.out.println("FINISHED " + ExportCoreContent.class.getSimpleName());
+  }
+  
+  private static void deleteDeletedImageProxiesRecursive(final File dir) {
+    for (final File file : dir.listFiles()) {
+      if (file.isDirectory()) {
+        deleteDeletedImageProxiesRecursive(file);
+      } else if (file.isFile() && file.getName().endsWith(PathFinder.PROXY_FILENAME_SUFFIX)
+          && ImageProxy.isMarkedAsDeleted(file)) {
+        if (file.delete()) {
+          System.out.println("Deleted \"marked-as-deleted\" image proxy: " + file.getAbsolutePath());
+        } else {
+          System.out.println("ERROR: Failed to delete \"marked-as-deleted\" image proxy: " + file.getAbsolutePath());
+          errors++;
+        }
+      }
+    }
   }
   
   private static void export(final File dir, final int versionNumber) throws IOException {

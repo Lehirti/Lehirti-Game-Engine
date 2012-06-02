@@ -139,7 +139,7 @@ public class ImageProxy {
     return new ImageProxy(imageProxyFile, imageFile, image);
   }
   
-  private static boolean isMarkedAsDeleted(final File imageProxyFile) {
+  public static boolean isMarkedAsDeleted(final File imageProxyFile) {
     final Properties props = new Properties();
     FileUtils.readPropsFromFile(props, imageProxyFile);
     return props.containsKey("Deleted");
