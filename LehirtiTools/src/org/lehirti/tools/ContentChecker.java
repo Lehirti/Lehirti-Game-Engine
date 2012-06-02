@@ -23,13 +23,15 @@ public final class ContentChecker {
     final Vector<Class<?>> imageEnums = new ClassFinder().findSubclasses(ImageKey.class.getName());
     for (final Class<?> imageEnum : imageEnums) {
       final ImageKey[] imageKeys = (ImageKey[]) imageEnum.getEnumConstants();
-      for (final ImageKey key : imageKeys) {
-        final ImageWrapper imageWrapper = ResourceCache.get(key);
-        if (imageWrapper.getResourceState() == ResourceState.MISSING) {
-          System.out.println(ResourceState.MISSING + " image: " + imageWrapper.toString());
-        } else {
-          iCore += imageWrapper.getNrOfCoreImages();
-          iMod += imageWrapper.getNrOfModImages();
+      if (imageKeys != null) {
+        for (final ImageKey key : imageKeys) {
+          final ImageWrapper imageWrapper = ResourceCache.get(key);
+          if (imageWrapper.getResourceState() == ResourceState.MISSING) {
+            System.out.println(ResourceState.MISSING + " image: " + imageWrapper.toString());
+          } else {
+            iCore += imageWrapper.getNrOfCoreImages();
+            iMod += imageWrapper.getNrOfModImages();
+          }
         }
       }
     }
@@ -41,14 +43,16 @@ public final class ContentChecker {
     final Vector<Class<?>> textEnums = new ClassFinder().findSubclasses(TextKey.class.getName());
     for (final Class<?> textEnum : textEnums) {
       final TextKey[] textKeys = (TextKey[]) textEnum.getEnumConstants();
-      for (final TextKey key : textKeys) {
-        final TextWrapper textWrapper = ResourceCache.get(key);
-        if (textWrapper.getResourceState() == ResourceState.MISSING) {
-          System.out.println(ResourceState.MISSING + " text: " + key.getClass().getName() + "." + key.name());
-        } else if (textWrapper.getResourceState() == ResourceState.CORE) {
-          tCore++;
-        } else if (textWrapper.getResourceState() == ResourceState.MOD) {
-          tMod++;
+      if (textKeys != null) {
+        for (final TextKey key : textKeys) {
+          final TextWrapper textWrapper = ResourceCache.get(key);
+          if (textWrapper.getResourceState() == ResourceState.MISSING) {
+            System.out.println(ResourceState.MISSING + " text: " + key.getClass().getName() + "." + key.name());
+          } else if (textWrapper.getResourceState() == ResourceState.CORE) {
+            tCore++;
+          } else if (textWrapper.getResourceState() == ResourceState.MOD) {
+            tMod++;
+          }
         }
       }
     }
