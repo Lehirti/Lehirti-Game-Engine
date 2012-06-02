@@ -38,7 +38,9 @@ public class ImgChange {
   
   private ImgChange addForeground(final ImageKey... foregroundImages) {
     for (final ImageKey img : foregroundImages) {
-      this.addedFGImages.add(img);
+      if (img != null) {
+        this.addedFGImages.add(img);
+      }
     }
     return this;
   }

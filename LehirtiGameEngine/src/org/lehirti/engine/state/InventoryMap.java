@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import org.lehirti.engine.Main;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.text.CommonText;
+import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 
 public class InventoryMap<K extends State, V> extends LinkedHashMap<K, V> {
@@ -59,7 +60,7 @@ public class InventoryMap<K extends State, V> extends LinkedHashMap<K, V> {
   private void updateInventoryScreen() {
     final SortedMap<String, LinkedHashMap<Inventory, Object>> sortedInventory = new TreeMap<String, LinkedHashMap<Inventory, Object>>();
     for (final Map.Entry<Inventory, Object> invEntry : INVENTORY.entrySet()) {
-      final String rawValue = ResourceCache.get(invEntry.getKey()).getRawValue();
+      final String rawValue = ResourceCache.get((TextKey) invEntry.getKey()).getRawValue();
       LinkedHashMap<Inventory, Object> inventoryPerName = sortedInventory.get(rawValue);
       if (inventoryPerName == null) {
         inventoryPerName = new LinkedHashMap<Inventory, Object>();
@@ -70,7 +71,7 @@ public class InventoryMap<K extends State, V> extends LinkedHashMap<K, V> {
     Main.INVENTORY_AREA.setText(ResourceCache.get(CommonText.INVENTORY));
     for (final LinkedHashMap<Inventory, Object> map : sortedInventory.values()) {
       for (final Map.Entry<Inventory, Object> entry : map.entrySet()) {
-        final TextWrapper tw = ResourceCache.get(entry.getKey());
+        final TextWrapper tw = ResourceCache.get((TextKey) entry.getKey());
         tw.addParameter(entry.getValue().toString());
         Main.INVENTORY_AREA.addText(tw);
       }

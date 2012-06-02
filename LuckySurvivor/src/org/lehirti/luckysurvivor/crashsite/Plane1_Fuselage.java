@@ -41,7 +41,7 @@ public class Plane1_Fuselage extends EventNode<NullState> {
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setBG(CrashSite.INSIDE_FUSELAGE);
+    return ImgChange.setBGAndFG(CrashSite.INSIDE_FUSELAGE);
   }
   
   @Override
