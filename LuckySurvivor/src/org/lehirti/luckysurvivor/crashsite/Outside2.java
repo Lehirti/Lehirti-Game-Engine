@@ -1,7 +1,8 @@
 package org.lehirti.luckysurvivor.crashsite;
 
-import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.AlternativeOneTimeEvents;
+import org.lehirti.engine.events.EventNode;
+import org.lehirti.engine.events.NPCSelectEvent;
 import org.lehirti.engine.events.TextOnlyEvent;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
@@ -11,6 +12,7 @@ import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.luckysurvivor.map.Map;
 import org.lehirti.luckysurvivor.map.Map.Location;
+import org.lehirti.luckysurvivor.npc.CrashSiteNPCs;
 
 public class Outside2 extends EventNode<NullState> {
   public static enum Text implements TextKey {
@@ -94,8 +96,8 @@ public class Outside2 extends EventNode<NullState> {
       addOption(Key.OPTION_V, Text.OPTION_BURY_THE_DEAD, new BuryTheDead());
     }
     
-    addOption(Key.OPTION_EAST, Text.OPTION_EXAMINE_OTHER_SURVIVORS, new TextOnlyEvent(Text.EXAMINE_OTHER_SURVIVORS,
-        new Outside2()));
+    addOption(Key.OPTION_EAST, Text.OPTION_EXAMINE_OTHER_SURVIVORS, new NPCSelectEvent(
+        CrashSite.OUTSIDE_PLANE_NON_BURNING, new Outside2(), CrashSiteNPCs.getNPCs(), 0));
     
     addOption(Key.OPTION_LEAVE, CommonText.OPTION_LEAVE_AREA, new TextOnlyEvent(Text.LEAVE_THE_AREA, new Map(
         Location.CRASH_SITE)));

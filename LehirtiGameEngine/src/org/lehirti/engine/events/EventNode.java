@@ -69,7 +69,7 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
    * 
    * @param text
    */
-  private void addText(final TextWrapper text) {
+  protected void addText(final TextWrapper text) {
     try {
       javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {
