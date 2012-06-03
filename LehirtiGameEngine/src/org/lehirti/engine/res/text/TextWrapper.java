@@ -18,7 +18,7 @@ public class TextWrapper implements Externalizable {
   private TextKey key;
   private String rawValue; // as stored on disc; may be different from what's displayed on screen
   
-  private final List<String> parameters = new LinkedList<String>();
+  private final List<Object> parameters = new LinkedList<Object>();
   
   private final ResourceState state;
   
@@ -60,7 +60,14 @@ public class TextWrapper implements Externalizable {
     }
     String val = this.rawValue;
     for (int i = 0; i < this.parameters.size(); i++) {
-      val = val.replaceAll("\\{" + i + "\\}", this.parameters.get(i));
+      final Object param = this.parameters.get(i);
+      String paramString;
+      if (param instanceof String) {
+        paramString = (String) param;
+      } else {
+        paramString = ((TextWrapper) param).getValue();
+      }
+      val = val.replaceAll("\\{" + i + "\\}", paramString);
     }
     return val;
   }
@@ -72,6 +79,24 @@ public class TextWrapper implements Externalizable {
   
   public void addParameter(final String param) {
     this.parameters.add(param);
+  }
+  
+  public void addParameter(final TextWrapper param) {
+    this.parameters.add(param);
+  }
+  
+  /**
+   * @return this TextWrapper and all (recursively) contained (as parameters) TextWrappers
+   */
+  public List<TextWrapper> getAllTexts() {
+    final List<TextWrapper> allTexts = new LinkedList<TextWrapper>();
+    allTexts.add(this);
+    for (final Object param : this.parameters) {
+      if (param instanceof TextWrapper) {
+        allTexts.addAll(((TextWrapper) param).getAllTexts());
+      }
+    }
+    return allTexts;
   }
   
   @Override
@@ -102,7 +127,7 @@ public class TextWrapper implements Externalizable {
     final int nrOfParams = in.readInt();
     this.parameters.clear();
     for (int i = 0; i < nrOfParams; i++) {
-      this.parameters.add((String) in.readObject());
+      this.parameters.add(in.readObject());
     }
   }
   
@@ -112,7 +137,7 @@ public class TextWrapper implements Externalizable {
     out.writeObject(this.key.name());
     out.writeObject(this.rawValue);
     out.writeInt(this.parameters.size());
-    for (final String param : this.parameters) {
+    for (final Object param : this.parameters) {
       out.writeObject(param);
     }
   }

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JTextArea;
@@ -101,7 +102,11 @@ public class TextArea extends JTextArea implements Externalizable {
   }
   
   public List<TextWrapper> getAllTexts() {
-    return this.allTexts;
+    final List<TextWrapper> allTextsIncludeCascaded = new LinkedList<TextWrapper>();
+    for (final TextWrapper txtWrp : this.allTexts) {
+      allTextsIncludeCascaded.addAll(txtWrp.getAllTexts());
+    }
+    return allTextsIncludeCascaded;
   }
   
   @Override
