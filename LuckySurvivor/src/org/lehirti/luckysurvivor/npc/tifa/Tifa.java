@@ -8,6 +8,7 @@ import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
+import org.lehirti.engine.sex.Sex;
 import org.lehirti.luckysurvivor.npc.AbstractNPC;
 
 public class Tifa extends AbstractNPC {
@@ -33,6 +34,11 @@ public class Tifa extends AbstractNPC {
   }
   
   @Override
+  public Sex getSex() {
+    return Sex.FEMALE;
+  }
+  
+  @Override
   public List<TextWrapper> getGeneralDescription() {
     final List<TextWrapper> generalDescription = new LinkedList<TextWrapper>();
     generalDescription.add(ResourceCache.get(Text.GENERAL_DESCRIPTION));
@@ -40,7 +46,37 @@ public class Tifa extends AbstractNPC {
   }
   
   @Override
+  public List<TextWrapper> getExamineDescription() {
+    return Collections.emptyList();
+  }
+  
+  @Override
   public List<TextWrapper> getGoOgleDescription() {
+    return Collections.emptyList();
+  }
+  
+  @Override
+  public List<TextWrapper> getFlirtWithDescription() {
+    return Collections.emptyList();
+  }
+  
+  @Override
+  public List<TextWrapper> getGiveItemDescription() {
+    return Collections.emptyList();
+  }
+  
+  @Override
+  public List<TextWrapper> getInventoryDescription() {
+    return Collections.emptyList();
+  }
+  
+  @Override
+  public List<TextWrapper> getTalkToDescription() {
+    return Collections.emptyList();
+  }
+  
+  @Override
+  public List<TextWrapper> getSexActsDescription() {
     return Collections.emptyList();
   }
 }

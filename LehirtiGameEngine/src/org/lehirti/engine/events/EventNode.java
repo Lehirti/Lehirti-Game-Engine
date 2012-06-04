@@ -121,7 +121,9 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
   protected void addOption(final Key key, final TextKey text, final Event<?> event) {
     final boolean keyIsAvailable = this.availableOptionKeys.remove(key);
     if (!keyIsAvailable) {
-      LOGGER.warn("Requested option key {} not available; using arbitrary option key instead.", key.name());
+      if (key != null) {
+        LOGGER.warn("Requested option key {} not available; using arbitrary option key instead.", key.name());
+      }
       addOption(text, event);
       return;
     }
