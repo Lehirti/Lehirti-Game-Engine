@@ -2,7 +2,6 @@ package org.lehirti.luckysurvivor.crashsite;
 
 import org.lehirti.engine.events.AlternativeOneTimeEvents;
 import org.lehirti.engine.events.EventNode;
-import org.lehirti.engine.events.NPCSelectEvent;
 import org.lehirti.engine.events.TextOnlyEvent;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
@@ -13,6 +12,7 @@ import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.luckysurvivor.map.Map;
 import org.lehirti.luckysurvivor.map.Map.Location;
 import org.lehirti.luckysurvivor.npc.CrashSiteNPCs;
+import org.lehirti.luckysurvivor.npc.NPCSelectEvent;
 
 public class Outside2 extends EventNode<NullState> {
   public static enum Text implements TextKey {

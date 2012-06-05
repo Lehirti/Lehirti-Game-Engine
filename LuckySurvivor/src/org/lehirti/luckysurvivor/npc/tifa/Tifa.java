@@ -10,6 +10,7 @@ import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.sex.Sex;
 import org.lehirti.luckysurvivor.npc.AbstractNPC;
+import org.lehirti.luckysurvivor.sss.SexAct;
 
 public class Tifa extends AbstractNPC {
   private static final long serialVersionUID = 1L;
@@ -78,5 +79,17 @@ public class Tifa extends AbstractNPC {
   @Override
   public List<TextWrapper> getSexActsDescription() {
     return Collections.emptyList();
+  }
+  
+  @Override
+  public ImageKey getReactionImage(final SexAct proposedSexAct, final int npcDispositionToSexAct) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
+  @Override
+  public List<TextWrapper> getReactionText(final SexAct act, final int npcDispositionToSexAct) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

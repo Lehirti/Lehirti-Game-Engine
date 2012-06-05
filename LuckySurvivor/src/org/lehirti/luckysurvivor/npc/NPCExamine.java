@@ -1,24 +1,26 @@
-package org.lehirti.engine.events;
+package org.lehirti.luckysurvivor.npc;
 
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import org.lehirti.engine.events.Event;
+import org.lehirti.engine.events.EventNode;
+import org.lehirti.engine.events.Option;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextWrapper;
-import org.lehirti.engine.state.NPC;
 
-public class NPCGoOgle extends EventNode<NullState> implements Externalizable {
+public class NPCExamine extends EventNode<NullState> implements Externalizable {
   
   private NPC npc;
   private Event<?> returnEvent;
   
   // for saving/loading
-  public NPCGoOgle() {
+  public NPCExamine() {
     this(null, null);
   }
   
@@ -36,7 +38,7 @@ public class NPCGoOgle extends EventNode<NullState> implements Externalizable {
     out.writeObject(this.returnEvent);
   }
   
-  public NPCGoOgle(final NPC npc, final Event<?> returnEvent) {
+  public NPCExamine(final NPC npc, final Event<?> returnEvent) {
     this.npc = npc;
     this.returnEvent = returnEvent;
   }
@@ -49,12 +51,12 @@ public class NPCGoOgle extends EventNode<NullState> implements Externalizable {
   @Override
   protected void doEvent() {
     setText(this.npc.getName());
-    for (final TextWrapper txtWrp : this.npc.getGoOgleDescription()) {
+    for (final TextWrapper txtWrp : this.npc.getExamineDescription()) {
       addText(txtWrp);
     }
     
     addOption(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new NPCOverviewEvent(this.npc, this.returnEvent));
-    for (final Option option : this.npc.getGoOgleOptions(this.returnEvent)) {
+    for (final Option option : this.npc.getExamineOptions(this.returnEvent)) {
       addOption(option.key, option.text, option.event);
     }
   }

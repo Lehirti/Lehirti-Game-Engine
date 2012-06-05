@@ -3,7 +3,6 @@ package org.lehirti.luckysurvivor.npc;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.lehirti.engine.state.NPC;
 import org.lehirti.luckysurvivor.npc.hinata.Hinata;
 import org.lehirti.luckysurvivor.npc.tifa.Tifa;
 

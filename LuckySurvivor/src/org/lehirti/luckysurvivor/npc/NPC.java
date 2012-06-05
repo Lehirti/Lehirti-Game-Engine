@@ -1,4 +1,4 @@
-package org.lehirti.engine.state;
+package org.lehirti.luckysurvivor.npc;
 
 import java.io.Serializable;
 import java.util.List;
@@ -9,6 +9,7 @@ import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.sex.Sex;
+import org.lehirti.luckysurvivor.sss.SexAct;
 
 public interface NPC extends Serializable {
   public TextKey getName();
@@ -48,4 +49,10 @@ public interface NPC extends Serializable {
   public List<TextWrapper> getSexActsDescription();
   
   public List<Option> getSexActsOptions(Event<?> returnEvent);
+  
+  public int getDispositionTo(SexAct act, boolean proposeItToNPC);
+  
+  public ImageKey getReactionImage(SexAct proposedSexAct, int npcDispositionToSexAct);
+  
+  public List<TextWrapper> getReactionText(SexAct act, int npcDispositionToSexAct);
 }

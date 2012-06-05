@@ -5,20 +5,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.lehirti.engine.events.Event;
-import org.lehirti.engine.events.NPCExamine;
-import org.lehirti.engine.events.NPCFlirtWith;
-import org.lehirti.engine.events.NPCGiveItem;
-import org.lehirti.engine.events.NPCGoOgle;
-import org.lehirti.engine.events.NPCHaveSex;
-import org.lehirti.engine.events.NPCInventory;
-import org.lehirti.engine.events.NPCTalkTo;
 import org.lehirti.engine.events.Option;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.sex.Sex;
-import org.lehirti.engine.state.NPC;
 import org.lehirti.luckysurvivor.sss.SexAct;
-import org.lehirti.luckysurvivor.sss.SexActEvent;
+import org.lehirti.luckysurvivor.sss.ProposeSexActEvent;
 
 public abstract class AbstractNPC implements NPC {
   private static final long serialVersionUID = 1L;
@@ -30,6 +22,11 @@ public abstract class AbstractNPC implements NPC {
     OPTION_GIVE_ITEM,
     OPTION_FLIRT_WITH,
     OPTION_INVENTORY,
+    
+    OPTION_BODY,
+    OPTION_BIO,
+    OPTION_QUESTS,
+    OPTION_LIKES,
     
     OPTION_HAVE_SEX_WITH_HER
   }
@@ -49,10 +46,10 @@ public abstract class AbstractNPC implements NPC {
   @Override
   public List<Option> getExamineOptions(final Event<?> returnEvent) {
     final List<Option> options = new ArrayList<Option>(11);
-    // body
-    // bio
-    // quests
-    // likes
+    options.add(new Option(Key.OPTION_WEST, Text.OPTION_BODY, new NPCExamine(this, returnEvent))); // TODO
+    options.add(new Option(Key.OPTION_SOUTH, Text.OPTION_BIO, new NPCExamine(this, returnEvent))); // TODO
+    options.add(new Option(Key.OPTION_EAST, Text.OPTION_QUESTS, new NPCExamine(this, returnEvent))); // TODO
+    options.add(new Option(Key.OPTION_NORTH, Text.OPTION_LIKES, new NPCExamine(this, returnEvent))); // TODO
     return options;
   }
   
@@ -92,8 +89,14 @@ public abstract class AbstractNPC implements NPC {
     final List<Option> options = new ArrayList<Option>(11);
     final Set<SexAct> physicallyPossibleSexActs = SexAct.getPhysicallyPossible(Sex.MALE, getSex());
     for (final SexAct act : physicallyPossibleSexActs) {
-      options.add(new Option(null, act, new SexActEvent(this, act, returnEvent)));
+      options.add(new Option(null, act, new ProposeSexActEvent(this, act, returnEvent)));
     }
     return options;
+  }
+  
+  @Override
+  public int getDispositionTo(final SexAct act, final boolean proposeItToNPC) {
+    // TODO Auto-generated method stub
+    return 0;
   }
 }

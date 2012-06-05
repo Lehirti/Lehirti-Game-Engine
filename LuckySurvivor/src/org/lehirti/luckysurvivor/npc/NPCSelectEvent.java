@@ -1,4 +1,4 @@
-package org.lehirti.engine.events;
+package org.lehirti.luckysurvivor.npc;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -7,12 +7,13 @@ import java.io.ObjectOutput;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.lehirti.engine.events.Event;
+import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
-import org.lehirti.engine.state.NPC;
 
 public class NPCSelectEvent extends EventNode<NullState> implements Externalizable {
   
