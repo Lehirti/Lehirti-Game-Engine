@@ -49,7 +49,6 @@ public class ImgChange {
    * remove selected foreground images from screen
    * 
    * @param foregroundImagesToRemove
-   * @return
    */
   public ImgChange removeFG(final ImageKey... foregroundImagesToRemove) {
     for (final ImageKey img : foregroundImagesToRemove) {
@@ -83,17 +82,15 @@ public class ImgChange {
    * clear foreground and set new foreground images; leave background as-is
    * 
    * @param backgroundImage
-   * @return
    */
   public static ImgChange setFG(final ImageKey... foregroundImages) {
     return new ImgChange(false, true, null).addForeground(foregroundImages);
   }
   
   /**
-   * add additional images to foreground; leave background as-is
+   * add additional foreground images on top of existing images
    * 
-   * @param backgroundImage
-   * @return
+   * @param foregroundImages
    */
   public static ImgChange addFG(final ImageKey... foregroundImages) {
     return new ImgChange(false, false, null).addForeground(foregroundImages);
@@ -101,10 +98,15 @@ public class ImgChange {
   
   /**
    * change nothing
-   * 
-   * @return
    */
   public static ImgChange nullChange() {
     return new ImgChange(false, false, null);
+  }
+  
+  /**
+   * clear screen (remove background image and all foreground images
+   */
+  public static ImgChange clearScreen() {
+    return new ImgChange(true, true, null);
   }
 }
