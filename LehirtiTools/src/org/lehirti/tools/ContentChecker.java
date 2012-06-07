@@ -74,7 +74,7 @@ public final class ContentChecker {
   
   private static void checkForOrphans(final File baseDir) {
     for (final File file : baseDir.listFiles()) {
-      checkPackageForOrphans(baseDir.getName(), file);
+      checkPackageForOrphans(baseDir.getParent() + "/" + baseDir.getName(), file);
     }
   }
   
@@ -95,7 +95,7 @@ public final class ContentChecker {
     try {
       final TextKey key = (TextKey) Enum.valueOf((Class<? extends Enum>) Class.forName(className), name);
     } catch (final Exception e) {
-      System.out.println("ORPHAN  text:  " + baseName + ": " + className + "." + name);
+      System.out.println("ORPHAN  text:  " + baseName + "/" + className + "." + name);
     }
   }
   
@@ -103,7 +103,7 @@ public final class ContentChecker {
     try {
       final ImageKey key = (ImageKey) Enum.valueOf((Class<? extends Enum>) Class.forName(className), name);
     } catch (final Exception e) {
-      System.out.println("ORPHAN  image: " + baseName + ": " + className + "." + name);
+      System.out.println("ORPHAN  image: " + baseName + "/" + className + "." + name);
     }
   }
 }

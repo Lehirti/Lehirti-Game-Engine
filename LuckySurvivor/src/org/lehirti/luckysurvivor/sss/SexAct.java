@@ -22,21 +22,31 @@ public enum SexAct implements TextKey {
   GET_BLOWJOB(COCK, ANY),
   GIVE_BLOWJOB(ANY, COCK);
   
-  public final SexFeature pcHas;
-  public final SexFeature npcHas;
+  public final SexFeature participant1;
+  public final SexFeature participant2;
+  public final SexToyCategory requiredSexToy;
   
-  private SexAct(final SexFeature pcHas, final SexFeature npcHas) {
-    this.pcHas = pcHas;
-    this.npcHas = npcHas;
+  private SexAct(final SexFeature participant1, final SexFeature participant2, final SexToyCategory requiredSexToy) {
+    this.participant1 = participant1;
+    this.participant2 = participant2;
+    this.requiredSexToy = requiredSexToy;
   }
   
-  public static Set<SexAct> getPhysicallyPossible(final Sex pc, final Sex npc) {
+  private SexAct(final SexFeature participant1, final SexFeature participant2) {
+    this(participant1, participant2, SexToyCategory.NONE);
+  }
+  
+  public static Set<SexAct> getPhysicallyPossible(final Sex participantA, final Sex participantB) {
     final Set<SexAct> physicallyPossibleSexActs = EnumSet.noneOf(SexAct.class);
     for (final SexAct act : values()) {
-      if (pc.has(act.pcHas) && npc.has(act.npcHas)) {
+      if (participantA.has(act.participant1) && participantB.has(act.participant2)) {
         physicallyPossibleSexActs.add(act);
       }
     }
     return physicallyPossibleSexActs;
+  }
+  
+  public SexToyCategory getRequiredSexToy() {
+    return this.requiredSexToy;
   }
 }

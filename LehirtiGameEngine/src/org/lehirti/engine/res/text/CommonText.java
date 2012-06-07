@@ -13,5 +13,6 @@ public enum CommonText implements TextKey {
   DAY,
   TIME_FORMAT,
   BLANK,
-  MARKER;
+  MARKER,
+  OPTION_DO_IT;
 }

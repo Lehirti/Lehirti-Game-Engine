@@ -8,15 +8,17 @@ import org.lehirti.engine.events.Option;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
-import org.lehirti.engine.sex.Sex;
 import org.lehirti.luckysurvivor.sss.SexAct;
+import org.lehirti.luckysurvivor.sss.SexParticipant;
+import org.lehirti.luckysurvivor.sss.SexToy;
 
-public interface NPC extends Serializable {
+public interface NPC extends SexParticipant, Serializable {
   public TextKey getName();
   
+  /**
+   * @return the regular "meet the npc" image.
+   */
   public ImageKey getImage();
-  
-  public Sex getSex();
   
   public List<TextWrapper> getGeneralDescription();
   
@@ -50,9 +52,20 @@ public interface NPC extends Serializable {
   
   public List<Option> getSexActsOptions(Event<?> returnEvent);
   
-  public int getDispositionTo(SexAct act, boolean proposeItToNPC);
+  /**
+   * when during sex the PC proposes to perform a certain sex act, this method will return the NPCs reaction to the
+   * proposition.
+   * 
+   * @param act
+   * @param toy
+   *          only required, if act requires a sex toy; else ignored
+   * @return [-100; 100]
+   */
+  public int getDispositionTo(SexAct act, SexToy toy);
   
-  public ImageKey getReactionImage(SexAct proposedSexAct, int npcDispositionToSexAct);
+  public ImageKey getReactionImage(SexAct proposedSexAct);
   
-  public List<TextWrapper> getReactionText(SexAct act, int npcDispositionToSexAct);
+  public List<TextWrapper> getReactionText(SexAct act);
+  
+  public List<Option> getReactionOptions(SexAct act, Event<?> returnEvent);
 }

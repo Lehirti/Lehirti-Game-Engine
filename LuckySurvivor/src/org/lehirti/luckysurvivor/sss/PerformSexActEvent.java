@@ -13,14 +13,14 @@ import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.luckysurvivor.npc.NPC;
 
-public class ProposeSexActEvent extends EventNode<NullState> implements Externalizable {
+public class PerformSexActEvent extends EventNode<NullState> implements Externalizable {
   
   private NPC npc;
   private SexAct act;
   private Event<?> returnEvent;
   
   // for saving/loading
-  public ProposeSexActEvent() {
+  public PerformSexActEvent() {
     this(null, null, null, null);
   }
   
@@ -40,7 +40,7 @@ public class ProposeSexActEvent extends EventNode<NullState> implements External
     out.writeObject(this.returnEvent);
   }
   
-  public ProposeSexActEvent(final NPC npc, final SexAct act, SexToy toy, final Event<?> returnEvent) {
+  public PerformSexActEvent(final NPC npc, final SexAct act, SexToy toy, final Event<?> returnEvent) {
     this.npc = npc;
     this.act = act;
     this.returnEvent = returnEvent;

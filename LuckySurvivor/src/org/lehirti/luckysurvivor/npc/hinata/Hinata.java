@@ -82,13 +82,13 @@ public class Hinata extends AbstractNPC {
   }
   
   @Override
-  public ImageKey getReactionImage(final SexAct proposedSexAct, final int npcDispositionToSexAct) {
+  public ImageKey getReactionImage(final SexAct proposedSexAct) {
     // TODO Auto-generated method stub
     return null;
   }
   
   @Override
-  public List<TextWrapper> getReactionText(final SexAct act, final int npcDispositionToSexAct) {
+  public List<TextWrapper> getReactionText(final SexAct act) {
     // TODO Auto-generated method stub
     return null;
   }
