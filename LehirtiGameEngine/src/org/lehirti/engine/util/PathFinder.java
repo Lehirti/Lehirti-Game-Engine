@@ -186,4 +186,15 @@ public class PathFinder {
     }
     return contentDirs;
   }
+  
+  public static File[] getContentPaths() {
+    final File[] contentDirs = new File[CORE_CONTENT_DIRS.size() + MOD_CONTENT_DIRS.size()];
+    for (int i = 0; i < CORE_CONTENT_DIRS.size(); i++) {
+      contentDirs[i] = CORE_CONTENT_DIRS.get(i);
+    }
+    for (int i = 0; i < MOD_CONTENT_DIRS.size(); i++) {
+      contentDirs[CORE_CONTENT_DIRS.size() + i] = MOD_CONTENT_DIRS.get(i);
+    }
+    return contentDirs;
+  }
 }

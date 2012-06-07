@@ -179,7 +179,7 @@ public final class ImageWrapper {
   
   @Override
   public String toString() {
-    return this.key.getClass().getSimpleName() + "." + this.key.name();
+    return this.key.getClass().getName() + "." + this.key.name();
   }
   
   public String toButtonString() {
