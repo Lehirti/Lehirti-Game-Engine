@@ -31,13 +31,14 @@ public class MapToCliffWest extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.DESCRIPTION);
     
-    addOption(Key.OPTION_NORTH, Text.OPTION_LOOK_AT_OCEAN, new TextOnlyEvent(Text.LOOK_AT_OCEAN, new MapToCliffWest()));
-    addOption(Key.OPTION_WEST, Text.OPTION_SEARCH_SOMETHING_USEFULL, new TextOnlyEvent(Text.SEARCH_SOMETHING_USEFULL,
+    addOption(Key.OPTION_NORTH, Text.OPTION_LOOK_AT_OCEAN, new TextOnlyEvent(Key.OPTION_NORTH, Text.LOOK_AT_OCEAN,
         new MapToCliffWest()));
-    addOption(Key.OPTION_SOUTH, Text.OPTION_SEARCH_SOMETHING_TO_EAT, new TextOnlyEvent(Text.SEARCH_SOMETHING_TO_EAT,
-        new MapToCliffWest()));
+    addOption(Key.OPTION_WEST, Text.OPTION_SEARCH_SOMETHING_USEFULL, new TextOnlyEvent(Key.OPTION_WEST,
+        Text.SEARCH_SOMETHING_USEFULL, new MapToCliffWest()));
+    addOption(Key.OPTION_SOUTH, Text.OPTION_SEARCH_SOMETHING_TO_EAT, new TextOnlyEvent(Key.OPTION_SOUTH,
+        Text.SEARCH_SOMETHING_TO_EAT, new MapToCliffWest()));
     
-    addOption(Key.OPTION_LEAVE, CommonText.OPTION_LEAVE_AREA, new TextOnlyEvent(Text.LEAVE_THE_AREA, new Map(
-        Location.CLIFF_WEST)));
+    addOption(Key.OPTION_LEAVE, CommonText.OPTION_LEAVE_AREA, new TextOnlyEvent(Key.OPTION_LEAVE, Text.LEAVE_THE_AREA,
+        new Map(Location.CLIFF_WEST)));
   }
 }

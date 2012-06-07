@@ -43,16 +43,16 @@ public class MapToLookoutHill extends EventNode<NullState> {
     setText(Text.DESCRIPTION);
     
     if (is(Bool.HAS_FOUND_SPRING)) {
-      addOption(Key.OPTION_NORTH, Text.OPTION_DRING_FROM_SPRING, new TextOnlyEvent(Text.DRING_FROM_SPRING,
-          new MapToLookoutHill()));
+      addOption(Key.OPTION_NORTH, Text.OPTION_DRING_FROM_SPRING, new TextOnlyEvent(Key.OPTION_NORTH,
+          Text.DRING_FROM_SPRING, new MapToLookoutHill()));
     } else {
       addOption(Key.OPTION_NORTH, Text.OPTION_SEARCH_FOR_WATER, new SetFlagTextOnlyEvent(Bool.HAS_FOUND_SPRING,
           Text.SEARCH_FOR_WATER, new MapToLookoutHill()));
     }
-    addOption(Key.OPTION_SOUTH, Text.OPTION_SEARCH_SOMETHING_TO_EAT, new TextOnlyEvent(Text.SEARCH_SOMETHING_TO_EAT,
-        new MapToLookoutHill()));
+    addOption(Key.OPTION_SOUTH, Text.OPTION_SEARCH_SOMETHING_TO_EAT, new TextOnlyEvent(Key.OPTION_SOUTH,
+        Text.SEARCH_SOMETHING_TO_EAT, new MapToLookoutHill()));
     
-    addOption(Key.OPTION_LEAVE, CommonText.OPTION_LEAVE_AREA, new TextOnlyEvent(Text.LEAVE_THE_AREA, new Map(
-        Location.LOOKOUT_HILL)));
+    addOption(Key.OPTION_LEAVE, CommonText.OPTION_LEAVE_AREA, new TextOnlyEvent(Key.OPTION_LEAVE, Text.LEAVE_THE_AREA,
+        new Map(Location.LOOKOUT_HILL)));
   }
 }

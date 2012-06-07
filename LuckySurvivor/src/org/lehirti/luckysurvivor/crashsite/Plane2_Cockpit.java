@@ -39,12 +39,12 @@ public class Plane2_Cockpit extends EventNode<NullState> {
     } else {
       carryPilotsOutText = Text.CARRY_PILOTS_OUTSIDE;
     }
-    addOption(Key.OPTION_NORTH, Text.OPTION_CARRY_PILOTS_OUTSIDE, new TextOnlyEvent(carryPilotsOutText,
+    addOption(Key.OPTION_NORTH, Text.OPTION_CARRY_PILOTS_OUTSIDE, new TextOnlyEvent(Key.OPTION_NORTH,
+        carryPilotsOutText, new Plane2_Cockpit()));
+    addOption(Key.OPTION_WEST, Text.OPTION_TRY_TO_USE_RADIO, new TextOnlyEvent(Key.OPTION_WEST, Text.TRY_TO_USE_RADIO,
         new Plane2_Cockpit()));
-    addOption(Key.OPTION_WEST, Text.OPTION_TRY_TO_USE_RADIO, new TextOnlyEvent(Text.TRY_TO_USE_RADIO,
-        new Plane2_Cockpit()));
-    addOption(Key.OPTION_SOUTH, Text.OPTION_LOOK_FOR_ANYTHING_USEFUL, new TextOnlyEvent(Text.LOOK_FOR_ANYTHING_USEFUL,
-        new Plane2_Cockpit()));
+    addOption(Key.OPTION_SOUTH, Text.OPTION_LOOK_FOR_ANYTHING_USEFUL, new TextOnlyEvent(Key.OPTION_SOUTH,
+        Text.LOOK_FOR_ANYTHING_USEFUL, new Plane2_Cockpit()));
     
     addOption(Key.OPTION_LEAVE, Text.OPTION_GO_BACK_TO_FUSELAGE, new Plane2_Fuselage());
   }

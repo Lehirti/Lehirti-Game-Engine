@@ -30,12 +30,13 @@ public class BoardPlane extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.PLANE_DESCRIPTION);
     
-    addOption(Key.OPTION_NORTH, Text.OPTION_FOLLOW_STEWARDESS, new StandardEvent(IntroImage.FUCK_STEWARDESS,
-        Text.FUCK_STEWARDESS, new PlaneInThunderstorm()));
-    addOption(Key.OPTION_WEST, Text.OPTION_TRY_SLEEP, new TextOnlyEvent(Text.TRY_SLEEP, new PlaneInThunderstorm()));
-    addOption(Key.OPTION_SOUTH, Text.OPTION_START_CONVERSATION, new TextOnlyEvent(Text.START_CONVERSATION,
+    addOption(Key.OPTION_NORTH, Text.OPTION_FOLLOW_STEWARDESS, new StandardEvent(Key.OPTION_NORTH,
+        IntroImage.FUCK_STEWARDESS, Text.FUCK_STEWARDESS, new PlaneInThunderstorm()));
+    addOption(Key.OPTION_WEST, Text.OPTION_TRY_SLEEP, new TextOnlyEvent(Key.OPTION_WEST, Text.TRY_SLEEP,
         new PlaneInThunderstorm()));
-    addOption(Key.OPTION_EAST, Text.OPTION_ASK_FOR_OTHER_SEAT, new TextOnlyEvent(Text.ASK_FOR_OTHER_SEAT,
-        new PlaneInThunderstorm()));
+    addOption(Key.OPTION_SOUTH, Text.OPTION_START_CONVERSATION, new TextOnlyEvent(Key.OPTION_SOUTH,
+        Text.START_CONVERSATION, new PlaneInThunderstorm()));
+    addOption(Key.OPTION_EAST, Text.OPTION_ASK_FOR_OTHER_SEAT, new TextOnlyEvent(Key.OPTION_EAST,
+        Text.ASK_FOR_OTHER_SEAT, new PlaneInThunderstorm()));
   }
 }

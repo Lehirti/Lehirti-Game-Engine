@@ -3,6 +3,7 @@ package org.lehirti.mindcraft.intro;
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.StandardEvent;
 import org.lehirti.engine.events.Event.NullState;
+import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
@@ -25,10 +26,10 @@ public class VisitTiffania extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.MAIN);
     
-    addOption(Text.OPTION_FUCK_HER, new StandardEvent(TiffaniaWestwood.FUCK_HER_INHOUSE, CommonText.OPTION_NEXT,
-        new VisitTiffania()));
-    addOption(Text.OPTION_RECEIVE_TITJOB, new StandardEvent(TiffaniaWestwood.TITJOB_INHOUSE, CommonText.OPTION_NEXT,
-        new VisitTiffania()));
+    addOption(Text.OPTION_FUCK_HER, new StandardEvent(Key.OPTION_NORTH, TiffaniaWestwood.FUCK_HER_INHOUSE,
+        CommonText.OPTION_NEXT, new VisitTiffania()));
+    addOption(Text.OPTION_RECEIVE_TITJOB, new StandardEvent(Key.OPTION_SOUTH, TiffaniaWestwood.TITJOB_INHOUSE,
+        CommonText.OPTION_NEXT, new VisitTiffania()));
     addOption(CommonText.OPTION_LEAVE, new HomeVillage());
   }
 }

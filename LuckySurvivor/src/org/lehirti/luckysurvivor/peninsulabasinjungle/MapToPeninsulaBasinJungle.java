@@ -25,7 +25,7 @@ public class MapToPeninsulaBasinJungle extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.DESCRIPTION);
     
-    addOption(Key.OPTION_LEAVE, CommonText.OPTION_LEAVE_AREA, new TextOnlyEvent(Text.LEAVE_THE_AREA, new Map(
-        Location.PENINSULA_BASIN_JUNGLE)));
+    addOption(Key.OPTION_LEAVE, CommonText.OPTION_LEAVE_AREA, new TextOnlyEvent(Key.OPTION_LEAVE, Text.LEAVE_THE_AREA,
+        new Map(Location.PENINSULA_BASIN_JUNGLE)));
   }
 }

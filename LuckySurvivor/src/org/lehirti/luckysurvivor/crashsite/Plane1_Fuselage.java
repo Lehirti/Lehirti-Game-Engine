@@ -51,14 +51,14 @@ public class Plane1_Fuselage extends EventNode<NullState> {
     addOption(Key.OPTION_NORTH, Text.OPTION_GO_TO_COCKPIT, new Plane1_Cockpit());
     
     if (is(Bool.HAS_LOOKED_FOR_SURVIVORS)) {
-      addOption(Key.OPTION_WEST, Text.OPTION_LOOK_FOR_MORE_SURVIVORS, new StandardEvent(
+      addOption(Key.OPTION_WEST, Text.OPTION_LOOK_FOR_MORE_SURVIVORS, new StandardEvent(Key.OPTION_WEST,
           CrashSite.LOOK_FOR_SURVIVORS_AFTER_CRASH, Text.LOOK_FOR_MORE_SURVIVORS, new Plane1_Fuselage()));
     } else {
       addOption(Key.OPTION_WEST, Text.OPTION_LOOK_FOR_OTHER_SURVIVORS, new SetFlagEvent(Bool.HAS_LOOKED_FOR_SURVIVORS,
           CrashSite.LOOK_FOR_SURVIVORS_AFTER_CRASH, Text.LOOK_FOR_OTHER_SURVIVORS, new Plane1_Fuselage()));
     }
     
-    addOption(Key.OPTION_SOUTH, Text.OPTION_SEARCH_RUBBLE_FOR_USEFULL_STUFF, new TextOnlyEvent(
+    addOption(Key.OPTION_SOUTH, Text.OPTION_SEARCH_RUBBLE_FOR_USEFULL_STUFF, new TextOnlyEvent(Key.OPTION_SOUTH,
         Text.SEARCH_RUBBLE_FOR_USEFULL_STUFF, new Plane1_Fuselage()));
     
     if (is(Bool.HAS_LOOKED_FOR_SURVIVORS)) {
@@ -66,9 +66,10 @@ public class Plane1_Fuselage extends EventNode<NullState> {
           Bool.HAS_HELPED_OTHERS_OUT_OF_PLANE, Text.HELP_FELLOW_SURVIVORS_OUT_OF_PLANE, new Plane1_Fuselage()));
     }
     
-    addOption(Key.OPTION_LEAVE, Text.OPTION_LEAVE_PLANE, new TextOnlyEvent(Text.LEAVE_PLANE, new Outside1()));
+    addOption(Key.OPTION_LEAVE, Text.OPTION_LEAVE_PLANE, new TextOnlyEvent(Key.OPTION_LEAVE, Text.LEAVE_PLANE,
+        new Outside1()));
     
-    addOption(Key.OPTION_ENTER, Text.OPTION_GO_BACK_TO_YOUR_SEAT, new TextOnlyEvent(Text.GO_BACK_TO_YOUR_SEAT,
-        new Plane1_YourSeat()));
+    addOption(Key.OPTION_ENTER, Text.OPTION_GO_BACK_TO_YOUR_SEAT, new TextOnlyEvent(Key.OPTION_ENTER,
+        Text.GO_BACK_TO_YOUR_SEAT, new Plane1_YourSeat()));
   }
 }

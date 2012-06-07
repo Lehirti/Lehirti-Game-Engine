@@ -1,7 +1,7 @@
 package org.lehirti.luckysurvivor.crashsite;
 
-import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.AlternativeOneTimeEvents;
+import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.TextOnlyEvent;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
@@ -85,9 +85,10 @@ public class Outside1 extends EventNode<NullState> {
           TxtImg.TALK_TO_OTHER_SURVIVORS_ALT_2));
     }
     
-    addOption(Key.OPTION_LEAVE, Text.OPTION_LEAVE_THE_AREA, new TextOnlyEvent(Text.LEAVE_THE_AREA, new Outside1()));
-    addOption(Key.OPTION_ENTER, Text.OPTION_ENTER_FUSELAGE, new TextOnlyEvent(Text.ENTER_FUSELAGE,
+    addOption(Key.OPTION_LEAVE, Text.OPTION_LEAVE_THE_AREA, new TextOnlyEvent(Key.OPTION_LEAVE, Text.LEAVE_THE_AREA,
+        new Outside1()));
+    addOption(Key.OPTION_ENTER, Text.OPTION_ENTER_FUSELAGE, new TextOnlyEvent(Key.OPTION_ENTER, Text.ENTER_FUSELAGE,
         new Plane1_Fuselage()));
-    addOption(Key.OPTION_WEST, Text.OPTION_REST, new TextOnlyEvent(Text.REST, new Outside1_Rest()));
+    addOption(Key.OPTION_WEST, Text.OPTION_REST, new TextOnlyEvent(Key.OPTION_WEST, Text.REST, new Outside1_Rest()));
   }
 }

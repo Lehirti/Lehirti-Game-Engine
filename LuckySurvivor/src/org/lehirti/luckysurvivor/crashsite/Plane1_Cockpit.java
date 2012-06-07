@@ -28,12 +28,12 @@ public class Plane1_Cockpit extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.DESCRIPTION);
     
-    addOption(Key.OPTION_NORTH, Text.OPTION_CARRY_PILOTS_OUTSIDE, new TextOnlyEvent(Text.CARRY_PILOTS_OUTSIDE,
-        new Plane1_Cockpit()));
-    addOption(Key.OPTION_WEST, Text.OPTION_TRY_SALVAGE_ELECTRONICS, new TextOnlyEvent(Text.TRY_SALVALGE_ELECTRONICS,
-        new Plane1_Cockpit()));
-    addOption(Key.OPTION_SOUTH, Text.OPTION_LOOK_FOR_ANYTHING_USEFUL, new TextOnlyEvent(Text.LOOK_FOR_ANYTHING_USEFUL,
-        new Plane1_Cockpit()));
+    addOption(Key.OPTION_NORTH, Text.OPTION_CARRY_PILOTS_OUTSIDE, new TextOnlyEvent(Key.OPTION_NORTH,
+        Text.CARRY_PILOTS_OUTSIDE, new Plane1_Cockpit()));
+    addOption(Key.OPTION_WEST, Text.OPTION_TRY_SALVAGE_ELECTRONICS, new TextOnlyEvent(Key.OPTION_WEST,
+        Text.TRY_SALVALGE_ELECTRONICS, new Plane1_Cockpit()));
+    addOption(Key.OPTION_SOUTH, Text.OPTION_LOOK_FOR_ANYTHING_USEFUL, new TextOnlyEvent(Key.OPTION_SOUTH,
+        Text.LOOK_FOR_ANYTHING_USEFUL, new Plane1_Cockpit()));
     
     addOption(Key.OPTION_LEAVE, Text.OPTION_GO_BACK_TO_FUSELAGE, new Plane1_Fuselage());
   }

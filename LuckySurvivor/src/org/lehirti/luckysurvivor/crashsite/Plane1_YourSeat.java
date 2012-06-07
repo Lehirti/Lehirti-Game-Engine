@@ -31,18 +31,18 @@ public class Plane1_YourSeat extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.DESCRIPTION);
     
-    addOption(Key.OPTION_NORTH, Text.OPTION_CHECK_PASSENGERS_NEXT_TO_YOU, new TextOnlyEvent(
+    addOption(Key.OPTION_NORTH, Text.OPTION_CHECK_PASSENGERS_NEXT_TO_YOU, new TextOnlyEvent(Key.OPTION_NORTH,
         Text.CHECK_PASSENGERS_NEXT_TO_YOU, new Plane1_YourSeat()));
-    addOption(Key.OPTION_WEST, Text.OPTION_LOOK_FOR_YOUR_BAGGAGE, new TextOnlyEvent(Text.LOOK_FOR_YOUR_BAGGAGE,
-        new Plane1_YourSeat()));
-    addOption(Key.OPTION_SOUTH, Text.OPTION_REST_FOR_A_WHILE, new TextOnlyEvent(Text.REST_FOR_A_WHILE,
-        new Plane1_YourSeat()));
-    addOption(Key.OPTION_EAST, Text.OPTION_CHECK_YOURSELF_FOR_INJURIES, new TextOnlyEvent(
+    addOption(Key.OPTION_WEST, Text.OPTION_LOOK_FOR_YOUR_BAGGAGE, new TextOnlyEvent(Key.OPTION_WEST,
+        Text.LOOK_FOR_YOUR_BAGGAGE, new Plane1_YourSeat()));
+    addOption(Key.OPTION_SOUTH, Text.OPTION_REST_FOR_A_WHILE, new TextOnlyEvent(Key.OPTION_SOUTH,
+        Text.REST_FOR_A_WHILE, new Plane1_YourSeat()));
+    addOption(Key.OPTION_EAST, Text.OPTION_CHECK_YOURSELF_FOR_INJURIES, new TextOnlyEvent(Key.OPTION_EAST,
         Text.CHECK_YOURSELF_FOR_INJURIES, new Plane1_YourSeat()));
     
     if (is(BoolInventory.WATCH)) {
-      addOption(Key.OPTION_LEAVE, Text.OPTION_LEAVE_YOUR_SEAT, new TextOnlyEvent(Text.LEAVE_YOUR_SEAT,
-          new Plane1_Fuselage()));
+      addOption(Key.OPTION_LEAVE, Text.OPTION_LEAVE_YOUR_SEAT, new TextOnlyEvent(Key.OPTION_LEAVE,
+          Text.LEAVE_YOUR_SEAT, new Plane1_Fuselage()));
     } else {
       addOption(Key.OPTION_LEAVE, Text.OPTION_LEAVE_YOUR_SEAT, new FindWatch());
     }

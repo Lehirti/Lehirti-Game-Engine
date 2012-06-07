@@ -70,8 +70,8 @@ public class Outside2 extends EventNode<NullState> {
     setText(Text.DESCRIPTION);
     
     if (is(Bool.SHELTER_HAS_BEEN_BUILT)) {
-      addOption(Key.OPTION_SOUTH, Text.OPTION_TRY_TO_PEEK_ON_GIRLS, new TextOnlyEvent(Text.TRY_TO_PEEK_ON_GIRLS,
-          new Outside2()));
+      addOption(Key.OPTION_SOUTH, Text.OPTION_TRY_TO_PEEK_ON_GIRLS, new TextOnlyEvent(Key.OPTION_SOUTH,
+          Text.TRY_TO_PEEK_ON_GIRLS, new Outside2()));
       addOption(Key.OPTION_NORTH, Text.OPTION_ENTER_SHELTER, new Shelter());
     } else {
       if (is(Plane1_Fuselage.Bool.HAS_HELPED_OTHERS_OUT_OF_PLANE)) {
@@ -90,16 +90,16 @@ public class Outside2 extends EventNode<NullState> {
             TxtImg.HELP_OTHER_SURVIVORS_DEFAULT, TxtImg.HELP_OTHER_SURVIVORS_ALT_1, TxtImg.HELP_OTHER_SURVIVORS_ALT_2));
       }
       
-      addOption(Key.OPTION_ENTER, Text.OPTION_ENTER_FUSELAGE, new TextOnlyEvent(Text.ENTER_FUSELAGE,
+      addOption(Key.OPTION_ENTER, Text.OPTION_ENTER_FUSELAGE, new TextOnlyEvent(Key.OPTION_ENTER, Text.ENTER_FUSELAGE,
           new Plane2_Fuselage()));
-      addOption(Key.OPTION_WEST, Text.OPTION_REST, new TextOnlyEvent(Text.REST, new Outside1_Rest()));
+      addOption(Key.OPTION_WEST, Text.OPTION_REST, new TextOnlyEvent(Key.OPTION_WEST, Text.REST, new Outside1_Rest()));
       addOption(Key.OPTION_V, Text.OPTION_BURY_THE_DEAD, new BuryTheDead());
     }
     
     addOption(Key.OPTION_EAST, Text.OPTION_EXAMINE_OTHER_SURVIVORS, new NPCSelectEvent(
         CrashSite.OUTSIDE_PLANE_NON_BURNING, new Outside2(), CrashSiteNPCs.getNPCs(), 0));
     
-    addOption(Key.OPTION_LEAVE, CommonText.OPTION_LEAVE_AREA, new TextOnlyEvent(Text.LEAVE_THE_AREA, new Map(
-        Location.CRASH_SITE)));
+    addOption(Key.OPTION_LEAVE, CommonText.OPTION_LEAVE_AREA, new TextOnlyEvent(Key.OPTION_LEAVE, Text.LEAVE_THE_AREA,
+        new Map(Location.CRASH_SITE)));
   }
 }

@@ -27,7 +27,7 @@ public class FindWatch extends EventNode<NullState> {
     set(BoolInventory.WATCH, true);
     DateTime.init(DayOfWeek.WEDNESDAY, 1, 21, 1, 29);
     
-    addOption(Key.OPTION_LEAVE, CommonText.OPTION_NEXT, new StandardEvent(null, Plane1_YourSeat.Text.LEAVE_YOUR_SEAT,
-        new Plane1_Fuselage()));
+    addOption(Key.OPTION_LEAVE, CommonText.OPTION_NEXT, new StandardEvent(Key.OPTION_LEAVE, null,
+        Plane1_YourSeat.Text.LEAVE_YOUR_SEAT, new Plane1_Fuselage()));
   }
 }

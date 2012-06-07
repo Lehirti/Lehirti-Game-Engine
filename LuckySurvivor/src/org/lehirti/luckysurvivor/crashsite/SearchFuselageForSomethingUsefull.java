@@ -4,6 +4,7 @@ import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.Location;
 import org.lehirti.engine.events.TextOnlyEvent;
 import org.lehirti.engine.events.Event.NullState;
+import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImageKey;
 
 public class SearchFuselageForSomethingUsefull extends Location<NullState> {
@@ -16,6 +17,6 @@ public class SearchFuselageForSomethingUsefull extends Location<NullState> {
   
   @Override
   protected Event<?> getNullEvent() {
-    return new TextOnlyEvent(Plane2_Fuselage.Text.NOTHING_OF_VALUE_WAS_FOUND, new Plane2_Fuselage());
+    return new TextOnlyEvent(Key.OPTION_LEAVE, Plane2_Fuselage.Text.NOTHING_OF_VALUE_WAS_FOUND, new Plane2_Fuselage());
   }
 }
