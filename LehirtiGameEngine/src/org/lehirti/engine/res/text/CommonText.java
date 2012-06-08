@@ -14,5 +14,6 @@ public enum CommonText implements TextKey {
   TIME_FORMAT,
   BLANK,
   MARKER,
-  OPTION_DO_IT;
+  OPTION_DO_IT,
+  OPTION_USE_IT;
 }

@@ -11,12 +11,14 @@ import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.sex.Sex;
 import org.lehirti.luckysurvivor.npc.AbstractNPC;
 import org.lehirti.luckysurvivor.sss.SexAct;
+import org.lehirti.luckysurvivor.sss.SexToy;
 
 public class Hinata extends AbstractNPC {
   private static final long serialVersionUID = 1L;
   
   public static enum Image implements ImageKey {
-    MAIN;
+    MAIN,
+    INDIFFERENT_TO_SEX_ACT;
   }
   
   public static enum Text implements TextKey {
@@ -82,14 +84,12 @@ public class Hinata extends AbstractNPC {
   }
   
   @Override
-  public ImageKey getReactionImage(final SexAct proposedSexAct) {
-    // TODO Auto-generated method stub
-    return null;
+  public ImageKey getReactionImage(final SexAct act, final SexToy toy) {
+    return Image.INDIFFERENT_TO_SEX_ACT;
   }
   
   @Override
-  public List<TextWrapper> getReactionText(final SexAct act) {
-    // TODO Auto-generated method stub
-    return null;
+  public List<TextWrapper> getReactionText(final SexAct act, final SexToy toy) {
+    return Collections.emptyList();
   }
 }

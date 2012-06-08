@@ -13,6 +13,8 @@ public enum SexAct implements TextKey {
   FUCK_PUSSY(COCK, PUSSY),
   GET_PUSSY_FUCKED(PUSSY, COCK),
   
+  INSERT_TOY_INTO_PUSSY(ANY, PUSSY, SexToyCategory.PUSSY),
+  
   FUCK_ANAL(COCK, ANY),
   GET_FUCKED_ANALLY(ANY, COCK),
   

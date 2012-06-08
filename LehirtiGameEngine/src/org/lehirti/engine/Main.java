@@ -216,6 +216,9 @@ public abstract class Main {
       StateObject.load(ois);
       IMAGE_AREA.readExternal(ois);
       TEXT_AREA.readExternal(ois);
+      STATS_AREA.readExternal(ois);
+      OPTION_AREA.readExternal(ois);
+      OPTION_AREA.repaint();
       final Event<?> oldEvent = currentEvent;
       currentEvent = (Event<?>) ois.readObject();
       synchronized (oldEvent) {
@@ -263,6 +266,8 @@ public abstract class Main {
       StateObject.save(oos);
       IMAGE_AREA.writeExternal(oos);
       TEXT_AREA.writeExternal(oos);
+      STATS_AREA.writeExternal(oos);
+      OPTION_AREA.writeExternal(oos);
       oos.writeObject(currentEvent);
       
       LOGGER.info("Game saved");

@@ -4,6 +4,10 @@ import static org.lehirti.engine.gui.Key.*;
 import static org.lehirti.luckysurvivor.map.Map.Location.*;
 import static org.lehirti.luckysurvivor.map.Map.PathDescription.*;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.EventFactory;
 import org.lehirti.engine.events.EventNode;
@@ -110,9 +114,30 @@ public class Map extends EventNode<NullState> {
     }
   }
   
-  private final Location currentLocation;
-  private final Path currentPath;
-  private final Location toLocation;
+  private Location currentLocation;
+  private Path currentPath;
+  private Location toLocation;
+  
+  // for loading/saving
+  public Map() {
+    this(null);
+  }
+  
+  @Override
+  public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+    super.readExternal(in);
+    this.currentLocation = (Location) in.readObject();
+    this.currentPath = (Path) in.readObject();
+    this.toLocation = (Location) in.readObject();
+  }
+  
+  @Override
+  public void writeExternal(final ObjectOutput out) throws IOException {
+    super.writeExternal(out);
+    out.writeObject(this.currentLocation);
+    out.writeObject(this.currentPath);
+    out.writeObject(this.toLocation);
+  }
   
   public Map(final Location currentLocation) {
     this.currentLocation = currentLocation;

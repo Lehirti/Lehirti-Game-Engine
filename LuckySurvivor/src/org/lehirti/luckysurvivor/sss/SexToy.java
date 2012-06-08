@@ -1,5 +1,7 @@
 package org.lehirti.luckysurvivor.sss;
 
+import static org.lehirti.luckysurvivor.sss.SexToyCategory.*;
+
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,7 +11,11 @@ import org.lehirti.engine.res.TextAndImageKeyWithFlag;
 import org.lehirti.engine.state.StateObject;
 
 public enum SexToy implements TextAndImageKeyWithFlag {
-  ;
+  TINY_DILDO(PUSSY, ASS),
+  SMALL_DILDO(PUSSY, ASS),
+  DILDO(PUSSY, ASS),
+  BIG_DILDO(PUSSY, ASS),
+  LARGE_DILDO(PUSSY, ASS);
   
   private final Set<SexToyCategory> categories = EnumSet.noneOf(SexToyCategory.class);
   
@@ -21,7 +27,7 @@ public enum SexToy implements TextAndImageKeyWithFlag {
   
   @Override
   public Boolean defaultValue() {
-    return Boolean.FALSE;
+    return Boolean.TRUE; // TODO for testing make all sex toys available
   }
   
   public boolean belongsToCategory(final SexToyCategory category) {

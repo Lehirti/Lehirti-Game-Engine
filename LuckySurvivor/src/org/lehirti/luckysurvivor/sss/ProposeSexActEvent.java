@@ -17,6 +17,7 @@ public class ProposeSexActEvent extends EventNode<NullState> implements External
   
   private NPC npc;
   private SexAct act;
+  private SexToy toy;
   private Event<?> returnEvent;
   
   // for saving/loading
@@ -29,6 +30,7 @@ public class ProposeSexActEvent extends EventNode<NullState> implements External
     super.readExternal(in);
     this.npc = (NPC) in.readObject();
     this.act = (SexAct) in.readObject();
+    this.toy = (SexToy) in.readObject();
     this.returnEvent = (Event<?>) in.readObject();
   }
   
@@ -37,29 +39,31 @@ public class ProposeSexActEvent extends EventNode<NullState> implements External
     super.writeExternal(out);
     out.writeObject(this.npc);
     out.writeObject(this.act);
+    out.writeObject(this.toy);
     out.writeObject(this.returnEvent);
   }
   
-  public ProposeSexActEvent(final NPC npc, final SexAct act, SexToy toy, final Event<?> returnEvent) {
+  public ProposeSexActEvent(final NPC npc, final SexAct act, final SexToy toy, final Event<?> returnEvent) {
     this.npc = npc;
     this.act = act;
+    this.toy = toy;
     this.returnEvent = returnEvent;
   }
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setFG(this.npc.getReactionImage(this.act));
+    return ImgChange.setFG(this.npc.getReactionImage(this.act, this.toy));
   }
   
   @Override
   protected void doEvent() {
     setText(this.act);
     
-    for (final TextWrapper txtWrp : this.npc.getReactionText(this.act)) {
+    for (final TextWrapper txtWrp : this.npc.getReactionText(this.act, this.toy)) {
       addText(txtWrp);
     }
     
-    for (final Option option : this.npc.getReactionOptions(this.act, this.returnEvent)) {
+    for (final Option option : this.npc.getReactionOptions(this.act, this.toy, this.returnEvent)) {
       addOption(option.key, option.text, option.event);
     }
   }

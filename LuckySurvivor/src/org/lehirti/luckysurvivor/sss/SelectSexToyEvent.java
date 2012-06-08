@@ -8,16 +8,19 @@ import java.util.List;
 
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.EventNode;
-import org.lehirti.engine.events.Option;
 import org.lehirti.engine.events.Event.NullState;
+import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
-import org.lehirti.engine.res.text.TextWrapper;
+import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.luckysurvivor.npc.NPC;
+import org.lehirti.luckysurvivor.npc.NPCHaveSex;
 
 public class SelectSexToyEvent extends EventNode<NullState> implements Externalizable {
   
   private NPC npc;
   private SexAct act;
+  private List<SexToy> allToys;
+  private int selectedSexToy;
   private Event<?> returnEvent;
   
   // for saving/loading
@@ -30,6 +33,8 @@ public class SelectSexToyEvent extends EventNode<NullState> implements Externali
     super.readExternal(in);
     this.npc = (NPC) in.readObject();
     this.act = (SexAct) in.readObject();
+    this.allToys = (List<SexToy>) in.readObject();
+    this.selectedSexToy = in.readInt();
     this.returnEvent = (Event<?>) in.readObject();
   }
   
@@ -38,6 +43,8 @@ public class SelectSexToyEvent extends EventNode<NullState> implements Externali
     super.writeExternal(out);
     out.writeObject(this.npc);
     out.writeObject(this.act);
+    out.writeObject(this.allToys);
+    out.writeInt(this.selectedSexToy);
     out.writeObject(this.returnEvent);
   }
   
@@ -45,24 +52,47 @@ public class SelectSexToyEvent extends EventNode<NullState> implements Externali
       final Event<?> returnEvent) {
     this.npc = npc;
     this.act = act;
+    this.allToys = allToys;
+    this.selectedSexToy = selectedToy;
     this.returnEvent = returnEvent;
   }
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setFG(this.npc.getReactionImage(this.act));
+    return ImgChange.setFG(this.allToys.get(this.selectedSexToy));
   }
   
   @Override
   protected void doEvent() {
-    setText(this.act);
-    
-    for (final TextWrapper txtWrp : this.npc.getReactionText(this.act)) {
-      addText(txtWrp);
+    setText(null);
+    for (int i = 0; i < this.allToys.size(); i++) {
+      if (i == this.selectedSexToy) {
+        addText(CommonText.MARKER);
+      }
+      addText(this.allToys.get(i));
     }
     
-    for (final Option option : this.npc.getReactionOptions(this.act, this.returnEvent)) {
-      addOption(option.key, option.text, option.event);
+    addOption(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new NPCHaveSex(this.npc, this.returnEvent));
+    int previous = this.selectedSexToy - 1;
+    if (previous < 0) {
+      previous = this.allToys.size() - 1;
+    }
+    int next = this.selectedSexToy + 1;
+    if (next >= this.allToys.size()) {
+      next = 0;
+    }
+    addOption(Key.OPTION_NORTH, CommonText.OPTION_PREVIOUS, new SelectSexToyEvent(this.npc, this.act, this.allToys,
+        previous, this.returnEvent));
+    addOption(Key.OPTION_SOUTH, CommonText.OPTION_NEXT, new SelectSexToyEvent(this.npc, this.act, this.allToys, next,
+        this.returnEvent));
+    
+    final SexToy selectedToy = this.allToys.get(this.selectedSexToy);
+    if (this.npc.getDispositionTo(this.act, selectedToy) > 0) {
+      addOption(Key.OPTION_ENTER, CommonText.OPTION_USE_IT, new PerformSexActEvent(this.npc, this.act, selectedToy,
+          this.returnEvent));
+    } else {
+      addOption(Key.OPTION_ENTER, CommonText.OPTION_USE_IT, new ProposeSexActEvent(this.npc, this.act, selectedToy,
+          this.returnEvent));
     }
   }
 }

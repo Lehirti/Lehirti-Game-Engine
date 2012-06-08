@@ -63,9 +63,9 @@ public interface NPC extends SexParticipant, Serializable {
    */
   public int getDispositionTo(SexAct act, SexToy toy);
   
-  public ImageKey getReactionImage(SexAct proposedSexAct);
+  public ImageKey getReactionImage(SexAct proposedSexAct, SexToy toy);
   
-  public List<TextWrapper> getReactionText(SexAct act);
+  public List<TextWrapper> getReactionText(SexAct act, SexToy toy);
   
-  public List<Option> getReactionOptions(SexAct act, Event<?> returnEvent);
+  public List<Option> getReactionOptions(SexAct act, SexToy toy, Event<?> returnEvent);
 }

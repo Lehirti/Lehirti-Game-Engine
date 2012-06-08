@@ -124,10 +124,12 @@ public abstract class AbstractNPC implements NPC {
     return 0;
   }
   
-  public List<Option> getReactionOptions(final SexAct act, final Event<?> returnEvent) {
+  @Override
+  public List<Option> getReactionOptions(final SexAct act, final SexToy toy, final Event<?> returnEvent) {
     final List<Option> options = new ArrayList<Option>(12);
     options.add(new Option(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new NPCHaveSex(this, returnEvent)));
-    options.add(new Option(Key.OPTION_ENTER, CommonText.OPTION_DO_IT, null)); // TODO
+    options.add(new Option(Key.OPTION_ENTER, CommonText.OPTION_DO_IT, new PerformSexActEvent(this, act, toy,
+        returnEvent)));
     return options;
   }
 }
