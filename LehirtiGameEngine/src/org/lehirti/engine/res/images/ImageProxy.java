@@ -1,5 +1,7 @@
 package org.lehirti.engine.res.images;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +18,15 @@ import org.slf4j.LoggerFactory;
 public class ImageProxy {
   private static final Logger LOGGER = LoggerFactory.getLogger(ImageProxy.class);
   
-  private static final BufferedImage NULL_IMAGE = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+  private static final BufferedImage NULL_IMAGE = new BufferedImage(200, 50, BufferedImage.TYPE_INT_ARGB);
+  static {
+    final Graphics graphics = NULL_IMAGE.getGraphics();
+    graphics.setColor(Color.WHITE);
+    graphics.fillRect(0, 0, NULL_IMAGE.getWidth(), NULL_IMAGE.getHeight());
+    graphics.setColor(Color.BLACK);
+    graphics.drawString("Image missing!", 20, 20);
+    graphics.drawString("Press Ctrl-i to add image", 20, 40);
+  }
   
   public static enum ProxyProps {
     ALIGN_X, // LEFT, CENTER, RIGHT
@@ -55,8 +65,8 @@ public class ImageProxy {
   ImageProxy() {
     this.imageFile = null;
     this.modProxyFile = null;
-    this.imageSizeX = 100;
-    this.imageSizeY = 100;
+    this.imageSizeX = 800;
+    this.imageSizeY = 600;
   }
   
   private void setPlacement(final File imageProxyFile) {
@@ -231,10 +241,10 @@ public class ImageProxy {
     
     if (this.imageFile == null) {
       coords = new int[4];
-      coords[0] = 0;
-      coords[1] = 0;
-      coords[2] = 100;
-      coords[3] = 100;
+      coords[0] = screenWidth / 4;
+      coords[1] = screenHeight / 4;
+      coords[2] = screenWidth / 2;
+      coords[3] = screenHeight / 8;
       return coords;
     }
     

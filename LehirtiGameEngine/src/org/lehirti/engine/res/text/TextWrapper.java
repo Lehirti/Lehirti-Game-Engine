@@ -40,7 +40,7 @@ public class TextWrapper implements Externalizable {
         this.rawValue = FileUtils.readContentAsString(coreFile);
         this.state = ResourceState.CORE;
       } else {
-        this.rawValue = "TODO: " + key.getClass().getSimpleName() + "." + key.name() + "\n\n";
+        this.rawValue = "Ctrl-t: " + key.getClass().getSimpleName() + "." + key.name() + "\n\n";
         this.state = ResourceState.MISSING;
       }
     }
