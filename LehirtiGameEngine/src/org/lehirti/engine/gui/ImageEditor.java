@@ -33,6 +33,8 @@ public class ImageEditor extends JFrame implements ActionListener {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(ImageEditor.class);
   
+  private static File CURRENT_DIRECTORY = new File(".");
+  
   private final class NumericalInputVerifier extends InputVerifier {
     private final ImageEditor imgEditor;
     
@@ -301,8 +303,9 @@ public class ImageEditor extends JFrame implements ActionListener {
       setImage(this.selectedImageNr);
     } else if (e.getSource() == this.newAlternative) {
       LOGGER.debug("addAlternative()");
-      final JFileChooser fc = new JFileChooser();
+      final JFileChooser fc = new JFileChooser(CURRENT_DIRECTORY);
       final int returnVal = fc.showOpenDialog(this);
+      CURRENT_DIRECTORY = fc.getCurrentDirectory();
       if (returnVal == JFileChooser.APPROVE_OPTION) {
         LOGGER.debug("file selected");
         final File file = fc.getSelectedFile();
