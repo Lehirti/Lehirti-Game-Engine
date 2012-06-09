@@ -26,6 +26,20 @@ public class Tifa extends AbstractNPC {
     GENERAL_DESCRIPTION;
   }
   
+  public static enum SexActImage implements ImageKey {
+    // BEGIN GENERATED BLOCK SexAct
+    FUCK_PUSSY,
+    GET_PUSSY_FUCKED,
+    INSERT_TOY_INTO_PUSSY,
+    FUCK_ANAL,
+    GET_FUCKED_ANALLY,
+    GET_TITJOB,
+    GIVE_TITJOB,
+    GET_BLOWJOB,
+    GIVE_BLOWJOB,
+    // END GENERATED BLOCK SexAct
+  }
+  
   @Override
   public ImageKey getImage() {
     return Image.MAIN;
@@ -91,5 +105,20 @@ public class Tifa extends AbstractNPC {
   @Override
   public List<TextWrapper> getReactionText(final SexAct act, final SexToy toy) {
     return Collections.emptyList();
+  }
+  
+  @Override
+  public ImageKey getSexActPerformedImage(final SexAct act, final SexToy toy) {
+    return SexActImage.valueOf(act.name());
+  }
+  
+  @Override
+  public List<TextWrapper> getSexActPerformedText(final SexAct act, final SexToy toy) {
+    return Collections.emptyList();
+  }
+  
+  @Override
+  public void updateStateAfterSexAct(final SexAct act, final SexToy toy) {
+    // TODO Auto-generated method stub
   }
 }

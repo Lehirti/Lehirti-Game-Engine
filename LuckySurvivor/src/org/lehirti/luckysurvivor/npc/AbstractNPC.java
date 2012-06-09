@@ -33,7 +33,9 @@ public abstract class AbstractNPC implements NPC {
     OPTION_QUESTS,
     OPTION_LIKES,
     
-    OPTION_HAVE_SEX_WITH_HER
+    OPTION_HAVE_SEX_WITH_HER,
+    OPTION_CHANGE_SEX_ACT,
+    OPTION_REPEAT_SEX_ACT,
   }
   
   @Override
@@ -94,28 +96,39 @@ public abstract class AbstractNPC implements NPC {
     final List<Option> options = new ArrayList<Option>(11);
     final Set<SexAct> physicallyPossibleSexActs = SexAct.getPhysicallyPossible(Sex.MALE, getSex());
     for (final SexAct act : physicallyPossibleSexActs) {
-      final SexToyCategory requiredSexToy = act.getRequiredSexToy();
-      if (requiredSexToy == SexToyCategory.NONE) {
-        if (getDispositionTo(act, null) > 0) {
-          options.add(new Option(null, act, new PerformSexActEvent(this, act, null, returnEvent)));
-        } else {
-          options.add(new Option(null, act, new ProposeSexActEvent(this, act, null, returnEvent)));
-        }
-      } else {
-        final List<SexToy> allAvailable = SexToy.getAllAvailable(requiredSexToy);
-        if (allAvailable.size() > 1) {
-          options.add(new Option(null, act, new SelectSexToyEvent(this, act, allAvailable, 0, returnEvent)));
-        } else if (allAvailable.size() == 1) {
-          final SexToy toy = allAvailable.get(0);
-          if (getDispositionTo(act, toy) > 0) {
-            options.add(new Option(null, act, new PerformSexActEvent(this, act, toy, returnEvent)));
-          } else {
-            options.add(new Option(null, act, new ProposeSexActEvent(this, act, toy, returnEvent)));
-          }
-        }
+      final Option option = createOption(act, null, returnEvent);
+      if (option != null) {
+        options.add(option);
       }
     }
     return options;
+  }
+  
+  private Option createOption(final SexAct act, final SexToy toyIfAlreadySelected, final Event<?> returnEvent) {
+    final SexToyCategory requiredSexToy = act.getRequiredSexToy();
+    if (requiredSexToy == SexToyCategory.NONE) {
+      if (getDispositionTo(act, null) > 0) {
+        return new Option(null, act, new PerformSexActEvent(this, act, null, returnEvent));
+      } else {
+        return new Option(null, act, new ProposeSexActEvent(this, act, null, returnEvent));
+      }
+    } else {
+      SexToy toy = toyIfAlreadySelected;
+      final List<SexToy> allAvailable = SexToy.getAllAvailable(requiredSexToy);
+      if (toy == null && allAvailable.size() == 1) {
+        toy = allAvailable.get(0);
+      }
+      if (toy != null) {
+        if (getDispositionTo(act, toy) > 0) {
+          return new Option(null, act, new PerformSexActEvent(this, act, toy, returnEvent));
+        } else {
+          return new Option(null, act, new ProposeSexActEvent(this, act, toy, returnEvent));
+        }
+      } else if (allAvailable.size() > 1) {
+        return new Option(null, act, new SelectSexToyEvent(this, act, allAvailable, 0, returnEvent));
+      }
+    }
+    return null;
   }
   
   @Override
@@ -130,6 +143,17 @@ public abstract class AbstractNPC implements NPC {
     options.add(new Option(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new NPCHaveSex(this, returnEvent)));
     options.add(new Option(Key.OPTION_ENTER, CommonText.OPTION_DO_IT, new PerformSexActEvent(this, act, toy,
         returnEvent)));
+    return options;
+  }
+  
+  @Override
+  public List<Option> getSexActPerformedOptions(final SexAct act, final SexToy toy, final Event<?> returnEvent) {
+    final List<Option> options = new ArrayList<Option>(12);
+    options.add(new Option(Key.OPTION_LEAVE, Text.OPTION_CHANGE_SEX_ACT, new NPCHaveSex(this, returnEvent)));
+    final Option option = createOption(act, toy, returnEvent);
+    if (option != null) {
+      options.add(new Option(Key.OPTION_ENTER, Text.OPTION_REPEAT_SEX_ACT, option.event));
+    }
     return options;
   }
 }

@@ -52,18 +52,20 @@ public class PerformSexActEvent extends EventNode<NullState> implements External
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setFG(this.npc.getReactionImage(this.act, this.toy));
+    return ImgChange.setFG(this.npc.getSexActPerformedImage(this.act, this.toy));
   }
   
   @Override
   protected void doEvent() {
     setText(this.act);
     
-    for (final TextWrapper txtWrp : this.npc.getReactionText(this.act, this.toy)) {
+    for (final TextWrapper txtWrp : this.npc.getSexActPerformedText(this.act, this.toy)) {
       addText(txtWrp);
     }
     
-    for (final Option option : this.npc.getReactionOptions(this.act, this.toy, this.returnEvent)) {
+    this.npc.updateStateAfterSexAct(this.act, this.toy);
+    
+    for (final Option option : this.npc.getSexActPerformedOptions(this.act, this.toy, this.returnEvent)) {
       addOption(option.key, option.text, option.event);
     }
   }

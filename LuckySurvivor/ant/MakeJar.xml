@@ -3,6 +3,16 @@
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
     <target name="create_run_jar">
+        <java classname="org.lehirti.tools.UpdateGeneratedCodeBlocks">
+            <arg value="../src"/>
+            <classpath>
+                <pathelement path="../../LehirtiTools/bin"/>
+                <pathelement path="../../LehirtiGameEngine/bin"/>
+                <pathelement path="../bin"/>
+                <pathelement location="../../LehirtiGameEngine/lib/slf4j-api-1.6.4.jar"/>
+                <pathelement location="../../LehirtiGameEngine/lib/slf4j-jdk14-1.6.4.jar"/>
+            </classpath>
+        </java>
         <apply executable="check_workspace_clean.sh" osfamily="unix" failonerror="true">
             <fileset dir="." includes="version"/>
         </apply>

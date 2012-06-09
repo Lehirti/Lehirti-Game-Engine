@@ -63,9 +63,38 @@ public interface NPC extends SexParticipant, Serializable {
    */
   public int getDispositionTo(SexAct act, SexToy toy);
   
-  public ImageKey getReactionImage(SexAct proposedSexAct, SexToy toy);
+  /**
+   * image of npc reacting to the prospect of the given sex act being performed
+   * 
+   * @param act
+   * @param toy
+   * @return
+   */
+  public ImageKey getReactionImage(SexAct act, SexToy toy);
   
+  /**
+   * text of npc reacting to the prospect of the given sex act being performed
+   * 
+   * @param act
+   * @param toy
+   * @return
+   */
   public List<TextWrapper> getReactionText(SexAct act, SexToy toy);
   
+  /**
+   * player options after proposing given sex act to npc
+   * 
+   * @param act
+   * @param toy
+   * @return
+   */
   public List<Option> getReactionOptions(SexAct act, SexToy toy, Event<?> returnEvent);
+  
+  public ImageKey getSexActPerformedImage(SexAct act, SexToy toy);
+  
+  public List<TextWrapper> getSexActPerformedText(SexAct act, SexToy toy);
+  
+  public void updateStateAfterSexAct(SexAct act, SexToy toy);
+  
+  public List<Option> getSexActPerformedOptions(SexAct act, SexToy toy, Event<?> returnEvent);
 }
