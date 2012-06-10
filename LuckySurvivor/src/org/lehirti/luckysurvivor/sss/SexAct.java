@@ -3,13 +3,14 @@ package org.lehirti.luckysurvivor.sss;
 import static org.lehirti.engine.sex.SexFeature.*;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
-import org.lehirti.engine.res.text.TextKey;
+import org.lehirti.engine.res.TextAndImageKey;
 import org.lehirti.engine.sex.Sex;
 import org.lehirti.engine.sex.SexFeature;
 
-public enum SexAct implements TextKey {
+public enum SexAct implements TextAndImageKey {
   FUCK_PUSSY(COCK, PUSSY),
   GET_PUSSY_FUCKED(PUSSY, COCK),
   
@@ -50,5 +51,14 @@ public enum SexAct implements TextKey {
   
   public SexToyCategory getRequiredSexToy() {
     return this.requiredSexToy;
+  }
+  
+  public int getSelectedIndex(final List<SexAct> availableSexActs) {
+    for (int i = 0; i < availableSexActs.size(); i++) {
+      if (availableSexActs.get(i) == this) {
+        return i;
+      }
+    }
+    return -1;
   }
 }

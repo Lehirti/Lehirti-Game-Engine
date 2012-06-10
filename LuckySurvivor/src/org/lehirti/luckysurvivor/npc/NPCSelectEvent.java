@@ -77,6 +77,7 @@ public class NPCSelectEvent extends EventNode<NullState> implements Externalizab
         addText(CommonText.MARKER);
       }
       addText(this.npcs.get(i).getName());
+      addText(CommonText.NEWLINE);
     }
     
     if (!this.npcs.isEmpty()) {

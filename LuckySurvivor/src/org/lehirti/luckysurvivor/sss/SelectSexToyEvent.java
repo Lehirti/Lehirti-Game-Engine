@@ -72,7 +72,9 @@ public class SelectSexToyEvent extends EventNode<NullState> implements Externali
       addText(this.allToys.get(i));
     }
     
-    addOption(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new NPCHaveSex(this.npc, this.returnEvent));
+    final List<SexAct> availableSexActs = this.npc.getAvailableSexActs();
+    addOption(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new NPCHaveSex(this.npc, availableSexActs, this.act
+        .getSelectedIndex(availableSexActs), this.returnEvent));
     int previous = this.selectedSexToy - 1;
     if (previous < 0) {
       previous = this.allToys.size() - 1;

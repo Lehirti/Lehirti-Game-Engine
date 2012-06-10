@@ -1,6 +1,7 @@
 package org.lehirti.luckysurvivor.npc;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -9,7 +10,7 @@ import org.lehirti.engine.events.Option;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
-import org.lehirti.engine.sex.Sex;
+import org.lehirti.luckysurvivor.pc.PC;
 import org.lehirti.luckysurvivor.sss.PerformSexActEvent;
 import org.lehirti.luckysurvivor.sss.ProposeSexActEvent;
 import org.lehirti.luckysurvivor.sss.SelectSexToyEvent;
@@ -81,7 +82,8 @@ public abstract class AbstractNPC implements NPC {
   @Override
   public List<Option> getFlirtWithOptions(final Event<?> returnEvent) {
     final List<Option> options = new ArrayList<Option>(11);
-    options.add(new Option(Key.OPTION_ENTER, Text.OPTION_HAVE_SEX_WITH_HER, new NPCHaveSex(this, returnEvent)));
+    options.add(new Option(Key.OPTION_ENTER, Text.OPTION_HAVE_SEX_WITH_HER, new NPCHaveSex(this, getAvailableSexActs(),
+        0, returnEvent)));
     return options;
   }
   
@@ -92,19 +94,18 @@ public abstract class AbstractNPC implements NPC {
   }
   
   @Override
-  public List<Option> getSexActsOptions(final Event<?> returnEvent) {
-    final List<Option> options = new ArrayList<Option>(11);
-    final Set<SexAct> physicallyPossibleSexActs = SexAct.getPhysicallyPossible(Sex.MALE, getSex());
+  public List<SexAct> getAvailableSexActs() {
+    final List<SexAct> availableSexActs = new LinkedList<SexAct>();
+    final Set<SexAct> physicallyPossibleSexActs = SexAct.getPhysicallyPossible(new PC().getSex(), getSex());
     for (final SexAct act : physicallyPossibleSexActs) {
-      final Option option = createOption(act, null, returnEvent);
-      if (option != null) {
-        options.add(option);
+      if (act.getRequiredSexToy() == SexToyCategory.NONE || !SexToy.getAllAvailable(act.getRequiredSexToy()).isEmpty()) {
+        availableSexActs.add(act);
       }
     }
-    return options;
+    return availableSexActs;
   }
   
-  private Option createOption(final SexAct act, final SexToy toyIfAlreadySelected, final Event<?> returnEvent) {
+  public Option createOption(final SexAct act, final SexToy toyIfAlreadySelected, final Event<?> returnEvent) {
     final SexToyCategory requiredSexToy = act.getRequiredSexToy();
     if (requiredSexToy == SexToyCategory.NONE) {
       if (getDispositionTo(act, null) > 0) {
@@ -140,7 +141,10 @@ public abstract class AbstractNPC implements NPC {
   @Override
   public List<Option> getReactionOptions(final SexAct act, final SexToy toy, final Event<?> returnEvent) {
     final List<Option> options = new ArrayList<Option>(12);
-    options.add(new Option(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new NPCHaveSex(this, returnEvent)));
+    final List<SexAct> availableSexActs = getAvailableSexActs();
+    final int selectedAct = act.getSelectedIndex(availableSexActs);
+    options.add(new Option(Key.OPTION_LEAVE, Text.OPTION_CHANGE_SEX_ACT, new NPCHaveSex(this, availableSexActs,
+        selectedAct, returnEvent)));
     options.add(new Option(Key.OPTION_ENTER, CommonText.OPTION_DO_IT, new PerformSexActEvent(this, act, toy,
         returnEvent)));
     return options;
@@ -149,7 +153,10 @@ public abstract class AbstractNPC implements NPC {
   @Override
   public List<Option> getSexActPerformedOptions(final SexAct act, final SexToy toy, final Event<?> returnEvent) {
     final List<Option> options = new ArrayList<Option>(12);
-    options.add(new Option(Key.OPTION_LEAVE, Text.OPTION_CHANGE_SEX_ACT, new NPCHaveSex(this, returnEvent)));
+    final List<SexAct> availableSexActs = getAvailableSexActs();
+    final int selectedAct = act.getSelectedIndex(availableSexActs);
+    options.add(new Option(Key.OPTION_LEAVE, Text.OPTION_CHANGE_SEX_ACT, new NPCHaveSex(this, availableSexActs,
+        selectedAct, returnEvent)));
     final Option option = createOption(act, toy, returnEvent);
     if (option != null) {
       options.add(new Option(Key.OPTION_ENTER, Text.OPTION_REPEAT_SEX_ACT, option.event));

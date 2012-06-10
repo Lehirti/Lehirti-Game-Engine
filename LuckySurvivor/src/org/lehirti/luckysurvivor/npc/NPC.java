@@ -50,7 +50,7 @@ public interface NPC extends SexParticipant, Serializable {
   
   public List<TextWrapper> getSexActsDescription();
   
-  public List<Option> getSexActsOptions(Event<?> returnEvent);
+  public Option createOption(final SexAct act, final SexToy toyIfAlreadySelected, final Event<?> returnEvent);
   
   /**
    * when during sex the PC proposes to perform a certain sex act, this method will return the NPCs reaction to the

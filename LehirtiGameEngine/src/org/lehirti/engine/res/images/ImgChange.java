@@ -104,7 +104,14 @@ public class ImgChange {
   }
   
   /**
-   * clear screen (remove background image and all foreground images
+   * clear foreground (remove all foreground images; leave background)
+   */
+  public static ImgChange clearFG() {
+    return new ImgChange(false, true, null);
+  }
+  
+  /**
+   * clear screen (remove background image and all foreground images)
    */
   public static ImgChange clearScreen() {
     return new ImgChange(true, true, null);
