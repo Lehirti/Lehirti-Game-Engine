@@ -1,6 +1,7 @@
 package org.lehirti.luckysurvivor.npc;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -8,11 +9,14 @@ import java.util.Set;
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.Option;
 import org.lehirti.engine.gui.Key;
+import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
+import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.luckysurvivor.pc.PC;
 import org.lehirti.luckysurvivor.sss.PerformSexActEvent;
 import org.lehirti.luckysurvivor.sss.ProposeSexActEvent;
+import org.lehirti.luckysurvivor.sss.ReactionToSexAct;
 import org.lehirti.luckysurvivor.sss.SelectSexToyEvent;
 import org.lehirti.luckysurvivor.sss.SexAct;
 import org.lehirti.luckysurvivor.sss.SexToy;
@@ -108,7 +112,8 @@ public abstract class AbstractNPC implements NPC {
   public Option createOption(final SexAct act, final SexToy toyIfAlreadySelected, final Event<?> returnEvent) {
     final SexToyCategory requiredSexToy = act.getRequiredSexToy();
     if (requiredSexToy == SexToyCategory.NONE) {
-      if (getDispositionTo(act, null) > 0) {
+      if (ReactionToSexAct.getEffective(getReactionToPropositionOf(act, null)).ordinal() > ReactionToSexAct.INDIFFERENT
+          .ordinal()) {
         return new Option(null, act, new PerformSexActEvent(this, act, null, returnEvent));
       } else {
         return new Option(null, act, new ProposeSexActEvent(this, act, null, returnEvent));
@@ -120,7 +125,8 @@ public abstract class AbstractNPC implements NPC {
         toy = allAvailable.get(0);
       }
       if (toy != null) {
-        if (getDispositionTo(act, toy) > 0) {
+        if (ReactionToSexAct.getEffective(getReactionToPropositionOf(act, toy)).ordinal() > ReactionToSexAct.INDIFFERENT
+            .ordinal()) {
           return new Option(null, act, new PerformSexActEvent(this, act, toy, returnEvent));
         } else {
           return new Option(null, act, new ProposeSexActEvent(this, act, toy, returnEvent));
@@ -133,10 +139,70 @@ public abstract class AbstractNPC implements NPC {
   }
   
   @Override
-  public int getDispositionTo(final SexAct act, final SexToy toy) {
-    // TODO determine act disposition from NPC preference to act, NPC disposition to PC and NPC lust
-    return 0;
+  public Set<ReactionToSexAct> getReactionToPropositionOf(final SexAct act, final SexToy toy) {
+    final Set<ReactionToSexAct> reactions = EnumSet.noneOf(ReactionToSexAct.class);
+    
+    // check, if the act is unconditionally rejected
+    final int reluctance = getReluctanceToPerformAct(act, toy);
+    if (reluctance > 100) {
+      reactions.add(ReactionToSexAct.REJECTED_REPULSED_BY_SEX_ACT_ON_PRINCIPLE);
+    }
+    
+    // check, if the act is perceived as too painful
+    final int expectedPainLevel = getPainDelta(act, toy) + getCurrentPainLevel();
+    if (expectedPainLevel > getAbsoluteUpperPainThreshold()) {
+      reactions.add(ReactionToSexAct.REJECTED_TOO_PAINFUL);
+    }
+    
+    // check, if disposition towards PC and NPC lust overcome reluctance towards act and anticipated pain
+    
+    // general willingness
+    int willingnessToPerformSexAct = getDispositionTowardsPC() - reluctance;
+    
+    // modified by pain
+    if (expectedPainLevel > getUpperPainComfortThreshold()) {
+      // it hurts too much
+      willingnessToPerformSexAct -= (expectedPainLevel - getUpperPainComfortThreshold());
+    }
+    if (expectedPainLevel < getLowerPainComfortThreshold()) {
+      // it's boring when you hardly feel anything
+      willingnessToPerformSexAct -= (getLowerPainComfortThreshold() - expectedPainLevel);
+    }
+    
+    // modified by lust
+    willingnessToPerformSexAct += getCurrentLust() / 10;
+    if (willingnessToPerformSexAct < -50) {
+      reactions.add(ReactionToSexAct.REJECTED_ABSOLUTELY);
+    } else if (willingnessToPerformSexAct < -30) {
+      reactions.add(ReactionToSexAct.REJECTED_STRONGLY);
+    } else if (willingnessToPerformSexAct < -10) {
+      reactions.add(ReactionToSexAct.REJECTED);
+    } else if (willingnessToPerformSexAct < 10) {
+      reactions.add(ReactionToSexAct.INDIFFERENT);
+    } else if (willingnessToPerformSexAct < 30) {
+      reactions.add(ReactionToSexAct.ACCEPTED);
+    } else if (willingnessToPerformSexAct < 50) {
+      reactions.add(ReactionToSexAct.ACCEPTED_LIKE);
+    } else {
+      reactions.add(ReactionToSexAct.ACCEPTED_LOVE);
+    }
+    
+    return reactions;
   }
+  
+  @Override
+  public ImageKey getReactionImage(final SexAct act, final SexToy toy) {
+    return getReactionImage(ReactionToSexAct.getEffective(getReactionToPropositionOf(act, toy)));
+  }
+  
+  abstract protected ImageKey getReactionImage(final ReactionToSexAct reaction);
+  
+  @Override
+  public List<TextWrapper> getReactionText(final SexAct act, final SexToy toy) {
+    return getReactionText(ReactionToSexAct.getEffective(getReactionToPropositionOf(act, toy)));
+  }
+  
+  abstract protected List<TextWrapper> getReactionText(final ReactionToSexAct reaction);
   
   @Override
   public List<Option> getReactionOptions(final SexAct act, final SexToy toy, final Event<?> returnEvent) {

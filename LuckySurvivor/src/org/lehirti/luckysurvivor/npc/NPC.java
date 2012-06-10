@@ -2,12 +2,14 @@ package org.lehirti.luckysurvivor.npc;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.Option;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
+import org.lehirti.luckysurvivor.sss.ReactionToSexAct;
 import org.lehirti.luckysurvivor.sss.SexAct;
 import org.lehirti.luckysurvivor.sss.SexParticipant;
 import org.lehirti.luckysurvivor.sss.SexToy;
@@ -61,7 +63,23 @@ public interface NPC extends SexParticipant, Serializable {
    *          only required, if act requires a sex toy; else ignored
    * @return [-100; 100]
    */
-  public int getDispositionTo(SexAct act, SexToy toy);
+  public Set<ReactionToSexAct> getReactionToPropositionOf(SexAct act, SexToy toy);
+  
+  public int getReluctanceToPerformAct(SexAct act, SexToy toy);
+  
+  public int getPainDelta(SexAct act, SexToy toy);
+  
+  public int getDispositionTowardsPC();
+  
+  public int getCurrentPainLevel();
+  
+  public int getLowerPainComfortThreshold();
+  
+  public int getUpperPainComfortThreshold();
+  
+  public int getAbsoluteUpperPainThreshold();
+  
+  public int getCurrentLust();
   
   /**
    * image of npc reacting to the prospect of the given sex act being performed

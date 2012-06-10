@@ -5,11 +5,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.lehirti.engine.res.ResourceCache;
+import org.lehirti.engine.res.TextAndImageKey;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.sex.Sex;
+import org.lehirti.engine.state.IntState;
+import org.lehirti.engine.state.StateObject;
 import org.lehirti.luckysurvivor.npc.AbstractNPC;
+import org.lehirti.luckysurvivor.sss.ReactionToSexAct;
 import org.lehirti.luckysurvivor.sss.SexAct;
 import org.lehirti.luckysurvivor.sss.SexToy;
 
@@ -18,12 +22,25 @@ public class Hinata extends AbstractNPC {
   
   public static enum Image implements ImageKey {
     MAIN,
-    INDIFFERENT_TO_SEX_ACT;
   }
   
   public static enum Text implements TextKey {
     NAME,
     GENERAL_DESCRIPTION;
+  }
+  
+  public static enum ReactionToSexActImage implements TextAndImageKey {
+    // BEGIN GENERATED BLOCK ReactionToSexAct
+    REJECTED_REPULSED_BY_SEX_ACT_ON_PRINCIPLE,
+    REJECTED_TOO_PAINFUL,
+    REJECTED_ABSOLUTELY,
+    REJECTED_STRONGLY,
+    REJECTED,
+    INDIFFERENT,
+    ACCEPTED,
+    ACCEPTED_LIKE,
+    ACCEPTED_LOVE,
+    // END GENERATED BLOCK ReactionToSexAct
   }
   
   public static enum SexActImage implements ImageKey {
@@ -38,6 +55,26 @@ public class Hinata extends AbstractNPC {
     GET_BLOWJOB,
     GIVE_BLOWJOB,
     // END GENERATED BLOCK SexAct
+  }
+  
+  private static enum Int implements IntState {
+    ABSOLUTE_UPPER_PAIN_THRESHOLD(0),
+    UPPER_PAIN_COMFORT_THRESHOLD(0),
+    LOWER_PAIN_COMFORT_THRESHOLD(0),
+    CURRENT_PAIN_LEVEL(0),
+    CURRENT_LUST(0),
+    DISPOSITION_TOWARDS_PC(0), ;
+    
+    private final Long defaultValue;
+    
+    private Int(final long defaultValue) {
+      this.defaultValue = Long.valueOf(defaultValue);
+    }
+    
+    @Override
+    public Long defaultValue() {
+      return this.defaultValue;
+    }
   }
   
   @Override
@@ -98,13 +135,37 @@ public class Hinata extends AbstractNPC {
   }
   
   @Override
-  public ImageKey getReactionImage(final SexAct act, final SexToy toy) {
-    return Image.INDIFFERENT_TO_SEX_ACT;
+  protected TextAndImageKey getReactionImage(final ReactionToSexAct reaction) {
+    switch (reaction) {
+    case REJECTED_REPULSED_BY_SEX_ACT_ON_PRINCIPLE:
+      return ReactionToSexActImage.REJECTED_REPULSED_BY_SEX_ACT_ON_PRINCIPLE;
+    case REJECTED_TOO_PAINFUL:
+      return ReactionToSexActImage.REJECTED_TOO_PAINFUL;
+    case REJECTED_ABSOLUTELY:
+      return ReactionToSexActImage.REJECTED_ABSOLUTELY;
+    case REJECTED_STRONGLY:
+      return ReactionToSexActImage.REJECTED_STRONGLY;
+    case REJECTED:
+      return ReactionToSexActImage.REJECTED;
+    case INDIFFERENT:
+      return ReactionToSexActImage.INDIFFERENT;
+    case ACCEPTED:
+      return ReactionToSexActImage.ACCEPTED;
+    case ACCEPTED_LIKE:
+      return ReactionToSexActImage.ACCEPTED_LIKE;
+    case ACCEPTED_LOVE:
+      return ReactionToSexActImage.ACCEPTED_LOVE;
+    }
+    return null;
   }
   
   @Override
-  public List<TextWrapper> getReactionText(final SexAct act, final SexToy toy) {
-    return Collections.emptyList();
+  protected List<TextWrapper> getReactionText(final ReactionToSexAct reaction) {
+    final TextKey text = getReactionImage(reaction);
+    final TextWrapper textWrapper = ResourceCache.get(text);
+    final List<TextWrapper> texts = new LinkedList<TextWrapper>();
+    texts.add(textWrapper);
+    return texts;
   }
   
   @Override
@@ -120,5 +181,46 @@ public class Hinata extends AbstractNPC {
   @Override
   public void updateStateAfterSexAct(final SexAct act, final SexToy toy) {
     // TODO Auto-generated method stub
+  }
+  
+  @Override
+  public int getAbsoluteUpperPainThreshold() {
+    return (int) StateObject.get(Int.ABSOLUTE_UPPER_PAIN_THRESHOLD);
+  }
+  
+  @Override
+  public int getUpperPainComfortThreshold() {
+    return (int) StateObject.get(Int.UPPER_PAIN_COMFORT_THRESHOLD);
+  }
+  
+  @Override
+  public int getLowerPainComfortThreshold() {
+    return (int) StateObject.get(Int.LOWER_PAIN_COMFORT_THRESHOLD);
+  }
+  
+  @Override
+  public int getCurrentPainLevel() {
+    return (int) StateObject.get(Int.CURRENT_PAIN_LEVEL);
+  }
+  
+  @Override
+  public int getCurrentLust() {
+    return (int) StateObject.get(Int.CURRENT_LUST);
+  }
+  
+  @Override
+  public int getDispositionTowardsPC() {
+    return (int) StateObject.get(Int.DISPOSITION_TOWARDS_PC);
+  }
+  
+  @Override
+  public int getPainDelta(final SexAct act, final SexToy toy) {
+    return 0; // TODO
+  }
+  
+  @Override
+  public int getReluctanceToPerformAct(final SexAct act, final SexToy toy) {
+    // TODO Auto-generated method stub
+    return 0;
   }
 }

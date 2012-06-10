@@ -4,26 +4,48 @@ import java.io.File;
 import java.util.regex.Pattern;
 
 import org.lehirti.engine.util.FileUtils;
+import org.lehirti.luckysurvivor.sss.ReactionToSexAct;
 import org.lehirti.luckysurvivor.sss.SexAct;
 
 public final class UpdateGeneratedCodeBlocks {
-  private static final String PREFIX = "// BEGIN GENERATED BLOCK SexAct";
-  private static final String POSTFIX = "// END GENERATED BLOCK SexAct";
-  private static final Pattern TO_BE_REPLACED = Pattern.compile(PREFIX + ".*?" + POSTFIX, Pattern.DOTALL);
-  private static final String REPLACE_WITH;
+  private static final String PREFIX_SexAct = "// BEGIN GENERATED BLOCK SexAct";
+  private static final String POSTFIX_SexAct = "// END GENERATED BLOCK SexAct";
+  private static final Pattern SexAct_TO_BE_REPLACED = Pattern.compile(PREFIX_SexAct + ".*?" + POSTFIX_SexAct,
+      Pattern.DOTALL);
+  private static final String SexAct_REPLACE_WITH;
   static {
     final String NEWLINE = System.getProperty("line.separator") + "    ";
     final StringBuilder sb = new StringBuilder();
-    sb.append(PREFIX);
+    sb.append(PREFIX_SexAct);
     sb.append(NEWLINE);
     for (final SexAct act : SexAct.values()) {
       sb.append(act.name());
       sb.append(",");
       sb.append(NEWLINE);
     }
-    sb.append(POSTFIX);
+    sb.append(POSTFIX_SexAct);
     
-    REPLACE_WITH = sb.toString();
+    SexAct_REPLACE_WITH = sb.toString();
+  }
+  
+  private static final String PREFIX_ReactionToSexAct = "// BEGIN GENERATED BLOCK ReactionToSexAct";
+  private static final String POSTFIX_ReactionToSexAct = "// END GENERATED BLOCK ReactionToSexAct";
+  private static final Pattern ReactionToSexAct_TO_BE_REPLACED = Pattern.compile(PREFIX_ReactionToSexAct + ".*?"
+      + POSTFIX_ReactionToSexAct, Pattern.DOTALL);
+  private static final String ReactionToSexAct_REPLACE_WITH;
+  static {
+    final String NEWLINE = System.getProperty("line.separator") + "    ";
+    final StringBuilder sb = new StringBuilder();
+    sb.append(PREFIX_ReactionToSexAct);
+    sb.append(NEWLINE);
+    for (final ReactionToSexAct act : ReactionToSexAct.values()) {
+      sb.append(act.name());
+      sb.append(",");
+      sb.append(NEWLINE);
+    }
+    sb.append(POSTFIX_ReactionToSexAct);
+    
+    ReactionToSexAct_REPLACE_WITH = sb.toString();
   }
   
   public static void main(final String[] args) {
@@ -47,7 +69,8 @@ public final class UpdateGeneratedCodeBlocks {
   
   private static void updateFile(final File file) {
     final String fileContent = FileUtils.readContentAsString(file);
-    final String newFileContent = TO_BE_REPLACED.matcher(fileContent).replaceAll(REPLACE_WITH);
+    String newFileContent = SexAct_TO_BE_REPLACED.matcher(fileContent).replaceAll(SexAct_REPLACE_WITH);
+    newFileContent = ReactionToSexAct_TO_BE_REPLACED.matcher(newFileContent).replaceAll(ReactionToSexAct_REPLACE_WITH);
     if (!fileContent.equals(newFileContent)) {
       FileUtils.writeContentToFile(file, newFileContent);
     }

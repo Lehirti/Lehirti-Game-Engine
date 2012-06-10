@@ -89,7 +89,8 @@ public class SelectSexToyEvent extends EventNode<NullState> implements Externali
         this.returnEvent));
     
     final SexToy selectedToy = this.allToys.get(this.selectedSexToy);
-    if (this.npc.getDispositionTo(this.act, selectedToy) > 0) {
+    if (ReactionToSexAct.getEffective(this.npc.getReactionToPropositionOf(this.act, selectedToy)).ordinal() > ReactionToSexAct.INDIFFERENT
+        .ordinal()) {
       addOption(Key.OPTION_ENTER, CommonText.OPTION_USE_IT, new PerformSexActEvent(this.npc, this.act, selectedToy,
           this.returnEvent));
     } else {
