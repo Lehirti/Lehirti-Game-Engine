@@ -16,14 +16,14 @@ public enum SexAct implements TextAndImageKey {
   
   INSERT_TOY_INTO_PUSSY(ANY, PUSSY, SexToyCategory.PUSSY),
   
-  FUCK_ANAL(COCK, ANY),
-  GET_FUCKED_ANALLY(ANY, COCK),
+  FUCK_ANAL(COCK, ASS),
+  GET_FUCKED_ANALLY(ASS, COCK),
   
   GET_TITJOB(COCK, BREASTS),
   GIVE_TITJOB(BREASTS, COCK),
   
-  GET_BLOWJOB(COCK, ANY),
-  GIVE_BLOWJOB(ANY, COCK);
+  GET_BLOWJOB(COCK, MOUTH),
+  GIVE_BLOWJOB(MOUTH, COCK);
   
   public final SexFeature participant1;
   public final SexFeature participant2;

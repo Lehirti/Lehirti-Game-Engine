@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.text.TextKey;
+import org.lehirti.engine.state.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,8 @@ public class PathFinder {
   private static final String VERSION_FILE_LOCATION = "version";
   
   private static final String RES = "res";
+  
+  private static final String DEFAULTS = "defaults";
   
   private static final File CORE_BASE_DIR = new File("core");
   private static final String CORE_BASE_DIR_ABSOLUTE_PATH = CORE_BASE_DIR.getAbsolutePath();
@@ -36,10 +39,16 @@ public class PathFinder {
   private static final Map<ImageKey, File[]> CORE_IMAGE_CACHE = new HashMap<ImageKey, File[]>(1024);
   private static final Map<ImageKey, File[]> MOD_IMAGE_CACHE = new HashMap<ImageKey, File[]>(1024);
   
-  private static final File CORE_RES_DIR = new File(PathFinder.CORE_BASE_DIR, RES);
-  private static final File MOD_RES_DIR = new File(PathFinder.MOD_BASE_DIR, RES);
+  private static final File CORE_RES_DIR = new File(CORE_BASE_DIR, RES);
+  private static final File MOD_RES_DIR = new File(MOD_BASE_DIR, RES);
+  
+  public static final File MOD_DEFAULTS_DIR = new File(MOD_BASE_DIR, DEFAULTS);
   
   public static final String PROXY_FILENAME_SUFFIX = ".proxy";
+  
+  public static final String PROPERTIES_FILENAME_SUFFIX = ".properties";
+  
+  public static final File CONFIG_DIR = new File("config");
   
   public static File getCoreFile(final TextKey key) {
     return get(key, CORE_TEXT_CACHE, CORE_CONTENT_DIRS);
@@ -196,5 +205,9 @@ public class PathFinder {
       contentDirs[CORE_CONTENT_DIRS.size() + i] = MOD_CONTENT_DIRS.get(i);
     }
     return contentDirs;
+  }
+  
+  public static File getModDefaultProperties(final Class<? extends State> stateClass) {
+    return new File(MOD_DEFAULTS_DIR, stateClass.getName() + PROPERTIES_FILENAME_SUFFIX);
   }
 }

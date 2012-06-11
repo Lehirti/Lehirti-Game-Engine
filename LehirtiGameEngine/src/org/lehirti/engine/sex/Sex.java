@@ -3,9 +3,9 @@ package org.lehirti.engine.sex;
 import static org.lehirti.engine.sex.SexFeature.*;
 
 public enum Sex {
-  MALE(COCK, ANY),
-  FEMALE(PUSSY, BREASTS, ANY),
-  FUTA(COCK, PUSSY, BREASTS, ANY);
+  MALE(COCK, MOUTH, ASS, ANY),
+  FEMALE(PUSSY, BREASTS, MOUTH, ASS, ANY),
+  FUTA(COCK, PUSSY, BREASTS, MOUTH, ASS, ANY);
   
   private final SexFeature[] features;
   

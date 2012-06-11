@@ -4,9 +4,11 @@ import java.io.File;
 import java.util.Properties;
 
 import org.lehirti.engine.util.FileUtils;
+import org.lehirti.engine.util.PathFinder;
 
 public final class KeyMapping {
-  private static File PROPS_FILE = new File("config/" + KeyMapping.class.getSimpleName() + ".properties");
+  private static File PROPS_FILE = new File(PathFinder.CONFIG_DIR, KeyMapping.class.getSimpleName()
+      + PathFinder.PROPERTIES_FILENAME_SUFFIX);
   
   private static Properties PROPS = null;
   

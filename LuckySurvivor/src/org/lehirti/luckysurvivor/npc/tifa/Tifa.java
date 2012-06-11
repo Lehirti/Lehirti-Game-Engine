@@ -3,6 +3,7 @@ package org.lehirti.luckysurvivor.npc.tifa;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.TextAndImageKey;
@@ -12,6 +13,7 @@ import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.sex.Sex;
 import org.lehirti.engine.state.IntState;
 import org.lehirti.engine.state.StateObject;
+import org.lehirti.engine.util.PropertyUtils;
 import org.lehirti.luckysurvivor.npc.AbstractNPC;
 import org.lehirti.luckysurvivor.sss.ReactionToSexAct;
 import org.lehirti.luckysurvivor.sss.SexAct;
@@ -55,6 +57,39 @@ public class Tifa extends AbstractNPC {
     GET_BLOWJOB,
     GIVE_BLOWJOB,
     // END GENERATED BLOCK SexAct
+  }
+  
+  public static enum ReluctanceToPerformSexAct implements IntState {
+    // BEGIN GENERATED BLOCK SexAct
+    FUCK_PUSSY,
+    GET_PUSSY_FUCKED,
+    INSERT_TOY_INTO_PUSSY,
+    FUCK_ANAL,
+    GET_FUCKED_ANALLY,
+    GET_TITJOB,
+    GIVE_TITJOB,
+    GET_BLOWJOB,
+    GIVE_BLOWJOB,
+    // END GENERATED BLOCK SexAct
+    ;
+    
+    private final Long defaultValue;
+    
+    private ReluctanceToPerformSexAct() {
+      final Properties defaultValues = PropertyUtils.getDefaultProperties(ReluctanceToPerformSexAct.class);
+      if (defaultValues.containsKey(name())) {
+        this.defaultValue = Long.valueOf(defaultValues.getProperty(name(), "9001"));
+      } else {
+        this.defaultValue = Long.valueOf(9001);
+        defaultValues.put(name(), "9001");
+        PropertyUtils.setDefaultProperties(ReluctanceToPerformSexAct.class, defaultValues);
+      }
+    }
+    
+    @Override
+    public Long defaultValue() {
+      return this.defaultValue;
+    }
   }
   
   private static enum Int implements IntState {
@@ -200,7 +235,7 @@ public class Tifa extends AbstractNPC {
   
   @Override
   public int getReluctanceToPerformAct(final SexAct act, final SexToy toy) {
-    // TODO Auto-generated method stub
-    return 0;
+    final ReluctanceToPerformSexAct reluctance = ReluctanceToPerformSexAct.valueOf(act.name());
+    return (int) StateObject.get(reluctance);
   }
 }
