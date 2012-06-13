@@ -22,6 +22,7 @@ public class RecoverBodiesFromPlane extends EventNode<NullState> {
   protected void doEvent() {
     if (is(Bool.HAS_STRECHER)) {
       setText(Text.RECOVER_BODIES_WITH_STRECHER);
+      set(Bool.DEAD_BODIES_REMOVED_FROM_PLANE, true);
     } else {
       setText(Text.RECOVER_BODIES_WITHOUT_STRECHER);
     }
