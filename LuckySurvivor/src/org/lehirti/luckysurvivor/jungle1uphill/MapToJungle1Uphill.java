@@ -26,11 +26,6 @@ public class MapToJungle1Uphill extends EventNode<NullState> {
   
   public static enum Bool implements BoolState {
     HAS_EXAMINED_GROUND;
-    
-    @Override
-    public Boolean defaultValue() {
-      return Boolean.FALSE;
-    }
   }
   
   @Override

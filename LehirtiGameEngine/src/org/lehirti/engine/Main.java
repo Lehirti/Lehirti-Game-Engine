@@ -32,8 +32,11 @@ import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.images.ImageWrapper;
 import org.lehirti.engine.res.text.CommonText;
+import org.lehirti.engine.state.BoolState;
+import org.lehirti.engine.state.IntState;
 import org.lehirti.engine.state.StateObject;
 import org.lehirti.engine.state.StaticInitializer;
+import org.lehirti.engine.state.StringState;
 import org.lehirti.engine.util.ClassFinder;
 import org.lehirti.engine.util.LogUtils;
 import org.lehirti.engine.util.PathFinder;
@@ -329,6 +332,27 @@ public abstract class Main {
     final Vector<Class<?>> modules = new ClassFinder().findSubclasses(StaticInitializer.class.getName());
     for (final Class<?> module : modules) {
       LOGGER.debug("Loaded module: {}", module.getName());
+    }
+    
+    Vector<Class<?>> states = new ClassFinder().findSubclasses(IntState.class.getName());
+    for (final Class<?> intState : states) {
+      if (intState.isEnum()) {
+        StateObject.initIntDefaults((Class<IntState>) intState);
+      }
+    }
+    
+    states = new ClassFinder().findSubclasses(StringState.class.getName());
+    for (final Class<?> stringState : states) {
+      if (stringState.isEnum()) {
+        StateObject.initStringDefaults((Class<StringState>) stringState);
+      }
+    }
+    
+    states = new ClassFinder().findSubclasses(BoolState.class.getName());
+    for (final Class<?> boolState : states) {
+      if (boolState.isEnum()) {
+        StateObject.initBoolDefaults((Class<BoolState>) boolState);
+      }
     }
     
     javax.swing.SwingUtilities.invokeAndWait(new Runnable() {

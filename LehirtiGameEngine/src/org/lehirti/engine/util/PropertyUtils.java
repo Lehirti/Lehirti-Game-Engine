@@ -25,6 +25,7 @@ public class PropertyUtils {
       return properties;
     }
     
+    // start with empty properties
     final Properties defaultProperties = new Properties();
     try {
       

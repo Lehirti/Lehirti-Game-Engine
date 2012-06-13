@@ -25,11 +25,6 @@ public enum DateTime implements IntState {
     SUNDAY;
   }
   
-  @Override
-  public Long defaultValue() {
-    return Long.valueOf(0L);
-  }
-  
   public static void setFirstDayOfWeek(final DayOfWeek firstDay) {
     StateObject.set(FIRST_DAY, firstDay.ordinal());
   }

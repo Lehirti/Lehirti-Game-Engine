@@ -3,7 +3,6 @@ package org.lehirti.luckysurvivor.npc.tifa;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.TextAndImageKey;
@@ -13,7 +12,6 @@ import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.sex.Sex;
 import org.lehirti.engine.state.IntState;
 import org.lehirti.engine.state.StateObject;
-import org.lehirti.engine.util.PropertyUtils;
 import org.lehirti.luckysurvivor.npc.AbstractNPC;
 import org.lehirti.luckysurvivor.sss.ReactionToSexAct;
 import org.lehirti.luckysurvivor.sss.SexAct;
@@ -72,44 +70,15 @@ public class Tifa extends AbstractNPC {
     GIVE_BLOWJOB,
     // END GENERATED BLOCK SexAct
     ;
-    
-    private final Long defaultValue;
-    
-    private ReluctanceToPerformSexAct() {
-      final Properties defaultValues = PropertyUtils.getDefaultProperties(ReluctanceToPerformSexAct.class);
-      if (defaultValues.containsKey(name())) {
-        this.defaultValue = Long.valueOf(defaultValues.getProperty(name(), "9001"));
-      } else {
-        this.defaultValue = Long.valueOf(9001);
-        defaultValues.put(name(), "9001");
-        PropertyUtils.setDefaultProperties(ReluctanceToPerformSexAct.class, defaultValues);
-      }
-    }
-    
-    @Override
-    public Long defaultValue() {
-      return this.defaultValue;
-    }
   }
   
   private static enum Int implements IntState {
-    ABSOLUTE_UPPER_PAIN_THRESHOLD(0),
-    UPPER_PAIN_COMFORT_THRESHOLD(0),
-    LOWER_PAIN_COMFORT_THRESHOLD(0),
-    CURRENT_PAIN_LEVEL(0),
-    CURRENT_LUST(0),
-    DISPOSITION_TOWARDS_PC(0), ;
-    
-    private final Long defaultValue;
-    
-    private Int(final long defaultValue) {
-      this.defaultValue = Long.valueOf(defaultValue);
-    }
-    
-    @Override
-    public Long defaultValue() {
-      return this.defaultValue;
-    }
+    ABSOLUTE_UPPER_PAIN_THRESHOLD,
+    UPPER_PAIN_COMFORT_THRESHOLD,
+    LOWER_PAIN_COMFORT_THRESHOLD,
+    CURRENT_PAIN_LEVEL,
+    CURRENT_LUST,
+    DISPOSITION_TOWARDS_PC;
   }
   
   @Override

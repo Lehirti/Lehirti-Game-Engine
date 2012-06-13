@@ -32,11 +32,6 @@ public class Plane1_Fuselage extends EventNode<NullState> {
   public static enum Bool implements BoolState {
     HAS_LOOKED_FOR_SURVIVORS,
     HAS_HELPED_OTHERS_OUT_OF_PLANE;
-    
-    @Override
-    public Boolean defaultValue() {
-      return Boolean.FALSE;
-    }
   }
   
   @Override

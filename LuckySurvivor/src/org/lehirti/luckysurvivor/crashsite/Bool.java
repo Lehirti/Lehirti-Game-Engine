@@ -10,9 +10,4 @@ public enum Bool implements BoolState {
   HAS_SHEETS_OF_FABRIC,
   HAS_STRECHER,
   HAS_PEANUTS_AND_BOTTLED_WATER;
-  
-  @Override
-  public Boolean defaultValue() {
-    return Boolean.FALSE;
-  }
 }

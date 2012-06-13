@@ -26,11 +26,6 @@ public class MapToLookoutHill extends EventNode<NullState> {
   
   public static enum Bool implements BoolState {
     HAS_FOUND_SPRING;
-    
-    @Override
-    public Boolean defaultValue() {
-      return Boolean.FALSE;
-    }
   }
   
   @Override

@@ -30,19 +30,8 @@ public class MazeState extends StateObject {
   }
   
   public static enum Int implements IntState {
-    MAZE_LAYOUT(0),
-    CURRENT_POSITION_IN_MAZE(0);
-    
-    private final Long defaultValue;
-    
-    private Int(final long defaultValue) {
-      this.defaultValue = Long.valueOf(defaultValue);
-    }
-    
-    @Override
-    public Long defaultValue() {
-      return this.defaultValue;
-    }
+    MAZE_LAYOUT,
+    CURRENT_POSITION_IN_MAZE;
   }
   
   private static void init() {

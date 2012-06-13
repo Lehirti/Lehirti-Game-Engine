@@ -25,11 +25,6 @@ public enum SexToy implements TextAndImageKeyWithFlag {
     }
   }
   
-  @Override
-  public Boolean defaultValue() {
-    return Boolean.TRUE; // TODO for testing make all sex toys available
-  }
-  
   public boolean belongsToCategory(final SexToyCategory category) {
     return this.categories.contains(category);
   }

@@ -46,11 +46,6 @@ public class Outside1 extends EventNode<NullState> {
     TALK_TO_OTHER_SURVIVORS_ALT_2,
     TALK_TO_OTHER_SURVIVORS_ALT_HAS_HELPED_1,
     TALK_TO_OTHER_SURVIVORS_ALT_HAS_HELPED_2;
-    
-    @Override
-    public Boolean defaultValue() {
-      return Boolean.FALSE;
-    }
   }
   
   @Override

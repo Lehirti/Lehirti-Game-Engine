@@ -53,11 +53,6 @@ public class Plane2_Fuselage extends EventNode<NullState> {
     RUBBLE_CLEARED,
     HULL_SEALED,
     WOMAN_FREED;
-    
-    @Override
-    public Boolean defaultValue() {
-      return Boolean.FALSE;
-    }
   }
   
   @Override

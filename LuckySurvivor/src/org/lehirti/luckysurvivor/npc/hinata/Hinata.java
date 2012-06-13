@@ -58,23 +58,12 @@ public class Hinata extends AbstractNPC {
   }
   
   private static enum Int implements IntState {
-    ABSOLUTE_UPPER_PAIN_THRESHOLD(0),
-    UPPER_PAIN_COMFORT_THRESHOLD(0),
-    LOWER_PAIN_COMFORT_THRESHOLD(0),
-    CURRENT_PAIN_LEVEL(0),
-    CURRENT_LUST(0),
-    DISPOSITION_TOWARDS_PC(0), ;
-    
-    private final Long defaultValue;
-    
-    private Int(final long defaultValue) {
-      this.defaultValue = Long.valueOf(defaultValue);
-    }
-    
-    @Override
-    public Long defaultValue() {
-      return this.defaultValue;
-    }
+    ABSOLUTE_UPPER_PAIN_THRESHOLD,
+    UPPER_PAIN_COMFORT_THRESHOLD,
+    LOWER_PAIN_COMFORT_THRESHOLD,
+    CURRENT_PAIN_LEVEL,
+    CURRENT_LUST,
+    DISPOSITION_TOWARDS_PC;
   }
   
   @Override

@@ -5,10 +5,4 @@ import org.lehirti.engine.state.Inventory;
 
 public enum BoolInventory implements BoolState, Inventory {
   WATCH;
-  
-  @Override
-  public Boolean defaultValue() {
-    return Boolean.FALSE;
-  }
-  
 }

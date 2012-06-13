@@ -8,9 +8,4 @@ public enum Bool implements BoolState {
   MARKET_SELLER_FUCKED,
   HEALER_KNOWS_ABOUT_ELF,
   TIFFANIA_HAS_TOLD_YOU_ALL_SHE_KNOWS;
-  
-  @Override
-  public Boolean defaultValue() {
-    return Boolean.FALSE;
-  }
 }

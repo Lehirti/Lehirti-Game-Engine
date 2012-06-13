@@ -8,11 +8,15 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Random;
+import java.util.Set;
 import java.util.Map.Entry;
 
+import org.lehirti.engine.util.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,13 +49,59 @@ public class StateObject implements Externalizable {
   private final Map<Class<?>, Enum<?>> PER_CLASS_STATE_MAP = new LinkedHashMap<Class<?>, Enum<?>>();
   
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // initialize defaults
+  // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public static void initIntDefaults(final Class<IntState> intStatesClass) {
+    initDefaults(intStatesClass, "0");
+  }
+  
+  public static void initStringDefaults(final Class<StringState> stringStatesClass) {
+    initDefaults(stringStatesClass, "");
+  }
+  
+  public static void initBoolDefaults(final Class<BoolState> boolStatesClass) {
+    initDefaults(boolStatesClass, "FALSE");
+  }
+  
+  private static void initDefaults(final Class<? extends State> statesClass, final String defaultValue) {
+    boolean updateNecessary = false;
+    final Properties defaultProperties = PropertyUtils.getDefaultProperties(statesClass);
+    final State[] states = statesClass.getEnumConstants();
+    for (final State state : states) {
+      if (!defaultProperties.containsKey(state.name())) {
+        // key in default properties missing
+        defaultProperties.setProperty(state.name(), defaultValue);
+        updateNecessary = true;
+      }
+    }
+    final Set<Object> keySet = new HashSet<Object>(defaultProperties.keySet());
+    KEYS: for (final Object key : keySet) {
+      for (final State state : states) {
+        if (state.name().equals(key)) {
+          continue KEYS;
+        }
+      }
+      // key in default properties file no longer used;
+      defaultProperties.remove(key);
+      updateNecessary = true;
+    }
+    
+    if (updateNecessary) {
+      PropertyUtils.setDefaultProperties(statesClass, defaultProperties);
+    }
+  }
+  
+  // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // static getters for all state
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
   public static boolean is(final BoolState key) {
     Boolean value = INSTANCE.BOOL_MAP.get(key);
     if (value == null) {
-      value = key.defaultValue();
+      final Properties defaultProperties = PropertyUtils.getDefaultProperties(key.getClass());
+      final String defaultValue = defaultProperties.getProperty(key.name());
+      value = Boolean.valueOf(defaultValue);
     }
     return value.booleanValue();
   }
@@ -63,7 +113,9 @@ public class StateObject implements Externalizable {
   public static long get(final IntState key) {
     Long value = INSTANCE.INT_MAP.get(key);
     if (value == null) {
-      value = key.defaultValue();
+      final Properties defaultProperties = PropertyUtils.getDefaultProperties(key.getClass());
+      final String defaultValue = defaultProperties.getProperty(key.name());
+      value = Long.valueOf(defaultValue);
     }
     return value.intValue();
   }
@@ -87,7 +139,8 @@ public class StateObject implements Externalizable {
   public static String get(final StringState key) {
     String value = INSTANCE.STRING_MAP.get(key);
     if (value == null) {
-      value = key.defaultValue();
+      final Properties defaultProperties = PropertyUtils.getDefaultProperties(key.getClass());
+      value = defaultProperties.getProperty(key.name());
     }
     return value;
   }

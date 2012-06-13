@@ -5,6 +5,4 @@ package org.lehirti.engine.state;
  */
 public interface State {
   public String name();
-  
-  public Object defaultValue();
 }
