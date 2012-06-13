@@ -40,6 +40,7 @@ import org.lehirti.engine.state.StringState;
 import org.lehirti.engine.util.ClassFinder;
 import org.lehirti.engine.util.LogUtils;
 import org.lehirti.engine.util.PathFinder;
+import org.lehirti.engine.util.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -301,6 +302,13 @@ public abstract class Main {
   }
   
   protected void engineMain(final String[] args) throws InterruptedException, InvocationTargetException {
+    boolean exportDefaults = false;
+    for (final String arg : args) {
+      if (arg.equals("--exportDefaults")) {
+        exportDefaults = true;
+      }
+    }
+    
     readVersion();
     
     readContent();
@@ -338,6 +346,10 @@ public abstract class Main {
     for (final Class<?> intState : states) {
       if (intState.isEnum()) {
         StateObject.initIntDefaults((Class<IntState>) intState);
+        if (exportDefaults) {
+          PropertyUtils.setDefaultProperties((Class<IntState>) intState, PropertyUtils
+              .getDefaultProperties((Class<IntState>) intState));
+        }
       }
     }
     
@@ -345,6 +357,10 @@ public abstract class Main {
     for (final Class<?> stringState : states) {
       if (stringState.isEnum()) {
         StateObject.initStringDefaults((Class<StringState>) stringState);
+        if (exportDefaults) {
+          PropertyUtils.setDefaultProperties((Class<StringState>) stringState, PropertyUtils
+              .getDefaultProperties((Class<StringState>) stringState));
+        }
       }
     }
     
@@ -352,6 +368,10 @@ public abstract class Main {
     for (final Class<?> boolState : states) {
       if (boolState.isEnum()) {
         StateObject.initBoolDefaults((Class<BoolState>) boolState);
+        if (exportDefaults) {
+          PropertyUtils.setDefaultProperties((Class<BoolState>) boolState, PropertyUtils
+              .getDefaultProperties((Class<BoolState>) boolState));
+        }
       }
     }
     
