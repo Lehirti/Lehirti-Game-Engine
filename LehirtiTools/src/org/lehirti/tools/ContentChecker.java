@@ -73,8 +73,10 @@ public final class ContentChecker {
   }
   
   private static void checkForOrphans(final File baseDir) {
-    for (final File file : baseDir.listFiles()) {
-      checkPackageForOrphans(baseDir.getParent() + "/" + baseDir.getName(), file);
+    if (baseDir.isDirectory()) {
+      for (final File file : baseDir.listFiles()) {
+        checkPackageForOrphans(baseDir.getParent() + "/" + baseDir.getName(), file);
+      }
     }
   }
   
