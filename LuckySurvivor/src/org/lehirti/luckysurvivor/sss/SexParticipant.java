@@ -8,4 +8,8 @@ public interface SexParticipant {
   public Sex getSex();
   
   public List<SexAct> getAvailableSexActs();
+  
+  public boolean isOrgasming();
+  
+  public boolean isExhausted();
 }

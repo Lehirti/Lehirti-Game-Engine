@@ -136,4 +136,16 @@ public enum DateTime implements IntState {
   private static String padTo2Digits(final long l) {
     return l < 10 ? "0" + l : String.valueOf(l);
   }
+  
+  public static int getDDhhmmss() {
+    int DDhhmmss = 0;
+    DDhhmmss += StateObject.get(DAY);
+    DDhhmmss *= 100;
+    DDhhmmss += StateObject.get(HOUR);
+    DDhhmmss *= 100;
+    DDhhmmss += StateObject.get(MINUTE);
+    DDhhmmss *= 100;
+    DDhhmmss += StateObject.get(SECOND);
+    return DDhhmmss;
+  }
 }

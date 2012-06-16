@@ -43,7 +43,35 @@ public class Hinata extends AbstractNPC {
     // END GENERATED BLOCK ReactionToSexAct
   }
   
+  public static enum ReluctanceToPerformSexAct implements IntState {
+    // BEGIN GENERATED BLOCK SexAct
+    FUCK_PUSSY,
+    GET_PUSSY_FUCKED,
+    INSERT_TOY_INTO_PUSSY,
+    FUCK_ANAL,
+    GET_FUCKED_ANALLY,
+    GET_TITJOB,
+    GIVE_TITJOB,
+    GET_BLOWJOB,
+    GIVE_BLOWJOB,
+    // END GENERATED BLOCK SexAct
+  }
+  
   public static enum SexActImage implements ImageKey {
+    // BEGIN GENERATED BLOCK SexAct
+    FUCK_PUSSY,
+    GET_PUSSY_FUCKED,
+    INSERT_TOY_INTO_PUSSY,
+    FUCK_ANAL,
+    GET_FUCKED_ANALLY,
+    GET_TITJOB,
+    GIVE_TITJOB,
+    GET_BLOWJOB,
+    GIVE_BLOWJOB,
+    // END GENERATED BLOCK SexAct
+  }
+  
+  public static enum OrgasmImage implements ImageKey {
     // BEGIN GENERATED BLOCK SexAct
     FUCK_PUSSY,
     GET_PUSSY_FUCKED,
@@ -63,7 +91,10 @@ public class Hinata extends AbstractNPC {
     LOWER_PAIN_COMFORT_THRESHOLD,
     CURRENT_PAIN_LEVEL,
     CURRENT_LUST,
-    DISPOSITION_TOWARDS_PC;
+    DISPOSITION_TOWARDS_PC,
+    AROUSAL,
+    ORGASM_THRESHOLD,
+    VIGOR;
   }
   
   @Override
@@ -125,27 +156,7 @@ public class Hinata extends AbstractNPC {
   
   @Override
   protected TextAndImageKey getReactionImage(final ReactionToSexAct reaction) {
-    switch (reaction) {
-    case REJECTED_REPULSED_BY_SEX_ACT_ON_PRINCIPLE:
-      return ReactionToSexActImage.REJECTED_REPULSED_BY_SEX_ACT_ON_PRINCIPLE;
-    case REJECTED_TOO_PAINFUL:
-      return ReactionToSexActImage.REJECTED_TOO_PAINFUL;
-    case REJECTED_ABSOLUTELY:
-      return ReactionToSexActImage.REJECTED_ABSOLUTELY;
-    case REJECTED_STRONGLY:
-      return ReactionToSexActImage.REJECTED_STRONGLY;
-    case REJECTED:
-      return ReactionToSexActImage.REJECTED;
-    case INDIFFERENT:
-      return ReactionToSexActImage.INDIFFERENT;
-    case ACCEPTED:
-      return ReactionToSexActImage.ACCEPTED;
-    case ACCEPTED_LIKE:
-      return ReactionToSexActImage.ACCEPTED_LIKE;
-    case ACCEPTED_LOVE:
-      return ReactionToSexActImage.ACCEPTED_LOVE;
-    }
-    return null;
+    return ReactionToSexActImage.valueOf(reaction.name());
   }
   
   @Override
@@ -163,13 +174,19 @@ public class Hinata extends AbstractNPC {
   }
   
   @Override
+  public ImageKey getOrgasmingImage(final SexAct act, final SexToy toy) {
+    return OrgasmImage.valueOf(act.name());
+  }
+  
+  @Override
   public List<TextWrapper> getSexActPerformedText(final SexAct act, final SexToy toy) {
     return Collections.emptyList();
   }
   
   @Override
-  public void updateStateAfterSexAct(final SexAct act, final SexToy toy) {
+  public void performSexAct(final SexAct act, final SexToy toy) {
     // TODO Auto-generated method stub
+    
   }
   
   @Override
@@ -209,7 +226,27 @@ public class Hinata extends AbstractNPC {
   
   @Override
   public int getReluctanceToPerformAct(final SexAct act, final SexToy toy) {
-    // TODO Auto-generated method stub
-    return 0;
+    final ReluctanceToPerformSexAct reluctance = ReluctanceToPerformSexAct.valueOf(act.name());
+    return (int) StateObject.get(reluctance);
+  }
+  
+  @Override
+  public int getArousal() {
+    return (int) StateObject.get(Int.AROUSAL);
+  }
+  
+  @Override
+  public void setArousal(final int newArousal) {
+    StateObject.set(Int.AROUSAL, newArousal);
+  }
+  
+  @Override
+  public int getVigor() {
+    return (int) StateObject.get(Int.VIGOR);
+  }
+  
+  @Override
+  public int getOrgasmThreshold() {
+    return (int) StateObject.get(Int.ORGASM_THRESHOLD);
   }
 }

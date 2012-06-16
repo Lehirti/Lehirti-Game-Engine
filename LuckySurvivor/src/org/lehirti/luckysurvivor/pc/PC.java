@@ -18,4 +18,16 @@ public final class PC implements SexParticipant {
   public List<SexAct> getAvailableSexActs() {
     return Collections.emptyList(); // TODO later, if/when the PC "is being sexed"
   }
+  
+  @Override
+  public boolean isOrgasming() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+  
+  @Override
+  public boolean isExhausted() {
+    // TODO Auto-generated method stub
+    return false;
+  }
 }

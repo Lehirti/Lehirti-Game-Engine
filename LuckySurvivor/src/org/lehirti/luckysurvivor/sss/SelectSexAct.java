@@ -1,4 +1,4 @@
-package org.lehirti.luckysurvivor.npc;
+package org.lehirti.luckysurvivor.sss;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -15,9 +15,10 @@ import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
-import org.lehirti.luckysurvivor.sss.SexAct;
+import org.lehirti.luckysurvivor.npc.NPC;
+import org.lehirti.luckysurvivor.npc.NPCOverviewEvent;
 
-public class NPCHaveSex extends EventNode<NullState> implements Externalizable {
+public class SelectSexAct extends EventNode<NullState> implements Externalizable {
   
   public static enum Text implements TextKey {
     TEXT_SELECT_SEX_ACT,
@@ -30,7 +31,7 @@ public class NPCHaveSex extends EventNode<NullState> implements Externalizable {
   private Event<?> returnEvent;
   
   // for saving/loading
-  public NPCHaveSex() {
+  public SelectSexAct() {
     this(null, new LinkedList<SexAct>(), 0, null);
   }
   
@@ -50,10 +51,14 @@ public class NPCHaveSex extends EventNode<NullState> implements Externalizable {
   public void writeExternal(final ObjectOutput out) throws IOException {
     super.writeExternal(out);
     out.writeObject(this.npc);
+    out.writeInt(this.availableSexActs.size());
+    for (int i = 0; i < this.availableSexActs.size(); i++) {
+      out.writeObject(this.availableSexActs.get(i));
+    }
     out.writeObject(this.returnEvent);
   }
   
-  public NPCHaveSex(final NPC npc, final List<SexAct> availableSexActs, final int selectedSexAct,
+  public SelectSexAct(final NPC npc, final List<SexAct> availableSexActs, final int selectedSexAct,
       final Event<?> returnEvent) {
     this.npc = npc;
     this.availableSexActs = availableSexActs;
@@ -99,9 +104,9 @@ public class NPCHaveSex extends EventNode<NullState> implements Externalizable {
         if (next > this.availableSexActs.size() - 1) {
           next = 0;
         }
-        addOption(Key.OPTION_NORTH, CommonText.OPTION_PREVIOUS, new NPCHaveSex(this.npc, this.availableSexActs, prev,
+        addOption(Key.OPTION_NORTH, CommonText.OPTION_PREVIOUS, new SelectSexAct(this.npc, this.availableSexActs, prev,
             this.returnEvent));
-        addOption(Key.OPTION_SOUTH, CommonText.OPTION_NEXT, new NPCHaveSex(this.npc, this.availableSexActs, next,
+        addOption(Key.OPTION_SOUTH, CommonText.OPTION_NEXT, new SelectSexAct(this.npc, this.availableSexActs, next,
             this.returnEvent));
       }
     }

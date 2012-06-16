@@ -13,7 +13,6 @@ import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.luckysurvivor.npc.NPC;
-import org.lehirti.luckysurvivor.npc.NPCHaveSex;
 
 public class SelectSexToyEvent extends EventNode<NullState> implements Externalizable {
   
@@ -73,7 +72,7 @@ public class SelectSexToyEvent extends EventNode<NullState> implements Externali
     }
     
     final List<SexAct> availableSexActs = this.npc.getAvailableSexActs();
-    addOption(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new NPCHaveSex(this.npc, availableSexActs, this.act
+    addOption(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new SelectSexAct(this.npc, availableSexActs, this.act
         .getSelectedIndex(availableSexActs), this.returnEvent));
     int previous = this.selectedSexToy - 1;
     if (previous < 0) {

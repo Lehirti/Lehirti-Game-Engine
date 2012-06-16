@@ -11,10 +11,9 @@ import org.lehirti.engine.events.Option;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextWrapper;
-import org.lehirti.engine.state.DateTime;
 import org.lehirti.luckysurvivor.npc.NPC;
 
-public class PerformSexActEvent extends EventNode<NullState> implements Externalizable {
+public class Orgasm extends EventNode<NullState> implements Externalizable {
   
   private NPC npc;
   private SexAct act;
@@ -22,7 +21,7 @@ public class PerformSexActEvent extends EventNode<NullState> implements External
   private Event<?> returnEvent;
   
   // for saving/loading
-  public PerformSexActEvent() {
+  public Orgasm() {
     this(null, null, null, null);
   }
   
@@ -44,7 +43,7 @@ public class PerformSexActEvent extends EventNode<NullState> implements External
     out.writeObject(this.returnEvent);
   }
   
-  public PerformSexActEvent(final NPC npc, final SexAct act, final SexToy toy, final Event<?> returnEvent) {
+  public Orgasm(final NPC npc, final SexAct act, final SexToy toy, final Event<?> returnEvent) {
     this.npc = npc;
     this.act = act;
     this.toy = toy;
@@ -53,18 +52,17 @@ public class PerformSexActEvent extends EventNode<NullState> implements External
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setFG(this.npc.getSexActPerformedImage(this.act, this.toy));
+    return ImgChange.setFG(this.npc.getOrgasmingImage(this.act, this.toy));
   }
   
   @Override
   protected void doEvent() {
     setText(this.act);
     
-    DateTime.advanceBy(this.act.timeDDhhmmss);
+    SexSession.getCurrent().updateNPCPoints(this.npc.getArousal());
+    this.npc.setArousal(this.npc.getArousal() / 3);
     
-    this.npc.performSexAct(this.act, this.toy);
-    
-    for (final TextWrapper txtWrp : this.npc.getSexActPerformedText(this.act, this.toy)) {
+    for (final TextWrapper txtWrp : this.npc.getSexActPerformedText(this.act, this.toy)) { // TODO orgasmingText
       addText(txtWrp);
     }
     

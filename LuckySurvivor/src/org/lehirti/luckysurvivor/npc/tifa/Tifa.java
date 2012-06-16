@@ -15,6 +15,7 @@ import org.lehirti.engine.state.StateObject;
 import org.lehirti.luckysurvivor.npc.AbstractNPC;
 import org.lehirti.luckysurvivor.sss.ReactionToSexAct;
 import org.lehirti.luckysurvivor.sss.SexAct;
+import org.lehirti.luckysurvivor.sss.SexSession;
 import org.lehirti.luckysurvivor.sss.SexToy;
 
 public class Tifa extends AbstractNPC {
@@ -57,6 +58,20 @@ public class Tifa extends AbstractNPC {
     // END GENERATED BLOCK SexAct
   }
   
+  public static enum OrgasmImage implements ImageKey {
+    // BEGIN GENERATED BLOCK SexAct
+    FUCK_PUSSY,
+    GET_PUSSY_FUCKED,
+    INSERT_TOY_INTO_PUSSY,
+    FUCK_ANAL,
+    GET_FUCKED_ANALLY,
+    GET_TITJOB,
+    GIVE_TITJOB,
+    GET_BLOWJOB,
+    GIVE_BLOWJOB,
+    // END GENERATED BLOCK SexAct
+  }
+  
   public static enum ReluctanceToPerformSexAct implements IntState {
     // BEGIN GENERATED BLOCK SexAct
     FUCK_PUSSY,
@@ -69,15 +84,34 @@ public class Tifa extends AbstractNPC {
     GET_BLOWJOB,
     GIVE_BLOWJOB,
     // END GENERATED BLOCK SexAct
-    ;
+  }
+  
+  public static enum ArousalFromPerformingSexAct implements IntState {
+    // BEGIN GENERATED BLOCK SexAct
+    FUCK_PUSSY,
+    GET_PUSSY_FUCKED,
+    INSERT_TOY_INTO_PUSSY,
+    FUCK_ANAL,
+    GET_FUCKED_ANALLY,
+    GET_TITJOB,
+    GIVE_TITJOB,
+    GET_BLOWJOB,
+    GIVE_BLOWJOB,
+    // END GENERATED BLOCK SexAct
   }
   
   private static enum Int implements IntState {
     ABSOLUTE_UPPER_PAIN_THRESHOLD,
     UPPER_PAIN_COMFORT_THRESHOLD,
     LOWER_PAIN_COMFORT_THRESHOLD,
-    CURRENT_PAIN_LEVEL,
-    CURRENT_LUST,
+    ORGASM_THRESHOLD,
+    
+    PAIN,
+    LUST,
+    AROUSAL,
+    VIGOR,
+    STAMINA,
+    
     DISPOSITION_TOWARDS_PC;
   }
   
@@ -158,13 +192,40 @@ public class Tifa extends AbstractNPC {
   }
   
   @Override
+  public ImageKey getOrgasmingImage(final SexAct act, final SexToy toy) {
+    return OrgasmImage.valueOf(act.name());
+  }
+  
+  @Override
   public List<TextWrapper> getSexActPerformedText(final SexAct act, final SexToy toy) {
     return Collections.emptyList();
   }
   
   @Override
-  public void updateStateAfterSexAct(final SexAct act, final SexToy toy) {
-    // TODO Auto-generated method stub
+  public void performSexAct(final SexAct act, final SexToy toy) {
+    
+    // vigor depending on stamina, vigor decreases by 20-120% of base exhaustion for sex act
+    StateObject.change(Int.VIGOR, -(int) (act.exhaustion2 * (120 - StateObject.get(Int.STAMINA)) / 100.0D));
+    
+    // TODO pain
+    
+    // arousal
+    final long arousal = getArousal(act, toy);
+    StateObject.change(Int.AROUSAL, arousal);
+    
+    SexSession.getCurrent().updateNPCPoints(arousal);
+    
+    // TODO orgasm check
+  }
+  
+  private long getArousal(final SexAct act, final SexToy toy) {
+    final long baseArousal = StateObject.get(ArousalFromPerformingSexAct.valueOf(act.name()));
+    switch (act.participant2) {
+    case PUSSY: // TODO
+    case ASS: // TODO
+    case MOUTH: // TODO
+    }
+    return baseArousal;
   }
   
   @Override
@@ -184,12 +245,12 @@ public class Tifa extends AbstractNPC {
   
   @Override
   public int getCurrentPainLevel() {
-    return (int) StateObject.get(Int.CURRENT_PAIN_LEVEL);
+    return (int) StateObject.get(Int.PAIN);
   }
   
   @Override
   public int getCurrentLust() {
-    return (int) StateObject.get(Int.CURRENT_LUST);
+    return (int) StateObject.get(Int.LUST);
   }
   
   @Override
@@ -206,5 +267,25 @@ public class Tifa extends AbstractNPC {
   public int getReluctanceToPerformAct(final SexAct act, final SexToy toy) {
     final ReluctanceToPerformSexAct reluctance = ReluctanceToPerformSexAct.valueOf(act.name());
     return (int) StateObject.get(reluctance);
+  }
+  
+  @Override
+  public int getArousal() {
+    return (int) StateObject.get(Int.AROUSAL);
+  }
+  
+  @Override
+  public void setArousal(final int newArousal) {
+    StateObject.set(Int.AROUSAL, newArousal);
+  }
+  
+  @Override
+  public int getVigor() {
+    return (int) StateObject.get(Int.VIGOR);
+  }
+  
+  @Override
+  public int getOrgasmThreshold() {
+    return (int) StateObject.get(Int.ORGASM_THRESHOLD);
   }
 }

@@ -124,6 +124,10 @@ public class StateObject implements Externalizable {
     INSTANCE.INT_MAP.put(key, Long.valueOf(value));
   }
   
+  public static void change(final IntState key, final long delta) {
+    INSTANCE.INT_MAP.put(key, Long.valueOf(get(key) + delta));
+  }
+  
   public static Serializable get(final ObjState key) {
     Serializable value = INSTANCE.OBJ_MAP.get(key);
     if (value == null) {

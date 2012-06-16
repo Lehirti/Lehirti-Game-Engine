@@ -14,13 +14,17 @@ import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.luckysurvivor.pc.PC;
+import org.lehirti.luckysurvivor.sss.EndSexSession;
+import org.lehirti.luckysurvivor.sss.Orgasm;
 import org.lehirti.luckysurvivor.sss.PerformSexActEvent;
 import org.lehirti.luckysurvivor.sss.ProposeSexActEvent;
 import org.lehirti.luckysurvivor.sss.ReactionToSexAct;
+import org.lehirti.luckysurvivor.sss.SelectSexAct;
 import org.lehirti.luckysurvivor.sss.SelectSexToyEvent;
 import org.lehirti.luckysurvivor.sss.SexAct;
 import org.lehirti.luckysurvivor.sss.SexToy;
 import org.lehirti.luckysurvivor.sss.SexToyCategory;
+import org.lehirti.luckysurvivor.sss.StartSexSession;
 
 public abstract class AbstractNPC implements NPC {
   private static final long serialVersionUID = 1L;
@@ -41,6 +45,8 @@ public abstract class AbstractNPC implements NPC {
     OPTION_HAVE_SEX_WITH_HER,
     OPTION_CHANGE_SEX_ACT,
     OPTION_REPEAT_SEX_ACT,
+    OPTION_ORGASM,
+    OPTION_END_SEX_SESSION,
   }
   
   @Override
@@ -86,8 +92,7 @@ public abstract class AbstractNPC implements NPC {
   @Override
   public List<Option> getFlirtWithOptions(final Event<?> returnEvent) {
     final List<Option> options = new ArrayList<Option>(11);
-    options.add(new Option(Key.OPTION_ENTER, Text.OPTION_HAVE_SEX_WITH_HER, new NPCHaveSex(this, getAvailableSexActs(),
-        0, returnEvent)));
+    options.add(new Option(Key.OPTION_ENTER, Text.OPTION_HAVE_SEX_WITH_HER, new StartSexSession(this, returnEvent)));
     return options;
   }
   
@@ -209,7 +214,7 @@ public abstract class AbstractNPC implements NPC {
     final List<Option> options = new ArrayList<Option>(12);
     final List<SexAct> availableSexActs = getAvailableSexActs();
     final int selectedAct = act.getSelectedIndex(availableSexActs);
-    options.add(new Option(Key.OPTION_LEAVE, Text.OPTION_CHANGE_SEX_ACT, new NPCHaveSex(this, availableSexActs,
+    options.add(new Option(Key.OPTION_LEAVE, Text.OPTION_CHANGE_SEX_ACT, new SelectSexAct(this, availableSexActs,
         selectedAct, returnEvent)));
     options.add(new Option(Key.OPTION_ENTER, CommonText.OPTION_DO_IT, new PerformSexActEvent(this, act, toy,
         returnEvent)));
@@ -219,14 +224,36 @@ public abstract class AbstractNPC implements NPC {
   @Override
   public List<Option> getSexActPerformedOptions(final SexAct act, final SexToy toy, final Event<?> returnEvent) {
     final List<Option> options = new ArrayList<Option>(12);
-    final List<SexAct> availableSexActs = getAvailableSexActs();
-    final int selectedAct = act.getSelectedIndex(availableSexActs);
-    options.add(new Option(Key.OPTION_LEAVE, Text.OPTION_CHANGE_SEX_ACT, new NPCHaveSex(this, availableSexActs,
-        selectedAct, returnEvent)));
-    final Option option = createOption(act, toy, returnEvent);
-    if (option != null) {
-      options.add(new Option(Key.OPTION_ENTER, Text.OPTION_REPEAT_SEX_ACT, option.event));
+    if (isOrgasming()) {
+      options.add(new Option(Key.OPTION_ENTER, Text.OPTION_ORGASM, new Orgasm(this, act, toy, returnEvent)));
+    } else if (isExhausted()) {
+      options.add(new Option(Key.OPTION_ENTER, Text.OPTION_END_SEX_SESSION, new EndSexSession(this, returnEvent)));
+    } else {
+      final List<SexAct> availableSexActs = getAvailableSexActs();
+      final int selectedAct = act.getSelectedIndex(availableSexActs);
+      options.add(new Option(Key.OPTION_LEAVE, Text.OPTION_CHANGE_SEX_ACT, new SelectSexAct(this, availableSexActs,
+          selectedAct, returnEvent)));
+      final Option option = createOption(act, toy, returnEvent);
+      if (option != null) {
+        options.add(new Option(Key.OPTION_ENTER, Text.OPTION_REPEAT_SEX_ACT, option.event));
+      }
     }
     return options;
+  }
+  
+  @Override
+  public boolean isExhausted() {
+    return getVigor() < 0;
+  }
+  
+  @Override
+  public int getVigor() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+  
+  @Override
+  public boolean isOrgasming() {
+    return getArousal() > getOrgasmThreshold();
   }
 }
