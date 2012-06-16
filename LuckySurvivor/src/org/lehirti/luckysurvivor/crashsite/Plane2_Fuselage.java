@@ -48,7 +48,6 @@ public class Plane2_Fuselage extends EventNode<NullState> {
   public static enum Bool implements BoolState {
     HAS_LOOKED_FOR_SURVIVORS,
     HAS_TRIED_TO_RECOVER_BODIES,
-    HAS_STRATCHER,
     FUSELAGE_EXAMINED,
     RUBBLE_CLEARED,
     HULL_SEALED,
@@ -77,7 +76,7 @@ public class Plane2_Fuselage extends EventNode<NullState> {
       addOption(Key.OPTION_SOUTH, Text.OPTION_RECOVER_BODIES_FROM_WRECKAGE, new RecoverBodiesFromPlane());
     }
     
-    if (is(Bool.HAS_TRIED_TO_RECOVER_BODIES) && !is(Bool.HAS_STRATCHER)) {
+    if (is(Bool.HAS_TRIED_TO_RECOVER_BODIES) && !is(org.lehirti.luckysurvivor.crashsite.Bool.HAS_STRETCHER)) {
       addOption(Key.OPTION_EAST, Text.OPTION_BUILD_STRECHER, new BuildStrecher());
     }
     
