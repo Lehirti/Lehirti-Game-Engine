@@ -27,21 +27,66 @@ public class TextWrapper implements Externalizable {
     this.state = ResourceState.LOADED;
   }
   
-  public TextWrapper(final TextKey key) {
+  public TextWrapper(final TextKey key, final boolean logModCoreDiff) {
     this.key = key;
     // for now, store text directly in the res dir
     final File modFile = PathFinder.getModFile(this.key);
-    if (modFile.canRead()) {
-      this.rawValue = FileUtils.readContentAsString(modFile);
-      this.state = ResourceState.MOD;
-    } else {
-      final File coreFile = PathFinder.getCoreFile(this.key);
-      if (coreFile.canRead()) {
-        this.rawValue = FileUtils.readContentAsString(coreFile);
-        this.state = ResourceState.CORE;
+    if (logModCoreDiff) {
+      if (modFile.canRead()) {
+        System.out.println(this.key.getClass().getName() + "." + this.key.name());
+        this.rawValue = FileUtils.readContentAsString(modFile);
+        this.state = ResourceState.MOD;
+        final File coreFile = PathFinder.getCoreFile(this.key);
+        if (coreFile.canRead()) {
+          final String coreRawValue = FileUtils.readContentAsString(coreFile);
+          System.out.println("CORE: " + coreRawValue.replaceAll("\\n", "\\\\n"));
+          System.out.println("MOD:  " + this.rawValue.replaceAll("\\n", "\\\\n"));
+          final int length = coreRawValue.length() < this.rawValue.length() ? coreRawValue.length() : this.rawValue
+              .length();
+          final StringBuilder sb = new StringBuilder();
+          for (int i = 0; i < length; i++) {
+            if (coreRawValue.charAt(i) == this.rawValue.charAt(i)) {
+              sb.append(' ');
+            } else {
+              sb.append('*');
+            }
+          }
+          final int lengthDiff = Math.abs(this.rawValue.length() - coreRawValue.length());
+          for (int i = 0; i < lengthDiff; i++) {
+            sb.append('+');
+          }
+          if (sb.toString().trim().length() == 0) {
+            System.out.println("NO DIFF");
+          } else {
+            System.out.println("DIFF: " + sb.toString());
+          }
+        } else {
+          System.out.println("NEW:  " + this.rawValue.replaceAll("\\n", "\\\\n"));
+        }
+        System.out.println();
       } else {
-        this.rawValue = "Ctrl-t: " + key.getClass().getSimpleName() + "." + key.name() + "\n\n";
-        this.state = ResourceState.MISSING;
+        final File coreFile = PathFinder.getCoreFile(this.key);
+        if (coreFile.canRead()) {
+          this.rawValue = FileUtils.readContentAsString(coreFile);
+          this.state = ResourceState.CORE;
+        } else {
+          this.rawValue = "Ctrl-t: " + key.getClass().getSimpleName() + "." + key.name() + "\n\n";
+          this.state = ResourceState.MISSING;
+        }
+      }
+    } else {
+      if (modFile.canRead()) {
+        this.rawValue = FileUtils.readContentAsString(modFile);
+        this.state = ResourceState.MOD;
+      } else {
+        final File coreFile = PathFinder.getCoreFile(this.key);
+        if (coreFile.canRead()) {
+          this.rawValue = FileUtils.readContentAsString(coreFile);
+          this.state = ResourceState.CORE;
+        } else {
+          this.rawValue = "Ctrl-t: " + key.getClass().getSimpleName() + "." + key.name() + "\n\n";
+          this.state = ResourceState.MISSING;
+        }
       }
     }
   }

@@ -60,7 +60,7 @@ public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
     if (key == null) {
       return null;
     }
-    return new TextWrapper(key);
+    return new TextWrapper(key, false);
   }
   
   public static void cacheRawImage(final File imageFile, final BufferedImage bufferedImage) {
