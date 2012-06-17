@@ -16,7 +16,6 @@ import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.luckysurvivor.npc.NPC;
-import org.lehirti.luckysurvivor.npc.NPCOverviewEvent;
 
 public class SelectSexAct extends EventNode<NullState> implements Externalizable {
   
@@ -111,6 +110,6 @@ public class SelectSexAct extends EventNode<NullState> implements Externalizable
       }
     }
     
-    addOption(Key.OPTION_Q, Text.OPTION_END_SEX_SESSION, new NPCOverviewEvent(this.npc, this.returnEvent));
+    addOption(Key.OPTION_Q, Text.OPTION_END_SEX_SESSION, new EndSexSession(this.npc, this.returnEvent));
   }
 }

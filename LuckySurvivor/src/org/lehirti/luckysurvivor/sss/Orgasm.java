@@ -12,6 +12,7 @@ import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.luckysurvivor.npc.NPC;
+import org.lehirti.luckysurvivor.pc.PC;
 
 public class Orgasm extends EventNode<NullState> implements Externalizable {
   
@@ -59,11 +60,22 @@ public class Orgasm extends EventNode<NullState> implements Externalizable {
   protected void doEvent() {
     setText(this.act);
     
-    SexSession.getCurrent().updateNPCPoints(this.npc.getArousal());
-    this.npc.setArousal(this.npc.getArousal() / 3);
+    if (PC.PLAYER.isOrgasming()) {
+      SexSession.getCurrent().updateNPCPoints(PC.PLAYER.getArousal());
+      PC.PLAYER.setArousal(PC.PLAYER.getArousal() / 3);
+      
+      for (final TextWrapper txtWrp : PC.PLAYER.getOrgasmingText(this.act, this.toy)) {
+        addText(txtWrp);
+      }
+    }
     
-    for (final TextWrapper txtWrp : this.npc.getSexActPerformedText(this.act, this.toy)) { // TODO orgasmingText
-      addText(txtWrp);
+    if (this.npc.isOrgasming()) {
+      SexSession.getCurrent().updateNPCPoints(this.npc.getArousal());
+      this.npc.setArousal(this.npc.getArousal() / 3);
+      
+      for (final TextWrapper txtWrp : PC.PLAYER.getOrgasmingText(this.act, this.toy)) {
+        addText(txtWrp);
+      }
     }
     
     for (final Option option : this.npc.getSexActPerformedOptions(this.act, this.toy, this.returnEvent)) {

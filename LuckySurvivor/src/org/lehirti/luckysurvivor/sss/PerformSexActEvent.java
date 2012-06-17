@@ -13,6 +13,7 @@ import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.state.DateTime;
 import org.lehirti.luckysurvivor.npc.NPC;
+import org.lehirti.luckysurvivor.pc.PC;
 
 public class PerformSexActEvent extends EventNode<NullState> implements Externalizable {
   
@@ -62,6 +63,7 @@ public class PerformSexActEvent extends EventNode<NullState> implements External
     
     DateTime.advanceBy(this.act.timeDDhhmmss);
     
+    PC.PLAYER.performSexAct(this.act, this.toy);
     this.npc.performSexAct(this.act, this.toy);
     
     for (final TextWrapper txtWrp : this.npc.getSexActPerformedText(this.act, this.toy)) {

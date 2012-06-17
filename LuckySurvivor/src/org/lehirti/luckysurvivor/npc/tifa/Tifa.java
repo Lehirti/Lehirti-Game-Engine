@@ -221,9 +221,11 @@ public class Tifa extends AbstractNPC {
   private long getArousal(final SexAct act, final SexToy toy) {
     final long baseArousal = StateObject.get(ArousalFromPerformingSexAct.valueOf(act.name()));
     switch (act.participant2) {
+    case COCK: // TODO
     case PUSSY: // TODO
-    case ASS: // TODO
+    case BREASTS: // TODO
     case MOUTH: // TODO
+    case ASS: // TODO
     }
     return baseArousal;
   }

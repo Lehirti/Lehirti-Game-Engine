@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JRootPane;
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
 
@@ -31,7 +32,7 @@ public class TextArea extends JTextArea implements Externalizable {
   private final double sizeY;
   
   private int currentPage = 0;
-  private final int totalNumberOfPages = 0;
+  private int totalNumberOfPages = 0;
   
   public TextArea(final double screenX, final double screenY, final double sizeX, final double sizeY) {
     this.screenX = screenX;
@@ -128,6 +129,7 @@ public class TextArea extends JTextArea implements Externalizable {
         if (pages.length <= this.currentPage) {
           this.currentPage = 0;
         }
+        this.totalNumberOfPages = pages.length;
         super.setText(pages[this.currentPage]);
       }
       
@@ -162,7 +164,11 @@ public class TextArea extends JTextArea implements Externalizable {
   
   private void adjustFontToWindowSize() {
     final Font oldFont = getFont();
-    int fontSize = getWidth() / 18;
+    final JRootPane rootPane = getRootPane();
+    int fontSize = 12;
+    if (rootPane != null) {
+      fontSize = getRootPane().getWidth() / 72;
+    }
     if (fontSize < 12) {
       fontSize = 12;
     }

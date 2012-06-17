@@ -14,7 +14,7 @@ public class PlaneInThunderstorm extends EventNode<NullState> {
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setBG(IntroImage.PLANE_IN_THUNDERSTORM);
+    return ImgChange.setBGAndFG(IntroImage.PLANE_IN_THUNDERSTORM);
   }
   
   @Override

@@ -1,6 +1,7 @@
 package org.lehirti.luckysurvivor.npc;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -224,9 +225,9 @@ public abstract class AbstractNPC implements NPC {
   @Override
   public List<Option> getSexActPerformedOptions(final SexAct act, final SexToy toy, final Event<?> returnEvent) {
     final List<Option> options = new ArrayList<Option>(12);
-    if (isOrgasming()) {
+    if (isOrgasming() || PC.PLAYER.isOrgasming()) {
       options.add(new Option(Key.OPTION_ENTER, Text.OPTION_ORGASM, new Orgasm(this, act, toy, returnEvent)));
-    } else if (isExhausted()) {
+    } else if (isExhausted() || PC.PLAYER.isExhausted()) {
       options.add(new Option(Key.OPTION_ENTER, Text.OPTION_END_SEX_SESSION, new EndSexSession(this, returnEvent)));
     } else {
       final List<SexAct> availableSexActs = getAvailableSexActs();
@@ -247,13 +248,12 @@ public abstract class AbstractNPC implements NPC {
   }
   
   @Override
-  public int getVigor() {
-    // TODO Auto-generated method stub
-    return 0;
+  public boolean isOrgasming() {
+    return getArousal() > getOrgasmThreshold();
   }
   
   @Override
-  public boolean isOrgasming() {
-    return getArousal() > getOrgasmThreshold();
+  public List<TextWrapper> getOrgasmingText(final SexAct act, final SexToy toy) {
+    return Collections.emptyList(); // TODO
   }
 }

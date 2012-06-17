@@ -81,14 +81,6 @@ public interface NPC extends SexParticipant, Serializable {
   
   public int getCurrentLust();
   
-  public int getOrgasmThreshold();
-  
-  public int getArousal();
-  
-  public void setArousal(int newArousal);
-  
-  public int getVigor();
-  
   /**
    * image of npc reacting to the prospect of the given sex act being performed
    * 
@@ -119,8 +111,6 @@ public interface NPC extends SexParticipant, Serializable {
   public ImageKey getSexActPerformedImage(SexAct act, SexToy toy);
   
   public List<TextWrapper> getSexActPerformedText(SexAct act, SexToy toy);
-  
-  public void performSexAct(SexAct act, SexToy toy);
   
   public List<Option> getSexActPerformedOptions(SexAct act, SexToy toy, Event<?> returnEvent);
   

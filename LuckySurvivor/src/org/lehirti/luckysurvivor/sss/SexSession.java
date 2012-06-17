@@ -1,6 +1,7 @@
 package org.lehirti.luckysurvivor.sss;
 
 import org.lehirti.engine.state.DateTime;
+import org.lehirti.luckysurvivor.pc.PC;
 
 public final class SexSession {
   private static SexSession INSTANCE = null;
@@ -25,7 +26,8 @@ public final class SexSession {
   }
   
   public static long finish() {
-    final long score = INSTANCE.npcPoints + INSTANCE.pcPoints / 2;
+    final long score = (INSTANCE.npcPoints - INSTANCE.participant.getArousal())
+        + (INSTANCE.pcPoints - PC.PLAYER.getArousal()) / 2;
     INSTANCE = null;
     return score;
   }
