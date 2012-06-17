@@ -108,8 +108,6 @@ public abstract class Main {
             }
           }
           
-          // TODO let the game handle key event and only if it does not use it
-          
           // let the game engine handle key event
           if (key == Key.CTRL_I) {
             editImages();
@@ -123,6 +121,8 @@ public abstract class Main {
             showInMainWindow(IMAGE_AREA);
           } else if (key == Key.SHOW_INVENTORY) {
             showInMainWindow(INVENTORY_AREA);
+          } else if (key == Key.CYCLE_TEXT_PAGES) {
+            TEXT_AREA.cycleToNextPage();
           } else {
             // key known to the game, but currently not assigned (e.g. one of the option keys)
           }

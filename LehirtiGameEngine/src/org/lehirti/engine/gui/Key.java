@@ -22,6 +22,8 @@ public enum Key {
   SHOW_MAIN('1'),
   SHOW_INVENTORY('2'),
   
+  CYCLE_TEXT_PAGES(' '),
+  
   // image and text editors
   CTRL_I((char) 0x09),
   CTRL_T((char) 0x14),
