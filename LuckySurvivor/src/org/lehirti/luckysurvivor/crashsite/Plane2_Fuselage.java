@@ -72,11 +72,11 @@ public class Plane2_Fuselage extends EventNode<NullState> {
           Bool.HAS_LOOKED_FOR_SURVIVORS, Text.LOOK_FOR_OTHER_SURVIVORS, new Plane2_Fuselage()));
     }
     
-    if (!is(org.lehirti.luckysurvivor.crashsite.Bool.DEAD_BODIES_REMOVED_FROM_PLANE)) {
+    if (!is(org.lehirti.luckysurvivor.crashsite.CrashSiteBool.DEAD_BODIES_REMOVED_FROM_PLANE)) {
       addOption(Key.OPTION_SOUTH, Text.OPTION_RECOVER_BODIES_FROM_WRECKAGE, new RecoverBodiesFromPlane());
     }
     
-    if (is(Bool.HAS_TRIED_TO_RECOVER_BODIES) && !is(org.lehirti.luckysurvivor.crashsite.Bool.HAS_STRETCHER)) {
+    if (is(Bool.HAS_TRIED_TO_RECOVER_BODIES) && !is(org.lehirti.luckysurvivor.crashsite.CrashSiteBool.HAS_STRETCHER)) {
       addOption(Key.OPTION_EAST, Text.OPTION_BUILD_STRECHER, new BuildStrecher());
     }
     
@@ -84,9 +84,9 @@ public class Plane2_Fuselage extends EventNode<NullState> {
     
     if (is(Bool.FUSELAGE_EXAMINED)) {
       if (is(Bool.RUBBLE_CLEARED) && is(Bool.HULL_SEALED)
-          && is(org.lehirti.luckysurvivor.crashsite.Bool.DEAD_BODIES_REMOVED_FROM_PLANE)) {
+          && is(org.lehirti.luckysurvivor.crashsite.CrashSiteBool.DEAD_BODIES_REMOVED_FROM_PLANE)) {
         addOption(Key.OPTION_A, Text.OPTION_USE_FUSELAGE_AS_SHELTER, new SetFlagTextOnlyEvent(
-            org.lehirti.luckysurvivor.crashsite.Bool.SHELTER_HAS_BEEN_BUILT, Text.USE_FUSELAGE_AS_SHELTER,
+            org.lehirti.luckysurvivor.crashsite.CrashSiteBool.SHELTER_HAS_BEEN_BUILT, Text.USE_FUSELAGE_AS_SHELTER,
             new Shelter()));
       } else {
         if (!is(Bool.RUBBLE_CLEARED)) {

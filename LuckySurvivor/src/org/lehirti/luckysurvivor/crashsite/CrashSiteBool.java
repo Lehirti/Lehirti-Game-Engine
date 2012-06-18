@@ -2,7 +2,7 @@ package org.lehirti.luckysurvivor.crashsite;
 
 import org.lehirti.engine.state.BoolState;
 
-public enum Bool implements BoolState {
+public enum CrashSiteBool implements BoolState {
   SHELTER_HAS_BEEN_BUILT,
   HAS_SHOVEL,
   HAS_METAL_STRUT,

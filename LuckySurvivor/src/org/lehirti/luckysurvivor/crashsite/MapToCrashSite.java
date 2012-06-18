@@ -1,21 +1,20 @@
-package org.atrun.locations;
+package org.lehirti.luckysurvivor.crashsite;
 
-import org.atrun.images.Background;
-import org.atrun.intro.events.Intro01;
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.Location;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.res.images.ImageKey;
 
-public class DrostalToVogard extends Location<NullState> {
+public final class MapToCrashSite extends Location<NullState> {
+  private static final long serialVersionUID = 1L;
   
   @Override
   protected ImageKey getBackgroundImageToDisplay() {
-    return Background.DROSTAL_TO_VOGARD;
+    return CrashSite.OUTSIDE_PLANE_NON_BURNING;
   }
   
   @Override
   protected Event<?> getDefaultEvent() {
-    return new Intro01();
+    return new Outside2();
   }
 }

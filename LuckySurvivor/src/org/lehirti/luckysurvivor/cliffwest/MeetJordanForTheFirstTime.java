@@ -1,4 +1,4 @@
-package org.lehirti.luckysurvivor.crashsite;
+package org.lehirti.luckysurvivor.cliffwest;
 
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Event.NullState;
@@ -7,25 +7,22 @@ import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 
-public class BuryTheDead extends EventNode<NullState> {
+public class MeetJordanForTheFirstTime extends EventNode<NullState> {
   public static enum Text implements TextKey {
-    BURY_WITH_SHOVEL,
-    BURY_WITHOUT_SHOVEL;
+    TEXT_TALK_TO_JORDAN_FOR_THE_FIRST_TIME
   }
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.nullChange();
+    return ImgChange.setFG(CliffWest.JORDAN);
   }
   
   @Override
   protected void doEvent() {
-    if (is(CrashSiteBool.HAS_SHOVEL)) {
-      setText(Text.BURY_WITH_SHOVEL);
-    } else {
-      setText(Text.BURY_WITHOUT_SHOVEL);
-    }
+    set(CliffWestBool.HAS_MET_JORDAN, true);
     
-    addOption(Key.OPTION_EAST, CommonText.OPTION_NEXT, new Outside2());
+    setText(Text.TEXT_TALK_TO_JORDAN_FOR_THE_FIRST_TIME);
+    
+    addOption(Key.OPTION_LEAVE, CommonText.OPTION_NEXT, new CliffWestEntry());
   }
 }

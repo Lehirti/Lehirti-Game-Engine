@@ -20,7 +20,7 @@ public class FreeTrappedWoman extends EventNode<NullState> {
   
   @Override
   protected void doEvent() {
-    if (is(Bool.HAS_METAL_STRUT)) {
+    if (is(CrashSiteBool.HAS_METAL_STRUT)) {
       setText(Text.FREE_WOMAN_WITH_METAL_STRUT);
       set(Plane2_Fuselage.Bool.WOMAN_FREED, true);
     } else {

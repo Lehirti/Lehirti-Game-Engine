@@ -16,7 +16,7 @@ public class HomeVillageToCapitol extends Location<NullState> {
   }
   
   @Override
-  protected Event<?> getNullEvent() {
+  protected Event<?> getDefaultEvent() {
     return new HomeVillage(); // TODO
   }
 }

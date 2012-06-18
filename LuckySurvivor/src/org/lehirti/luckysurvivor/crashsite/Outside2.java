@@ -11,7 +11,6 @@ import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.luckysurvivor.map.Map;
 import org.lehirti.luckysurvivor.map.Map.Location;
-import org.lehirti.luckysurvivor.npc.CrashSiteNPCs;
 import org.lehirti.luckysurvivor.npc.NPCSelectEvent;
 
 public class Outside2 extends EventNode<NullState> {
@@ -64,7 +63,7 @@ public class Outside2 extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.DESCRIPTION);
     
-    if (is(Bool.SHELTER_HAS_BEEN_BUILT)) {
+    if (is(CrashSiteBool.SHELTER_HAS_BEEN_BUILT)) {
       addOption(Key.OPTION_SOUTH, Text.OPTION_TRY_TO_PEEK_ON_GIRLS, new TextOnlyEvent(Key.OPTION_SOUTH,
           Text.TRY_TO_PEEK_ON_GIRLS, new Outside2()));
       addOption(Key.OPTION_NORTH, Text.OPTION_ENTER_SHELTER, new Shelter());

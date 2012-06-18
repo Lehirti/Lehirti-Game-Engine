@@ -22,9 +22,9 @@ public class BuildStrecher extends EventNode<NullState> {
   
   @Override
   protected void doEvent() {
-    if (is(Bool.HAS_LONG_METAL_POLES) && is(Bool.HAS_SHEETS_OF_FABRIC)) {
+    if (is(CrashSiteBool.HAS_LONG_METAL_POLES) && is(CrashSiteBool.HAS_SHEETS_OF_FABRIC)) {
       setText(Text.HAS_MATERIALS_TO_BUILD_STRECHER);
-      addOption(Key.OPTION_EAST, CommonText.OPTION_NEXT, new SetFlagTextOnlyEvent(Bool.HAS_STRETCHER, Text.OBTAINED_STRECHER,
+      addOption(Key.OPTION_EAST, CommonText.OPTION_NEXT, new SetFlagTextOnlyEvent(CrashSiteBool.HAS_STRETCHER, Text.OBTAINED_STRECHER,
           new Plane2_Fuselage()));
     } else {
       setText(Text.LACK_MATERIALS_TO_BUILD_STRECHER);

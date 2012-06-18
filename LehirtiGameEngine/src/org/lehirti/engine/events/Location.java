@@ -47,7 +47,7 @@ public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STAT
       }
     }
     if (probablityPerEventMap.isEmpty()) {
-      this.nextEvent = getNullEvent();
+      this.nextEvent = getDefaultEvent();
     } else {
       final List<Event<?>> probabilityAlwaysEvents = getProbabilityAlwaysEvents(probablityPerEventMap);
       if (!probabilityAlwaysEvents.isEmpty()) {
@@ -145,7 +145,7 @@ public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STAT
       }
       remainingProbabilityFromDieRoll -= entry.getValue().doubleValue();
     }
-    return getNullEvent();
+    return getDefaultEvent();
   }
   
   private static Event<?> getRandomProbabilityAlwaysEvent(final List<Event<?>> probabilityAlwaysEvents) {
@@ -165,7 +165,7 @@ public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STAT
     return probAlwaysEvents;
   }
   
-  protected abstract Event<?> getNullEvent();
+  protected abstract Event<?> getDefaultEvent();
   
   protected abstract ImageKey getBackgroundImageToDisplay();
 }

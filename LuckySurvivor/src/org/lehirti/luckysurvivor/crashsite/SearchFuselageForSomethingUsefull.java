@@ -16,7 +16,7 @@ public class SearchFuselageForSomethingUsefull extends Location<NullState> {
   }
   
   @Override
-  protected Event<?> getNullEvent() {
+  protected Event<?> getDefaultEvent() {
     return new TextOnlyEvent(Key.OPTION_LEAVE, Plane2_Fuselage.Text.NOTHING_OF_VALUE_WAS_FOUND, new Plane2_Fuselage());
   }
 }

@@ -15,7 +15,7 @@ public class Market extends Location<NullState> {
   }
   
   @Override
-  protected Event<?> getNullEvent() {
+  protected Event<?> getDefaultEvent() {
     return new HomeVillage();
   }
 }

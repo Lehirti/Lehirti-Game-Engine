@@ -1,8 +1,9 @@
-package org.lehirti.luckysurvivor.npc;
+package org.lehirti.luckysurvivor.crashsite;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import org.lehirti.luckysurvivor.npc.NPC;
 import org.lehirti.luckysurvivor.npc.hinata.Hinata;
 import org.lehirti.luckysurvivor.npc.tifa.Tifa;
 
