@@ -86,7 +86,7 @@ public class Outside2 extends EventNode<NullState> {
       
       addOption(Key.OPTION_ENTER, Text.OPTION_ENTER_FUSELAGE, new TextOnlyEvent(Key.OPTION_ENTER, Text.ENTER_FUSELAGE,
           new Plane2_Fuselage()));
-      addOption(Key.OPTION_WEST, Text.OPTION_REST, new TextOnlyEvent(Key.OPTION_WEST, Text.REST, new Outside1_Rest()));
+      addOption(Key.OPTION_WEST, Text.OPTION_REST, new TextOnlyEvent(Key.OPTION_WEST, Text.REST, new Outside2()));
       addOption(Key.OPTION_V, Text.OPTION_BURY_THE_DEAD, new BuryTheDead());
     }
     

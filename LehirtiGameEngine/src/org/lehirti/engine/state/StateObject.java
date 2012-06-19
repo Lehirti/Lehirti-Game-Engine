@@ -14,8 +14,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 
+import org.lehirti.engine.events.Event;
 import org.lehirti.engine.util.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +42,15 @@ public class StateObject implements Externalizable {
     }
     
   };
+  
+  private static enum InternalGameState implements ObjState {
+    EVENT_COUNT;
+    
+    @Override
+    public Serializable defaultValue() {
+      return null;
+    }
+  }
   
   // SortedMap produces class cast exceptions
   private final Map<BoolState, Boolean> BOOL_MAP = new InventoryMap<BoolState, Boolean>();
@@ -159,6 +170,44 @@ public class StateObject implements Externalizable {
   
   public static void set(final Class<?> clazz, final Enum<?> value) {
     INSTANCE.PER_CLASS_STATE_MAP.put(clazz, value);
+  }
+  
+  @SuppressWarnings("unchecked")
+  public static void incrementEventCount(final Event<?> event) {
+    Map<String, Integer> eventCountMap = (Map<String, Integer>) get(InternalGameState.EVENT_COUNT);
+    if (eventCountMap == null) {
+      eventCountMap = new TreeMap<String, Integer>();
+      set(InternalGameState.EVENT_COUNT, (Serializable) eventCountMap);
+    }
+    final String eventClassName = event.getClass().getName();
+    Integer count = eventCountMap.get(eventClassName);
+    if (count == null) {
+      count = Integer.valueOf(1);
+    } else {
+      count = Integer.valueOf(count.intValue() + 1);
+    }
+    eventCountMap.put(eventClassName, count);
+    
+    LOGGER.debug("Event {} executed {} times.", eventClassName, count);
+  }
+  
+  public static int getEventCount(final Event<?> event) {
+    return getEventCount(event.getClass());
+  }
+  
+  @SuppressWarnings("unchecked")
+  public static int getEventCount(final Class<? extends Event> eventClass) {
+    final Map<String, Integer> eventCountMap = (Map<String, Integer>) get(InternalGameState.EVENT_COUNT);
+    if (eventCountMap == null) {
+      return 0;
+    }
+    
+    final Integer count = eventCountMap.get(eventClass.getName());
+    if (count == null) {
+      return 0;
+    }
+    
+    return count.intValue();
   }
   
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

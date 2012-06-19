@@ -170,6 +170,8 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
     
     backgroundLoadNextImages();
     
+    StateObject.incrementEventCount(this);
+    
     resumeFromSavePoint();
   }
   
