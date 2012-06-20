@@ -1,4 +1,4 @@
 package org.lehirti.engine.state;
 
-public interface StringState extends State {
+public interface StringState extends AbstractState {
 }

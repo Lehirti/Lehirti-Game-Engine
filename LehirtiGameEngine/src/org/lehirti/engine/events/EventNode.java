@@ -24,7 +24,7 @@ import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.state.BoolState;
 import org.lehirti.engine.state.IntState;
-import org.lehirti.engine.state.StateObject;
+import org.lehirti.engine.state.State;
 import org.lehirti.engine.state.StringState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -170,7 +170,7 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
     
     backgroundLoadNextImages();
     
-    StateObject.incrementEventCount(this);
+    State.incrementEventCount(this);
     
     resumeFromSavePoint();
   }
@@ -285,23 +285,23 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
   }
   
   protected static boolean is(final BoolState key) {
-    return StateObject.is(key);
+    return State.is(key);
   }
   
   protected static long get(final IntState key) {
-    return StateObject.get(key);
+    return State.get(key);
   }
   
   protected static String get(final StringState key) {
-    return StateObject.get(key);
+    return State.get(key);
   }
   
   protected static void set(final BoolState key, final boolean value) {
-    StateObject.set(key, value);
+    State.set(key, value);
   }
   
   protected static void set(final IntState key, final long value) {
-    StateObject.set(key, value);
+    State.set(key, value);
   }
   
   protected static void change(final IntState key, final long change) {
@@ -309,7 +309,7 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
   }
   
   protected static void set(final StringState key, final String value) {
-    StateObject.set(key, value);
+    State.set(key, value);
   }
   
   @Override

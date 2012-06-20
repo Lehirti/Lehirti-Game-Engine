@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.lehirti.engine.state.State;
+import org.lehirti.engine.state.AbstractState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ public class PropertyUtils {
   
   private static final Map<String, Properties> CACHE = new HashMap<String, Properties>();
   
-  public static Properties getDefaultProperties(final Class<? extends State> stateClass) {
+  public static Properties getDefaultProperties(final Class<? extends AbstractState> stateClass) {
     final Properties properties = CACHE.get(stateClass.getName());
     if (properties != null) {
       return properties;
@@ -115,7 +115,7 @@ public class PropertyUtils {
     }
   }
   
-  public static void setDefaultProperties(final Class<? extends State> stateClass, final Properties defaultProperties) {
+  public static void setDefaultProperties(final Class<? extends AbstractState> stateClass, final Properties defaultProperties) {
     CACHE.put(stateClass.getName(), defaultProperties);
     
     // in development environment: write to props file to src dir

@@ -7,7 +7,7 @@ import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextKey;
-import org.lehirti.engine.state.StateObject;
+import org.lehirti.engine.state.State;
 
 public class EnterMaze extends EventNode<NullState> {
   private static final long serialVersionUID = 1L;
@@ -28,12 +28,12 @@ public class EnterMaze extends EventNode<NullState> {
     
     // initialize maze; once per game
     if (mazeLayout == 0L) {
-      mazeLayout = StateObject.DIE.nextLong();
+      mazeLayout = State.DIE.nextLong();
       set(MazeState.Int.MAZE_LAYOUT, mazeLayout);
     }
     
     // enter maze at random point
-    MazeState.setCurrentPosition(StateObject.DIE.nextLong());
+    MazeState.setCurrentPosition(State.DIE.nextLong());
     
     setText(Text.MAIN);
     

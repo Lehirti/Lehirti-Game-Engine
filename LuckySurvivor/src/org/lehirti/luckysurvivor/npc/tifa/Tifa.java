@@ -11,7 +11,7 @@ import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.sex.Sex;
 import org.lehirti.engine.state.IntState;
-import org.lehirti.engine.state.StateObject;
+import org.lehirti.engine.state.State;
 import org.lehirti.luckysurvivor.npc.AbstractNPC;
 import org.lehirti.luckysurvivor.sss.ReactionToSexAct;
 import org.lehirti.luckysurvivor.sss.SexAct;
@@ -205,13 +205,13 @@ public class Tifa extends AbstractNPC {
   public void performSexAct(final SexAct act, final SexToy toy) {
     
     // vigor depending on stamina, vigor decreases by 20-120% of base exhaustion for sex act
-    StateObject.change(Int.VIGOR, -(int) (act.exhaustion2 * (120 - StateObject.get(Int.STAMINA)) / 100.0D));
+    State.change(Int.VIGOR, -(int) (act.exhaustion2 * (120 - State.get(Int.STAMINA)) / 100.0D));
     
     // TODO pain
     
     // arousal
     final long arousal = getArousal(act, toy);
-    StateObject.change(Int.AROUSAL, arousal);
+    State.change(Int.AROUSAL, arousal);
     
     SexSession.getCurrent().updateNPCPoints(arousal);
     
@@ -219,7 +219,7 @@ public class Tifa extends AbstractNPC {
   }
   
   private long getArousal(final SexAct act, final SexToy toy) {
-    final long baseArousal = StateObject.get(ArousalFromPerformingSexAct.valueOf(act.name()));
+    final long baseArousal = State.get(ArousalFromPerformingSexAct.valueOf(act.name()));
     switch (act.participant2) {
     case COCK: // TODO
     case PUSSY: // TODO
@@ -232,32 +232,32 @@ public class Tifa extends AbstractNPC {
   
   @Override
   public int getAbsoluteUpperPainThreshold() {
-    return (int) StateObject.get(Int.ABSOLUTE_UPPER_PAIN_THRESHOLD);
+    return (int) State.get(Int.ABSOLUTE_UPPER_PAIN_THRESHOLD);
   }
   
   @Override
   public int getUpperPainComfortThreshold() {
-    return (int) StateObject.get(Int.UPPER_PAIN_COMFORT_THRESHOLD);
+    return (int) State.get(Int.UPPER_PAIN_COMFORT_THRESHOLD);
   }
   
   @Override
   public int getLowerPainComfortThreshold() {
-    return (int) StateObject.get(Int.LOWER_PAIN_COMFORT_THRESHOLD);
+    return (int) State.get(Int.LOWER_PAIN_COMFORT_THRESHOLD);
   }
   
   @Override
   public int getCurrentPainLevel() {
-    return (int) StateObject.get(Int.PAIN);
+    return (int) State.get(Int.PAIN);
   }
   
   @Override
   public int getCurrentLust() {
-    return (int) StateObject.get(Int.LUST);
+    return (int) State.get(Int.LUST);
   }
   
   @Override
   public int getDispositionTowardsPC() {
-    return (int) StateObject.get(Int.DISPOSITION_TOWARDS_PC);
+    return (int) State.get(Int.DISPOSITION_TOWARDS_PC);
   }
   
   @Override
@@ -268,26 +268,26 @@ public class Tifa extends AbstractNPC {
   @Override
   public int getReluctanceToPerformAct(final SexAct act, final SexToy toy) {
     final ReluctanceToPerformSexAct reluctance = ReluctanceToPerformSexAct.valueOf(act.name());
-    return (int) StateObject.get(reluctance);
+    return (int) State.get(reluctance);
   }
   
   @Override
   public int getArousal() {
-    return (int) StateObject.get(Int.AROUSAL);
+    return (int) State.get(Int.AROUSAL);
   }
   
   @Override
   public void setArousal(final int newArousal) {
-    StateObject.set(Int.AROUSAL, newArousal);
+    State.set(Int.AROUSAL, newArousal);
   }
   
   @Override
   public int getVigor() {
-    return (int) StateObject.get(Int.VIGOR);
+    return (int) State.get(Int.VIGOR);
   }
   
   @Override
   public int getOrgasmThreshold() {
-    return (int) StateObject.get(Int.ORGASM_THRESHOLD);
+    return (int) State.get(Int.ORGASM_THRESHOLD);
   }
 }

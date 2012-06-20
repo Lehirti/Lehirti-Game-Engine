@@ -12,7 +12,7 @@ import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.TextAndImageKeyWithFlag;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
-import org.lehirti.engine.state.StateObject;
+import org.lehirti.engine.state.State;
 
 public class AlternativeOneTimeEvents extends EventNode<NullState> implements Externalizable {
   
@@ -51,7 +51,7 @@ public class AlternativeOneTimeEvents extends EventNode<NullState> implements Ex
     if (availableRandomEvents.isEmpty()) {
       this.selectedEvent = defaultEvent;
     } else {
-      this.selectedEvent = availableRandomEvents.get(StateObject.DIE.nextInt(availableRandomEvents.size()));
+      this.selectedEvent = availableRandomEvents.get(State.DIE.nextInt(availableRandomEvents.size()));
     }
     this.nextEvent = nextEvent;
   }

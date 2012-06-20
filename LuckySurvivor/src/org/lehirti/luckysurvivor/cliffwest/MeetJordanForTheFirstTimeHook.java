@@ -1,6 +1,6 @@
 package org.lehirti.luckysurvivor.cliffwest;
 
-import static org.lehirti.engine.state.StateObject.*;
+import static org.lehirti.engine.state.State.*;
 
 import java.util.HashMap;
 import java.util.Map;

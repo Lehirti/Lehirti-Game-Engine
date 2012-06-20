@@ -34,7 +34,7 @@ import org.lehirti.engine.res.images.ImageWrapper;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.state.BoolState;
 import org.lehirti.engine.state.IntState;
-import org.lehirti.engine.state.StateObject;
+import org.lehirti.engine.state.State;
 import org.lehirti.engine.state.StaticInitializer;
 import org.lehirti.engine.state.StringState;
 import org.lehirti.engine.util.ClassFinder;
@@ -217,7 +217,7 @@ public abstract class Main {
       
       fis = new FileInputStream(sav);
       ois = new ObjectInputStream(fis);
-      StateObject.load(ois);
+      State.load(ois);
       IMAGE_AREA.readExternal(ois);
       TEXT_AREA.readExternal(ois);
       STATS_AREA.readExternal(ois);
@@ -267,7 +267,7 @@ public abstract class Main {
       
       fos = new FileOutputStream(sav);
       oos = new ObjectOutputStream(fos);
-      StateObject.save(oos);
+      State.save(oos);
       IMAGE_AREA.writeExternal(oos);
       TEXT_AREA.writeExternal(oos);
       STATS_AREA.writeExternal(oos);
@@ -345,7 +345,7 @@ public abstract class Main {
     Vector<Class<?>> states = new ClassFinder().findSubclasses(IntState.class.getName());
     for (final Class<?> intState : states) {
       if (intState.isEnum()) {
-        StateObject.initIntDefaults((Class<IntState>) intState);
+        State.initIntDefaults((Class<IntState>) intState);
         if (exportDefaults) {
           PropertyUtils.setDefaultProperties((Class<IntState>) intState, PropertyUtils
               .getDefaultProperties((Class<IntState>) intState));
@@ -356,7 +356,7 @@ public abstract class Main {
     states = new ClassFinder().findSubclasses(StringState.class.getName());
     for (final Class<?> stringState : states) {
       if (stringState.isEnum()) {
-        StateObject.initStringDefaults((Class<StringState>) stringState);
+        State.initStringDefaults((Class<StringState>) stringState);
         if (exportDefaults) {
           PropertyUtils.setDefaultProperties((Class<StringState>) stringState, PropertyUtils
               .getDefaultProperties((Class<StringState>) stringState));
@@ -367,7 +367,7 @@ public abstract class Main {
     states = new ClassFinder().findSubclasses(BoolState.class.getName());
     for (final Class<?> boolState : states) {
       if (boolState.isEnum()) {
-        StateObject.initBoolDefaults((Class<BoolState>) boolState);
+        State.initBoolDefaults((Class<BoolState>) boolState);
         if (exportDefaults) {
           PropertyUtils.setDefaultProperties((Class<BoolState>) boolState, PropertyUtils
               .getDefaultProperties((Class<BoolState>) boolState));

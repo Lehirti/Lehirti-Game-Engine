@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.lehirti.engine.res.ResourceState;
-import org.lehirti.engine.state.StateObject;
+import org.lehirti.engine.state.State;
 import org.lehirti.engine.util.PathFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +97,7 @@ public final class ImageWrapper {
     if (this.proxies.isEmpty()) {
       this.image = new ImageProxy();
     } else {
-      this.currentlyDisplayedImageNr = StateObject.DIE.nextInt(this.proxies.size());
+      this.currentlyDisplayedImageNr = State.DIE.nextInt(this.proxies.size());
       LOGGER.debug("Pin image {} alternative {}", toString(), this.currentlyDisplayedImageNr);
       this.image = this.proxies.get(this.currentlyDisplayedImageNr);
     }

@@ -8,9 +8,9 @@ import java.util.Set;
 import org.atrun.maze.res.MazeImage;
 import org.lehirti.engine.state.IntState;
 import org.lehirti.engine.state.ObjState;
-import org.lehirti.engine.state.StateObject;
+import org.lehirti.engine.state.State;
 
-public class MazeState extends StateObject {
+public class MazeState extends State {
   private static final long serialVersionUID = 1L;
   
   private static boolean initialized = false; // TODO game loading

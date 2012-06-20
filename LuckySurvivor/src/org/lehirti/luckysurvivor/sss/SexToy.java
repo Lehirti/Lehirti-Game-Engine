@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.lehirti.engine.res.TextAndImageKeyWithFlag;
-import org.lehirti.engine.state.StateObject;
+import org.lehirti.engine.state.State;
 
 public enum SexToy implements TextAndImageKeyWithFlag {
   TINY_DILDO(PUSSY, ASS),
@@ -32,7 +32,7 @@ public enum SexToy implements TextAndImageKeyWithFlag {
   public static List<SexToy> getAllAvailable(final SexToyCategory category) {
     final List<SexToy> availableToys = new LinkedList<SexToy>();
     for (final SexToy toy : values()) {
-      if (toy.belongsToCategory(category) && StateObject.is(toy)) {
+      if (toy.belongsToCategory(category) && State.is(toy)) {
         availableToys.add(toy);
       }
     }

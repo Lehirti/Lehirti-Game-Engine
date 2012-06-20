@@ -10,7 +10,7 @@ import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
-import org.lehirti.engine.state.StateObject;
+import org.lehirti.engine.state.State;
 
 public class AlternativeTextEvent extends EventNode<NullState> implements Externalizable {
   
@@ -60,7 +60,7 @@ public class AlternativeTextEvent extends EventNode<NullState> implements Extern
   
   @Override
   protected void doEvent() {
-    setText(this.texts[StateObject.DIE.nextInt(this.texts.length)]);
+    setText(this.texts[State.DIE.nextInt(this.texts.length)]);
     
     addOption(Key.OPTION_ENTER, CommonText.OPTION_NEXT, this.nextEvent);
   }

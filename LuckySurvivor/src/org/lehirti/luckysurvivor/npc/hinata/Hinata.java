@@ -11,7 +11,7 @@ import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.sex.Sex;
 import org.lehirti.engine.state.IntState;
-import org.lehirti.engine.state.StateObject;
+import org.lehirti.engine.state.State;
 import org.lehirti.luckysurvivor.npc.AbstractNPC;
 import org.lehirti.luckysurvivor.sss.ReactionToSexAct;
 import org.lehirti.luckysurvivor.sss.SexAct;
@@ -191,32 +191,32 @@ public class Hinata extends AbstractNPC {
   
   @Override
   public int getAbsoluteUpperPainThreshold() {
-    return (int) StateObject.get(Int.ABSOLUTE_UPPER_PAIN_THRESHOLD);
+    return (int) State.get(Int.ABSOLUTE_UPPER_PAIN_THRESHOLD);
   }
   
   @Override
   public int getUpperPainComfortThreshold() {
-    return (int) StateObject.get(Int.UPPER_PAIN_COMFORT_THRESHOLD);
+    return (int) State.get(Int.UPPER_PAIN_COMFORT_THRESHOLD);
   }
   
   @Override
   public int getLowerPainComfortThreshold() {
-    return (int) StateObject.get(Int.LOWER_PAIN_COMFORT_THRESHOLD);
+    return (int) State.get(Int.LOWER_PAIN_COMFORT_THRESHOLD);
   }
   
   @Override
   public int getCurrentPainLevel() {
-    return (int) StateObject.get(Int.CURRENT_PAIN_LEVEL);
+    return (int) State.get(Int.CURRENT_PAIN_LEVEL);
   }
   
   @Override
   public int getCurrentLust() {
-    return (int) StateObject.get(Int.CURRENT_LUST);
+    return (int) State.get(Int.CURRENT_LUST);
   }
   
   @Override
   public int getDispositionTowardsPC() {
-    return (int) StateObject.get(Int.DISPOSITION_TOWARDS_PC);
+    return (int) State.get(Int.DISPOSITION_TOWARDS_PC);
   }
   
   @Override
@@ -227,26 +227,26 @@ public class Hinata extends AbstractNPC {
   @Override
   public int getReluctanceToPerformAct(final SexAct act, final SexToy toy) {
     final ReluctanceToPerformSexAct reluctance = ReluctanceToPerformSexAct.valueOf(act.name());
-    return (int) StateObject.get(reluctance);
+    return (int) State.get(reluctance);
   }
   
   @Override
   public int getArousal() {
-    return (int) StateObject.get(Int.AROUSAL);
+    return (int) State.get(Int.AROUSAL);
   }
   
   @Override
   public void setArousal(final int newArousal) {
-    StateObject.set(Int.AROUSAL, newArousal);
+    State.set(Int.AROUSAL, newArousal);
   }
   
   @Override
   public int getVigor() {
-    return (int) StateObject.get(Int.VIGOR);
+    return (int) State.get(Int.VIGOR);
   }
   
   @Override
   public int getOrgasmThreshold() {
-    return (int) StateObject.get(Int.ORGASM_THRESHOLD);
+    return (int) State.get(Int.ORGASM_THRESHOLD);
   }
 }

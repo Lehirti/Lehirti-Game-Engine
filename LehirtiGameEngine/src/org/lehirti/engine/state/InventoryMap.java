@@ -12,7 +12,7 @@ import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 
-public class InventoryMap<K extends State, V> extends LinkedHashMap<K, V> {
+public class InventoryMap<K extends AbstractState, V> extends LinkedHashMap<K, V> {
   private static final long serialVersionUID = 1L;
   
   private static final Map<Inventory, Object> INVENTORY = new HashMap<Inventory, Object>();

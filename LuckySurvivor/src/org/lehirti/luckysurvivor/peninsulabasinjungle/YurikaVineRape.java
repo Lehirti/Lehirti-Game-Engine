@@ -5,7 +5,7 @@ import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextKey;
-import org.lehirti.engine.state.StateObject;
+import org.lehirti.engine.state.State;
 
 public class YurikaVineRape extends EventNode<NullState> {
   
@@ -33,7 +33,7 @@ public class YurikaVineRape extends EventNode<NullState> {
     addOption(Key.OPTION_SOUTH, Text.OPTION_LOOK_AT_PUSSY, new YurikaVineRapePussy());
     addOption(Key.OPTION_EAST, Text.OPTION_LOOK_AT_ASS, new YurikaVineRapeAss());
     
-    if (StateObject.getEventCount(YurikaVineRapeHelp.class) == 0) {
+    if (State.getEventCount(YurikaVineRapeHelp.class) == 0) {
       addOption(Key.OPTION_ENTER, Text.OPTION_TRY_TO_HELP, new YurikaVineRapeHelp());
     }
   }

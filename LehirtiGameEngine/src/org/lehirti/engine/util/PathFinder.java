@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.text.TextKey;
-import org.lehirti.engine.state.State;
+import org.lehirti.engine.state.AbstractState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -207,7 +207,7 @@ public class PathFinder {
     return contentDirs;
   }
   
-  public static File getModDefaultProperties(final Class<? extends State> stateClass) {
+  public static File getModDefaultProperties(final Class<? extends AbstractState> stateClass) {
     return new File(MOD_DEFAULTS_DIR, stateClass.getName() + PROPERTIES_FILENAME_SUFFIX);
   }
 }

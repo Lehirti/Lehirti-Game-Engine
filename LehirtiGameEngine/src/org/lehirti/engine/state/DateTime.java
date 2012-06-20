@@ -26,16 +26,16 @@ public enum DateTime implements IntState {
   }
   
   public static void setFirstDayOfWeek(final DayOfWeek firstDay) {
-    StateObject.set(FIRST_DAY, firstDay.ordinal());
+    State.set(FIRST_DAY, firstDay.ordinal());
   }
   
   public static DayOfWeek getFirstDayOfWeek() {
-    return DayOfWeek.values()[(int) StateObject.get(FIRST_DAY)];
+    return DayOfWeek.values()[(int) State.get(FIRST_DAY)];
   }
   
   public static DayOfWeek getCurrentDayOfWeek() {
-    int currentDayOfWeek = (int) StateObject.get(FIRST_DAY);
-    currentDayOfWeek += (int) StateObject.get(DAY);
+    int currentDayOfWeek = (int) State.get(FIRST_DAY);
+    currentDayOfWeek += (int) State.get(DAY);
     final DayOfWeek[] daysOfWeek = DayOfWeek.values();
     currentDayOfWeek %= daysOfWeek.length;
     return daysOfWeek[currentDayOfWeek];
@@ -43,10 +43,10 @@ public enum DateTime implements IntState {
   
   public static void init(final DayOfWeek firstDay, final int day, final int hour, final int minute, final int second) {
     setFirstDayOfWeek(firstDay);
-    StateObject.set(DAY, day);
-    StateObject.set(HOUR, hour);
-    StateObject.set(MINUTE, minute);
-    StateObject.set(SECOND, second);
+    State.set(DAY, day);
+    State.set(HOUR, hour);
+    State.set(MINUTE, minute);
+    State.set(SECOND, second);
     updateScreen();
   }
   
@@ -58,28 +58,28 @@ public enum DateTime implements IntState {
     int hours = DDhh % 100;
     int days = DDhh / 100;
     
-    long newSeconds = StateObject.get(SECOND) + seconds;
+    long newSeconds = State.get(SECOND) + seconds;
     while (newSeconds >= 60) {
       newSeconds -= 60;
       minutes++;
     }
-    StateObject.set(SECOND, newSeconds);
+    State.set(SECOND, newSeconds);
     
-    long newMinutes = StateObject.get(MINUTE) + minutes;
+    long newMinutes = State.get(MINUTE) + minutes;
     while (newMinutes >= 60) {
       newMinutes -= 60;
       hours++;
     }
-    StateObject.set(MINUTE, newMinutes);
+    State.set(MINUTE, newMinutes);
     
-    long newHours = StateObject.get(HOUR) + hours;
+    long newHours = State.get(HOUR) + hours;
     while (newHours >= 24) {
       newHours -= 24;
       days++;
     }
-    StateObject.set(HOUR, newHours);
+    State.set(HOUR, newHours);
     
-    StateObject.set(DAY, StateObject.get(DAY) + days);
+    State.set(DAY, State.get(DAY) + days);
     
     updateScreen();
   }
@@ -90,19 +90,19 @@ public enum DateTime implements IntState {
    * @param hhmmss
    */
   public static void advanceTo(final int hhmmss) {
-    final long currenthhmmss = (StateObject.get(HOUR) * 10000) + (StateObject.get(MINUTE) * 100)
-        + StateObject.get(SECOND);
+    final long currenthhmmss = (State.get(HOUR) * 10000) + (State.get(MINUTE) * 100)
+        + State.get(SECOND);
     if (hhmmss < currenthhmmss) {
-      StateObject.set(DAY, StateObject.get(DAY) + 1);
+      State.set(DAY, State.get(DAY) + 1);
     }
     
     final int seconds = hhmmss % 100;
     final int hhmm = hhmmss / 100;
     final int minutes = hhmm % 100;
     final int hours = hhmm / 100;
-    StateObject.set(HOUR, hours);
-    StateObject.set(MINUTE, minutes);
-    StateObject.set(SECOND, seconds);
+    State.set(HOUR, hours);
+    State.set(MINUTE, minutes);
+    State.set(SECOND, seconds);
     updateScreen();
   }
   
@@ -115,21 +115,21 @@ public enum DateTime implements IntState {
   public static void advanceTo(final DayOfWeek toDay, final int hhmmss) {
     advanceTo(hhmmss);
     while (toDay != getCurrentDayOfWeek()) {
-      StateObject.set(DAY, StateObject.get(DAY) + 1);
+      State.set(DAY, State.get(DAY) + 1);
     }
     updateScreen();
   }
   
   private static void updateScreen() {
     final TextWrapper day = ResourceCache.get(CommonText.DAY);
-    day.addParameter(String.valueOf(StateObject.get(DAY)));
+    day.addParameter(String.valueOf(State.get(DAY)));
     Main.STATS_AREA.setText(day);
     Main.STATS_AREA.addText(ResourceCache.get(getCurrentDayOfWeek()));
     Main.STATS_AREA.addText(ResourceCache.get(CommonText.BLANK));
     final TextWrapper time = ResourceCache.get(CommonText.TIME_FORMAT);
-    time.addParameter(padTo2Digits(StateObject.get(HOUR)));
-    time.addParameter(padTo2Digits(StateObject.get(MINUTE)));
-    time.addParameter(padTo2Digits(StateObject.get(SECOND)));
+    time.addParameter(padTo2Digits(State.get(HOUR)));
+    time.addParameter(padTo2Digits(State.get(MINUTE)));
+    time.addParameter(padTo2Digits(State.get(SECOND)));
     Main.STATS_AREA.addText(time);
   }
   
@@ -139,13 +139,13 @@ public enum DateTime implements IntState {
   
   public static int getDDhhmmss() {
     int DDhhmmss = 0;
-    DDhhmmss += StateObject.get(DAY);
+    DDhhmmss += State.get(DAY);
     DDhhmmss *= 100;
-    DDhhmmss += StateObject.get(HOUR);
+    DDhhmmss += State.get(HOUR);
     DDhhmmss *= 100;
-    DDhhmmss += StateObject.get(MINUTE);
+    DDhhmmss += State.get(MINUTE);
     DDhhmmss *= 100;
-    DDhhmmss += StateObject.get(SECOND);
+    DDhhmmss += State.get(SECOND);
     return DDhhmmss;
   }
 }

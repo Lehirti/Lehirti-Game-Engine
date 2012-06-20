@@ -6,7 +6,7 @@ import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
-import org.lehirti.engine.state.StateObject;
+import org.lehirti.engine.state.State;
 
 public class FuckRandomMarketGoer extends EventNode<NullState> {
   public static enum MarketGoer implements ImageKey, TextKey {
@@ -19,7 +19,7 @@ public class FuckRandomMarketGoer extends EventNode<NullState> {
   @Override
   protected synchronized ImgChange updateImageArea() {
     if (this.choice == -1) {
-      this.choice = StateObject.DIE.nextInt(MarketGoer.values().length);
+      this.choice = State.DIE.nextInt(MarketGoer.values().length);
     }
     return ImgChange.setFG(MarketGoer.values()[this.choice]);
   }

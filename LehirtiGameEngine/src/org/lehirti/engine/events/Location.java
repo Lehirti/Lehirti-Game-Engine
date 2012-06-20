@@ -14,7 +14,7 @@ import java.util.Map.Entry;
 
 import org.lehirti.engine.Main;
 import org.lehirti.engine.res.images.ImageKey;
-import org.lehirti.engine.state.StateObject;
+import org.lehirti.engine.state.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,7 +138,7 @@ public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STAT
   }
   
   private Event<?> getRandomRegularOrDefaultEvent(final Map<Event<?>, Double> eventsToChooseFrom) {
-    double remainingProbabilityFromDieRoll = StateObject.DIE.nextDouble() * 100.0D;
+    double remainingProbabilityFromDieRoll = State.DIE.nextDouble() * 100.0D;
     for (final Map.Entry<Event<?>, Double> entry : eventsToChooseFrom.entrySet()) {
       if (remainingProbabilityFromDieRoll < entry.getValue().doubleValue()) {
         return entry.getKey();
@@ -152,7 +152,7 @@ public abstract class Location<STATE extends Enum<?>> extends AbstractEvent<STAT
     if (probabilityAlwaysEvents.size() > 1) {
       LOGGER.warn(probabilityAlwaysEvents.size() + " events with probabilty \"ALWAYS\". Only one will occur.");
     }
-    return probabilityAlwaysEvents.get(StateObject.DIE.nextInt(probabilityAlwaysEvents.size()));
+    return probabilityAlwaysEvents.get(State.DIE.nextInt(probabilityAlwaysEvents.size()));
   }
   
   private static List<Event<?>> getProbabilityAlwaysEvents(final Map<Event<?>, Double> probablityPerEventMap) {
