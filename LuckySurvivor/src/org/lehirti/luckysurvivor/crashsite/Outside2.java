@@ -9,6 +9,7 @@ import org.lehirti.engine.res.TextAndImageKeyWithFlag;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
+import org.lehirti.luckysurvivor.crashsite.CrashSiteBool;
 import org.lehirti.luckysurvivor.map.Map;
 import org.lehirti.luckysurvivor.map.Map.Location;
 import org.lehirti.luckysurvivor.npc.NPCSelectEvent;
@@ -61,6 +62,12 @@ public class Outside2 extends EventNode<NullState> {
   
   @Override
   protected void doEvent() {
+	  /*
+	     *hope this is the right location
+	     */
+	set(CrashSiteBool.HAS_BEEN_HERE_BEFORE, true);
+	
+	
     setText(Text.DESCRIPTION);
     
     if (is(CrashSiteBool.SHELTER_HAS_BEEN_BUILT)) {

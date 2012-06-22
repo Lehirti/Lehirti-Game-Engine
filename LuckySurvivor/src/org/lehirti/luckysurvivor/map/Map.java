@@ -26,6 +26,7 @@ import org.lehirti.luckysurvivor.jungle1uphill.MapToJungle1Uphill;
 import org.lehirti.luckysurvivor.jungle2uphill.MapToJungle2Uphill;
 import org.lehirti.luckysurvivor.lookouthill.MapToLookoutHill;
 import org.lehirti.luckysurvivor.peninsulabasinjungle.MapToPeninsulaBasinJungle;
+import org.lehirti.luckysurvivor.peninsulaisthmus.MapToPeninsulaIsthmus;
 
 public class Map extends EventNode<NullState> {
   public static enum Location implements TextKey, ImageKey {
@@ -36,7 +37,8 @@ public class Map extends EventNode<NullState> {
     LOOKOUT_HILL(new StaticEventFactory(MapToLookoutHill.class)),
     CLIFF_SOUTH(new StaticEventFactory(MapToCliffSouth.class)),
     JUNGLE_2_UPHILL(new StaticEventFactory(MapToJungle2Uphill.class)),
-    PENINSULA_BASIN_JUNGLE(new StaticEventFactory(MapToPeninsulaBasinJungle.class));
+    PENINSULA_BASIN_JUNGLE(new StaticEventFactory(MapToPeninsulaBasinJungle.class)),
+    PENINSULA_ISTHMUS(new StaticEventFactory(MapToPeninsulaIsthmus.class));
     
     private final EventFactory locationEventFactory;
     
@@ -76,6 +78,9 @@ public class Map extends EventNode<NullState> {
     
     LOOKOUT_HILL_2_PENINSULA_BASIN_JUNGLE,
     PENINSULA_BASIN_JUNGLE_2_LOOKOUT_HILL,
+    
+    PENINSULA_BASIN_JUNGLE_2_PENINSULA_ISTHMUS,
+    PENINSULA_ISTHMUS_2_PENINSULA_BASIN_JUNGLE,
   }
   
   // TODO travel time/fatigue
@@ -88,7 +93,8 @@ public class Map extends EventNode<NullState> {
     CRASH_SITE___JUNGLE_2_UPHILL(CRASH_SITE, OPTION_EAST, CRASH_SITE_2_JUNGLE_2_UPHILL, OPTION_WEST, JUNGLE_2_UPHILL_2_CRASH_SITE, JUNGLE_2_UPHILL),
     JUNGLE_2_UPHILL___PENINSULA_BASIN_JUNGLE(JUNGLE_2_UPHILL, OPTION_EAST, JUNGLE_2_UPHILL_2_PENINSULA_BASIN_JUNGLE, OPTION_WEST, PENINSULA_BASIN_JUNGLE_2_JUNGLE_2_UPHILL, PENINSULA_BASIN_JUNGLE),
     JUNGLE_1_UPHILL___PENINSULA_BASIN_JUNGLE(JUNGLE_1_UPHILL, OPTION_EAST, JUNGLE_1_UPHILL_2_PENINSULA_BASIN_JUNGLE, OPTION_NORTH, PENINSULA_BASIN_JUNGLE_2_JUNGLE_1_UPHILL, PENINSULA_BASIN_JUNGLE),
-    LOOKOUT_HILL___PENINSULA_BASIN_JUNGLE(LOOKOUT_HILL, OPTION_EAST, LOOKOUT_HILL_2_PENINSULA_BASIN_JUNGLE, OPTION_SOUTH, PENINSULA_BASIN_JUNGLE_2_LOOKOUT_HILL, PENINSULA_BASIN_JUNGLE), ;
+    LOOKOUT_HILL___PENINSULA_BASIN_JUNGLE(LOOKOUT_HILL, OPTION_EAST, LOOKOUT_HILL_2_PENINSULA_BASIN_JUNGLE, OPTION_SOUTH, PENINSULA_BASIN_JUNGLE_2_LOOKOUT_HILL, PENINSULA_BASIN_JUNGLE),
+    PENINSULA_BASIN_JUNGLE___PENINSULA_ISTHMUS(PENINSULA_BASIN_JUNGLE, OPTION_EAST, PENINSULA_BASIN_JUNGLE_2_PENINSULA_ISTHMUS, OPTION_WEST, PENINSULA_ISTHMUS_2_PENINSULA_BASIN_JUNGLE, PENINSULA_ISTHMUS),;
     
     public final Location loc1;
     public final Location loc2;
