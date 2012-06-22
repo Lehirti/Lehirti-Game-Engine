@@ -113,34 +113,61 @@ public class TextArea extends JTextArea implements Externalizable {
   
   @Override
   public void setText(final String t) {
-    int nrPages = 1;
-    boolean textDoesNotFit;
-    do {
-      textDoesNotFit = false;
-      final String[] pages = splitIntoPages(t, nrPages);
-      for (final String page : pages) {
-        if (!pageFits(page)) {
-          textDoesNotFit = true;
-          nrPages++;
-          break;
+    if (pageFits(t)) {
+      this.totalNumberOfPages = 1;
+      this.currentPage = 0;
+      super.setText(t);
+      return;
+    }
+    final List<String> pages = new LinkedList<String>();
+    final String[] paragraphs = t.split("\\r?\\n|\\r");
+    for (int i = 0; i < paragraphs.length;) {
+      String page = paragraphs[i++];
+      if (!pageFits(page)) {
+        // split single paragraph, if it does not fit on one page
+        splitParagraph(pages, page);
+      } else {
+        // add as many paragraphs to one page, as fit
+        String oldPage = page;
+        while (i < paragraphs.length) {
+          page = page + "\n" + paragraphs[i++];
+          if (!pageFits(page)) {
+            i--;
+            break;
+          }
+          oldPage = page;
         }
+        pages.add(oldPage.trim());
       }
-      if (!textDoesNotFit) {
-        if (pages.length <= this.currentPage) {
-          this.currentPage = 0;
-        }
-        this.totalNumberOfPages = pages.length;
-        super.setText(pages[this.currentPage]);
+    }
+    this.totalNumberOfPages = pages.size();
+    if (this.currentPage >= this.totalNumberOfPages) {
+      this.currentPage = 0;
+    }
+    super.setText(pages.get(this.currentPage));
+  }
+  
+  // this paragraph is too long and does not fit onto one page; split at sentence level
+  private void splitParagraph(final List<String> pages, final String paragraph) {
+    String oldPage = "";
+    String page = "";
+    final String[] sentences = paragraph.split("\\.");
+    for (final String sentence : sentences) {
+      oldPage = page;
+      page += sentence + ".";
+      if (!pageFits(page)) {
+        pages.add(oldPage.trim());
+        page = sentence + ".";
       }
-      
-    } while (textDoesNotFit);
+    }
+    pages.add(page.trim());
   }
   
   private boolean pageFits(final String page) {
     super.setText(page);
     try {
       final Rectangle positionOfLastCharacter = modelToView(page.length());
-      if (positionOfLastCharacter != null && positionOfLastCharacter.getY() > getHeight()) {
+      if (positionOfLastCharacter != null && positionOfLastCharacter.getY() > getHeight() - getFont().getSize2D()) {
         return false;
       } else {
         return true;
