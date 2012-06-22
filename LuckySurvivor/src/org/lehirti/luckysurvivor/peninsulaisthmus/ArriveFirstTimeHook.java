@@ -1,6 +1,6 @@
 package org.lehirti.luckysurvivor.peninsulaisthmus;
 
-import static org.lehirti.engine.state.StateObject.*;
+import static org.lehirti.engine.state.State.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +35,8 @@ public final class ArriveFirstTimeHook implements LocationHook {
      * write DateTime.getDDhhmmss() > 103184403
      */
     if (is(PeninsulaIsthmusBool.HAS_NOT_BEEN_HERE_BEFORE) && !is(PeninsulaIsthmusBool.HAS_SEEN_GORGE)) {
-      // I removed the time, since it doesn't matter when you arrive. It will just tell you, that there is a gorge you cannot cross(yet)
+      // I removed the time, since it doesn't matter when you arrive. It will just tell you, that there is a gorge you
+      // cannot cross(yet)
       events.put(new ArriveFirstTime(), Double.valueOf(100.0));
     }
     return events;
