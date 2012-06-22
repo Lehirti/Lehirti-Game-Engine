@@ -9,7 +9,7 @@ import org.lehirti.engine.res.TextAndImageKeyWithFlag;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
-import org.lehirti.luckysurvivor.cliffwest.CliffWestBool;
+import org.lehirti.luckysurvivor.crashsite.CrashSiteBool;
 import org.lehirti.luckysurvivor.map.Map;
 import org.lehirti.luckysurvivor.map.Map.Location;
 import org.lehirti.luckysurvivor.npc.NPCSelectEvent;
@@ -65,7 +65,7 @@ public class Outside2 extends EventNode<NullState> {
 	  /*
 	     *hope this is the right location
 	     */
-	set(CliffWestBool.HAS_BEEN_HERE_BEFORE, true);
+	set(CrashSiteBool.HAS_BEEN_HERE_BEFORE, true);
 	
 	
     setText(Text.DESCRIPTION);
