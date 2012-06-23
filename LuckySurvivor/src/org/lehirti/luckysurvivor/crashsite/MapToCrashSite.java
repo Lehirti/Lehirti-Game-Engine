@@ -61,11 +61,6 @@ public class MapToCrashSite extends EventNode<NullState> {
   
   @Override
   protected void doEvent() {
-    /*
-     * hope this is the right location
-     */
-    set(CrashSiteBool.HAS_BEEN_HERE_BEFORE, true);
-    
     setText(Text.DESCRIPTION);
     
     if (is(CrashSiteBool.SHELTER_HAS_BEEN_BUILT)) {

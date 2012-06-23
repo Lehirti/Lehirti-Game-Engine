@@ -19,8 +19,6 @@ public class SeeAngryDiscussion extends EventNode<NullState> {
   
   @Override
   protected void doEvent() {
-	 set(CrashSiteBool.HAS_SEEN_ANGRY_DISCUSSION, true);
-	  
 	 setText(Text.TEXT_ANGRY_DISCUSSION);
      
 	 addOption(Key.OPTION_LEAVE, CommonText.OPTION_NEXT, new MapToCrashSite());

@@ -19,8 +19,6 @@ public class ArriveFirstTime extends EventNode<NullState> {
   
   @Override
   protected void doEvent() {
-    set(PeninsulaIsthmusBool.HAS_SEEN_GORGE, true);
-    
     setText(Text.TEXT_ARRIVE_FIRST_TIME);
     
     addOption(Key.OPTION_LEAVE, CommonText.OPTION_NEXT, new MapToPeninsulaIsthmus());

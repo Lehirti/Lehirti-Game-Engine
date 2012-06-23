@@ -158,6 +158,8 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
     LOGGER.info("Event: {}", getClass().getName());
     stopBackgroundLoadingOfImages();
     
+    State.incrementEventCount(this);
+    
     performImageAreaUpdates();
     
     clearOptions();
@@ -169,8 +171,6 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
     repaintImagesIfNeeded();
     
     backgroundLoadNextImages();
-    
-    State.incrementEventCount(this);
     
     resumeFromSavePoint();
   }

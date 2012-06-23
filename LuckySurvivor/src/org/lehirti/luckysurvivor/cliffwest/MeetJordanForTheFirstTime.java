@@ -19,8 +19,6 @@ public class MeetJordanForTheFirstTime extends EventNode<NullState> {
   
   @Override
   protected void doEvent() {
-    set(CliffWestBool.HAS_MET_JORDAN, true);
-    
     setText(Text.TEXT_TALK_TO_JORDAN_FOR_THE_FIRST_TIME);
     
     addOption(Key.OPTION_LEAVE, CommonText.OPTION_NEXT, new MapToCliffWest());

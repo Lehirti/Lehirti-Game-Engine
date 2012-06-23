@@ -7,6 +7,7 @@ import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
+import org.lehirti.engine.state.State;
 import org.lehirti.luckysurvivor.map.Map;
 import org.lehirti.luckysurvivor.map.Map.Location;
 import org.lehirti.luckysurvivor.npc.NPCSelectEvent;
@@ -34,12 +35,6 @@ public class MapToCliffWest extends EventNode<NullState> {
   
   @Override
   protected void doEvent() {
-    /*
-     * once we are here for the first time, we set the "HAS_BEEN_HERE_BEFORE" flag to true; all subsequent visits will
-     * set it to true, again, but that does not matter
-     */
-    set(CliffWestBool.HAS_BEEN_HERE_BEFORE, true);
-    
     setText(Text.DESCRIPTION);
     
     addOption(Key.OPTION_NORTH, Text.OPTION_LOOK_AT_OCEAN, new TextOnlyEvent(Key.OPTION_NORTH, Text.LOOK_AT_OCEAN,
@@ -50,9 +45,9 @@ public class MapToCliffWest extends EventNode<NullState> {
         Text.SEARCH_SOMETHING_TO_EAT, new MapToCliffWest()));
     
     /*
-     * only after we have met jordan, will we be able to examine the girls here
+     * only after we have met Jordan, will we be able to examine the girls here
      */
-    if (is(CliffWestBool.HAS_MET_JORDAN)) {
+    if (State.getEventCount(MeetJordanForTheFirstTime.class) > 0) {
       addOption(Key.OPTION_EAST, Text.OPTION_EXAMINE_THE_GIRLS, new NPCSelectEvent(CliffWest.CLIFF_WEST,
           new MapToCliffWest(), CliffWestNPCs.getNPCs(), 0));
     }
