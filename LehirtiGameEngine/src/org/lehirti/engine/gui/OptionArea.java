@@ -1,6 +1,9 @@
 package org.lehirti.engine.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.io.Externalizable;
 import java.io.IOException;
@@ -14,6 +17,7 @@ import java.util.Map.Entry;
 
 import javax.swing.JComponent;
 
+import org.lehirti.engine.Main;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
@@ -48,8 +52,16 @@ public class OptionArea extends JComponent implements Externalizable {
   
   @Override
   public void paintComponent(final Graphics g) {
+    g.setColor(Color.WHITE);
+    g.fillRect(0, 0, getWidth(), getHeight());
+    g.setColor(Color.BLACK);
     final Dimension size = getSize();
     final Dimension sizeOfOneOptionField = new Dimension(size.width / this.cols, size.height / this.rows);
+    final Font font = Main.TEXT_AREA.getScaledFont();
+    g.setFont(font);
+    final FontMetrics fontMetrics = g.getFontMetrics(font);
+    final int fontHeight = fontMetrics.getHeight();
+    final int yOffset = fontHeight + (sizeOfOneOptionField.height - fontHeight) / 4;
     for (final Map.Entry<Key, TextWrapper> option : this.options.entrySet()) {
       final Key key = option.getKey();
       final TextWrapper wrapper = ResourceCache.get(CommonText.KEY_OPTION);
@@ -57,8 +69,50 @@ public class OptionArea extends JComponent implements Externalizable {
       final TextWrapper text = option.getValue();
       final String assembledOptionString = wrapper.getValue() + text.getValue();
       final int x = key.col * sizeOfOneOptionField.width;
-      final int y = (int) ((key.row + 0.8) * sizeOfOneOptionField.height);
-      g.drawString(assembledOptionString, x, y);
+      final int y = key.row * sizeOfOneOptionField.height + yOffset;
+      
+      g.drawRect(key.col * sizeOfOneOptionField.width, key.row * sizeOfOneOptionField.height,
+          sizeOfOneOptionField.width, sizeOfOneOptionField.height);
+      if (fontMetrics.stringWidth(assembledOptionString) < sizeOfOneOptionField.width) {
+        g.drawString(assembledOptionString, x, y);
+      } else {
+        fitStringIntoOptionField(g, assembledOptionString, key.col * sizeOfOneOptionField.width, key.row
+            * sizeOfOneOptionField.height, sizeOfOneOptionField, font.getSize());
+        g.setFont(font);
+      }
+    }
+  }
+  
+  private void fitStringIntoOptionField(final Graphics g, final String optionString, final int xOffset,
+      final int yOffset, final Dimension optionField, final int fontSize) {
+    final String[] words = optionString.split(" ");
+    for (int i = fontSize; i > 0; i--) {
+      final Font font = g.getFont();
+      final Font newFont = new Font(font.getName(), font.getStyle(), i);
+      final FontMetrics metrics = g.getFontMetrics(newFont);
+      final int nrLines = optionField.height / metrics.getHeight();
+      final List<String> lines = new ArrayList<String>(nrLines);
+      int k = 0;
+      for (int j = 0; j < nrLines; j++) {
+        if (k >= words.length) {
+          break;
+        }
+        final StringBuilder sb = new StringBuilder(words[k++]);
+        while (k < words.length && metrics.stringWidth(sb.toString() + " " + words[k]) < optionField.width) {
+          sb.append(" ");
+          sb.append(words[k++]);
+        }
+        lines.add(sb.toString());
+      }
+      if (k >= words.length) {
+        g.setFont(newFont);
+        for (int j = 0; j < lines.size(); j++) {
+          final int stringWidth = metrics.stringWidth(lines.get(j));
+          final int padspace = (optionField.width - stringWidth) / 2;
+          g.drawString(lines.get(j), xOffset + padspace, yOffset + ((j + 1) * metrics.getHeight()) - 1);
+        }
+        return;
+      }
     }
   }
   

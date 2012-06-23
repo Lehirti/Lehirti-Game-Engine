@@ -26,6 +26,7 @@ import org.lehirti.engine.gui.ImageArea;
 import org.lehirti.engine.gui.ImageEditor;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.gui.OptionArea;
+import org.lehirti.engine.gui.StatsArea;
 import org.lehirti.engine.gui.TextArea;
 import org.lehirti.engine.gui.TextEditor;
 import org.lehirti.engine.res.ResourceCache;
@@ -65,7 +66,7 @@ public abstract class Main {
   public static ImageArea IMAGE_AREA;
   public static TextArea INVENTORY_AREA;
   public static OptionArea OPTION_AREA;
-  public static TextArea STATS_AREA;
+  public static StatsArea STATS_AREA;
   
   private static Component currentlyShownInMain;
   
@@ -164,7 +165,7 @@ public abstract class Main {
     
     INVENTORY_AREA = new TextArea(SCREEN_X, SCREEN_Y, 48.0, 36.0);
     
-    STATS_AREA = new TextArea(SCREEN_X, SCREEN_Y, 64.0, 6.0);
+    STATS_AREA = new StatsArea(SCREEN_X, SCREEN_Y, 64.0, 6.0);
     
     OPTION_AREA = new OptionArea(SCREEN_X, SCREEN_Y, 64.0, 6.0, 4, 3);
     
@@ -196,8 +197,6 @@ public abstract class Main {
     c.gridwidth = 2;
     c.gridheight = 1;
     MAIN_WINDOW.getContentPane().add(OPTION_AREA, c);
-    
-    STATS_AREA.setText("STATS_AREA (TODO ;)");
     
     INVENTORY_AREA.setText(ResourceCache.get(CommonText.INVENTORY));
     

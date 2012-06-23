@@ -90,8 +90,7 @@ public enum DateTime implements IntState {
    * @param hhmmss
    */
   public static void advanceTo(final int hhmmss) {
-    final long currenthhmmss = (State.get(HOUR) * 10000) + (State.get(MINUTE) * 100)
-        + State.get(SECOND);
+    final long currenthhmmss = (State.get(HOUR) * 10000) + (State.get(MINUTE) * 100) + State.get(SECOND);
     if (hhmmss < currenthhmmss) {
       State.set(DAY, State.get(DAY) + 1);
     }
@@ -121,16 +120,21 @@ public enum DateTime implements IntState {
   }
   
   private static void updateScreen() {
+    Main.STATS_AREA.repaint();
+  }
+  
+  public static String getDateFormatedForStatsArea() {
     final TextWrapper day = ResourceCache.get(CommonText.DAY);
     day.addParameter(String.valueOf(State.get(DAY)));
-    Main.STATS_AREA.setText(day);
-    Main.STATS_AREA.addText(ResourceCache.get(getCurrentDayOfWeek()));
-    Main.STATS_AREA.addText(ResourceCache.get(CommonText.BLANK));
+    final StringBuilder sb = new StringBuilder(day.getValue());
+    sb.append(ResourceCache.get(getCurrentDayOfWeek()).getValue());
+    sb.append(ResourceCache.get(CommonText.BLANK).getValue());
     final TextWrapper time = ResourceCache.get(CommonText.TIME_FORMAT);
     time.addParameter(padTo2Digits(State.get(HOUR)));
     time.addParameter(padTo2Digits(State.get(MINUTE)));
     time.addParameter(padTo2Digits(State.get(SECOND)));
-    Main.STATS_AREA.addText(time);
+    sb.append(time.getValue());
+    return sb.toString();
   }
   
   private static String padTo2Digits(final long l) {

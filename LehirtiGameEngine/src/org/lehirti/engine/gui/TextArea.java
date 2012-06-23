@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JRootPane;
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
 
@@ -177,32 +176,22 @@ public class TextArea extends JTextArea implements Externalizable {
     }
   }
   
-  private String[] splitIntoPages(final String t, final int nrPages) {
-    final String[] pages = new String[nrPages];
-    int beginOfNextPage = 0;
-    
-    for (int i = 0; i < nrPages; i++) {
-      pages[i] = t.substring(beginOfNextPage, beginOfNextPage + t.length() / nrPages);
-      beginOfNextPage += t.length() / nrPages;
-    }
-    
-    return pages;
-  }
-  
   private void adjustFontToWindowSize() {
     final Font oldFont = getFont();
-    final JRootPane rootPane = getRootPane();
-    int fontSize = 12;
-    if (rootPane != null) {
-      fontSize = getRootPane().getWidth() / 72;
+    if (oldFont != null) {
+      final Font newFont = getScaledFont();
+      if (oldFont.getSize() != newFont.getSize()) {
+        setFont(newFont);
+      }
     }
+  }
+  
+  public Font getScaledFont() {
+    int fontSize = getWidth() / 18;
     if (fontSize < 12) {
       fontSize = 12;
     }
-    if (oldFont == null || oldFont.getSize() != fontSize) {
-      final Font font = new Font("Verdana", Font.BOLD, fontSize);
-      setFont(font);
-    }
+    return new Font("Verdana", Font.BOLD, fontSize);
   }
   
   public List<TextWrapper> getAllTexts() {
