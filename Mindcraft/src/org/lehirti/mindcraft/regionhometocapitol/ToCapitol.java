@@ -3,8 +3,8 @@ package org.lehirti.mindcraft.regionhometocapitol;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.lehirti.engine.events.AbstractEvent;
 import org.lehirti.engine.events.Event;
-import org.lehirti.engine.events.Location;
 import org.lehirti.engine.events.EventHook;
 import org.lehirti.engine.events.StandardEvent;
 import org.lehirti.engine.gui.Key;
@@ -12,11 +12,11 @@ import org.lehirti.mindcraft.intro.HomeVillage;
 
 public class ToCapitol implements EventHook {
   static {
-    Location.registerDispatcher(HomeVillageToCapitol.class, new ToCapitol());
+    AbstractEvent.registerHook(HomeVillageToCapitol.class, new ToCapitol());
   }
   
   @Override
-  public Map<Event<?>, Double> getCurrentEvents(Event<?> previousEvent) {
+  public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent) {
     final Map<Event<?>, Double> events = new HashMap<Event<?>, Double>();
     events.put(new StandardEvent(Key.OPTION_ENTER, HomeToCapitol.WAY_TO_CAPITOL, HomeToCapitol.WAY_TO_CAPITOL,
         new HomeVillage()), Double.valueOf(100.0));

@@ -1,21 +1,14 @@
 package org.lehirti.mindcraft.intro;
 
-import org.lehirti.engine.events.Event;
-import org.lehirti.engine.events.Location;
-import org.lehirti.engine.events.Event.NullState;
-import org.lehirti.engine.res.images.ImageKey;
+import org.lehirti.engine.events.StandardEvent;
+import org.lehirti.engine.gui.Key;
+import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.mindcraft.images.Background;
 
-public class Neighbour extends Location<NullState> {
+public class Neighbour extends StandardEvent {
   private static final long serialVersionUID = 1L;
   
-  @Override
-  protected ImageKey getBackgroundImageToDisplay() {
-    return Background.VILLAGE_NEIGHBOUR;
-  }
-  
-  @Override
-  protected Event<?> getDefaultEvent() {
-    return new HomeVillage();
+  public Neighbour() {
+    super(Key.OPTION_LEAVE, Background.VILLAGE_NEIGHBOUR, CommonText.OPTION_LEAVE, new HomeVillage());
   }
 }

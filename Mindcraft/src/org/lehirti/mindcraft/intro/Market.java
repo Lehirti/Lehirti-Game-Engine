@@ -1,21 +1,14 @@
 package org.lehirti.mindcraft.intro;
 
-import org.lehirti.engine.events.Event;
-import org.lehirti.engine.events.Location;
-import org.lehirti.engine.events.Event.NullState;
-import org.lehirti.engine.res.images.ImageKey;
+import org.lehirti.engine.events.StandardEvent;
+import org.lehirti.engine.gui.Key;
+import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.mindcraft.images.Background;
 
-public class Market extends Location<NullState> {
+public class Market extends StandardEvent {
   private static final long serialVersionUID = 1L;
   
-  @Override
-  protected ImageKey getBackgroundImageToDisplay() {
-    return Background.VILLAGE_MARKET;
-  }
-  
-  @Override
-  protected Event<?> getDefaultEvent() {
-    return new HomeVillage();
+  public Market() {
+    super(Key.OPTION_LEAVE, Background.VILLAGE_MARKET, CommonText.OPTION_LEAVE_AREA, new HomeVillage());
   }
 }

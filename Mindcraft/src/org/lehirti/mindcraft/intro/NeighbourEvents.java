@@ -3,18 +3,18 @@ package org.lehirti.mindcraft.intro;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.lehirti.engine.events.AbstractEvent;
 import org.lehirti.engine.events.Event;
-import org.lehirti.engine.events.Location;
 import org.lehirti.engine.events.EventHook;
 import org.lehirti.engine.state.State;
 
 public class NeighbourEvents implements EventHook {
   static {
-    Location.registerDispatcher(Neighbour.class, new NeighbourEvents());
+    AbstractEvent.registerHook(Neighbour.class, new NeighbourEvents());
   }
   
   @Override
-  public Map<Event<?>, Double> getCurrentEvents(Event<?> previousEvent) {
+  public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent) {
     final Map<Event<?>, Double> events = new HashMap<Event<?>, Double>();
     if (State.get(MeetDitaOutsideHerHouse.class) == null) {
       events.put(new MeetDitaOutsideHerHouse(), Double.valueOf(100.0d));
