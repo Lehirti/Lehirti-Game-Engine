@@ -1,29 +1,43 @@
 package org.lehirti.luckysurvivor.peninsulaisthmus;
 
-import org.lehirti.engine.events.Event;
-import org.lehirti.engine.events.Location;
+import org.lehirti.engine.events.EventNode;
+import org.lehirti.engine.events.TextOnlyEvent;
 import org.lehirti.engine.events.Event.NullState;
-import org.lehirti.engine.res.images.ImageKey;
+import org.lehirti.engine.gui.Key;
+import org.lehirti.engine.res.images.ImgChange;
+import org.lehirti.engine.res.text.CommonText;
+import org.lehirti.engine.res.text.TextKey;
+import org.lehirti.luckysurvivor.map.Map;
+import org.lehirti.luckysurvivor.map.Map.Location;
 
 /**
- * locations by themselves are not very complex, just define a background image to display and a default event (this
- * event will be shown if there are no location hooks for this location or the location hooks have not returned any
- * events)
+ * this is the default first event when entering
  */
-public final class MapToPeninsulaIsthmus extends Location<NullState> {
-  private static final long serialVersionUID = 1L;
-  
-  @Override
-  protected ImageKey getBackgroundImageToDisplay() {
-    return PeninsulaIsthmus.PENINSULA_ISTHMUS;
+public class MapToPeninsulaIsthmus extends EventNode<NullState> {
+  public static enum Text implements TextKey {
+    DESCRIPTION,
+    LEAVE_THE_AREA,
+    OPTION_SEARCH_FOR_A_WAY,
+    SEARCH_FOR_A_WAY
   }
   
-  /**
-   * right now, we only have one location hook for this location and it will only return the "MeetJordanForTheFirstTime"
-   * one-time event. all other times the player comes here, he will get the default event
-   */
   @Override
-  protected Event<?> getDefaultEvent() {
-    return new PeninsulaIsthmusEntry();
+  protected ImgChange updateImageArea() {
+    return ImgChange.setBGAndFG(PeninsulaIsthmus.PENINSULA_ISTHMUS);
+  }
+  
+  @Override
+  protected void doEvent() {
+    /*
+     * set "HAS_BEEN_HERE_BEFORE" flag to true;
+     */
+    set(PeninsulaIsthmusBool.HAS_NOT_BEEN_HERE_BEFORE, false);
+    
+    setText(Text.DESCRIPTION);
+    
+    addOption(Key.OPTION_WEST, Text.OPTION_SEARCH_FOR_A_WAY, new TextOnlyEvent(Key.OPTION_WEST, Text.SEARCH_FOR_A_WAY,
+            new MapToPeninsulaIsthmus()));
+    addOption(Key.OPTION_LEAVE, CommonText.OPTION_LEAVE_AREA, new TextOnlyEvent(Key.OPTION_LEAVE, Text.LEAVE_THE_AREA,
+        new Map(Location.PENINSULA_ISTHMUS)));
   }
 }

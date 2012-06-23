@@ -5,18 +5,18 @@ import static org.lehirti.engine.state.State.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.lehirti.engine.events.AbstractEvent;
 import org.lehirti.engine.events.Event;
-import org.lehirti.engine.events.Location;
-import org.lehirti.engine.events.LocationHook;
+import org.lehirti.engine.events.EventHook;
 
-public final class ArriveFirstTimeHook implements LocationHook {
+public final class ArriveFirstTimeHook implements EventHook {
   static {
     /**
      * LocationHooks get registered with Locations like this; we tell the game that when the player enters the location
      * "MapToCliffWest" it should ask the location hook "MeetJordanForTheFirstTimeHook" - this class - if there are
      * events available for the player to encounter
      */
-    Location.registerDispatcher(MapToPeninsulaIsthmus.class, new ArriveFirstTimeHook());
+    AbstractEvent.registerHook(MapToPeninsulaIsthmus.class, new ArriveFirstTimeHook());
   }
   
   /**
@@ -24,7 +24,7 @@ public final class ArriveFirstTimeHook implements LocationHook {
    * return all available events, together with the probability of the event happening
    */
   @Override
-  public Map<Event<?>, Double> getCurrentEvents() {
+  public Map<Event<?>, Double> getCurrentEvents(Event<?> previousEvent) {
     // we start out with an empty map, meaning no events from this hook
     final Map<Event<?>, Double> events = new HashMap<Event<?>, Double>();
     

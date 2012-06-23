@@ -5,16 +5,16 @@ import java.util.Map;
 
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.Location;
-import org.lehirti.engine.events.LocationHook;
+import org.lehirti.engine.events.EventHook;
 import org.lehirti.engine.state.State;
 
-public class MarketEvents implements LocationHook {
+public class MarketEvents implements EventHook {
   static {
     Location.registerDispatcher(Market.class, new MarketEvents());
   }
   
   @Override
-  public Map<Event<?>, Double> getCurrentEvents() {
+  public Map<Event<?>, Double> getCurrentEvents(Event<?> previousEvent) {
     final Map<Event<?>, Double> events = new HashMap<Event<?>, Double>();
     if (State.is(Bool.YOU_ARE_HORNY)) {
       if (!State.is(Bool.MARKET_SELLER_FUCKED)) {

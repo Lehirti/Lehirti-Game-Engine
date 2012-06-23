@@ -107,6 +107,6 @@ public class Plane2_Fuselage extends EventNode<NullState> {
     addOption(Key.OPTION_V, Text.OPTION_GO_TO_COCKPIT, new Plane2_Cockpit());
     
     addOption(Key.OPTION_LEAVE, Text.OPTION_LEAVE_PLANE, new TextOnlyEvent(Key.OPTION_LEAVE, Text.LEAVE_PLANE,
-        new Outside2()));
+        new MapToCrashSite()));
   }
 }

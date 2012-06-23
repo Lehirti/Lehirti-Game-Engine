@@ -31,9 +31,12 @@ public interface Event<STATE extends Enum<?>> {
   /**
    * when adding an event as an option not the event itself, but event.getActualEvent() will be scheduled.
    * 
+   * @param previousEvent
+   *          the event that is adding the option
+   * 
    * @return this, if there are no EventHooks for this event which inject another event instead
    */
-  public Event<?> getActualEvent();
+  public Event<?> getActualEvent(Event<?> previousEvent);
   
   public STATE getEventState();
   

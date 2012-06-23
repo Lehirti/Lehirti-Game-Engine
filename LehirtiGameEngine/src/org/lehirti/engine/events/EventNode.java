@@ -150,7 +150,7 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
   }
   
   private void addOption(final TextKey text, final Key key, final Event<?> event) {
-    this.registeredEvents.put(key, event.getActualEvent());
+    this.registeredEvents.put(key, event.getActualEvent(this));
     setOption(text, key);
   }
   

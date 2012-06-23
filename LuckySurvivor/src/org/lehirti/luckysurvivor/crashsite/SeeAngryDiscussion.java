@@ -23,6 +23,6 @@ public class SeeAngryDiscussion extends EventNode<NullState> {
 	  
 	 setText(Text.TEXT_ANGRY_DISCUSSION);
      
-	 addOption(Key.OPTION_LEAVE, CommonText.OPTION_NEXT, new Outside2());
+	 addOption(Key.OPTION_LEAVE, CommonText.OPTION_NEXT, new MapToCrashSite());
   }
 }

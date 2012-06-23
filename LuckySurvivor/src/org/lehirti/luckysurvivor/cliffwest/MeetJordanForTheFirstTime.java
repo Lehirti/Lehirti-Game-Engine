@@ -23,6 +23,6 @@ public class MeetJordanForTheFirstTime extends EventNode<NullState> {
     
     setText(Text.TEXT_TALK_TO_JORDAN_FOR_THE_FIRST_TIME);
     
-    addOption(Key.OPTION_LEAVE, CommonText.OPTION_NEXT, new CliffWestEntry());
+    addOption(Key.OPTION_LEAVE, CommonText.OPTION_NEXT, new MapToCliffWest());
   }
 }

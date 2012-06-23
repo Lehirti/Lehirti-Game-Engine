@@ -20,6 +20,6 @@ public class Outside1_MorningAfterCrash extends EventNode<NullState> {
   @Override
   protected void doEvent() {
     setText(Text.DESCRIPTION);
-    addOption(Key.OPTION_ENTER, Text.OPTION_GET_UP, new Outside2());
+    addOption(Key.OPTION_ENTER, Text.OPTION_GET_UP, new MapToCrashSite());
   }
 }

@@ -5,19 +5,19 @@ import java.util.Map;
 
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.Location;
-import org.lehirti.engine.events.LocationHook;
+import org.lehirti.engine.events.EventHook;
 import org.lehirti.engine.events.StandardEvent;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.state.State;
 import org.lehirti.mindcraft.C;
 
-public class BathhouseEvents implements LocationHook {
+public class BathhouseEvents implements EventHook {
   static {
     Location.registerDispatcher(Bathhouse.class, new BathhouseEvents());
   }
   
   @Override
-  public Map<Event<?>, Double> getCurrentEvents() {
+  public Map<Event<?>, Double> getCurrentEvents(Event<?> previousEvent) {
     final Map<Event<?>, Double> events = new HashMap<Event<?>, Double>();
     if (State.is(Bool.GOT_BLOWJOB_IN_BATHHOUSE)) {
       events.put(new StandardEvent(Key.OPTION_ENTER, Intro.THREE_GIRLS_IN_BATHHOUSE, Intro.THREE_GIRLS_IN_BATHHOUSE,

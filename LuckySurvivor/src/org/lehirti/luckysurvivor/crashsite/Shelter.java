@@ -38,6 +38,6 @@ public class Shelter extends EventNode<NullState> {
     addOption(Key.OPTION_EAST, Text.OPTION_EXAMINE_OTHER_SURVIVORS, new TextOnlyEvent(Key.OPTION_EAST,
         Text.EXAMINE_OTHER_SURVIVORS, new Shelter()));
     
-    addOption(Key.OPTION_LEAVE, Text.OPTION_GO_OUTSIDE, new Outside2());
+    addOption(Key.OPTION_LEAVE, Text.OPTION_GO_OUTSIDE, new MapToCrashSite());
   }
 }

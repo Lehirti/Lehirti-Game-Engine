@@ -23,6 +23,6 @@ public class ArriveFirstTime extends EventNode<NullState> {
     
     setText(Text.TEXT_ARRIVE_FIRST_TIME);
     
-    addOption(Key.OPTION_LEAVE, CommonText.OPTION_NEXT, new PeninsulaIsthmusEntry());
+    addOption(Key.OPTION_LEAVE, CommonText.OPTION_NEXT, new MapToPeninsulaIsthmus());
   }
 }

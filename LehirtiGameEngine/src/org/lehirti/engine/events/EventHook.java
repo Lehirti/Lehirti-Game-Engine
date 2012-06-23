@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.lehirti.engine.state.StaticInitializer;
 
-public interface LocationHook extends StaticInitializer {
+public interface EventHook extends StaticInitializer {
   /**
    * should only be used for one-off events since an event with probability PROBABILITY_ALWAYS will prevent regular
    * events from occurring
@@ -17,6 +17,8 @@ public interface LocationHook extends StaticInitializer {
   public static final Double PROBABILITY_DEFAULT = Double.valueOf(-1.0);
   
   /**
+   * @param previousEvent
+   *          the event from which the player is coming to the hooked event
    * @return all events that may happen right now at this location with the probability (in percent) of them happening.<br/>
    *         events with probability PROBABILITY_ALWAYS and PROBABILITY_DEFAULT are special.<br/>
    *         if events with probability PROBABILITY_ALWAYS are present, one of them is chosen randomly and regular
@@ -27,5 +29,5 @@ public interface LocationHook extends StaticInitializer {
    *         if the sum of the probabilities of all non-special events is greater than 100, all probabilities are scaled
    *         back proportionately.
    */
-  public abstract Map<Event<?>, Double> getCurrentEvents();
+  public abstract Map<Event<?>, Double> getCurrentEvents(Event<?> previousEvent);
 }

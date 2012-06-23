@@ -26,6 +26,6 @@ public class BuryTheDead extends EventNode<NullState> {
       setText(Text.BURY_WITHOUT_SHOVEL);
     }
     
-    addOption(Key.OPTION_EAST, CommonText.OPTION_NEXT, new Outside2());
+    addOption(Key.OPTION_EAST, CommonText.OPTION_NEXT, new MapToCrashSite());
   }
 }
