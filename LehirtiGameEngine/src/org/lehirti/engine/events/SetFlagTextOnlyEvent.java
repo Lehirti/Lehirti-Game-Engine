@@ -15,18 +15,20 @@ import org.lehirti.engine.state.BoolState;
 public class SetFlagTextOnlyEvent extends EventNode<NullState> implements Externalizable {
   
   private BoolState flag;
+  private Key key;
   private TextKey text;
   private Event<?> nextEvent;
   
   // for saving/loading
   public SetFlagTextOnlyEvent() {
-    this(null, null, null);
+    this(null, null, null, null);
   }
   
   @Override
   public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
     super.readExternal(in);
     this.flag = (BoolState) in.readObject();
+    this.key = (Key) in.readObject();
     this.text = (TextKey) in.readObject();
     this.nextEvent = (Event<?>) in.readObject();
   }
@@ -35,12 +37,14 @@ public class SetFlagTextOnlyEvent extends EventNode<NullState> implements Extern
   public void writeExternal(final ObjectOutput out) throws IOException {
     super.writeExternal(out);
     out.writeObject(this.flag);
+    out.writeObject(this.key);
     out.writeObject(this.text);
     out.writeObject(this.nextEvent);
   }
   
-  public SetFlagTextOnlyEvent(final BoolState flag, final TextKey text, final Event<?> nextEvent) {
+  public SetFlagTextOnlyEvent(final BoolState flag, final Key key, final TextKey text, final Event<?> nextEvent) {
     this.flag = flag;
+    this.key = key;
     this.text = text;
     this.nextEvent = nextEvent;
   }
@@ -55,6 +59,6 @@ public class SetFlagTextOnlyEvent extends EventNode<NullState> implements Extern
     set(this.flag, true);
     setText(this.text);
     
-    addOption(Key.OPTION_ENTER, CommonText.OPTION_NEXT, this.nextEvent);
+    addOption(this.key, CommonText.OPTION_NEXT, this.nextEvent);
   }
 }

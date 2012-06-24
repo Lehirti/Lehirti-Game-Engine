@@ -42,7 +42,7 @@ public class MapToLookoutHill extends EventNode<NullState> {
           Text.DRING_FROM_SPRING, new MapToLookoutHill()));
     } else {
       addOption(Key.OPTION_NORTH, Text.OPTION_SEARCH_FOR_WATER, new SetFlagTextOnlyEvent(Bool.HAS_FOUND_SPRING,
-          Text.SEARCH_FOR_WATER, new MapToLookoutHill()));
+          Key.OPTION_ENTER, Text.SEARCH_FOR_WATER, new MapToLookoutHill()));
     }
     addOption(Key.OPTION_SOUTH, Text.OPTION_SEARCH_SOMETHING_TO_EAT, new TextOnlyEvent(Key.OPTION_SOUTH,
         Text.SEARCH_SOMETHING_TO_EAT, new MapToLookoutHill()));

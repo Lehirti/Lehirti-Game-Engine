@@ -58,7 +58,7 @@ public class Plane1_Fuselage extends EventNode<NullState> {
     
     if (is(Bool.HAS_LOOKED_FOR_SURVIVORS)) {
       addOption(Key.OPTION_EAST, Text.OPTION_HELP_FELLOW_SURVIVORS_OUT_OF_PLANE, new SetFlagTextOnlyEvent(
-          Bool.HAS_HELPED_OTHERS_OUT_OF_PLANE, Text.HELP_FELLOW_SURVIVORS_OUT_OF_PLANE, new Plane1_Fuselage()));
+          Bool.HAS_HELPED_OTHERS_OUT_OF_PLANE, Key.OPTION_ENTER, Text.HELP_FELLOW_SURVIVORS_OUT_OF_PLANE, new Plane1_Fuselage()));
     }
     
     addOption(Key.OPTION_LEAVE, Text.OPTION_LEAVE_PLANE, new TextOnlyEvent(Key.OPTION_LEAVE, Text.LEAVE_PLANE,

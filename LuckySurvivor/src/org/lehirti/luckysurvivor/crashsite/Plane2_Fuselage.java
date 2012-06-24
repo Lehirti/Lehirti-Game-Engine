@@ -69,7 +69,7 @@ public class Plane2_Fuselage extends EventNode<NullState> {
       }
     } else {
       addOption(Key.OPTION_NORTH, Text.OPTION_LOOK_FOR_OTHER_SURVIVORS, new SetFlagTextOnlyEvent(
-          Bool.HAS_LOOKED_FOR_SURVIVORS, Text.LOOK_FOR_OTHER_SURVIVORS, new Plane2_Fuselage()));
+          Bool.HAS_LOOKED_FOR_SURVIVORS, Key.OPTION_ENTER, Text.LOOK_FOR_OTHER_SURVIVORS, new Plane2_Fuselage()));
     }
     
     if (!is(org.lehirti.luckysurvivor.crashsite.CrashSiteBool.DEAD_BODIES_REMOVED_FROM_PLANE)) {
@@ -86,22 +86,22 @@ public class Plane2_Fuselage extends EventNode<NullState> {
       if (is(Bool.RUBBLE_CLEARED) && is(Bool.HULL_SEALED)
           && is(org.lehirti.luckysurvivor.crashsite.CrashSiteBool.DEAD_BODIES_REMOVED_FROM_PLANE)) {
         addOption(Key.OPTION_A, Text.OPTION_USE_FUSELAGE_AS_SHELTER, new SetFlagTextOnlyEvent(
-            org.lehirti.luckysurvivor.crashsite.CrashSiteBool.SHELTER_HAS_BEEN_BUILT, Text.USE_FUSELAGE_AS_SHELTER,
-            new Shelter()));
+            org.lehirti.luckysurvivor.crashsite.CrashSiteBool.SHELTER_HAS_BEEN_BUILT, Key.OPTION_ENTER,
+            Text.USE_FUSELAGE_AS_SHELTER, new Shelter()));
       } else {
         if (!is(Bool.RUBBLE_CLEARED)) {
           addOption(Key.OPTION_A, Text.OPTION_CLEAR_RUBBLE, new SetFlagTextOnlyEvent(Bool.RUBBLE_CLEARED,
-              Text.CLEAR_RUBBLE, new Plane2_Fuselage()));
+              Key.OPTION_ENTER, Text.CLEAR_RUBBLE, new Plane2_Fuselage()));
         }
         if (!is(Bool.HULL_SEALED)) {
-          addOption(Key.OPTION_X, Text.OPTION_SEAL_HULL, new SetFlagTextOnlyEvent(Bool.HULL_SEALED, Text.SEAL_HULL,
-              new Plane2_Fuselage()));
+          addOption(Key.OPTION_X, Text.OPTION_SEAL_HULL, new SetFlagTextOnlyEvent(Bool.HULL_SEALED, Key.OPTION_ENTER,
+              Text.SEAL_HULL, new Plane2_Fuselage()));
         }
       }
       
     } else {
       addOption(Key.OPTION_A, Text.OPTION_EXAMINE_FUSELAGE, new SetFlagTextOnlyEvent(Bool.FUSELAGE_EXAMINED,
-          Text.EXAMINE_FUSELAGE, new Plane2_Fuselage()));
+          Key.OPTION_ENTER, Text.EXAMINE_FUSELAGE, new Plane2_Fuselage()));
     }
     
     addOption(Key.OPTION_V, Text.OPTION_GO_TO_COCKPIT, new Plane2_Cockpit());

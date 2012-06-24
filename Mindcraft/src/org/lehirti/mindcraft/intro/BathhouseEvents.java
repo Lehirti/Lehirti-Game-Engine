@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.lehirti.engine.events.AbstractEvent;
 import org.lehirti.engine.events.Event;
-import org.lehirti.engine.events.EventHook;
 import org.lehirti.engine.events.StandardEvent;
+import org.lehirti.engine.events.hooks.EventHook;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.state.State;
 import org.lehirti.mindcraft.C;

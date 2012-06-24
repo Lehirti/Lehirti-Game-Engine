@@ -1,7 +1,8 @@
-package org.lehirti.engine.events;
+package org.lehirti.engine.events.hooks;
 
 import java.util.Map;
 
+import org.lehirti.engine.events.Event;
 import org.lehirti.engine.state.StaticInitializer;
 
 public interface EventHook extends StaticInitializer {

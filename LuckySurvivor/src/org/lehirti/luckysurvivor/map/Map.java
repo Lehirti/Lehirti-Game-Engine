@@ -14,10 +14,12 @@ import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.StaticEventFactory;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
+import org.lehirti.engine.res.TextAndImageKeyWithFlag;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
+import org.lehirti.engine.state.State;
 import org.lehirti.luckysurvivor.cliffnorth.MapToCliffNorth;
 import org.lehirti.luckysurvivor.cliffsouth.MapToCliffSouth;
 import org.lehirti.luckysurvivor.cliffwest.MapToCliffWest;
@@ -84,7 +86,11 @@ public class Map extends EventNode<NullState> {
   }
   
   // TODO travel time/fatigue
-  public static enum Path implements TextKey, ImageKey {
+  /**
+   * the flag/BoolState of each path indicates whether to path is available. so the Map$Path.properties file indicates
+   * the initial availability of paths
+   */
+  public static enum Path implements TextAndImageKeyWithFlag {
     CLIFF_WEST___CRASH_SITE(CLIFF_WEST, OPTION_EAST, CLIFF_WEST_2_CRASH_SITE, OPTION_WEST, CRASH_SITE_2_CLIFF_WEST, CRASH_SITE),
     JUNGLE_1_UPHILL___CRASH_SITE(JUNGLE_1_UPHILL, OPTION_SOUTH, JUNGLE_1_UPHILL_2_CRASH_SITE, OPTION_NORTH, CRASH_SITE_2_JUNGLE_1_UPHILL, CRASH_SITE),
     CRASH_SITE___LOOKOUT_HILL(CRASH_SITE, OPTION_SOUTH, CRASH_SITE_2_LOOKOUT_HILL, OPTION_NORTH, LOOKOUT_HILL_2_CRASH_SITE, LOOKOUT_HILL),
@@ -94,7 +100,7 @@ public class Map extends EventNode<NullState> {
     JUNGLE_2_UPHILL___PENINSULA_BASIN_JUNGLE(JUNGLE_2_UPHILL, OPTION_EAST, JUNGLE_2_UPHILL_2_PENINSULA_BASIN_JUNGLE, OPTION_WEST, PENINSULA_BASIN_JUNGLE_2_JUNGLE_2_UPHILL, PENINSULA_BASIN_JUNGLE),
     JUNGLE_1_UPHILL___PENINSULA_BASIN_JUNGLE(JUNGLE_1_UPHILL, OPTION_EAST, JUNGLE_1_UPHILL_2_PENINSULA_BASIN_JUNGLE, OPTION_NORTH, PENINSULA_BASIN_JUNGLE_2_JUNGLE_1_UPHILL, PENINSULA_BASIN_JUNGLE),
     LOOKOUT_HILL___PENINSULA_BASIN_JUNGLE(LOOKOUT_HILL, OPTION_EAST, LOOKOUT_HILL_2_PENINSULA_BASIN_JUNGLE, OPTION_SOUTH, PENINSULA_BASIN_JUNGLE_2_LOOKOUT_HILL, PENINSULA_BASIN_JUNGLE),
-    PENINSULA_BASIN_JUNGLE___PENINSULA_ISTHMUS(PENINSULA_BASIN_JUNGLE, OPTION_EAST, PENINSULA_BASIN_JUNGLE_2_PENINSULA_ISTHMUS, OPTION_WEST, PENINSULA_ISTHMUS_2_PENINSULA_BASIN_JUNGLE, PENINSULA_ISTHMUS),;
+    PENINSULA_BASIN_JUNGLE___PENINSULA_ISTHMUS(PENINSULA_BASIN_JUNGLE, OPTION_EAST, PENINSULA_BASIN_JUNGLE_2_PENINSULA_ISTHMUS, OPTION_WEST, PENINSULA_ISTHMUS_2_PENINSULA_BASIN_JUNGLE, PENINSULA_ISTHMUS), ;
     
     public final Location loc1;
     public final Location loc2;
@@ -163,11 +169,13 @@ public class Map extends EventNode<NullState> {
       setText(this.currentLocation);
       
       for (final Path path : Path.values()) {
-        if (path.loc1 == this.currentLocation) {
-          addOption(path.loc1toloc2, path.loc1toloc2Description, new Map(path, path.loc2));
-        }
-        if (path.loc2 == this.currentLocation) {
-          addOption(path.loc2toloc1, path.loc2toloc1Description, new Map(path, path.loc1));
+        if (State.is(path)) {
+          if (path.loc1 == this.currentLocation) {
+            addOption(path.loc1toloc2, path.loc1toloc2Description, new Map(path, path.loc2));
+          }
+          if (path.loc2 == this.currentLocation) {
+            addOption(path.loc2toloc1, path.loc2toloc1Description, new Map(path, path.loc1));
+          }
         }
       }
       

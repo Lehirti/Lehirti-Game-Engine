@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.lehirti.engine.events.AbstractEvent;
 import org.lehirti.engine.events.Event;
-import org.lehirti.engine.events.EventHook;
+import org.lehirti.engine.events.hooks.EventHook;
 import org.lehirti.engine.state.DateTime;
 import org.lehirti.engine.state.State;
 

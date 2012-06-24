@@ -42,7 +42,7 @@ public class MapToJungle1Uphill extends EventNode<NullState> {
           new MapToJungle1Uphill()));
     } else {
       addOption(Key.OPTION_NORTH, Text.OPTION_EXAMINE_THE_GROUND, new SetFlagTextOnlyEvent(Bool.HAS_EXAMINED_GROUND,
-          Text.EXAMINE_THE_GROUND, new MapToJungle1Uphill()));
+          Key.OPTION_ENTER, Text.EXAMINE_THE_GROUND, new MapToJungle1Uphill()));
     }
     
     addOption(Key.OPTION_SOUTH, Text.OPTION_SEARCH_FOR_SOMETHING_TO_EAT, new TextOnlyEvent(Key.OPTION_SOUTH,

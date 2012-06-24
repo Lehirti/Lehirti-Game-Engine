@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.lehirti.engine.Main;
+import org.lehirti.engine.events.hooks.EventHook;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.state.State;
@@ -25,13 +26,13 @@ public abstract class AbstractEvent<STATE extends Enum<?>> implements Event<STAT
   private static final Map<Class<? extends Event<?>>, Set<EventHook>> EVENT_DISPATCHERS = new HashMap<Class<? extends Event<?>>, Set<EventHook>>();
   
   public static synchronized void registerHook(final Class<? extends Event<?>> event,
-      final EventHook dispatcher) {
+      final EventHook eventHook) {
     Set<EventHook> dispatchers = EVENT_DISPATCHERS.get(event);
     if (dispatchers == null) {
       dispatchers = new HashSet<EventHook>();
       EVENT_DISPATCHERS.put(event, dispatchers);
     }
-    dispatchers.add(dispatcher);
+    dispatchers.add(eventHook);
   }
   
   private boolean repaintNeeded = false;

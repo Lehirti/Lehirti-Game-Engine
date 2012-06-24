@@ -108,8 +108,9 @@ public class OptionArea extends JComponent implements Externalizable {
         g.setFont(newFont);
         for (int j = 0; j < lines.size(); j++) {
           final int stringWidth = metrics.stringWidth(lines.get(j));
-          final int padspace = (optionField.width - stringWidth) / 2;
-          g.drawString(lines.get(j), xOffset + padspace, yOffset + ((j + 1) * metrics.getHeight()) - 1);
+          final int xPad = (optionField.width - stringWidth) / 2;
+          final int yPad = (optionField.height - lines.size() * metrics.getHeight()) / 4;
+          g.drawString(lines.get(j), xOffset + xPad, yOffset + yPad + ((j + 1) * metrics.getHeight()));
         }
         return;
       }
