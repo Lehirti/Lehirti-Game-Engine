@@ -20,15 +20,23 @@ import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.state.State;
+import org.lehirti.luckysurvivor.cliffmeadowedgewest.MapToCliffMeadowEdgeWest;
 import org.lehirti.luckysurvivor.cliffnorth.MapToCliffNorth;
 import org.lehirti.luckysurvivor.cliffsouth.MapToCliffSouth;
 import org.lehirti.luckysurvivor.cliffwest.MapToCliffWest;
 import org.lehirti.luckysurvivor.crashsite.MapToCrashSite;
+import org.lehirti.luckysurvivor.creekundercliff.MapToCreekUnderCliff;
+import org.lehirti.luckysurvivor.crevicewithcreek.MapToCreviceWithCreek;
+import org.lehirti.luckysurvivor.drycreek.MapToDryCreek;
+import org.lehirti.luckysurvivor.holeintheground.MapToHoleInTheGround;
+import org.lehirti.luckysurvivor.islandentry.MapToIslandEntry;
 import org.lehirti.luckysurvivor.jungle1uphill.MapToJungle1Uphill;
 import org.lehirti.luckysurvivor.jungle2uphill.MapToJungle2Uphill;
 import org.lehirti.luckysurvivor.lookouthill.MapToLookoutHill;
 import org.lehirti.luckysurvivor.peninsulabasinjungle.MapToPeninsulaBasinJungle;
 import org.lehirti.luckysurvivor.peninsulaisthmus.MapToPeninsulaIsthmus;
+import org.lehirti.luckysurvivor.pondoverhang.MapToPondOverhang;
+import org.lehirti.luckysurvivor.ridge.MapToRidge;
 
 public class Map extends EventNode<NullState> {
   public static enum Location implements TextKey, ImageKey {
@@ -40,7 +48,15 @@ public class Map extends EventNode<NullState> {
     CLIFF_SOUTH(new StaticEventFactory(MapToCliffSouth.class)),
     JUNGLE_2_UPHILL(new StaticEventFactory(MapToJungle2Uphill.class)),
     PENINSULA_BASIN_JUNGLE(new StaticEventFactory(MapToPeninsulaBasinJungle.class)),
-    PENINSULA_ISTHMUS(new StaticEventFactory(MapToPeninsulaIsthmus.class));
+    PENINSULA_ISTHMUS(new StaticEventFactory(MapToPeninsulaIsthmus.class)),
+    ISLAND_ENTRY(new StaticEventFactory(MapToIslandEntry.class)),
+    RIDGE(new StaticEventFactory(MapToRidge.class)),
+    CREVICE_WITH_CREEK(new StaticEventFactory(MapToCreviceWithCreek.class)),
+    CREEK_UNDER_CLIFF(new StaticEventFactory(MapToCreekUnderCliff.class)),
+    POND_OVERHANG(new StaticEventFactory(MapToPondOverhang.class)),
+    DRY_CREEK(new StaticEventFactory(MapToDryCreek.class)),
+    CLIFF_MEADOW_EDGE_WEST(new StaticEventFactory(MapToCliffMeadowEdgeWest.class)),
+    HOLE_IN_THE_GROUND(new StaticEventFactory(MapToHoleInTheGround.class));
     
     private final EventFactory locationEventFactory;
     
@@ -83,6 +99,30 @@ public class Map extends EventNode<NullState> {
     
     PENINSULA_BASIN_JUNGLE_2_PENINSULA_ISTHMUS,
     PENINSULA_ISTHMUS_2_PENINSULA_BASIN_JUNGLE,
+    
+    PENINSULA_ISTHMUS_2_ISLAND_ENTRY,
+    ISLAND_ENTRY_2_PENINSULA_ISTHMUS,
+    
+    ISLAND_ENTRY_2_RIDGE,
+    RIDGE_2_ISLAND_ENTRY,
+    
+    RIDGE_2_CREVICE_WITH_CREEK,
+    CREVICE_WITH_CREEK_2_RIDGE,
+    
+    CREVICE_WITH_CREEK_2_CREEK_UNDER_CLIFF,
+    CREEK_UNDER_CLIFF_2_CREVICE_WITH_CREEK,
+    
+    CREEK_UNDER_CLIFF_2_POND_OVERHANG,
+    POND_OVERHANG_2_CREEK_UNDER_CLIFF,
+    
+    POND_OVERHANG_2_DRY_CREEK,
+    DRY_CREEK_2_POND_OVERHANG,
+    
+    DRY_CREEK_2_CLIFF_MEADOW_EDGE_WEST,
+    CLIFF_MEADOW_EDGE_WEST_2_DRY_CREEK,
+    
+    CLIFF_MEADOW_EDGE_WEST_2_HOLE_IN_THE_GROUND,
+    HOLE_IN_THE_GROUND_2_CLIFF_MEADOW_EDGE_WEST,
   }
   
   // TODO travel time/fatigue
@@ -100,7 +140,15 @@ public class Map extends EventNode<NullState> {
     JUNGLE_2_UPHILL___PENINSULA_BASIN_JUNGLE(JUNGLE_2_UPHILL, OPTION_EAST, JUNGLE_2_UPHILL_2_PENINSULA_BASIN_JUNGLE, OPTION_WEST, PENINSULA_BASIN_JUNGLE_2_JUNGLE_2_UPHILL, PENINSULA_BASIN_JUNGLE),
     JUNGLE_1_UPHILL___PENINSULA_BASIN_JUNGLE(JUNGLE_1_UPHILL, OPTION_EAST, JUNGLE_1_UPHILL_2_PENINSULA_BASIN_JUNGLE, OPTION_NORTH, PENINSULA_BASIN_JUNGLE_2_JUNGLE_1_UPHILL, PENINSULA_BASIN_JUNGLE),
     LOOKOUT_HILL___PENINSULA_BASIN_JUNGLE(LOOKOUT_HILL, OPTION_EAST, LOOKOUT_HILL_2_PENINSULA_BASIN_JUNGLE, OPTION_SOUTH, PENINSULA_BASIN_JUNGLE_2_LOOKOUT_HILL, PENINSULA_BASIN_JUNGLE),
-    PENINSULA_BASIN_JUNGLE___PENINSULA_ISTHMUS(PENINSULA_BASIN_JUNGLE, OPTION_EAST, PENINSULA_BASIN_JUNGLE_2_PENINSULA_ISTHMUS, OPTION_WEST, PENINSULA_ISTHMUS_2_PENINSULA_BASIN_JUNGLE, PENINSULA_ISTHMUS), ;
+    PENINSULA_BASIN_JUNGLE___PENINSULA_ISTHMUS(PENINSULA_BASIN_JUNGLE, OPTION_EAST, PENINSULA_BASIN_JUNGLE_2_PENINSULA_ISTHMUS, OPTION_WEST, PENINSULA_ISTHMUS_2_PENINSULA_BASIN_JUNGLE, PENINSULA_ISTHMUS),
+    PENINSULA_ISTHMUS___ISLAND_ENTRY(PENINSULA_ISTHMUS, OPTION_EAST, PENINSULA_ISTHMUS_2_ISLAND_ENTRY, OPTION_WEST, ISLAND_ENTRY_2_PENINSULA_ISTHMUS, ISLAND_ENTRY),
+    ISLAND_ENTRY___RIDGE(ISLAND_ENTRY, OPTION_EAST, ISLAND_ENTRY_2_RIDGE, OPTION_WEST, RIDGE_2_ISLAND_ENTRY, RIDGE),
+    RIDGE___CREVICE_WITH_CREEK(RIDGE, OPTION_NORTH, RIDGE_2_CREVICE_WITH_CREEK, OPTION_SOUTH, CREVICE_WITH_CREEK_2_RIDGE, CREVICE_WITH_CREEK),
+    CREVICE_WITH_CREEK___CREEK_UNDER_CLIFF(CREVICE_WITH_CREEK, OPTION_EAST, CREVICE_WITH_CREEK_2_CREEK_UNDER_CLIFF, OPTION_WEST, CREEK_UNDER_CLIFF_2_CREVICE_WITH_CREEK, CREEK_UNDER_CLIFF),
+    CREEK_UNDER_CLIFF___POND_OVERHANG(CREEK_UNDER_CLIFF, OPTION_EAST, CREEK_UNDER_CLIFF_2_POND_OVERHANG, OPTION_WEST, POND_OVERHANG_2_CREEK_UNDER_CLIFF, POND_OVERHANG),
+    POND_OVERHANG___DRY_CREEK(POND_OVERHANG, OPTION_EAST, POND_OVERHANG_2_DRY_CREEK, OPTION_WEST, DRY_CREEK_2_POND_OVERHANG, DRY_CREEK),
+    DRY_CREEK___CLIFF_MEADOW_EDGE_WEST(DRY_CREEK, OPTION_EAST, DRY_CREEK_2_CLIFF_MEADOW_EDGE_WEST, OPTION_WEST, CLIFF_MEADOW_EDGE_WEST_2_DRY_CREEK, CLIFF_MEADOW_EDGE_WEST),
+    CLIFF_MEADOW_EDGE_WEST___HOLE_IN_THE_GROUND(CLIFF_MEADOW_EDGE_WEST, OPTION_NORTH, CLIFF_MEADOW_EDGE_WEST_2_HOLE_IN_THE_GROUND, OPTION_SOUTH, HOLE_IN_THE_GROUND_2_CLIFF_MEADOW_EDGE_WEST, HOLE_IN_THE_GROUND), ;
     
     public final Location loc1;
     public final Location loc2;
