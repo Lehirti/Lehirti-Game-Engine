@@ -54,7 +54,6 @@ public class MapToPeninsulaIsthmus extends EventNode<NullState> {
           new MapToPeninsulaIsthmus()));
     } else {
       // once the tree is felled, go east
-      // TODO replace MapToCrashSite with new eastern event
       addOption(Key.OPTION_EAST, Text.OPTION_GO_EAST, new MapToIslandEntry());
     }
     
