@@ -19,7 +19,7 @@ public class Main extends org.lehirti.engine.Main {
    * @throws InterruptedException
    */
   public static void main(final String[] args) throws InterruptedException, InvocationTargetException {
-    org.lehirti.engine.Main.currentEvent = new Night1();
+    setCurrentEvent(new Night1());
     
     new Main().engineMain(args);
   }

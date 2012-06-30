@@ -4,18 +4,18 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.Stack;
 import java.util.TreeMap;
 
-import org.lehirti.engine.Main;
 import org.lehirti.engine.res.ResourceCache;
-import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
-import org.lehirti.engine.res.text.TextWrapper;
 
 public class InventoryMap<K extends AbstractState, V> extends LinkedHashMap<K, V> {
   private static final long serialVersionUID = 1L;
   
   private static final Map<Inventory, Object> INVENTORY = new HashMap<Inventory, Object>();
+  
+  private static Stack<Inventory> LAST_SELECTED_ITEMS = new Stack<Inventory>();
   
   @Override
   public V put(final K key, final V value) {
@@ -25,27 +25,32 @@ public class InventoryMap<K extends AbstractState, V> extends LinkedHashMap<K, V
         final Boolean boolValue = (Boolean) value;
         if (boolValue.booleanValue()) {
           INVENTORY.put(invKey, boolValue);
+          LAST_SELECTED_ITEMS.push(invKey);
         } else {
           INVENTORY.remove(invKey);
+          LAST_SELECTED_ITEMS.remove(invKey);
         }
       } else if (invKey instanceof IntState) {
         final Long longValue = (Long) value;
         if (longValue.longValue() == 0L) {
           INVENTORY.remove(invKey);
+          LAST_SELECTED_ITEMS.remove(invKey);
         } else {
           INVENTORY.put(invKey, longValue);
+          LAST_SELECTED_ITEMS.push(invKey);
         }
       } else if (invKey instanceof StringState) {
         final String stringValue = (String) value;
         if (stringValue.equals("")) {
           INVENTORY.remove(invKey);
+          LAST_SELECTED_ITEMS.remove(invKey);
         } else {
           INVENTORY.put(invKey, stringValue);
+          LAST_SELECTED_ITEMS.push(invKey);
         }
       } else {
         // TODO
       }
-      updateInventoryScreen();
     }
     return super.put(key, value);
   }
@@ -53,11 +58,22 @@ public class InventoryMap<K extends AbstractState, V> extends LinkedHashMap<K, V
   @Override
   public void clear() {
     INVENTORY.clear();
-    updateInventoryScreen();
     super.clear();
   }
   
-  private void updateInventoryScreen() {
+  public static Inventory getSelectedItem() {
+    if (LAST_SELECTED_ITEMS.isEmpty()) {
+      return null;
+    }
+    return LAST_SELECTED_ITEMS.peek();
+  }
+  
+  public static void setSelectedItem(final Inventory item) {
+    LAST_SELECTED_ITEMS.remove(item);
+    LAST_SELECTED_ITEMS.push(item);
+  }
+  
+  public static SortedMap<String, LinkedHashMap<Inventory, Object>> getSortedInventory() {
     final SortedMap<String, LinkedHashMap<Inventory, Object>> sortedInventory = new TreeMap<String, LinkedHashMap<Inventory, Object>>();
     for (final Map.Entry<Inventory, Object> invEntry : INVENTORY.entrySet()) {
       final String rawValue = ResourceCache.get((TextKey) invEntry.getKey()).getRawValue();
@@ -68,13 +84,6 @@ public class InventoryMap<K extends AbstractState, V> extends LinkedHashMap<K, V
       }
       inventoryPerName.put(invEntry.getKey(), invEntry.getValue());
     }
-    Main.INVENTORY_AREA.setText(ResourceCache.get(CommonText.INVENTORY));
-    for (final LinkedHashMap<Inventory, Object> map : sortedInventory.values()) {
-      for (final Map.Entry<Inventory, Object> entry : map.entrySet()) {
-        final TextWrapper tw = ResourceCache.get((TextKey) entry.getKey());
-        tw.addParameter(entry.getValue().toString());
-        Main.INVENTORY_AREA.addText(tw);
-      }
-    }
+    return sortedInventory;
   }
 }

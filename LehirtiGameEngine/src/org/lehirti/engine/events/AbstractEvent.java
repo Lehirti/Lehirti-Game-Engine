@@ -25,8 +25,7 @@ public abstract class AbstractEvent<STATE extends Enum<?>> implements Event<STAT
   
   private static final Map<Class<? extends Event<?>>, Set<EventHook>> EVENT_DISPATCHERS = new HashMap<Class<? extends Event<?>>, Set<EventHook>>();
   
-  public static synchronized void registerHook(final Class<? extends Event<?>> event,
-      final EventHook eventHook) {
+  public static synchronized void registerHook(final Class<? extends Event<?>> event, final EventHook eventHook) {
     Set<EventHook> dispatchers = EVENT_DISPATCHERS.get(event);
     if (dispatchers == null) {
       dispatchers = new HashSet<EventHook>();
@@ -38,22 +37,22 @@ public abstract class AbstractEvent<STATE extends Enum<?>> implements Event<STAT
   private boolean repaintNeeded = false;
   
   protected void setImage(final ImageKey key) {
-    Main.IMAGE_AREA.setImage(key);
+    Main.getCurrentImageArea().setImage(key);
     this.repaintNeeded = true;
   }
   
   protected void addImage(final ImageKey key) {
-    Main.IMAGE_AREA.addImage(key);
+    Main.getCurrentImageArea().addImage(key);
     this.repaintNeeded = true;
   }
   
   protected void setBackgroundImage(final ImageKey key) {
-    Main.IMAGE_AREA.setBackgroundImage(key);
+    Main.getCurrentImageArea().setBackgroundImage(key);
     this.repaintNeeded = true;
   }
   
   protected void removeImage(final ImageKey imageKey) {
-    Main.IMAGE_AREA.removeImage(imageKey);
+    Main.getCurrentImageArea().removeImage(imageKey);
     this.repaintNeeded = true;
   }
   
@@ -62,7 +61,7 @@ public abstract class AbstractEvent<STATE extends Enum<?>> implements Event<STAT
       try {
         javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
           public void run() {
-            Main.IMAGE_AREA.repaint();
+            Main.getCurrentImageArea().repaint();
           }
         });
       } catch (final InterruptedException e) {
@@ -112,7 +111,7 @@ public abstract class AbstractEvent<STATE extends Enum<?>> implements Event<STAT
   }
   
   @Override
-  public Event<?> getActualEvent(Event<?> previousEvent) {
+  public Event<?> getActualEvent(final Event<?> previousEvent) {
     final Set<EventHook> dispatchersForThisLocation = EVENT_DISPATCHERS.get(this.getClass());
     
     final Map<Event<?>, Double> probablityPerEventMap = new HashMap<Event<?>, Double>();

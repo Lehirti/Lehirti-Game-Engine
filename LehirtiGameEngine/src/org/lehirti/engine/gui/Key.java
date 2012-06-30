@@ -18,9 +18,8 @@ public enum Key {
   OPTION_C('c', 2, 2),
   OPTION_V('v', 3, 2),
   
-  // 
-  SHOW_MAIN('1'),
-  SHOW_INVENTORY('2'),
+  //
+  SHOW_INVENTORY('1'),
   
   CYCLE_TEXT_PAGES(' '),
   

@@ -57,7 +57,7 @@ public class OptionArea extends JComponent implements Externalizable {
     g.setColor(Color.BLACK);
     final Dimension size = getSize();
     final Dimension sizeOfOneOptionField = new Dimension(size.width / this.cols, size.height / this.rows);
-    final Font font = Main.TEXT_AREA.getScaledFont();
+    final Font font = Main.getCurrentTextArea().getScaledFont();
     g.setFont(font);
     final FontMetrics fontMetrics = g.getFontMetrics(font);
     final int fontHeight = fontMetrics.getHeight();

@@ -1,9 +1,7 @@
 package org.lehirti.engine;
 
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,7 +12,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
@@ -23,15 +20,12 @@ import javax.swing.JFrame;
 
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.gui.ImageArea;
-import org.lehirti.engine.gui.ImageEditor;
-import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.gui.OptionArea;
 import org.lehirti.engine.gui.StatsArea;
 import org.lehirti.engine.gui.TextArea;
-import org.lehirti.engine.gui.TextEditor;
 import org.lehirti.engine.res.ResourceCache;
+import org.lehirti.engine.res.images.CommonImage;
 import org.lehirti.engine.res.images.ImageKey;
-import org.lehirti.engine.res.images.ImageWrapper;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.state.BoolState;
 import org.lehirti.engine.state.IntState;
@@ -58,21 +52,29 @@ public abstract class Main {
   private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
   
   public static JFrame MAIN_WINDOW;
+  private static KeyListener KEY_LISTENER = new GameKeyListener();
   
   private static final double SCREEN_X = 64.0;
   private static final double SCREEN_Y = 48.0;
   
   public static TextArea TEXT_AREA;
   public static ImageArea IMAGE_AREA;
-  public static TextArea INVENTORY_AREA;
   public static OptionArea OPTION_AREA;
   public static StatsArea STATS_AREA;
   
-  private static Component currentlyShownInMain;
+  public static TextArea INVENTORY_TEXT_AREA;
+  public static ImageArea INVENTORY_IMAGE_AREA;
+  public static OptionArea INVENTORY_OPTION_AREA;
+  
+  private static volatile ImageArea currentImageArea = null;
+  private static volatile TextArea currentTextArea = null;
+  private static volatile StatsArea currentStatsArea = null;
+  private static volatile OptionArea currentOptionsArea = null;
   
   public static boolean IS_DEVELOPMENT_VERSION = false;
   
-  public static volatile Event<?> currentEvent = null;
+  private static volatile Event<?> currentEvent = null;
+  private static volatile Event<?> currentInventoryEvent = null;
   
   private void createAndShowGUI() {
     
@@ -81,93 +83,21 @@ public abstract class Main {
     MAIN_WINDOW.getContentPane().setLayout(new GridBagLayout());
     
     TEXT_AREA = new TextArea(SCREEN_X, SCREEN_Y, 16.0, 36.0);
-    TEXT_AREA.addKeyListener(new KeyListener() {
-      @Override
-      public void keyPressed(final KeyEvent e) {
-      }
-      
-      @Override
-      public void keyReleased(final KeyEvent e) {
-      }
-      
-      @Override
-      public synchronized void keyTyped(final KeyEvent e) {
-        // note the synchronized: making sure to only process one key event at a time
-        try {
-          final Key key = Key.getByChar(e.getKeyChar());
-          
-          if (key == null) {
-            // key unrelated to the game pressed
-            return;
-          }
-          
-          // let current event handle key event first
-          if (getCurrentEvent() != null) {
-            if (getCurrentEvent().handleKeyEvent(key)) {
-              // current event did use the key, so this key is "used up"
-              return;
-            }
-          }
-          
-          // let the game engine handle key event
-          if (key == Key.CTRL_I) {
-            editImages();
-          } else if (key == Key.CTRL_T) {
-            editTexts();
-          } else if (key == Key.CTRL_S) {
-            saveGame();
-          } else if (key == Key.CTRL_L) {
-            loadGame();
-          } else if (key == Key.SHOW_MAIN) {
-            showInMainWindow(IMAGE_AREA);
-          } else if (key == Key.SHOW_INVENTORY) {
-            showInMainWindow(INVENTORY_AREA);
-          } else if (key == Key.CYCLE_TEXT_PAGES) {
-            TEXT_AREA.cycleToNextPage();
-          } else {
-            // key known to the game, but currently not assigned (e.g. one of the option keys)
-          }
-        } finally {
-          e.consume();
-        }
-        
-      }
-      
-      private void showInMainWindow(final Component component) {
-        MAIN_WINDOW.getContentPane().remove(currentlyShownInMain);
-        currentlyShownInMain = component;
-        
-        final GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        MAIN_WINDOW.getContentPane().add(component, c);
-        MAIN_WINDOW.validate();
-        MAIN_WINDOW.repaint();
-      }
-      
-      private void editImages() {
-        final List<ImageWrapper> allImages = IMAGE_AREA.getAllImages();
-        new ImageEditor(allImages, IMAGE_AREA);
-      }
-      
-      private void editTexts() {
-        if (currentlyShownInMain == INVENTORY_AREA) {
-          new TextEditor(INVENTORY_AREA, new OptionArea(0, 0, 0, 0, 0, 0));
-        } else {
-          new TextEditor(TEXT_AREA, OPTION_AREA);
-        }
-      }
-    });
-    
+    TEXT_AREA.addKeyListener(KEY_LISTENER);
     IMAGE_AREA = new ImageArea(SCREEN_X, SCREEN_Y, 48.0, 36.0);
-    
-    INVENTORY_AREA = new TextArea(SCREEN_X, SCREEN_Y, 48.0, 36.0);
-    
     STATS_AREA = new StatsArea(SCREEN_X, SCREEN_Y, 64.0, 6.0);
-    
     OPTION_AREA = new OptionArea(SCREEN_X, SCREEN_Y, 64.0, 6.0, 4, 3);
+    
+    INVENTORY_TEXT_AREA = new TextArea(SCREEN_X, SCREEN_Y, 16.0, 36.0);
+    INVENTORY_TEXT_AREA.addKeyListener(KEY_LISTENER);
+    INVENTORY_TEXT_AREA.setVisible(false);
+    INVENTORY_IMAGE_AREA = new ImageArea(SCREEN_X, SCREEN_Y, 48.0, 36.0);
+    INVENTORY_IMAGE_AREA.setVisible(false);
+    INVENTORY_OPTION_AREA = new OptionArea(SCREEN_X, SCREEN_Y, 64.0, 6.0, 4, 3);
+    INVENTORY_OPTION_AREA.setVisible(false);
+    
+    INVENTORY_IMAGE_AREA.setBackgroundImage(CommonImage.INVENTORY_BACKGROUND);
+    INVENTORY_TEXT_AREA.setText(ResourceCache.get(CommonText.INVENTORY));
     
     GridBagConstraints c = new GridBagConstraints();
     c.gridx = 0;
@@ -175,7 +105,6 @@ public abstract class Main {
     c.gridwidth = 1;
     c.gridheight = 1;
     MAIN_WINDOW.getContentPane().add(IMAGE_AREA, c);
-    currentlyShownInMain = IMAGE_AREA;
     
     c = new GridBagConstraints();
     c.gridx = 1;
@@ -198,13 +127,40 @@ public abstract class Main {
     c.gridheight = 1;
     MAIN_WINDOW.getContentPane().add(OPTION_AREA, c);
     
-    INVENTORY_AREA.setText(ResourceCache.get(CommonText.INVENTORY));
+    c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 0;
+    c.gridwidth = 1;
+    c.gridheight = 1;
+    MAIN_WINDOW.getContentPane().add(INVENTORY_IMAGE_AREA, c);
+    
+    c = new GridBagConstraints();
+    c.gridx = 1;
+    c.gridy = 0;
+    c.gridwidth = 1;
+    c.gridheight = 1;
+    MAIN_WINDOW.getContentPane().add(INVENTORY_TEXT_AREA, c);
+    
+    c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 2;
+    c.gridwidth = 2;
+    c.gridheight = 1;
+    MAIN_WINDOW.getContentPane().add(INVENTORY_OPTION_AREA, c);
+    
+    setCurrentImageArea(IMAGE_AREA);
+    setCurrentTextArea(TEXT_AREA);
+    setCurrentStatsArea(STATS_AREA);
+    setCurrentOptionArea(OPTION_AREA);
+    
+    MAIN_WINDOW.validate();
+    MAIN_WINDOW.repaint();
     
     MAIN_WINDOW.pack();
     MAIN_WINDOW.setVisible(true);
   }
   
-  protected void loadGame() {
+  protected static void loadGame() {
     final File sav = new File("save"); // TODO save file name
     FileInputStream fis = null;
     ObjectInputStream ois = null;
@@ -222,8 +178,12 @@ public abstract class Main {
       STATS_AREA.readExternal(ois);
       OPTION_AREA.readExternal(ois);
       OPTION_AREA.repaint();
+      INVENTORY_IMAGE_AREA.readExternal(ois);
+      INVENTORY_TEXT_AREA.readExternal(ois);
+      INVENTORY_OPTION_AREA.readExternal(ois);
       final Event<?> oldEvent = currentEvent;
       currentEvent = (Event<?>) ois.readObject();
+      currentInventoryEvent = (Event<?>) ois.readObject();
       synchronized (oldEvent) {
         oldEvent.newEventHasBeenLoaded();
         oldEvent.notifyAll();
@@ -254,7 +214,7 @@ public abstract class Main {
     }
   }
   
-  protected void saveGame() {
+  protected static void saveGame() {
     final File sav = new File("save"); // TODO save file name
     FileOutputStream fos = null;
     ObjectOutputStream oos = null;
@@ -271,7 +231,11 @@ public abstract class Main {
       TEXT_AREA.writeExternal(oos);
       STATS_AREA.writeExternal(oos);
       OPTION_AREA.writeExternal(oos);
+      INVENTORY_IMAGE_AREA.writeExternal(oos);
+      INVENTORY_TEXT_AREA.writeExternal(oos);
+      INVENTORY_OPTION_AREA.writeExternal(oos);
       oos.writeObject(currentEvent);
+      oos.writeObject(currentInventoryEvent);
       
       LOGGER.info("Game saved");
     } catch (final FileNotFoundException e) {
@@ -296,8 +260,69 @@ public abstract class Main {
     }
   }
   
-  protected Event<?> getCurrentEvent() {
-    return Main.currentEvent;
+  public static synchronized Event<?> getCurrentEvent() {
+    if (currentImageArea == IMAGE_AREA) {
+      return Main.currentEvent;
+    }
+    return Main.currentInventoryEvent;
+  }
+  
+  public static synchronized void setCurrentEvent(final Event<?> event) {
+    if (currentImageArea == IMAGE_AREA) {
+      Main.currentEvent = event;
+    } else {
+      Main.currentInventoryEvent = event;
+    }
+  }
+  
+  public static TextArea getCurrentTextArea() {
+    return currentTextArea;
+  }
+  
+  public static ImageArea getCurrentImageArea() {
+    return currentImageArea;
+  }
+  
+  public static StatsArea getCurrentStatsArea() {
+    return currentStatsArea;
+  }
+  
+  public static OptionArea getCurrentOptionArea() {
+    return currentOptionsArea;
+  }
+  
+  public static void setCurrentTextArea(final TextArea textArea) {
+    if (textArea == TEXT_AREA) {
+      INVENTORY_TEXT_AREA.setVisible(false);
+    } else {
+      TEXT_AREA.setVisible(false);
+    }
+    textArea.setVisible(true);
+    currentTextArea = textArea;
+  }
+  
+  public static void setCurrentImageArea(final ImageArea imageArea) {
+    if (imageArea == IMAGE_AREA) {
+      INVENTORY_IMAGE_AREA.setVisible(false);
+    } else {
+      IMAGE_AREA.setVisible(false);
+    }
+    imageArea.setVisible(true);
+    currentImageArea = imageArea;
+  }
+  
+  public static void setCurrentStatsArea(final StatsArea statsArea) {
+    currentStatsArea = statsArea;
+  }
+  
+  public static void setCurrentOptionArea(final OptionArea optionArea) {
+    if (optionArea == OPTION_AREA) {
+      INVENTORY_OPTION_AREA.setVisible(false);
+    } else {
+      OPTION_AREA.setVisible(false);
+    }
+    optionArea.setVisible(true);
+    currentOptionsArea = optionArea;
   }
   
   protected void engineMain(final String[] args) throws InterruptedException, InvocationTargetException {
@@ -383,7 +408,7 @@ public abstract class Main {
     LOGGER.info("{} started.", getGameName());
     
     while (true) {
-      currentEvent.execute();
+      getCurrentEvent().execute();
     }
   }
   

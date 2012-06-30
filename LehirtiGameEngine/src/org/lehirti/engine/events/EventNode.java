@@ -37,7 +37,7 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
   private transient final List<Key> availableOptionKeys = Key.getOptionKeys();
   private transient final Map<Event<?>, TextKey> optionsWithArbitraryKey = new LinkedHashMap<Event<?>, TextKey>();
   
-  private transient boolean canBeSaved = false;
+  private transient boolean savePointReached = false;
   private transient boolean newEventHasBeenLoaded = false;
   
   /**
@@ -49,7 +49,7 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
     try {
       javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {
-          Main.TEXT_AREA.setText(text);
+          Main.getCurrentTextArea().setText(text);
         }
       });
     } catch (final InterruptedException e) {
@@ -73,7 +73,7 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
     try {
       javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {
-          Main.TEXT_AREA.addText(text);
+          Main.getCurrentTextArea().addText(text);
         }
       });
     } catch (final InterruptedException e) {
@@ -88,7 +88,7 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
     try {
       javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {
-          Main.OPTION_AREA.clearOptions();
+          Main.getCurrentOptionArea().clearOptions();
         }
       });
     } catch (final InterruptedException e) {
@@ -103,7 +103,7 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
     try {
       javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {
-          Main.OPTION_AREA.setOption(text, key);
+          Main.getCurrentOptionArea().setOption(text, key);
         }
       });
     } catch (final InterruptedException e) {
@@ -156,22 +156,23 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
   
   public void execute() {
     LOGGER.info("Event: {}", getClass().getName());
-    stopBackgroundLoadingOfImages();
-    
-    State.incrementEventCount(this);
-    
-    performImageAreaUpdates();
-    
-    clearOptions();
-    
-    doEvent();
-    
-    addOptionsWithArbitraryKeys();
-    
-    repaintImagesIfNeeded();
-    
-    backgroundLoadNextImages();
-    
+    if (!this.savePointReached) {
+      stopBackgroundLoadingOfImages();
+      
+      State.incrementEventCount(this);
+      
+      performImageAreaUpdates();
+      
+      clearOptions();
+      
+      doEvent();
+      
+      addOptionsWithArbitraryKeys();
+      
+      repaintImagesIfNeeded();
+      
+      backgroundLoadNextImages();
+    }
     resumeFromSavePoint();
   }
   
@@ -228,7 +229,7 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
   
   @Override
   public synchronized boolean isLoadSavePoint() {
-    return this.canBeSaved;
+    return this.savePointReached;
   }
   
   @Override
@@ -238,14 +239,14 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
   
   @Override
   public void resumeFromSavePoint() {
-    this.canBeSaved = true;
+    this.savePointReached = true;
     LOGGER.debug("Savepoint reached.");
     synchronized (this) {
-      while (Main.currentEvent == this) {
+      while (Main.getCurrentEvent() == this) {
         try {
           wait();
           if (this.newEventHasBeenLoaded) {
-            Main.currentEvent.resumeFromSavePoint();
+            Main.getCurrentEvent().resumeFromSavePoint();
           }
         } catch (final InterruptedException e) {
           LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
@@ -316,7 +317,7 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
   public boolean handleKeyEvent(final Key key) {
     final Event<?> event = this.registeredEvents.get(key);
     if (event != null) {
-      Main.currentEvent = event;
+      Main.setCurrentEvent(event);
       synchronized (this) {
         notifyAll();
       }
