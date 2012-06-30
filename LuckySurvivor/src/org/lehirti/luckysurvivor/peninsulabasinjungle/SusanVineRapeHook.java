@@ -8,9 +8,9 @@ import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.hooks.EventHook;
 import org.lehirti.engine.state.State;
 
-public final class YurikaVineRapeHook implements EventHook {
+public final class SusanVineRapeHook implements EventHook {
   static {
-    AbstractEvent.registerHook(MapToPeninsulaBasinJungle.class, new YurikaVineRapeHook());
+    AbstractEvent.registerHook(MapToPeninsulaBasinJungle.class, new SusanVineRapeHook());
   }
   
   @Override
@@ -18,8 +18,8 @@ public final class YurikaVineRapeHook implements EventHook {
     final Map<Event<?>, Double> events = new HashMap<Event<?>, Double>();
     
     // this is how you inject a one-time event (in this case into MapToPeninsulaBasinJungle)
-    if (State.getEventCount(YurikaVineRape.class) == 0) {
-      events.put(new YurikaVineRape(), Double.valueOf(EventHook.PROBABILITY_ALWAYS));
+    if (State.getEventCount(SusanVineRape.class) == 0) {
+      events.put(new SusanVineRape(), Double.valueOf(EventHook.PROBABILITY_ALWAYS));
     }
     
     return events;

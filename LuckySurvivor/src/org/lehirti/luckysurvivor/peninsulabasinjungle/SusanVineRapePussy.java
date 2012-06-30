@@ -8,7 +8,7 @@ import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.luckysurvivor.crashsite.MapToCrashSite;
 
-public class YurikaVineRapeAss extends EventNode<NullState> {
+public class SusanVineRapePussy extends EventNode<NullState> {
   
   public static enum Text implements TextKey {
     DESCRIPTION;
@@ -16,7 +16,7 @@ public class YurikaVineRapeAss extends EventNode<NullState> {
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setFG(PeninsulaBasinJungle.YURIKA_VINE_RAPED_ASS);
+    return ImgChange.setFG(PeninsulaBasinJungle.SUSAN_VINE_RAPED_PUSSY);
   }
   
   @Override
@@ -25,6 +25,6 @@ public class YurikaVineRapeAss extends EventNode<NullState> {
     
     // TODO change NPC Yurika stats
     
-    addOption(Key.OPTION_EAST, CommonText.OPTION_NEXT, new MapToCrashSite());
+    addOption(Key.OPTION_SOUTH, CommonText.OPTION_NEXT, new MapToCrashSite());
   }
 }

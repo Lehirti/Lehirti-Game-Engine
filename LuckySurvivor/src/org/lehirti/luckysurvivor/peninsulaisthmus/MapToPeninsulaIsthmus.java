@@ -8,7 +8,7 @@ import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.state.State;
-import org.lehirti.luckysurvivor.crashsite.MapToCrashSite;
+import org.lehirti.luckysurvivor.islandentry.MapToIslandEntry;
 import org.lehirti.luckysurvivor.map.Map;
 import org.lehirti.luckysurvivor.map.Map.Location;
 
@@ -49,13 +49,13 @@ public class MapToPeninsulaIsthmus extends EventNode<NullState> {
     
     // as long as there no path across
     if (State.getEventCount(FellTree.class) == 0) {
-      // just state that "YOU ... SHALL ... NOT ... PASS"
+      // just state that "YOU ... SHALL ... NOT ... PASS ^^"
       addOption(Key.OPTION_EAST, Text.OPTION_GO_EAST, new TextOnlyEvent(Key.OPTION_EAST, Text.TEXT_NO_WAY_ACROSS,
           new MapToPeninsulaIsthmus()));
     } else {
       // once the tree is felled, go east
       // TODO replace MapToCrashSite with new eastern event
-      addOption(Key.OPTION_EAST, Text.OPTION_GO_EAST, new MapToCrashSite());
+      addOption(Key.OPTION_EAST, Text.OPTION_GO_EAST, new MapToIslandEntry());
     }
     
     addOption(Key.OPTION_LEAVE, CommonText.OPTION_LEAVE_AREA, new TextOnlyEvent(Key.OPTION_LEAVE, Text.LEAVE_THE_AREA,
