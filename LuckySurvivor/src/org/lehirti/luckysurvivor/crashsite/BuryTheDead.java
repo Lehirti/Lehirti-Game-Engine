@@ -20,7 +20,7 @@ public class BuryTheDead extends EventNode<NullState> {
   
   @Override
   protected void doEvent() {
-    if (is(CrashSiteBool.HAS_SHOVEL)) {
+    if (is(CrashSiteBoolInventory.SHOVEL)) {
       setText(Text.BURY_WITH_SHOVEL);
     } else {
       setText(Text.BURY_WITHOUT_SHOVEL);

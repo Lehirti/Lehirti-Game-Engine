@@ -17,14 +17,14 @@ public class FindWatch extends EventNode<NullState> {
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setFG(BoolInventory.WATCH);
+    return ImgChange.setFG(CrashSiteBoolInventory.WATCH);
   }
   
   @Override
   protected void doEvent() {
     setText(Text.DESCRIPTION);
     
-    set(BoolInventory.WATCH, true);
+    set(CrashSiteBoolInventory.WATCH, true);
     DateTime.init(DayOfWeek.WEDNESDAY, 1, 21, 1, 29);
     
     addOption(Key.OPTION_LEAVE, CommonText.OPTION_NEXT, new StandardEvent(Key.OPTION_LEAVE, null,

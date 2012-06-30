@@ -5,10 +5,11 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
-import org.lehirti.engine.Main;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.ResourceCache;
@@ -59,16 +60,42 @@ public final class InventoryEvent extends EventNode<NullState> implements Extern
       
       final SortedMap<String, LinkedHashMap<Inventory, Object>> sortedInventory = InventoryMap.getSortedInventory();
       
+      final List<Map.Entry<Inventory, Object>> items = new LinkedList<Map.Entry<Inventory, Object>>();
+      int indexOfSelectedItem = 0;
+      
       for (final LinkedHashMap<Inventory, Object> map : sortedInventory.values()) {
         for (final Map.Entry<Inventory, Object> entry : map.entrySet()) {
+          items.add(entry);
           if (entry.getKey().equals(this.selectedItem)) {
-            Main.INVENTORY_TEXT_AREA.addText(ResourceCache.get(CommonText.MARKER));
-            Main.INVENTORY_IMAGE_AREA.setImage(entry.getKey());
+            indexOfSelectedItem = items.size() - 1;
           }
-          final TextWrapper tw = ResourceCache.get((TextKey) entry.getKey());
-          tw.addParameter(entry.getValue().toString());
-          Main.INVENTORY_TEXT_AREA.addText(tw);
         }
+      }
+      int startIndex = indexOfSelectedItem - 5;
+      if (startIndex < 0) {
+        startIndex = 0;
+      }
+      int endIndex = indexOfSelectedItem + 5;
+      if (endIndex >= items.size()) {
+        endIndex = items.size() - 1;
+      }
+      for (int i = startIndex; i <= endIndex; i++) {
+        final Map.Entry<Inventory, Object> entry = items.get(i);
+        if (entry.getKey().equals(this.selectedItem)) {
+          addText(ResourceCache.get(CommonText.MARKER));
+        }
+        final TextWrapper tw = ResourceCache.get((TextKey) entry.getKey());
+        tw.addParameter(entry.getValue().toString());
+        addText(tw);
+        addText(CommonText.NEWLINE);
+      }
+      if (indexOfSelectedItem != startIndex) {
+        addOption(Key.OPTION_NORTH, CommonText.OPTION_PREVIOUS, new InventoryEvent(items.get(indexOfSelectedItem - 1)
+            .getKey()));
+      }
+      if (indexOfSelectedItem != endIndex) {
+        addOption(Key.OPTION_SOUTH, CommonText.OPTION_NEXT, new InventoryEvent(items.get(indexOfSelectedItem + 1)
+            .getKey()));
       }
     }
     addOption(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new InventoryToGameEvent());

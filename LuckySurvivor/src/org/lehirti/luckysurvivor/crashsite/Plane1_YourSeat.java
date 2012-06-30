@@ -40,7 +40,7 @@ public class Plane1_YourSeat extends EventNode<NullState> {
     addOption(Key.OPTION_EAST, Text.OPTION_CHECK_YOURSELF_FOR_INJURIES, new TextOnlyEvent(Key.OPTION_EAST,
         Text.CHECK_YOURSELF_FOR_INJURIES, new Plane1_YourSeat()));
     
-    if (is(BoolInventory.WATCH)) {
+    if (is(CrashSiteBoolInventory.WATCH)) {
       addOption(Key.OPTION_LEAVE, Text.OPTION_LEAVE_YOUR_SEAT, new TextOnlyEvent(Key.OPTION_LEAVE,
           Text.LEAVE_YOUR_SEAT, new Plane1_Fuselage()));
     } else {

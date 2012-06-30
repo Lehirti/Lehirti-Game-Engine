@@ -34,7 +34,7 @@ public class Plane2_Cockpit extends EventNode<NullState> {
     setText(Text.DESCRIPTION);
     
     TextKey carryPilotsOutText;
-    if (is(CrashSiteBool.HAS_STRETCHER)) {
+    if (is(CrashSiteBoolInventory.STRETCHER)) {
       carryPilotsOutText = Text.CARRY_PILOTS_OUTSIDE_WITH_STRECHER;
     } else {
       carryPilotsOutText = Text.CARRY_PILOTS_OUTSIDE;

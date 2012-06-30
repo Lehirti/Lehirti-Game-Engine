@@ -20,7 +20,7 @@ public class RecoverBodiesFromPlane extends EventNode<NullState> {
   
   @Override
   protected void doEvent() {
-    if (is(CrashSiteBool.HAS_STRETCHER)) {
+    if (is(CrashSiteBoolInventory.STRETCHER)) {
       setText(Text.RECOVER_BODIES_WITH_STRECHER);
       set(CrashSiteBool.DEAD_BODIES_REMOVED_FROM_PLANE, true);
     } else {
