@@ -298,6 +298,7 @@ public abstract class Main {
       TEXT_AREA.setVisible(false);
     }
     textArea.setVisible(true);
+    textArea.requestFocusInWindow();
     currentTextArea = textArea;
   }
   
