@@ -18,7 +18,7 @@ public final class SeeAngryDiscussionHook implements EventHook {
     final Map<Event<?>, Double> events = new HashMap<Event<?>, Double>();
     
     if (State.getEventCount(MapToCrashSite.class) > 0 // has been to crash site before (redundant)
-        && previousEvent.getClass().equals(Map.class) // AND is coming from the map
+        && previousEvent.getClass().equals(org.lehirti.luckysurvivor.map.Map.class) // AND is coming from the map
         && State.getEventCount(SeeAngryDiscussion.class) == 0) { // AND has not seen the angry discussion
       events.put(new SeeAngryDiscussion(), Double.valueOf(100.0));
       /*
