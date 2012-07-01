@@ -160,9 +160,9 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
     stopBackgroundLoadingOfImages();
     
     if (!this.savePointReached) {
-      State.incrementEventCount(this);
-      
       performImageAreaUpdates();
+      
+      State.incrementEventCount(this);
       
       clearOptions();
       

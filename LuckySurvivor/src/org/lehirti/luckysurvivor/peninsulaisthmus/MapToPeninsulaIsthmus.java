@@ -29,8 +29,23 @@ public class MapToPeninsulaIsthmus extends EventNode<NullState> {
   }
   
   @Override
+  /*
+   * changes to the image area are controlled via this method. after the previous event has finished executing, this
+   * method is called for ALL possible next events (ALL the options) to preload all images that might be needed next.
+   * this means that this method is even called for events that will not be executed (because the player selects another
+   * option). it is therefore strictly FORBIDDEN to update state (set a variable) in this method. however, you are - of
+   * course - free the query state as much as you want, just keep in mind that the event counter for this Event and all
+   * the updates in the doEvent() method happen AFTER this method is called.
+   */
   protected ImgChange updateImageArea() {
-    return ImgChange.setBGAndFG(PeninsulaIsthmus.PENINSULA_ISTHMUS);
+    // your use case with the tree is simple:
+    if (State.getEventCount(FellTree.class) == 0) {
+      // as long as the tree is not felled, show the without-tree image
+      return ImgChange.setBGAndFG(PeninsulaIsthmus.PENINSULA_ISTHMUS);
+    } else {
+      // later, show the with-tree image
+      return ImgChange.setBGAndFG(PeninsulaIsthmus.PENINSULA_ISTHMUS_WITH_TREE);
+    }
   }
   
   @Override
