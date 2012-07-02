@@ -2,7 +2,6 @@ package org.lehirti.luckysurvivor.crashsite;
 
 import java.util.LinkedList;
 import java.util.List;
-import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.state.State;
 import org.lehirti.luckysurvivor.npc.NPC;
 import org.lehirti.luckysurvivor.npc.hinata.Hinata;
