@@ -42,6 +42,12 @@ public class StandardEvent extends EventNode<NullState> implements Externalizabl
     out.writeObject(this.nextEvent);
   }
   
+  /*
+   * here we are! the StandardEvent class only has this one (real) constructor (a method that has the same name as the
+   * class and defines no explicit return value). here you see which parameters you need to create a proper
+   * StandardEvent instance. in line 23 there is one other constructor, but this one is for loading/saving only. using
+   * it in regular code would create a broken event.
+   */
   public StandardEvent(final Key key, final ImageKey image, final TextKey text, final Event<?> nextEvent) {
     this.key = key;
     this.image = image;
