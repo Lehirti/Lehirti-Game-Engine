@@ -95,7 +95,7 @@ public final class ImageWrapper {
   
   public void pinRandomImage() {
     if (this.proxies.isEmpty()) {
-      this.image = new ImageProxy();
+      this.image = new ImageProxy(this.key);
     } else {
       this.currentlyDisplayedImageNr = State.DIE.nextInt(this.proxies.size());
       LOGGER.debug("Pin image {} alternative {}", toString(), this.currentlyDisplayedImageNr);
@@ -153,7 +153,7 @@ public final class ImageWrapper {
   public void removeAlternativeImage(final int alternativeImageNr) {
     final ImageProxy removed = this.proxies.remove(alternativeImageNr);
     this.currentlyDisplayedImageNr = this.proxies.size() - 1;
-    this.image = new ImageProxy();
+    this.image = new ImageProxy(this.key);
     removed.setDeleted();
     pinNextImage();
     LOGGER.info("Image {} removed from {}", removed.toString(), toString());

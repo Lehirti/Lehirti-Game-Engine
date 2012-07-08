@@ -18,16 +18,6 @@ import org.slf4j.LoggerFactory;
 public class ImageProxy {
   private static final Logger LOGGER = LoggerFactory.getLogger(ImageProxy.class);
   
-  private static final BufferedImage NULL_IMAGE = new BufferedImage(200, 50, BufferedImage.TYPE_INT_ARGB);
-  static {
-    final Graphics graphics = NULL_IMAGE.getGraphics();
-    graphics.setColor(Color.WHITE);
-    graphics.fillRect(0, 0, NULL_IMAGE.getWidth(), NULL_IMAGE.getHeight());
-    graphics.setColor(Color.BLACK);
-    graphics.drawString("Image missing!", 20, 20);
-    graphics.drawString("Press Ctrl-i to add image", 20, 40);
-  }
-  
   public static enum ProxyProps {
     ALIGN_X, // LEFT, CENTER, RIGHT
     ALIGN_Y, // TOP, CENTER, BOTTOM
@@ -37,8 +27,10 @@ public class ImageProxy {
     SCALE_Y; // double; in percent of available y resolution
   }
   
+  private final ImageKey key;
   private final File imageFile;
   private SoftReference<BufferedImage> image;
+  private SoftReference<BufferedImage> nullImage;
   private final int imageSizeX;
   private final int imageSizeY;
   private final File modProxyFile;
@@ -53,6 +45,7 @@ public class ImageProxy {
   private Double scaleY = null;
   
   private ImageProxy(final File imageProxyFile, final File imageFile, final BufferedImage image) {
+    this.key = null;
     setPlacement(imageProxyFile);
     this.modProxyFile = PathFinder.toModFile(imageProxyFile);
     
@@ -62,11 +55,28 @@ public class ImageProxy {
     this.imageSizeY = image.getHeight();
   }
   
-  ImageProxy() {
+  ImageProxy(final ImageKey key) {
+    this.key = key;
+    this.nullImage = new SoftReference<BufferedImage>(makeNullImage());
     this.imageFile = null;
     this.modProxyFile = null;
     this.imageSizeX = 800;
     this.imageSizeY = 600;
+  }
+  
+  private BufferedImage makeNullImage() {
+    final BufferedImage nI = new BufferedImage(200, 50, BufferedImage.TYPE_INT_ARGB);
+    final Graphics graphics = nI.getGraphics();
+    graphics.setColor(Color.WHITE);
+    graphics.fillRect(0, 0, nI.getWidth(), nI.getHeight());
+    graphics.setColor(Color.BLACK);
+    if (this.key != null) {
+      graphics.drawString(this.key.getClass().getSimpleName() + "." + this.key.name(), 20, 20);
+    } else {
+      graphics.drawString("Image missing!", 20, 20);
+    }
+    graphics.drawString("Press Ctrl-i to add image", 20, 40);
+    return nI;
   }
   
   private void setPlacement(final File imageProxyFile) {
@@ -214,7 +224,12 @@ public class ImageProxy {
   
   BufferedImage getImage() {
     if (this.imageFile == null) {
-      return NULL_IMAGE;
+      BufferedImage bufferedImage = this.nullImage.get();
+      if (bufferedImage == null) {
+        bufferedImage = makeNullImage();
+        this.nullImage = new SoftReference<BufferedImage>(bufferedImage);
+      }
+      return bufferedImage;
     }
     
     BufferedImage bufferedImage = this.image.get();
@@ -222,7 +237,7 @@ public class ImageProxy {
       bufferedImage = ResourceCache.getRawImage(this.imageFile);
       if (bufferedImage == null) {
         LOGGER.error("Failed to read previously readable image " + this.imageFile.getAbsolutePath());
-        return NULL_IMAGE;
+        return makeNullImage();
       } else {
         this.image = new SoftReference<BufferedImage>(bufferedImage);
       }
