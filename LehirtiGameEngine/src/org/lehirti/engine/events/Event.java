@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImageKey;
+import org.lehirti.engine.state.TimeInterval;
 
 public interface Event<STATE extends Enum<?>> {
   public static enum NullState {
@@ -43,4 +44,6 @@ public interface Event<STATE extends Enum<?>> {
   public void setEventState(STATE newState);
   
   public Collection<ImageKey> getAllUsedImages();
+  
+  public TimeInterval getRequiredTimeInterval();
 }

@@ -26,6 +26,7 @@ import org.lehirti.engine.state.BoolState;
 import org.lehirti.engine.state.IntState;
 import org.lehirti.engine.state.State;
 import org.lehirti.engine.state.StringState;
+import org.lehirti.engine.state.TimeInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -169,6 +170,8 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
       doEvent();
       
       addOptionsWithArbitraryKeys();
+      
+      getRequiredTimeInterval().advance();
     }
     repaintImagesIfNeeded();
     
@@ -328,4 +331,8 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
   }
   
   protected abstract void doEvent();
+  
+  public TimeInterval getRequiredTimeInterval() {
+    return TimeInterval.noAdvance(); // by default, events do not advance time at all
+  }
 }
