@@ -26,6 +26,9 @@ public class Outside1_MorningAfterCrash extends EventNode<NullState> {
   
   @Override
   public TimeInterval getRequiredTimeInterval() {
+    // advance time to the next 8:00:00 (format is hhmmss; 24h; but do not add leading zeros: 080000 would be wrong!)
+    // TimeInterval.advanceTo(DayOfWeek.THURSDAY, 63221); <- would jump to the next Thursday 06:32:21
     return TimeInterval.advanceTo(80000);
+    
   }
 }

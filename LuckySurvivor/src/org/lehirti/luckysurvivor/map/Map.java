@@ -126,7 +126,7 @@ public class Map extends EventNode<NullState> {
     HOLE_IN_THE_GROUND_2_CLIFF_MEADOW_EDGE_WEST,
   }
   
-  // TODO travel time/fatigue
+  // TODO travel time/fatigue; traveling each path takes exactly one hour; can be changed for each path indiviually
   /**
    * the flag/BoolState of each path indicates whether to path is available. so the Map$Path.properties file indicates
    * the initial availability of paths

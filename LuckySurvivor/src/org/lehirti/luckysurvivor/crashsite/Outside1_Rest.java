@@ -26,6 +26,7 @@ public class Outside1_Rest extends EventNode<NullState> {
   
   @Override
   public TimeInterval getRequiredTimeInterval() {
+    // advance time by 3 hours (format is DDhhmmss; 24h; but do NOT add leading zeros. 00030000 would be wrong!)
     return TimeInterval.advanceBy(30000);
   }
 }
