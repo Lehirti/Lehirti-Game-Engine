@@ -146,15 +146,21 @@ public enum DateTime implements IntState {
     return l < 10 ? "0" + l : String.valueOf(l);
   }
   
+  public static int gethhmmss() {
+    int hhmmss = 0;
+    hhmmss += State.get(HOUR);
+    hhmmss *= 100;
+    hhmmss += State.get(MINUTE);
+    hhmmss *= 100;
+    hhmmss += State.get(SECOND);
+    return hhmmss;
+  }
+  
   public static int getDDhhmmss() {
     int DDhhmmss = 0;
     DDhhmmss += State.get(DAY);
-    DDhhmmss *= 100;
-    DDhhmmss += State.get(HOUR);
-    DDhhmmss *= 100;
-    DDhhmmss += State.get(MINUTE);
-    DDhhmmss *= 100;
-    DDhhmmss += State.get(SECOND);
+    DDhhmmss *= 1000000;
+    DDhhmmss += gethhmmss();
     return DDhhmmss;
   }
 }
