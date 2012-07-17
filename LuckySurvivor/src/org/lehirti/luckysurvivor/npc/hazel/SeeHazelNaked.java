@@ -12,8 +12,8 @@ import org.lehirti.luckysurvivor.crashsite.MapToCrashSite;
 
 public class SeeHazelNaked extends EventNode<NullState> {
   public static enum Text implements TextKey {
-    FIRST_TIME,
-    CONSECUTIVE_TIME;
+    FIRST_TIME_SLEEPING_HAZEL,
+    CONSECUTIVE_TIME_SLEEPING_HAZEL;
   }
   
   @Override
@@ -24,9 +24,9 @@ public class SeeHazelNaked extends EventNode<NullState> {
   @Override
   protected void doEvent() {
     if (State.getEventCount(this) == 1) {
-      setText(Text.FIRST_TIME);
+      setText(Text.FIRST_TIME_SLEEPING_HAZEL);
     } else {
-      setText(Text.CONSECUTIVE_TIME);
+      setText(Text.CONSECUTIVE_TIME_SLEEPING_HAZEL);
     }
     
     addOption(Key.OPTION_LEAVE, CommonText.OPTION_NEXT, new MapToCrashSite());

@@ -11,7 +11,7 @@ import org.lehirti.luckysurvivor.crashsite.MapToCrashSite;
 
 public class MeetHazel extends EventNode<NullState> {
   public static enum Text implements TextKey {
-    DESCRIPTION;
+    DESCRIPTION_MEET_HAZEL;
   }
   
   @Override
@@ -21,7 +21,7 @@ public class MeetHazel extends EventNode<NullState> {
   
   @Override
   protected void doEvent() {
-    setText(Text.DESCRIPTION);
+    setText(Text.DESCRIPTION_MEET_HAZEL);
     
     addOption(Key.OPTION_LEAVE, CommonText.OPTION_NEXT, new MapToCrashSite());
   }

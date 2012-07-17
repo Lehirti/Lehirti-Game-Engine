@@ -11,7 +11,7 @@ import org.lehirti.luckysurvivor.crashsite.MapToCrashSite;
 
 public class MeetSophia extends EventNode<NullState> {
   public static enum Text implements TextKey {
-    DESCRIPTION;
+    DESCRIPTION_MEET_SOPHIA;
   }
   
   @Override
@@ -21,7 +21,7 @@ public class MeetSophia extends EventNode<NullState> {
   
   @Override
   protected void doEvent() {
-    setText(Text.DESCRIPTION);
+    setText(Text.DESCRIPTION_MEET_SOPHIA);
     
     addOption(Key.OPTION_LEAVE, CommonText.OPTION_NEXT, new MapToCrashSite());
   }
