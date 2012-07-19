@@ -8,15 +8,16 @@ import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.hooks.EventHook;
 import org.lehirti.engine.state.DateTime;
 import org.lehirti.engine.state.State;
+import org.lehirti.luckysurvivor.npc.emily.MeetEmily;
 
-public final class MeetJordanForTheFirstTimeHook implements EventHook {
+public final class MapToCliffWestHook implements EventHook {
   static {
     /**
      * EventHooks get registered with Events like this; we tell the game that when the player enters the event
      * "MapToCliffWest" it should ask the event hook "MeetJordanForTheFirstTimeHook" - this class - if there are events
      * available for the player to encounter; there may be multiple event hooks for one event.
      */
-    AbstractEvent.registerHook(MapToCliffWest.class, new MeetJordanForTheFirstTimeHook());
+    AbstractEvent.registerHook(MapToCliffWest.class, new MapToCliffWestHook());
   }
   
   /**
@@ -28,18 +29,17 @@ public final class MeetJordanForTheFirstTimeHook implements EventHook {
     // we start out with an empty map, meaning no events from this hook
     final Map<Event<?>, Double> events = new HashMap<Event<?>, Double>();
     
-    /*
-     * TODO since in-game time is not really progressing, yet, i just check if the player has been here before, has not
-     * met jordan, yet and if the time is greater than 0 (which is always true); once time is progressing properly, this
-     * can be changed easily. if you want to show the event only after day 103; 18 hours 44 minutes and 3 seconds just
-     * write DateTime.getDDhhmmss() > 103184403
-     */
     if (State.getEventCount(MapToCliffWest.class) > 0 // player has been here before
-        && DateTime.getDDhhmmss() > 0 // AND the necessary amount of time has passed
+        && DateTime.gethhmmss() > 30000 // AND the necessary amount of time has passed
         && State.getEventCount(MeetJordanForTheFirstTime.class) == 0) { // AND he has not met jordan, yet
       // the condition for meeting jordan for the first time is met, so we add the event
-      // TODO i took the liberty of making the event only happening with a 25% probability to make up for the time thing
-      events.put(new MeetJordanForTheFirstTime(), Double.valueOf(25.0));
+      events.put(new MeetJordanForTheFirstTime(), Double.valueOf(100.0));
+    }
+    
+    if (State.getEventCount(MeetJordanForTheFirstTime.class) > 0 // player has met jordan
+        && State.getEventCount(MeetEmily.class) == 0) { // AND has not met, emily, yet
+      // the condition for meeting jordan for the first time is met, so we add the event
+      events.put(new MeetEmily(), Double.valueOf(50.0));
     }
     return events;
   }
