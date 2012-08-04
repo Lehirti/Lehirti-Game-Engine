@@ -36,10 +36,10 @@ public class TextEditor extends JFrame implements ActionListener {
   int selectedTextNr = -1;
   int selectedOptionNr = -1;
   
-  public TextEditor(final TextArea gameTextArea, final OptionArea gameOptionArea) {
+  public TextEditor(final TextArea gameTextArea, final OptionArea gameOptionArea, final List<TextWrapper> textAreaTexts) {
     this.gameTextArea = gameTextArea;
     this.gameOptionArea = gameOptionArea;
-    this.allTexts = gameTextArea.getAllTexts();
+    this.allTexts = textAreaTexts;
     this.allOptions = gameOptionArea.getAllOptions();
     if (!this.allTexts.isEmpty()) {
       this.selectedTextNr = 0;

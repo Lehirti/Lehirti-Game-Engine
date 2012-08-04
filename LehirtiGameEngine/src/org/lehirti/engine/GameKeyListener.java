@@ -76,6 +76,6 @@ public class GameKeyListener implements KeyListener {
   }
   
   private void editTexts() {
-    new TextEditor(Main.getCurrentTextArea(), Main.getCurrentOptionArea());
+    new TextEditor(Main.getCurrentTextArea(), Main.getCurrentOptionArea(), Main.getCurrentTextArea().getAllTexts());
   }
 }

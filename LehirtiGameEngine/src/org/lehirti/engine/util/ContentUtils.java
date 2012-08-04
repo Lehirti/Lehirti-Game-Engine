@@ -21,6 +21,8 @@ import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.ResourceState;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.images.ImageWrapper;
+import org.lehirti.engine.res.text.TextKey;
+import org.lehirti.engine.res.text.TextWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -179,5 +181,23 @@ public class ContentUtils {
       }
     }
     return imageWrapperList;
+  }
+  
+  public static List<TextWrapper> getTextWrappers(final boolean withoutImagesOnly) {
+    final List<TextWrapper> textWrapperList = new ArrayList<TextWrapper>(10000);
+    final Vector<Class<?>> textEnums = new ClassFinder().findSubclasses(TextKey.class.getName());
+    for (final Class<?> textEnum : textEnums) {
+      final TextKey[] textKeys = (TextKey[]) textEnum.getEnumConstants();
+      if (textKeys != null) {
+        for (final TextKey key : textKeys) {
+          final TextWrapper textWrapper = ResourceCache.get(key);
+          if (withoutImagesOnly && textWrapper.getResourceState() != ResourceState.MISSING) {
+            continue;
+          }
+          textWrapperList.add(textWrapper);
+        }
+      }
+    }
+    return textWrapperList;
   }
 }

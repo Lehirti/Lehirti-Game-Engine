@@ -35,6 +35,16 @@ public final class ContentChecker {
     
     int tCore = 0;
     int tMod = 0;
+    for (final TextWrapper textWrapper : ContentUtils.getTextWrappers(false)) {
+      if (textWrapper.getResourceState() == ResourceState.MISSING) {
+        System.out.println(ResourceState.MISSING + " text:  " + textWrapper.toString());
+      } else if (textWrapper.getResourceState() == ResourceState.CORE) {
+        tCore++;
+      } else if (textWrapper.getResourceState() == ResourceState.MOD) {
+        tMod++;
+      }
+    }
+    
     final Vector<Class<?>> textEnums = new ClassFinder().findSubclasses(TextKey.class.getName());
     for (final Class<?> textEnum : textEnums) {
       final TextKey[] textKeys = (TextKey[]) textEnum.getEnumConstants();

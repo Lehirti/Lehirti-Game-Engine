@@ -24,6 +24,7 @@ import org.lehirti.engine.gui.ImageEditor;
 import org.lehirti.engine.gui.OptionArea;
 import org.lehirti.engine.gui.StatsArea;
 import org.lehirti.engine.gui.TextArea;
+import org.lehirti.engine.gui.TextEditor;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.images.CommonImage;
 import org.lehirti.engine.res.images.ImageKey;
@@ -424,10 +425,10 @@ public abstract class Main {
     
     if (editImages || editTexts) {
       if (editImages) {
-        new ImageEditor(ContentUtils.getImageWrappers(!all), Main.getCurrentImageArea());
+        new ImageEditor(ContentUtils.getImageWrappers(!all), getCurrentImageArea());
       }
       if (editTexts) {
-        // new TextEditor(gameTextArea, gameOptionArea);
+        new TextEditor(getCurrentTextArea(), getCurrentOptionArea(), ContentUtils.getTextWrappers(!all));
       }
     } else {
       while (true) {
