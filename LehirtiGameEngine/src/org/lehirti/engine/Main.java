@@ -20,6 +20,7 @@ import javax.swing.JFrame;
 
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.gui.ImageArea;
+import org.lehirti.engine.gui.ImageEditor;
 import org.lehirti.engine.gui.OptionArea;
 import org.lehirti.engine.gui.StatsArea;
 import org.lehirti.engine.gui.TextArea;
@@ -33,6 +34,7 @@ import org.lehirti.engine.state.State;
 import org.lehirti.engine.state.StaticInitializer;
 import org.lehirti.engine.state.StringState;
 import org.lehirti.engine.util.ClassFinder;
+import org.lehirti.engine.util.ContentUtils;
 import org.lehirti.engine.util.LogUtils;
 import org.lehirti.engine.util.PathFinder;
 import org.lehirti.engine.util.PropertyUtils;
@@ -328,9 +330,21 @@ public abstract class Main {
   
   protected void engineMain(final String[] args) throws InterruptedException, InvocationTargetException {
     boolean exportDefaults = false;
+    boolean editImages = false;
+    boolean editTexts = false;
+    boolean all = false;
     for (final String arg : args) {
       if (arg.equals("--exportDefaults")) {
         exportDefaults = true;
+      }
+      if (arg.equals("--editImages")) {
+        editImages = true;
+      }
+      if (arg.equals("--editTexts")) {
+        editTexts = true;
+      }
+      if (arg.equals("--all")) {
+        all = true;
       }
     }
     
@@ -372,8 +386,8 @@ public abstract class Main {
       if (intState.isEnum()) {
         State.initIntDefaults((Class<IntState>) intState);
         if (exportDefaults) {
-          PropertyUtils.setDefaultProperties((Class<IntState>) intState, PropertyUtils
-              .getDefaultProperties((Class<IntState>) intState));
+          PropertyUtils.setDefaultProperties((Class<IntState>) intState,
+              PropertyUtils.getDefaultProperties((Class<IntState>) intState));
         }
       }
     }
@@ -383,8 +397,8 @@ public abstract class Main {
       if (stringState.isEnum()) {
         State.initStringDefaults((Class<StringState>) stringState);
         if (exportDefaults) {
-          PropertyUtils.setDefaultProperties((Class<StringState>) stringState, PropertyUtils
-              .getDefaultProperties((Class<StringState>) stringState));
+          PropertyUtils.setDefaultProperties((Class<StringState>) stringState,
+              PropertyUtils.getDefaultProperties((Class<StringState>) stringState));
         }
       }
     }
@@ -394,8 +408,8 @@ public abstract class Main {
       if (boolState.isEnum()) {
         State.initBoolDefaults((Class<BoolState>) boolState);
         if (exportDefaults) {
-          PropertyUtils.setDefaultProperties((Class<BoolState>) boolState, PropertyUtils
-              .getDefaultProperties((Class<BoolState>) boolState));
+          PropertyUtils.setDefaultProperties((Class<BoolState>) boolState,
+              PropertyUtils.getDefaultProperties((Class<BoolState>) boolState));
         }
       }
     }
@@ -408,8 +422,17 @@ public abstract class Main {
     
     LOGGER.info("{} started.", getGameName());
     
-    while (true) {
-      getCurrentEvent().execute();
+    if (editImages || editTexts) {
+      if (editImages) {
+        new ImageEditor(ContentUtils.getImageWrappers(!all), Main.getCurrentImageArea());
+      }
+      if (editTexts) {
+        // new TextEditor(gameTextArea, gameOptionArea);
+      }
+    } else {
+      while (true) {
+        getCurrentEvent().execute();
+      }
     }
   }
   

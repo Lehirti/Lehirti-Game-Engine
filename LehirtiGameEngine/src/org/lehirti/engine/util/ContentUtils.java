@@ -3,17 +3,24 @@ package org.lehirti.engine.util;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.lehirti.engine.Main;
+import org.lehirti.engine.res.ResourceCache;
+import org.lehirti.engine.res.ResourceState;
+import org.lehirti.engine.res.images.ImageKey;
+import org.lehirti.engine.res.images.ImageWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,5 +161,23 @@ public class ContentUtils {
       }
     }
     return map;
+  }
+  
+  public static List<ImageWrapper> getImageWrappers(final boolean withoutImagesOnly) {
+    final List<ImageWrapper> imageWrapperList = new ArrayList<ImageWrapper>(10000);
+    final Vector<Class<?>> imageEnums = new ClassFinder().findSubclasses(ImageKey.class.getName());
+    for (final Class<?> imageEnum : imageEnums) {
+      final ImageKey[] imageKeys = (ImageKey[]) imageEnum.getEnumConstants();
+      if (imageKeys != null) {
+        for (final ImageKey key : imageKeys) {
+          final ImageWrapper imageWrapper = ResourceCache.get(key);
+          if (withoutImagesOnly && imageWrapper.getResourceState() != ResourceState.MISSING) {
+            continue;
+          }
+          imageWrapperList.add(imageWrapper);
+        }
+      }
+    }
+    return imageWrapperList;
   }
 }

@@ -10,6 +10,7 @@ import org.lehirti.engine.res.images.ImageWrapper;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.util.ClassFinder;
+import org.lehirti.engine.util.ContentUtils;
 import org.lehirti.engine.util.PathFinder;
 import org.lehirti.luckysurvivor.C;
 
@@ -21,19 +22,12 @@ public final class ContentChecker {
     
     int iCore = 0;
     int iMod = 0;
-    final Vector<Class<?>> imageEnums = new ClassFinder().findSubclasses(ImageKey.class.getName());
-    for (final Class<?> imageEnum : imageEnums) {
-      final ImageKey[] imageKeys = (ImageKey[]) imageEnum.getEnumConstants();
-      if (imageKeys != null) {
-        for (final ImageKey key : imageKeys) {
-          final ImageWrapper imageWrapper = ResourceCache.get(key);
-          if (imageWrapper.getResourceState() == ResourceState.MISSING) {
-            System.out.println(ResourceState.MISSING + " image: " + imageWrapper.toString());
-          } else {
-            iCore += imageWrapper.getNrOfCoreImages();
-            iMod += imageWrapper.getNrOfModImages();
-          }
-        }
+    for (final ImageWrapper imageWrapper : ContentUtils.getImageWrappers(false)) {
+      if (imageWrapper.getResourceState() == ResourceState.MISSING) {
+        System.out.println(ResourceState.MISSING + " image: " + imageWrapper.toString());
+      } else {
+        iCore += imageWrapper.getNrOfCoreImages();
+        iMod += imageWrapper.getNrOfModImages();
       }
     }
     
