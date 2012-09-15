@@ -153,9 +153,16 @@ public class ContentUtils {
     for (final File zipFile : contentZipFiles) {
       final String name = zipFile.getName();
       final String versionNumberString = name.substring(contentKey.length() + 1, name.length() - ".zip".length());
-      final Integer versionNumber = Integer.valueOf(versionNumberString);
+      final Integer versionNumber;
+      if (versionNumberString.indexOf("-") != -1) {
+        final String[] versionsFromTo = versionNumberString.split("-");
+        versionNumber = Integer.valueOf(versionsFromTo[versionsFromTo.length - 1]);
+      } else {
+        versionNumber = Integer.valueOf(versionNumberString);
+      }
       try {
         map.put(versionNumber, new ZipFile(zipFile));
+        LOGGER.debug("Zip file {} has version number {}", name, Integer.valueOf(versionNumber));
       } catch (final ZipException e) {
         LOGGER.error("Unable to read zip file " + zipFile.getAbsolutePath(), e);
       } catch (final IOException e) {

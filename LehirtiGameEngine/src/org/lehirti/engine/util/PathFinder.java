@@ -2,6 +2,7 @@ package org.lehirti.engine.util;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -176,7 +177,18 @@ public class PathFinder {
   }
   
   public static File getContentZipFile(final String contentKey, final int version) {
-    return new File(contentKey + "-" + version + ".zip");
+    final File root = new File(".");
+    final File[] matchingFiles = root.listFiles(new FilenameFilter() {
+      @Override
+      public boolean accept(final File dir, final String name) {
+        return name.startsWith(contentKey) && name.endsWith("-" + version + ".zip");
+      }
+    });
+    if (matchingFiles.length == 0) {
+      return new File(contentKey + "-" + version + ".zip");
+    } else {
+      return matchingFiles[0];
+    }
   }
   
   public static File getCoreContentDir(final String contentKey) {
