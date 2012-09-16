@@ -31,7 +31,12 @@ public class GameKeyListener implements KeyListener {
       final Key key = Key.getByChar(e.getKeyChar());
       
       if (key == null) {
-        // key unrelated to the game pressed
+        // key unrelated to core game
+        
+        // handle key text input events of non-core-game keys
+        if (Main.getCurrentEvent() != null) {
+          Main.getCurrentEvent().handleKeyEvent(e);
+        }
         return;
       }
       
@@ -46,9 +51,23 @@ public class GameKeyListener implements KeyListener {
       // let the game engine handle key event
       if (key == Key.CTRL_I) {
         editImages();
+        return;
       } else if (key == Key.CTRL_T) {
         editTexts();
-      } else if (key == Key.CTRL_S) {
+        return;
+      } else if (key == Key.CYCLE_TEXT_PAGES) {
+        Main.getCurrentTextArea().cycleToNextPage();
+        return;
+      }
+      
+      // handle key text input events of core-game keys
+      if (Main.getCurrentEvent() != null) {
+        if (Main.getCurrentEvent().handleKeyEvent(e)) {
+          return;
+        }
+      }
+      
+      if (key == Key.CTRL_S) {
         Main.saveGame();
       } else if (key == Key.CTRL_L) {
         Main.loadGame();
@@ -61,8 +80,6 @@ public class GameKeyListener implements KeyListener {
         synchronized (oldEvent) {
           oldEvent.notifyAll();
         }
-      } else if (key == Key.CYCLE_TEXT_PAGES) {
-        Main.getCurrentTextArea().cycleToNextPage();
       } else {
         // key known to the game, but currently not assigned (e.g. one of the option keys)
       }

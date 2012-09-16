@@ -1,5 +1,6 @@
 package org.lehirti.engine.events;
 
+import java.awt.event.KeyEvent;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -40,6 +41,7 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
   
   private transient boolean savePointReached = false;
   private transient boolean newEventHasBeenLoaded = false;
+  private boolean isTextInput = false;
   
   /**
    * clear text field and set new text
@@ -115,6 +117,21 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
     }
   }
   
+  private void setTextInputOption(final TextKey text, final String initialText) {
+    try {
+      javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
+        public void run() {
+          Main.getCurrentOptionArea().setTextInputOption(text, initialText);
+        }
+      });
+    } catch (final InterruptedException e) {
+      LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
+      throw new ThreadDeath();
+    } catch (final InvocationTargetException e) {
+      LOGGER.error("InvocationTargetException trying to add text to text area", e);
+    }
+  }
+  
   protected void addText(final TextKey key) {
     addText(ResourceCache.get(key));
   }
@@ -134,6 +151,18 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
   
   protected void addOption(final TextKey text, final Event<?> event) {
     this.optionsWithArbitraryKey.put(event, text);
+  }
+  
+  /**
+   * An event can *EITHER* have regular options *OR* ONE text input option
+   * 
+   * @param text
+   * @param event
+   */
+  protected void setTextInputOption(final TextKey text, final String initialText, final Event<?> event) {
+    this.registeredEvents.put(Key.TEXT_INPUT_OPTION_ENTER, event.getActualEvent(this));
+    this.isTextInput = true;
+    setTextInputOption(text, initialText);
   }
   
   private void addOptionsWithArbitraryKeys() {
@@ -328,6 +357,35 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
       return true;
     }
     return false;
+  }
+  
+  @Override
+  public boolean handleKeyEvent(final KeyEvent e) {
+    if (this.isTextInput) {
+      if (e.getKeyChar() == '\n') {
+        final String finalTextInput = Main.getCurrentOptionArea().getCurrentTextInput();
+        if (handleTextInput(finalTextInput)) {
+          return handleKeyEvent(Key.TEXT_INPUT_OPTION_ENTER);
+        } else {
+          return false;
+        }
+      } else {
+        return Main.getCurrentOptionArea().handleKeyEvent(e);
+      }
+    } else {
+      // event has no text input option
+      return false;
+    }
+  }
+  
+  /**
+   * supposed to be overwritten by subclasses, to validate and handle text input by user
+   * 
+   * @param finalTextInput
+   * @return true, if input is valid and game can continue with next event
+   */
+  protected boolean handleTextInput(final String finalTextInput) {
+    return true;
   }
   
   protected abstract void doEvent();

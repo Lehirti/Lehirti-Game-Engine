@@ -11,5 +11,8 @@ public enum IntroImage implements ImageKey {
   THE_CRASH,
   FUCK_STEWARDESS,
   INSTRUCTIONS,
-  THANKS;
+  THANKS,
+  PROFESSOR_OAK,
+  INFO_DESK,
+  CHECKIN_BACKGROUND;
 }

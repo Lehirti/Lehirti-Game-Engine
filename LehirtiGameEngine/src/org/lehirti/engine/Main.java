@@ -84,9 +84,9 @@ public abstract class Main {
     Main.MAIN_WINDOW = new JFrame(getGameName());
     MAIN_WINDOW.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     MAIN_WINDOW.getContentPane().setLayout(new GridBagLayout());
+    MAIN_WINDOW.addKeyListener(KEY_LISTENER);
     
     TEXT_AREA = new TextArea(SCREEN_X, SCREEN_Y, 16.0, 36.0);
-    TEXT_AREA.addKeyListener(KEY_LISTENER);
     IMAGE_AREA = new ImageArea(SCREEN_X, SCREEN_Y, 48.0, 36.0);
     STATS_AREA = new StatsArea(SCREEN_X, SCREEN_Y, 64.0, 6.0);
     OPTION_AREA = new OptionArea(SCREEN_X, SCREEN_Y, 64.0, 6.0, 4, 3);

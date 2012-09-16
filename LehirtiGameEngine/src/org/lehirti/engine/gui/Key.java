@@ -1,5 +1,6 @@
 package org.lehirti.engine.gui;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +18,8 @@ public enum Key {
   OPTION_X('x', 1, 2),
   OPTION_C('c', 2, 2),
   OPTION_V('v', 3, 2),
+  
+  TEXT_INPUT_OPTION_ENTER(KeyEvent.CHAR_UNDEFINED),
   
   //
   SHOW_INVENTORY('1'),

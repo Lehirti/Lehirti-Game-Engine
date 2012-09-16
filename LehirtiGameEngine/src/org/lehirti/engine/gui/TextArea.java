@@ -42,6 +42,7 @@ public class TextArea extends JTextArea implements Externalizable {
     getCaret().setVisible(false);
     setLineWrap(true);
     setWrapStyleWord(true);
+    setFocusable(false);
   }
   
   @Override

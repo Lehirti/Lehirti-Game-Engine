@@ -1,7 +1,7 @@
 package org.lehirti.luckysurvivor.intro;
 
-import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Event.NullState;
+import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextKey;
@@ -16,7 +16,7 @@ public class Airport extends EventNode<NullState> {
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setBG(IntroImage.AIRPORT);
+    return ImgChange.setBGAndFG(IntroImage.AIRPORT);
   }
   
   @Override

@@ -1,8 +1,8 @@
 package org.lehirti.luckysurvivor.crashsite;
 
+import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.TextOnlyEvent;
-import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextKey;
@@ -24,7 +24,7 @@ public class Plane1_YourSeat extends EventNode<NullState> {
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setBG(CrashSite.IN_OWN_SEAT_IN_PLANE);
+    return ImgChange.setBGAndFG(CrashSite.IN_OWN_SEAT_IN_PLANE);
   }
   
   @Override

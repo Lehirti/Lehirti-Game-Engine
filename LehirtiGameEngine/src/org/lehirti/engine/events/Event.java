@@ -1,5 +1,6 @@
 package org.lehirti.engine.events;
 
+import java.awt.event.KeyEvent;
 import java.util.Collection;
 
 import org.lehirti.engine.gui.Key;
@@ -46,4 +47,6 @@ public interface Event<STATE extends Enum<?>> {
   public Collection<ImageKey> getAllUsedImages();
   
   public TimeInterval getRequiredTimeInterval();
+  
+  public boolean handleKeyEvent(KeyEvent e);
 }

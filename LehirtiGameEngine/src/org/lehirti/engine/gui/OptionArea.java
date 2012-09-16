@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.geom.Rectangle2D;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -39,6 +41,9 @@ public class OptionArea extends JComponent implements Externalizable {
   private final int rows;
   
   private final Map<Key, TextWrapper> options = new EnumMap<Key, TextWrapper>(Key.class);
+  private boolean isTextInput = false;
+  private TextKey textInputLabel = null;
+  private String currentTextInput = null;
   
   public OptionArea(final double screenX, final double screenY, final double sizeX, final double sizeY, final int cols,
       final int rows) {
@@ -61,24 +66,35 @@ public class OptionArea extends JComponent implements Externalizable {
     g.setFont(font);
     final FontMetrics fontMetrics = g.getFontMetrics(font);
     final int fontHeight = fontMetrics.getHeight();
-    final int yOffset = fontHeight + (sizeOfOneOptionField.height - fontHeight) / 4;
-    for (final Map.Entry<Key, TextWrapper> option : this.options.entrySet()) {
-      final Key key = option.getKey();
-      final TextWrapper wrapper = ResourceCache.get(CommonText.KEY_OPTION);
-      wrapper.addParameter(String.valueOf(key.mapping));
-      final TextWrapper text = option.getValue();
-      final String assembledOptionString = wrapper.getValue() + text.getValue();
-      final int x = key.col * sizeOfOneOptionField.width;
-      final int y = key.row * sizeOfOneOptionField.height + yOffset;
+    if (this.isTextInput) {
+      final TextWrapper wrapper = ResourceCache.get(this.textInputLabel);
+      final String labelString = wrapper.getValue();
+      final Rectangle2D labelBounds = fontMetrics.getStringBounds(labelString, g);
+      g.drawString(labelString, (int) ((size.width - labelBounds.getWidth()) / 2), (int) labelBounds.getHeight());
       
-      g.drawRect(key.col * sizeOfOneOptionField.width, key.row * sizeOfOneOptionField.height,
-          sizeOfOneOptionField.width, sizeOfOneOptionField.height);
-      if (fontMetrics.stringWidth(assembledOptionString) < sizeOfOneOptionField.width) {
-        g.drawString(assembledOptionString, x, y);
-      } else {
-        fitStringIntoOptionField(g, assembledOptionString, key.col * sizeOfOneOptionField.width, key.row
-            * sizeOfOneOptionField.height, sizeOfOneOptionField, font.getSize());
-        g.setFont(font);
+      final Rectangle2D inputBounds = fontMetrics.getStringBounds(this.currentTextInput, g);
+      g.drawString(this.currentTextInput, (int) ((size.width - inputBounds.getWidth()) / 2),
+          (int) (labelBounds.getHeight() + inputBounds.getHeight() + (size.height / 10)));
+    } else {
+      final int yOffset = fontHeight + (sizeOfOneOptionField.height - fontHeight) / 4;
+      for (final Map.Entry<Key, TextWrapper> option : this.options.entrySet()) {
+        final Key key = option.getKey();
+        final TextWrapper wrapper = ResourceCache.get(CommonText.KEY_OPTION);
+        wrapper.addParameter(String.valueOf(key.mapping));
+        final TextWrapper text = option.getValue();
+        final String assembledOptionString = wrapper.getValue() + text.getValue();
+        final int x = key.col * sizeOfOneOptionField.width;
+        final int y = key.row * sizeOfOneOptionField.height + yOffset;
+        
+        g.drawRect(key.col * sizeOfOneOptionField.width, key.row * sizeOfOneOptionField.height,
+            sizeOfOneOptionField.width, sizeOfOneOptionField.height);
+        if (fontMetrics.stringWidth(assembledOptionString) < sizeOfOneOptionField.width) {
+          g.drawString(assembledOptionString, x, y);
+        } else {
+          fitStringIntoOptionField(g, assembledOptionString, key.col * sizeOfOneOptionField.width, key.row
+              * sizeOfOneOptionField.height, sizeOfOneOptionField, font.getSize());
+          g.setFont(font);
+        }
       }
     }
   }
@@ -176,6 +192,7 @@ public class OptionArea extends JComponent implements Externalizable {
   
   public void clearOptions() {
     this.options.clear();
+    this.isTextInput = false;
     repaint();
   }
   
@@ -183,5 +200,33 @@ public class OptionArea extends JComponent implements Externalizable {
   public void setOption(final TextKey text, final Key key) {
     this.options.put(key, ResourceCache.get(text));
     repaint();
+  }
+  
+  public void setTextInputOption(final TextKey text, final String initialTextInput) {
+    this.isTextInput = true;
+    this.textInputLabel = text;
+    this.currentTextInput = initialTextInput;
+    repaint();
+  }
+  
+  public String getCurrentTextInput() {
+    return this.currentTextInput;
+  }
+  
+  public boolean handleKeyEvent(final KeyEvent e) {
+    final char keyChar = e.getKeyChar();
+    if (keyChar == KeyEvent.CHAR_UNDEFINED) {
+      return false;
+    }
+    
+    if (keyChar == '\b') {
+      if (this.currentTextInput.length() > 0) {
+        this.currentTextInput = this.currentTextInput.substring(0, this.currentTextInput.length() - 1);
+      }
+    } else {
+      this.currentTextInput += keyChar;
+    }
+    repaint();
+    return true;
   }
 }

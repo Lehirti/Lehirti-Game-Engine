@@ -7,6 +7,7 @@ import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.sex.Sex;
 import org.lehirti.engine.state.IntState;
 import org.lehirti.engine.state.State;
+import org.lehirti.engine.state.StringState;
 import org.lehirti.luckysurvivor.npc.tifa.Tifa.ArousalFromPerformingSexAct;
 import org.lehirti.luckysurvivor.sss.SexAct;
 import org.lehirti.luckysurvivor.sss.SexParticipant;
@@ -14,6 +15,10 @@ import org.lehirti.luckysurvivor.sss.SexSession;
 import org.lehirti.luckysurvivor.sss.SexToy;
 
 public final class PC implements SexParticipant {
+  public static enum String implements StringState {
+    NAME;
+  }
+  
   public static enum Int implements IntState {
     AROUSAL,
     VIGOR,
