@@ -1,23 +1,28 @@
 package org.lehirti.engine.gui;
 
+import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.lehirti.engine.res.ResourceCache;
+import org.lehirti.engine.res.images.CommonImage;
+import org.lehirti.engine.res.images.ImageKey;
+
 public enum Key {
-  OPTION_Q('q', 0, 0),
-  OPTION_LEAVE('w', 1, 0),
-  OPTION_NORTH('e', 2, 0),
-  OPTION_ENTER('r', 3, 0),
-  OPTION_A('a', 0, 1),
-  OPTION_WEST('s', 1, 1),
-  OPTION_SOUTH('d', 2, 1),
-  OPTION_EAST('f', 3, 1),
-  OPTION_Z('z', 0, 2),
-  OPTION_X('x', 1, 2),
-  OPTION_C('c', 2, 2),
-  OPTION_V('v', 3, 2),
+  OPTION_Q('q', 0, 0, CommonImage.OPTION_KEY_0_0),
+  OPTION_LEAVE('w', 1, 0, CommonImage.OPTION_KEY_1_0),
+  OPTION_NORTH('e', 2, 0, CommonImage.OPTION_KEY_2_0),
+  OPTION_ENTER('r', 3, 0, CommonImage.OPTION_KEY_3_0),
+  OPTION_A('a', 0, 1, CommonImage.OPTION_KEY_0_1),
+  OPTION_WEST('s', 1, 1, CommonImage.OPTION_KEY_1_1),
+  OPTION_SOUTH('d', 2, 1, CommonImage.OPTION_KEY_2_1),
+  OPTION_EAST('f', 3, 1, CommonImage.OPTION_KEY_3_1),
+  OPTION_Z('z', 0, 2, CommonImage.OPTION_KEY_0_2),
+  OPTION_X('x', 1, 2, CommonImage.OPTION_KEY_1_2),
+  OPTION_C('c', 2, 2, CommonImage.OPTION_KEY_2_2),
+  OPTION_V('v', 3, 2, CommonImage.OPTION_KEY_3_2),
   
   TEXT_INPUT_OPTION_ENTER(KeyEvent.CHAR_UNDEFINED),
   
@@ -49,12 +54,15 @@ public enum Key {
   public final boolean isOptionKey;
   public final int col;
   public final int row;
+  public final ImageKey buttonImageKey;
+  private Image buttonImage;
   
-  private Key(final char defaultMapping, final int col, final int row) {
+  private Key(final char defaultMapping, final int col, final int row, final ImageKey buttonImageKey) {
     this.mapping = KeyMapping.getMappingFor(name(), defaultMapping);
     this.isOptionKey = true;
     this.col = col;
     this.row = row;
+    this.buttonImageKey = buttonImageKey;
   }
   
   private Key(final char defaultMapping) {
@@ -62,6 +70,14 @@ public enum Key {
     this.isOptionKey = false;
     this.col = -1;
     this.row = -1;
+    this.buttonImageKey = null;
+  }
+  
+  public Image getButtonImage() {
+    if (this.buttonImage == null) {
+      this.buttonImage = ResourceCache.get(this.buttonImageKey).getImage();
+    }
+    return this.buttonImage;
   }
   
   public static Key getByChar(final char mapping) {

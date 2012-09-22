@@ -21,6 +21,7 @@ import javax.swing.JComponent;
 
 import org.lehirti.engine.Main;
 import org.lehirti.engine.res.ResourceCache;
+import org.lehirti.engine.res.images.CommonImage;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
@@ -59,6 +60,7 @@ public class OptionArea extends JComponent implements Externalizable {
   public void paintComponent(final Graphics g) {
     g.setColor(Color.WHITE);
     g.fillRect(0, 0, getWidth(), getHeight());
+    g.drawImage(ResourceCache.get(CommonImage.OPTION_AREA_BACKGROUND).getImage(), 0, 0, getWidth(), getHeight(), null);
     g.setColor(Color.BLACK);
     final Dimension size = getSize();
     final Dimension sizeOfOneOptionField = new Dimension(size.width / this.cols, size.height / this.rows);
@@ -82,18 +84,27 @@ public class OptionArea extends JComponent implements Externalizable {
         final TextWrapper wrapper = ResourceCache.get(CommonText.KEY_OPTION);
         wrapper.addParameter(String.valueOf(key.mapping));
         final TextWrapper text = option.getValue();
-        final String assembledOptionString = wrapper.getValue() + text.getValue();
         final int x = key.col * sizeOfOneOptionField.width;
         final int y = key.row * sizeOfOneOptionField.height + yOffset;
         
-        g.drawRect(key.col * sizeOfOneOptionField.width, key.row * sizeOfOneOptionField.height,
-            sizeOfOneOptionField.width, sizeOfOneOptionField.height);
-        if (fontMetrics.stringWidth(assembledOptionString) < sizeOfOneOptionField.width) {
-          g.drawString(assembledOptionString, x, y);
+        // g.drawRect(key.col * sizeOfOneOptionField.width, key.row * sizeOfOneOptionField.height,
+        // sizeOfOneOptionField.width, sizeOfOneOptionField.height);
+        
+        g.drawImage(key.getButtonImage(), key.col * sizeOfOneOptionField.width, key.row * sizeOfOneOptionField.height,
+            sizeOfOneOptionField.height, sizeOfOneOptionField.height, null);
+        final Rectangle2D keyBounds = fontMetrics.getStringBounds(String.valueOf(key.mapping), g);
+        final int xOffsetKey = (int) ((sizeOfOneOptionField.height - keyBounds.getWidth()) / 2);
+        g.drawString(String.valueOf(key.mapping), key.col * sizeOfOneOptionField.width + xOffsetKey, key.row
+            * sizeOfOneOptionField.height + yOffset);
+        
+        final Dimension sizeOfOneOptionFieldWOKey = new Dimension(sizeOfOneOptionField.width
+            - sizeOfOneOptionField.height, sizeOfOneOptionField.height);
+        
+        if (fontMetrics.stringWidth(text.getValue()) < sizeOfOneOptionField.width - sizeOfOneOptionField.height) {
+          g.drawString(text.getValue(), x + sizeOfOneOptionField.height, y);
         } else {
-          fitStringIntoOptionField(g, assembledOptionString, key.col * sizeOfOneOptionField.width, key.row
-              * sizeOfOneOptionField.height, sizeOfOneOptionField, font.getSize());
-          g.setFont(font);
+          fitStringIntoOptionField(g, text.getValue(), x + sizeOfOneOptionField.height, key.row
+              * sizeOfOneOptionField.height, sizeOfOneOptionFieldWOKey, font.getSize());
         }
       }
     }
