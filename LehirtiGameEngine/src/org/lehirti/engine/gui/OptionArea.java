@@ -22,6 +22,7 @@ import javax.swing.JComponent;
 import org.lehirti.engine.Main;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.images.CommonImage;
+import org.lehirti.engine.res.images.ImageWrapper;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
@@ -60,7 +61,9 @@ public class OptionArea extends JComponent implements Externalizable {
   public void paintComponent(final Graphics g) {
     g.setColor(Color.WHITE);
     g.fillRect(0, 0, getWidth(), getHeight());
-    g.drawImage(ResourceCache.get(CommonImage.OPTION_AREA_BACKGROUND).getImage(), 0, 0, getWidth(), getHeight(), null);
+    final ImageWrapper optionAreaBackground = ResourceCache.get(CommonImage.OPTION_AREA_BACKGROUND);
+    optionAreaBackground.pinRandomImage();
+    g.drawImage(optionAreaBackground.getImage(), 0, 0, getWidth(), getHeight(), null);
     g.setColor(Color.BLACK);
     final Dimension size = getSize();
     final Dimension sizeOfOneOptionField = new Dimension(size.width / this.cols, size.height / this.rows);
