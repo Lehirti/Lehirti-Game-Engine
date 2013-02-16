@@ -1,8 +1,13 @@
 package org.lehirti.engine.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.TexturePaint;
+import java.awt.image.BufferedImage;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -11,14 +16,16 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 
+import org.lehirti.engine.res.ResourceCache;
+import org.lehirti.engine.res.images.CommonImage;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TextArea extends JTextArea implements Externalizable {
+public class TextArea extends JTextPane implements Externalizable {
   private static final long serialVersionUID = 1L;
   
   private static final Logger LOGGER = LoggerFactory.getLogger(TextArea.class);
@@ -40,9 +47,10 @@ public class TextArea extends JTextArea implements Externalizable {
     this.sizeY = sizeY;
     
     getCaret().setVisible(false);
-    setLineWrap(true);
-    setWrapStyleWord(true);
+    // setLineWrap(true);
+    // setWrapStyleWord(true);
     setFocusable(false);
+    setOpaque(false);
   }
   
   @Override
@@ -52,6 +60,23 @@ public class TextArea extends JTextArea implements Externalizable {
     }
     adjustFontToWindowSize();
     super.repaint();
+  }
+  
+  @Override
+  public void paintComponent(final Graphics g) {
+    final Graphics2D g2 = (Graphics2D) g;
+    final BufferedImage bufferedImage = ResourceCache.get(CommonImage.TEXT_AREA_BACKGROUND).getImage();
+    final Rectangle rect = new Rectangle(0, 0, bufferedImage.getWidth(null), bufferedImage.getHeight(null));
+    final TexturePaint texturePaint = new TexturePaint(bufferedImage, rect);
+    g2.setPaint(texturePaint);
+    g.fillRect(0, 0, getWidth(), getHeight());
+    super.paintComponent(g);
+    if (this.totalNumberOfPages > 1) {
+      g.setColor(Color.BLACK);
+      final String pageXofY = (this.currentPage + 1) + "/" + this.totalNumberOfPages;
+      g.drawString(pageXofY, (30 * getWidth()) / 31 - getFontMetrics(getFont()).stringWidth(pageXofY), getHeight()
+          - (int) (0.5f * getFont().getSize2D()));
+    }
   }
   
   @Override
@@ -167,7 +192,8 @@ public class TextArea extends JTextArea implements Externalizable {
     super.setText(page);
     try {
       final Rectangle positionOfLastCharacter = modelToView(page.length());
-      if (positionOfLastCharacter != null && positionOfLastCharacter.getY() > getHeight() - getFont().getSize2D()) {
+      if (positionOfLastCharacter != null
+          && positionOfLastCharacter.getY() > getHeight() - 2.5f * getFont().getSize2D()) {
         return false;
       } else {
         return true;
