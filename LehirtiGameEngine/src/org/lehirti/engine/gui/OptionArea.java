@@ -47,6 +47,8 @@ public class OptionArea extends JComponent implements Externalizable {
   private TextKey textInputLabel = null;
   private String currentTextInput = null;
   
+  final ImageWrapper optionAreaBackground;
+  
   public OptionArea(final double screenX, final double screenY, final double sizeX, final double sizeY, final int cols,
       final int rows) {
     this.screenX = screenX;
@@ -55,15 +57,15 @@ public class OptionArea extends JComponent implements Externalizable {
     this.sizeY = sizeY;
     this.cols = cols;
     this.rows = rows;
+    this.optionAreaBackground = ResourceCache.get(CommonImage.OPTION_AREA_BACKGROUND);
+    this.optionAreaBackground.pinRandomImage();
   }
   
   @Override
   public void paintComponent(final Graphics g) {
     g.setColor(Color.WHITE);
     g.fillRect(0, 0, getWidth(), getHeight());
-    final ImageWrapper optionAreaBackground = ResourceCache.get(CommonImage.OPTION_AREA_BACKGROUND);
-    optionAreaBackground.pinRandomImage();
-    g.drawImage(optionAreaBackground.getImage(), 0, 0, getWidth(), getHeight(), null);
+    g.drawImage(this.optionAreaBackground.getImage(), 0, 0, getWidth(), getHeight(), null);
     g.setColor(Color.BLACK);
     final Dimension size = getSize();
     final Dimension sizeOfOneOptionField = new Dimension(size.width / this.cols, size.height / this.rows);
