@@ -25,7 +25,6 @@ import org.lehirti.luckysurvivor.sss.SelectSexToyEvent;
 import org.lehirti.luckysurvivor.sss.SexAct;
 import org.lehirti.luckysurvivor.sss.SexToy;
 import org.lehirti.luckysurvivor.sss.SexToyCategory;
-import org.lehirti.luckysurvivor.sss.StartSexSession;
 
 public abstract class AbstractNPC implements NPC {
   private static final long serialVersionUID = 1L;
@@ -93,7 +92,7 @@ public abstract class AbstractNPC implements NPC {
   @Override
   public List<Option> getFlirtWithOptions(final Event<?> returnEvent) {
     final List<Option> options = new ArrayList<Option>(11);
-    options.add(new Option(Key.OPTION_ENTER, Text.OPTION_HAVE_SEX_WITH_HER, new StartSexSession(this, returnEvent)));
+    // options.add(new Option(Key.OPTION_ENTER, Text.OPTION_HAVE_SEX_WITH_HER, new StartSexSession(this, returnEvent)));
     return options;
   }
   
