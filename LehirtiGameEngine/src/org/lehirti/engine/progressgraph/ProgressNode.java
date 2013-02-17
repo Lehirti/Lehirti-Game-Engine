@@ -1,8 +1,10 @@
 package org.lehirti.engine.progressgraph;
 
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -137,16 +139,19 @@ public final class ProgressNode {
     g2d.fillArc(position.x - size / 2, position.y - size / 2, size, size, 0, 360);
     if (hasBeenReached()) {
       final String name = getId().name();
-      g2d.drawString(name, position.x + size / 2, position.y);
+      g2d.setColor(Color.BLACK);
+      final FontMetrics fm = g2d.getFontMetrics();
+      final Rectangle2D bounds = fm.getStringBounds(name, g2d);
+      g2d.drawString(name, position.x - (int) (bounds.getWidth() / 2), position.y + (int) (bounds.getHeight() * 0.3f));
     }
   }
   
   private Color determineNodeColor(final ProgressNode node) {
     if (node.isActive()) {
-      return Color.BLUE;
+      return Color.RED;
     }
     if (node.hasBeenReached()) {
-      return Color.GREEN;
+      return Color.BLUE;
     }
     if (node.hasActiveParent()) {
       return Color.CYAN;
@@ -174,10 +179,10 @@ public final class ProgressNode {
   
   private static Color determineEdgeColor(final ProgressNode parent, final ProgressNode child) {
     if (parent.hasBeenReached() && child.hasBeenReached()) {
-      return Color.GREEN;
+      return Color.BLUE;
     }
     if (parent.isActive()) {
-      return Color.ORANGE;
+      return Color.CYAN;
     } else {
       return Color.BLACK;
     }
@@ -194,5 +199,9 @@ public final class ProgressNode {
     final int y = (int) (cellHeight * (level - 0.5));
     
     return new Point(x, y);
+  }
+  
+  public boolean isRoot() {
+    return this.parents.isEmpty();
   }
 }

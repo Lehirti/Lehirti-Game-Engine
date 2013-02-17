@@ -1,6 +1,5 @@
 package org.lehirti.engine.progressgraph;
 
-import org.lehirti.engine.state.State;
 
 public enum TestGraph implements PG {
   UNKNOWN,
@@ -11,10 +10,11 @@ public enum TestGraph implements PG {
   LIKED(MET_HER_AND_KNOW_NAME),
   LOVED(LIKED);
   
-  static {
-    State.set(UNKNOWN, true);
-    State.set(MET_HER, true);
-  }
+  // static {
+  // State.set(UNKNOWN, true);
+  // State.set(MET_HER, true);
+  // State.set(HATED, true);
+  // }
   
   private static ProgressGraph PROGRESS_GRAPH = null;
   

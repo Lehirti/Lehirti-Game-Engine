@@ -2,6 +2,7 @@ package org.lehirti.engine.gui;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 
 import org.lehirti.engine.progressgraph.PG;
 import org.lehirti.engine.progressgraph.ProgressGraph;
@@ -20,18 +21,34 @@ public class ProgressImageArea extends ImageArea {
     }
     
     ProgressGraph pg = null;
+    int[] coords = null;
     
     for (final ImageWrapper image : this.foregroundImages) {
+      BufferedImage bImg = image.getImage();
       if (image.getKey() instanceof PG) {
         pg = ((PG) image.getKey()).getProgressGraph();
+        if (pg.getActiveNode().isRoot()) {
+          final BufferedImage bImg2 = new BufferedImage(bImg.getWidth(), bImg.getHeight(), bImg.getType());
+          for (int x = 0; x < bImg.getWidth(); x++) {
+            for (int y = 0; y < bImg.getHeight(); y++) {
+              int argb = bImg.getRGB(x, y);
+              argb &= 0xFF000000;
+              argb += argb >> 8;
+              argb += argb >> 16;
+              bImg2.setRGB(x, y, argb);
+            }
+          }
+          bImg = bImg2;
+        }
       }
-      final int[] coords = image.calculateCoordinates(getWidth(), getHeight());
-      g2d.drawImage(image.getImage(), coords[0], coords[1], coords[2], coords[3], null);
+      coords = image.calculateCoordinates(getWidth(), getHeight());
+      g2d.drawImage(bImg, coords[0], coords[1], coords[2], coords[3], null);
     }
     
     if (pg != null) {
-      final Image dynamicGraphImage = pg.getDynamicGraphImage(getWidth(), getHeight());
-      g2d.drawImage(dynamicGraphImage, 0, 0, getWidth(), getHeight(), null);
+      final int xOffset = coords[0] + coords[2];
+      final Image dynamicGraphImage = pg.getDynamicGraphImage(getWidth() - xOffset, getHeight());
+      g2d.drawImage(dynamicGraphImage, xOffset, 0, getWidth() - xOffset, getHeight(), null);
     }
   }
 }
