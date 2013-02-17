@@ -5,9 +5,11 @@ import java.awt.event.KeyListener;
 
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.InventoryEvent;
+import org.lehirti.engine.events.ProgressEvent;
 import org.lehirti.engine.gui.ImageEditor;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.gui.TextEditor;
+import org.lehirti.engine.progressgraph.TestGraph;
 import org.lehirti.engine.state.InventoryMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +79,15 @@ public class GameKeyListener implements KeyListener {
         Main.setCurrentTextArea(Main.INVENTORY_TEXT_AREA);
         Main.setCurrentOptionArea(Main.INVENTORY_OPTION_AREA);
         Main.setCurrentEvent(new InventoryEvent(InventoryMap.getSelectedItem()));
+        synchronized (oldEvent) {
+          oldEvent.notifyAll();
+        }
+      } else if (key == Key.SHOW_PROGRESS) {
+        final Event<?> oldEvent = Main.getCurrentEvent();
+        Main.setCurrentImageArea(Main.PROGRESS_IMAGE_AREA);
+        Main.setCurrentTextArea(Main.PROGRESS_TEXT_AREA);
+        Main.setCurrentOptionArea(Main.PROGRESS_OPTION_AREA);
+        Main.setCurrentEvent(new ProgressEvent(TestGraph.class));
         synchronized (oldEvent) {
           oldEvent.notifyAll();
         }

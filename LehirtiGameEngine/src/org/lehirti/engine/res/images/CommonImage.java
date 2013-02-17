@@ -15,5 +15,6 @@ public enum CommonImage implements ImageKey {
   OPTION_KEY_1_2,
   OPTION_KEY_2_2,
   OPTION_KEY_3_2,
-  TEXT_AREA_BACKGROUND;
+  TEXT_AREA_BACKGROUND,
+  PROGRESS_BACKGROUND;
 }

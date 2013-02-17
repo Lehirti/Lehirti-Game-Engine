@@ -29,6 +29,8 @@ public enum Key {
   //
   SHOW_INVENTORY('1'),
   
+  SHOW_PROGRESS('2'),
+  
   CYCLE_TEXT_PAGES(' '),
   
   // image and text editors

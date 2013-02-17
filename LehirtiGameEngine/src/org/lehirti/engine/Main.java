@@ -1,5 +1,6 @@
 package org.lehirti.engine;
 
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyListener;
@@ -22,6 +23,7 @@ import org.lehirti.engine.events.Event;
 import org.lehirti.engine.gui.ImageArea;
 import org.lehirti.engine.gui.ImageEditor;
 import org.lehirti.engine.gui.OptionArea;
+import org.lehirti.engine.gui.ProgressImageArea;
 import org.lehirti.engine.gui.StatsArea;
 import org.lehirti.engine.gui.TextArea;
 import org.lehirti.engine.gui.TextEditor;
@@ -60,14 +62,19 @@ public abstract class Main {
   private static final double SCREEN_X = 64.0;
   private static final double SCREEN_Y = 48.0;
   
+  public static StatsArea STATS_AREA;
+  
   public static TextArea TEXT_AREA;
   public static ImageArea IMAGE_AREA;
   public static OptionArea OPTION_AREA;
-  public static StatsArea STATS_AREA;
   
   public static TextArea INVENTORY_TEXT_AREA;
   public static ImageArea INVENTORY_IMAGE_AREA;
   public static OptionArea INVENTORY_OPTION_AREA;
+  
+  public static TextArea PROGRESS_TEXT_AREA;
+  public static ImageArea PROGRESS_IMAGE_AREA;
+  public static OptionArea PROGRESS_OPTION_AREA;
   
   private static volatile ImageArea currentImageArea = null;
   private static volatile TextArea currentTextArea = null;
@@ -101,6 +108,16 @@ public abstract class Main {
     
     INVENTORY_IMAGE_AREA.setBackgroundImage(CommonImage.INVENTORY_BACKGROUND);
     INVENTORY_TEXT_AREA.setText(ResourceCache.get(CommonText.INVENTORY));
+    
+    PROGRESS_TEXT_AREA = new TextArea(SCREEN_X, SCREEN_Y, 16.0, 36.0);
+    PROGRESS_TEXT_AREA.addKeyListener(KEY_LISTENER);
+    PROGRESS_TEXT_AREA.setVisible(false);
+    PROGRESS_IMAGE_AREA = new ProgressImageArea(SCREEN_X, SCREEN_Y, 48.0, 36.0);
+    PROGRESS_IMAGE_AREA.setVisible(false);
+    PROGRESS_OPTION_AREA = new OptionArea(SCREEN_X, SCREEN_Y, 64.0, 6.0, 4, 3);
+    PROGRESS_OPTION_AREA.setVisible(false);
+    
+    PROGRESS_IMAGE_AREA.setBackgroundImage(CommonImage.PROGRESS_BACKGROUND);
     
     GridBagConstraints c = new GridBagConstraints();
     c.gridx = 0;
@@ -151,6 +168,27 @@ public abstract class Main {
     c.gridheight = 1;
     MAIN_WINDOW.getContentPane().add(INVENTORY_OPTION_AREA, c);
     
+    c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 0;
+    c.gridwidth = 1;
+    c.gridheight = 1;
+    MAIN_WINDOW.getContentPane().add(PROGRESS_IMAGE_AREA, c);
+    
+    c = new GridBagConstraints();
+    c.gridx = 1;
+    c.gridy = 0;
+    c.gridwidth = 1;
+    c.gridheight = 1;
+    MAIN_WINDOW.getContentPane().add(PROGRESS_TEXT_AREA, c);
+    
+    c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 2;
+    c.gridwidth = 2;
+    c.gridheight = 1;
+    MAIN_WINDOW.getContentPane().add(PROGRESS_OPTION_AREA, c);
+    
     setCurrentImageArea(IMAGE_AREA);
     setCurrentTextArea(TEXT_AREA);
     setCurrentStatsArea(STATS_AREA);
@@ -184,6 +222,9 @@ public abstract class Main {
       INVENTORY_IMAGE_AREA.readExternal(ois);
       INVENTORY_TEXT_AREA.readExternal(ois);
       INVENTORY_OPTION_AREA.readExternal(ois);
+      PROGRESS_IMAGE_AREA.readExternal(ois);
+      PROGRESS_TEXT_AREA.readExternal(ois);
+      PROGRESS_OPTION_AREA.readExternal(ois);
       final Event<?> oldEvent = currentEvent;
       currentEvent = (Event<?>) ois.readObject();
       currentInventoryEvent = (Event<?>) ois.readObject();
@@ -237,6 +278,9 @@ public abstract class Main {
       INVENTORY_IMAGE_AREA.writeExternal(oos);
       INVENTORY_TEXT_AREA.writeExternal(oos);
       INVENTORY_OPTION_AREA.writeExternal(oos);
+      PROGRESS_IMAGE_AREA.writeExternal(oos);
+      PROGRESS_TEXT_AREA.writeExternal(oos);
+      PROGRESS_OPTION_AREA.writeExternal(oos);
       oos.writeObject(currentEvent);
       oos.writeObject(currentInventoryEvent);
       
@@ -295,22 +339,20 @@ public abstract class Main {
   }
   
   public static void setCurrentTextArea(final TextArea textArea) {
-    if (textArea == TEXT_AREA) {
-      INVENTORY_TEXT_AREA.setVisible(false);
-    } else {
-      TEXT_AREA.setVisible(false);
-    }
+    INVENTORY_TEXT_AREA.setVisible(false);
+    PROGRESS_TEXT_AREA.setVisible(false);
+    TEXT_AREA.setVisible(false);
+    
     textArea.setVisible(true);
     textArea.requestFocusInWindow();
     currentTextArea = textArea;
   }
   
   public static void setCurrentImageArea(final ImageArea imageArea) {
-    if (imageArea == IMAGE_AREA) {
-      INVENTORY_IMAGE_AREA.setVisible(false);
-    } else {
-      IMAGE_AREA.setVisible(false);
-    }
+    INVENTORY_IMAGE_AREA.setVisible(false);
+    PROGRESS_IMAGE_AREA.setVisible(false);
+    IMAGE_AREA.setVisible(false);
+    
     imageArea.setVisible(true);
     currentImageArea = imageArea;
   }
@@ -320,11 +362,10 @@ public abstract class Main {
   }
   
   public static void setCurrentOptionArea(final OptionArea optionArea) {
-    if (optionArea == OPTION_AREA) {
-      INVENTORY_OPTION_AREA.setVisible(false);
-    } else {
-      OPTION_AREA.setVisible(false);
-    }
+    INVENTORY_OPTION_AREA.setVisible(false);
+    PROGRESS_OPTION_AREA.setVisible(false);
+    OPTION_AREA.setVisible(false);
+    
     optionArea.setVisible(true);
     currentOptionsArea = optionArea;
   }
@@ -456,4 +497,8 @@ public abstract class Main {
   abstract protected void readContent();
   
   abstract protected String getGameName();
+  
+  public static Font getScaledFont() {
+    return currentTextArea.getScaledFont();
+  }
 }
