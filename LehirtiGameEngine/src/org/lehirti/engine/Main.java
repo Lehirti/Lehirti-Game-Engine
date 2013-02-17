@@ -1,6 +1,7 @@
 package org.lehirti.engine;
 
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyListener;
@@ -199,6 +200,7 @@ public abstract class Main {
     
     MAIN_WINDOW.pack();
     MAIN_WINDOW.setVisible(true);
+    MAIN_WINDOW.setExtendedState(Frame.MAXIMIZED_BOTH);
   }
   
   protected static void loadGame() {
