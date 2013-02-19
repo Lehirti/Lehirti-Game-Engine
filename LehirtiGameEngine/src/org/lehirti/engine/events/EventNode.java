@@ -24,6 +24,7 @@ import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.state.BoolState;
+import org.lehirti.engine.state.EventState;
 import org.lehirti.engine.state.IntState;
 import org.lehirti.engine.state.State;
 import org.lehirti.engine.state.StringState;
@@ -31,7 +32,8 @@ import org.lehirti.engine.state.TimeInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STATE> implements Externalizable {
+public abstract class EventNode<STATE extends Enum<?> & EventState> extends AbstractEvent<STATE> implements
+    Externalizable {
   private static final long serialVersionUID = 1L;
   private static final Logger LOGGER = LoggerFactory.getLogger(EventNode.class);
   
@@ -192,8 +194,6 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
     if (!this.savePointReached) {
       performImageAreaUpdates();
       
-      State.incrementEventCount(this);
-      
       clearOptions();
       
       doEvent();
@@ -201,6 +201,8 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
       addOptionsWithArbitraryKeys();
       
       getRequiredTimeInterval().advance();
+      
+      State.incrementEventCount(this);
     }
     repaintImagesIfNeeded();
     
@@ -350,6 +352,7 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
   public boolean handleKeyEvent(final Key key) {
     final Event<?> event = this.registeredEvents.get(key);
     if (event != null) {
+      keyPressed(key);
       Main.setCurrentEvent(event);
       synchronized (this) {
         notifyAll();
@@ -386,6 +389,14 @@ public abstract class EventNode<STATE extends Enum<?>> extends AbstractEvent<STA
    */
   protected boolean handleTextInput(final String finalTextInput) {
     return true;
+  }
+  
+  /**
+   * callback for event classes to react to (state changes) user input to the own event
+   */
+  @Override
+  public void keyPressed(final Key key) {
+    // empty in this base class
   }
   
   protected abstract void doEvent();

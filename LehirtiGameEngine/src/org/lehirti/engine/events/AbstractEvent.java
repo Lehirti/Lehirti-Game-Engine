@@ -9,18 +9,19 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.lehirti.engine.Main;
 import org.lehirti.engine.events.hooks.EventHook;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImageKey;
+import org.lehirti.engine.state.EventState;
 import org.lehirti.engine.state.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractEvent<STATE extends Enum<?>> implements Event<STATE> {
+public abstract class AbstractEvent<STATE extends Enum<?> & EventState> implements Event<STATE> {
   private static final Logger LOGGER = LoggerFactory.getLogger(AbstractEvent.class);
   
   private static final Map<Class<? extends Event<?>>, Set<EventHook>> EVENT_DISPATCHERS = new HashMap<Class<? extends Event<?>>, Set<EventHook>>();

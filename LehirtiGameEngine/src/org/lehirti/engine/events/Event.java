@@ -5,10 +5,11 @@ import java.util.Collection;
 
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImageKey;
+import org.lehirti.engine.state.EventState;
 import org.lehirti.engine.state.TimeInterval;
 
 public interface Event<STATE extends Enum<?>> {
-  public static enum NullState {
+  public static enum NullState implements EventState {
   }
   
   public void execute();
@@ -49,4 +50,6 @@ public interface Event<STATE extends Enum<?>> {
   public TimeInterval getRequiredTimeInterval();
   
   public boolean handleKeyEvent(KeyEvent e);
+  
+  public void keyPressed(Key key);
 }

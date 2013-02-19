@@ -4,6 +4,7 @@ import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
+import org.lehirti.engine.state.EventState;
 import org.lehirti.mindcraft.images.Dita;
 
 public class MeetDitaOutsideHerHouse extends EventNode<MeetDitaOutsideHerHouse.State> {
@@ -12,7 +13,7 @@ public class MeetDitaOutsideHerHouse extends EventNode<MeetDitaOutsideHerHouse.S
     RECURRING_MEETING
   }
   
-  public static enum State {
+  public static enum State implements EventState {
     FIRST_MEETING_DONE
   }
   

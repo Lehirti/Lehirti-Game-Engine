@@ -86,6 +86,7 @@ public abstract class Main {
   
   private static volatile Event<?> currentEvent = null;
   private static volatile Event<?> currentInventoryEvent = null;
+  private static volatile Event<?> currentProgressEvent = null;
   
   private void createAndShowGUI() {
     
@@ -230,6 +231,7 @@ public abstract class Main {
       final Event<?> oldEvent = currentEvent;
       currentEvent = (Event<?>) ois.readObject();
       currentInventoryEvent = (Event<?>) ois.readObject();
+      currentProgressEvent = (Event<?>) ois.readObject();
       synchronized (oldEvent) {
         oldEvent.newEventHasBeenLoaded();
         oldEvent.notifyAll();
@@ -285,6 +287,7 @@ public abstract class Main {
       PROGRESS_OPTION_AREA.writeExternal(oos);
       oos.writeObject(currentEvent);
       oos.writeObject(currentInventoryEvent);
+      oos.writeObject(currentProgressEvent);
       
       LOGGER.info("Game saved");
     } catch (final FileNotFoundException e) {
@@ -313,14 +316,19 @@ public abstract class Main {
     if (currentImageArea == IMAGE_AREA) {
       return Main.currentEvent;
     }
-    return Main.currentInventoryEvent;
+    if (currentImageArea == INVENTORY_IMAGE_AREA) {
+      return Main.currentInventoryEvent;
+    }
+    return Main.currentProgressEvent;
   }
   
   public static synchronized void setCurrentEvent(final Event<?> event) {
     if (currentImageArea == IMAGE_AREA) {
       Main.currentEvent = event;
-    } else {
+    } else if (currentImageArea == INVENTORY_IMAGE_AREA) {
       Main.currentInventoryEvent = event;
+    } else {
+      Main.currentProgressEvent = event;
     }
   }
   

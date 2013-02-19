@@ -11,11 +11,11 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.util.PropertyUtils;
@@ -57,7 +57,7 @@ public class State implements Externalizable {
   private final Map<IntState, Long> INT_MAP = new InventoryMap<IntState, Long>();
   private final Map<ObjState, Serializable> OBJ_MAP = new InventoryMap<ObjState, Serializable>();
   private final Map<StringState, String> STRING_MAP = new InventoryMap<StringState, String>();
-  private final Map<Class<?>, Enum<?>> PER_CLASS_STATE_MAP = new LinkedHashMap<Class<?>, Enum<?>>();
+  private final Map<Class<?>, EventState> PER_CLASS_STATE_MAP = new LinkedHashMap<Class<?>, EventState>();
   
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // initialize defaults
@@ -164,11 +164,11 @@ public class State implements Externalizable {
     INSTANCE.STRING_MAP.put(key, value);
   }
   
-  public static Enum<?> get(final Class<?> clazz) {
+  public static EventState get(final Class<?> clazz) {
     return INSTANCE.PER_CLASS_STATE_MAP.get(clazz);
   }
   
-  public static void set(final Class<?> clazz, final Enum<?> value) {
+  public static void set(final Class<?> clazz, final EventState value) {
     INSTANCE.PER_CLASS_STATE_MAP.put(clazz, value);
   }
   
@@ -296,16 +296,17 @@ public class State implements Externalizable {
     out.writeObject(OnDiskDelim.END_STATE_OBJECT.name());
   }
   
-  private void writePerClassMap(final ObjectOutput out, final Map<Class<?>, Enum<?>> map) throws IOException {
-    for (final Entry<Class<?>, Enum<?>> entry : map.entrySet()) {
+  private void writePerClassMap(final ObjectOutput out, final Map<Class<?>, EventState> map) throws IOException {
+    for (final Entry<Class<?>, EventState> entry : map.entrySet()) {
       out.writeObject(entry.getKey().getName());
-      final Enum<?> value = entry.getValue();
+      final EventState value = entry.getValue();
       out.writeObject(value.getClass().getName());
       out.writeObject(value.name());
     }
   }
   
-  private void writeMap(final ObjectOutput out, final Map<? extends AbstractState, ? extends Object> map) throws IOException {
+  private void writeMap(final ObjectOutput out, final Map<? extends AbstractState, ? extends Object> map)
+      throws IOException {
     for (final Map.Entry<? extends AbstractState, ? extends Object> entry : map.entrySet()) {
       out.writeObject(entry.getKey().getClass().getName());
       out.writeObject(entry.getKey().name());
@@ -347,7 +348,8 @@ public class State implements Externalizable {
         final Class<?> key;
         try {
           key = Class.forName(className);
-          final Enum<?> value = Enum.valueOf((Class<? extends Enum>) Class.forName(valueClassName), valueName);
+          final EventState value = (EventState) Enum.valueOf((Class<? extends Enum>) Class.forName(valueClassName),
+              valueName);
           INSTANCE.PER_CLASS_STATE_MAP.put(key, value);
         } catch (final RuntimeException e) {
           LOGGER.warn("Ignoring state " + valueClassName + "." + valueName + " for class " + className, e);
@@ -359,7 +361,8 @@ public class State implements Externalizable {
         final Object value = in.readObject();
         
         try {
-          final AbstractState key = (AbstractState) Enum.valueOf((Class<? extends Enum>) Class.forName(className), keyName);
+          final AbstractState key = (AbstractState) Enum.valueOf((Class<? extends Enum>) Class.forName(className),
+              keyName);
           switch (startDelim) {
           case START_BOOL_MAP:
             INSTANCE.BOOL_MAP.put((BoolState) key, (Boolean) value);
