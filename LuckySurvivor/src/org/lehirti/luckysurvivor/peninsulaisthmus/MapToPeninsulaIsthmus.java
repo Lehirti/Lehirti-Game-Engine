@@ -1,8 +1,8 @@
 package org.lehirti.luckysurvivor.peninsulaisthmus;
 
+import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.TextOnlyEvent;
-import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
@@ -62,11 +62,10 @@ public class MapToPeninsulaIsthmus extends EventNode<NullState> {
       addOption(Key.OPTION_WEST, Text.OPTION_FELL_TREE, new FellTree());
     }
     
-    // as long as there no path across
+    // as long as there is no path across
     if (State.getEventCount(FellTree.class) == 0) {
       // just state that "YOU ... SHALL ... NOT ... PASS ^^"
-      addOption(Key.OPTION_EAST, Text.OPTION_GO_EAST, new TextOnlyEvent(Key.OPTION_EAST, Text.TEXT_NO_WAY_ACROSS,
-          new MapToPeninsulaIsthmus()));
+      addOption(Key.OPTION_EAST, Text.OPTION_GO_EAST, new GoEastWithoutTree());
     } else {
       // once the tree is felled, go east
       addOption(Key.OPTION_EAST, Text.OPTION_GO_EAST, new MapToIslandEntry());
