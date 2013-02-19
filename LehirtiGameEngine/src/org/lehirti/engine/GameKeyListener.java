@@ -5,10 +5,10 @@ import java.awt.event.KeyListener;
 
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.InventoryEvent;
-import org.lehirti.engine.events.ProgressEvent;
 import org.lehirti.engine.gui.ImageEditor;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.gui.TextEditor;
+import org.lehirti.engine.progressgraph.ProgressEvent;
 import org.lehirti.engine.progressgraph.TestGraph;
 import org.lehirti.engine.state.InventoryMap;
 import org.slf4j.Logger;

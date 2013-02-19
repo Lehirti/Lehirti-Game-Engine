@@ -204,4 +204,8 @@ public final class ProgressNode {
   public boolean isRoot() {
     return this.parents.isEmpty();
   }
+  
+  public boolean hasChildren() {
+    return !this.children.isEmpty();
+  }
 }

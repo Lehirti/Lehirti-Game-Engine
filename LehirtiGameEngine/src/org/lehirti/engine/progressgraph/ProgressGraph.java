@@ -8,9 +8,28 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.lehirti.engine.Main;
+import org.lehirti.engine.res.text.TextKey;
+import org.lehirti.engine.state.StringState;
 import org.lehirti.engine.util.MiscUtils;
 
 public final class ProgressGraph {
+  public static enum ProgressCommon implements TextKey {
+    UNKNOWN,
+    INCOMPLETE,
+    COMPLETE;
+    
+    public ProgressCommon getNext() {
+      return values()[(this.ordinal() + 1) % values().length];
+    }
+    
+    public ProgressCommon getPrevious() {
+      if (this.ordinal() == 0) {
+        return values()[values().length - 1];
+      }
+      return values()[this.ordinal() - 1];
+    }
+  }
+  
   private final ProgressNode rootNode;
   private final Class<? extends PG> pgClass;
   private int[] widthsPerLevels;
@@ -83,5 +102,35 @@ public final class ProgressGraph {
     final int x = width / maxWIdthPerLevel;
     final int y = height / totalGraphDepth;
     return x < y ? x / 2 : y / 2;
+  }
+  
+  public ProgressCommon getGeneralProgress() {
+    if (getActiveNode() == this.rootNode) {
+      return ProgressCommon.UNKNOWN;
+    }
+    if (getActiveNode().hasChildren()) {
+      return ProgressCommon.INCOMPLETE;
+    }
+    return ProgressCommon.COMPLETE;
+  }
+  
+  @Override
+  public int hashCode() {
+    return this.pgClass.hashCode();
+  }
+  
+  @Override
+  public boolean equals(final Object object) {
+    if (object == null) {
+      return false;
+    }
+    if (!(object instanceof ProgressGraph)) {
+      return false;
+    }
+    return this.pgClass.equals(((ProgressGraph) object).pgClass);
+  }
+  
+  public StringState getName() {
+    return this.rootNode.getActiveNode().getId().getName();
   }
 }

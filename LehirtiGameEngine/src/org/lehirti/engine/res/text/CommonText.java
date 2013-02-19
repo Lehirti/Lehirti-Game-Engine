@@ -16,5 +16,7 @@ public enum CommonText implements TextKey {
   MARKER,
   OPTION_DO_IT,
   OPTION_USE_IT,
-  NEWLINE;
+  NEWLINE,
+  PARAMETER,
+  UNKNOWN_NAME;
 }

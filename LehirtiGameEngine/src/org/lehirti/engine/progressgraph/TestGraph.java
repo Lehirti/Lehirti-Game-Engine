@@ -1,5 +1,7 @@
 package org.lehirti.engine.progressgraph;
 
+import org.lehirti.engine.state.State;
+import org.lehirti.engine.state.StringState;
 
 public enum TestGraph implements PG {
   UNKNOWN,
@@ -10,11 +12,11 @@ public enum TestGraph implements PG {
   LIKED(MET_HER_AND_KNOW_NAME),
   LOVED(LIKED);
   
-  // static {
-  // State.set(UNKNOWN, true);
-  // State.set(MET_HER, true);
-  // State.set(HATED, true);
-  // }
+  static {
+    State.set(UNKNOWN, true);
+    State.set(MET_HER, true);
+    State.set(HATED, true);
+  }
   
   private static ProgressGraph PROGRESS_GRAPH = null;
   
@@ -35,5 +37,10 @@ public enum TestGraph implements PG {
       PROGRESS_GRAPH = new ProgressGraph(this.getClass());
     }
     return PROGRESS_GRAPH;
+  }
+  
+  @Override
+  public StringState getName() {
+    return TestGraphName.NAME;
   }
 }
