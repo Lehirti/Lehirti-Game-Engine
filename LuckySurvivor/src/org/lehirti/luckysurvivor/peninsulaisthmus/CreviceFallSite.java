@@ -30,7 +30,7 @@ public class CreviceFallSite extends EventNode<NullState> {
   
   @Override
   protected void doEvent() {
-    if (State.getEventCount(CreviceFallSite.class) == 0) {
+    if (State.getEventCount(CreviceFallSite.class) == 1) {
       setText(Text.INITIAL_IMPRESSIONS);
       addOption(Key.OPTION_EAST, Text.OPTION_INVESTIGATE, new CreviceFallSite());
     } else {

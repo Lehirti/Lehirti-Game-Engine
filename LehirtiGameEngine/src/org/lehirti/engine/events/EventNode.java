@@ -196,13 +196,13 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
       
       clearOptions();
       
+      State.incrementEventCount(this);
+      
       doEvent();
       
       addOptionsWithArbitraryKeys();
       
       getRequiredTimeInterval().advance();
-      
-      State.incrementEventCount(this);
     }
     repaintImagesIfNeeded();
     

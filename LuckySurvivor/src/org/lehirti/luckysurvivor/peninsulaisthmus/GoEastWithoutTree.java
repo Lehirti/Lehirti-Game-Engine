@@ -35,7 +35,7 @@ public final class GoEastWithoutTree extends EventNode<NullState> {
   
   @Override
   protected void doEvent() {
-    if (State.getEventCount(GoEastWithoutTree.class) == 0) {
+    if (State.getEventCount(GoEastWithoutTree.class) == 1) {
       setText(Text.CLIMB_AND_FALL);
       addOption(Key.OPTION_EAST, Text.OPTION_TRY_GRABBING, new FallIntoCrevice());
     } else {
