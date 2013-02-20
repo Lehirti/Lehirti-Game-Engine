@@ -23,6 +23,6 @@ public class FoundCucumber extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.FOUND_ANOTHER_CUCUMBER);
     State.change(Consumable.CUCUMBERS, 1); // we add one cucumber to the inventory
-    addOption(Key.OPTION_EAST, CommonText.OPTION_NEXT, new CreviceNorthAfterCucumber());
+    addOption(Key.OPTION_EAST, CommonText.OPTION_NEXT, new CreviceNorth());
   }
 }

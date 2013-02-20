@@ -7,18 +7,22 @@ import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.state.EventState;
+import org.lehirti.engine.state.State;
 import org.lehirti.luckysurvivor.peninsulaisthmus.CreviceNorth.CreviceState;
 
 public class CreviceNorth extends EventNode<CreviceState> {
   public static enum Text implements TextKey {
     INITIAL_IMPRESSIONS,
+    EJACULATION_FROM_EFFECTS_OF_CUCUMBER,
+    THIS_IS_WHERE_YOU_FOUND_THE_CUCUMBER,
+    OPTION_SEARCH_FOR_CUCUMBERS,
     
     OPTION_INVESTIGATE,
-    OPTION_EAT_CUCUMBER,
   }
   
   public static enum Img implements ImageKey {
-    CREVICE_NORTH
+    CREVICE_NORTH,
+    EJACULATION_FROM_EFFECTS_OF_CUCUMBER
   }
   
   /*
@@ -28,11 +32,16 @@ public class CreviceNorth extends EventNode<CreviceState> {
   public static enum CreviceState implements EventState {
     // the initial value is "null"
     INVESTIGATED,
+    CUCUMBER_EATEN,
   }
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setBGAndFG(Img.CREVICE_NORTH);
+    if (getEventState() == CreviceState.INVESTIGATED) {
+      return ImgChange.setBGAndFG(Img.CREVICE_NORTH, Img.EJACULATION_FROM_EFFECTS_OF_CUCUMBER);
+    } else {
+      return ImgChange.setBG(Img.CREVICE_NORTH);
+    }
   }
   
   @Override
@@ -45,9 +54,18 @@ public class CreviceNorth extends EventNode<CreviceState> {
     } else {
       switch (state) {
       case INVESTIGATED:
-        // TODO
+        setText(Text.EJACULATION_FROM_EFFECTS_OF_CUCUMBER);
+        setEventState(CreviceState.CUCUMBER_EATEN);
+        break;
+      case CUCUMBER_EATEN:
+        setText(Text.THIS_IS_WHERE_YOU_FOUND_THE_CUCUMBER);
         break;
       }
+      if (State.getEventCount(FoundCucumber.class) == 0) {
+        addOption(Key.OPTION_EAST, Text.OPTION_SEARCH_FOR_CUCUMBERS, new FoundCucumber());
+      }
+      addOption(Key.OPTION_NORTH, CommonText.OPTION_GO_NORTH, new CreviceFurtherNorth());
+      addOption(Key.OPTION_SOUTH, CommonText.OPTION_RETURN_SOUTH, new CreviceFallSite());
     }
   }
   

@@ -29,6 +29,6 @@ public class InvestigateCreviceNorth extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.FIND_CUCUMBER_AFTER_INVESTIGATION);
     addOption(Key.OPTION_NORTH, Text.OPTION_EAT_THE_CUCUMBER, new StandardEvent(Key.OPTION_NORTH, Img.COCK_SWELLING,
-        Text.COCK_SWELLING, new CreviceNorthAfterCucumber()));
+        Text.COCK_SWELLING, new CreviceNorth()));
   }
 }

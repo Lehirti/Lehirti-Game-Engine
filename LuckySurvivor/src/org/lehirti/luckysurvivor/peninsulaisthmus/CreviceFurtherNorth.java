@@ -26,7 +26,7 @@ public class CreviceFurtherNorth extends EventNode<NullState> {
   @Override
   protected void doEvent() {
     setText(Text.CREVICE_FURTHER_NORTH);
-    addOption(Key.OPTION_SOUTH, CommonText.OPTION_RETURN_SOUTH, new CreviceNorthAfterCucumber());
+    addOption(Key.OPTION_SOUTH, CommonText.OPTION_RETURN_SOUTH, new CreviceNorth());
     addOption(Key.OPTION_NORTH, Text.OPTION_ESCAPE_CRAVICE, new MapToPeninsulaIsthmus());
   }
 }
