@@ -64,7 +64,7 @@ public class MapToPeninsulaIsthmus extends EventNode<NullState> {
     
     // as long as there is no path across
     if (State.getEventCount(FellTree.class) == 0) {
-      // just state that "YOU ... SHALL ... NOT ... PASS ^^"
+      // THIS ... IS ... CUCUMBERLAND
       addOption(Key.OPTION_EAST, Text.OPTION_GO_EAST, new GoEastWithoutTree());
     } else {
       // once the tree is felled, go east

@@ -14,6 +14,7 @@ public class CreviceNorth extends EventNode<CreviceState> {
     INITIAL_IMPRESSIONS,
     
     OPTION_INVESTIGATE,
+    OPTION_EAT_CUCUMBER,
   }
   
   public static enum Img implements ImageKey {
@@ -39,7 +40,7 @@ public class CreviceNorth extends EventNode<CreviceState> {
     final CreviceState state = getEventState();
     if (state == null) {
       setText(Text.INITIAL_IMPRESSIONS);
-      addOption(Key.OPTION_NORTH, Text.OPTION_INVESTIGATE, new CreviceFallSite()); // TODO
+      addOption(Key.OPTION_NORTH, Text.OPTION_INVESTIGATE, new InvestigateCreviceNorth());
       addOption(Key.OPTION_SOUTH, CommonText.OPTION_RETURN_SOUTH, new CreviceFallSite());
     } else {
       switch (state) {
