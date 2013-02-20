@@ -196,6 +196,8 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
       
       clearOptions();
       
+      // must be called before doEvent(); otherwise event hooks don't work properly
+      // must be called after performImageAreaUpdates(); otherwise the count would be inconsistent in updateImageArea()
       State.incrementEventCount(this);
       
       doEvent();
