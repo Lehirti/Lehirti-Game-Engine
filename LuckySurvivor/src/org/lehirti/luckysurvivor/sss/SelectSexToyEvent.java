@@ -7,11 +7,12 @@ import java.io.ObjectOutput;
 import java.util.List;
 
 import org.lehirti.engine.events.Event;
-import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Event.NullState;
+import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
+import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.luckysurvivor.npc.NPC;
 
 public class SelectSexToyEvent extends EventNode<NullState> implements Externalizable {
@@ -63,7 +64,7 @@ public class SelectSexToyEvent extends EventNode<NullState> implements Externali
   
   @Override
   protected void doEvent() {
-    setText(null);
+    setText((TextKey) null);
     for (int i = 0; i < this.allToys.size(); i++) {
       if (i == this.selectedSexToy) {
         addText(CommonText.MARKER);
@@ -72,8 +73,8 @@ public class SelectSexToyEvent extends EventNode<NullState> implements Externali
     }
     
     final List<SexAct> availableSexActs = this.npc.getAvailableSexActs();
-    addOption(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new SelectSexAct(this.npc, availableSexActs, this.act
-        .getSelectedIndex(availableSexActs), this.returnEvent));
+    addOption(Key.OPTION_LEAVE, CommonText.OPTION_BACK,
+        new SelectSexAct(this.npc, availableSexActs, this.act.getSelectedIndex(availableSexActs), this.returnEvent));
     int previous = this.selectedSexToy - 1;
     if (previous < 0) {
       previous = this.allToys.size() - 1;

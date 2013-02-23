@@ -12,7 +12,7 @@ public final class InventoryToGameEvent extends EventNode<NullState> implements 
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.nullChange();
+    return ImgChange.noChange();
   }
   
   @Override

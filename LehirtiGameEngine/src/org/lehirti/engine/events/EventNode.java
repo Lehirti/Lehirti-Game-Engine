@@ -39,7 +39,7 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
   
   private final ConcurrentMap<Key, Event<?>> registeredEvents = new ConcurrentHashMap<Key, Event<?>>();
   private transient final List<Key> availableOptionKeys = Key.getOptionKeys();
-  private transient final Map<Event<?>, TextKey> optionsWithArbitraryKey = new LinkedHashMap<Event<?>, TextKey>();
+  private transient final Map<Event<?>, TextWrapper> optionsWithArbitraryKey = new LinkedHashMap<Event<?>, TextWrapper>();
   
   private transient boolean savePointReached = false;
   private transient boolean newEventHasBeenLoaded = false;
@@ -50,7 +50,7 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
    * 
    * @param text
    */
-  private void setText(final TextWrapper text) {
+  protected void setText(final TextWrapper text) {
     try {
       javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {
@@ -119,6 +119,21 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
     }
   }
   
+  private void setOption(final TextWrapper text, final Key key) {
+    try {
+      javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
+        public void run() {
+          Main.getCurrentOptionArea().setOption(text, key);
+        }
+      });
+    } catch (final InterruptedException e) {
+      LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
+      throw new ThreadDeath();
+    } catch (final InvocationTargetException e) {
+      LOGGER.error("InvocationTargetException trying to add text to text area", e);
+    }
+  }
+  
   private void setTextInputOption(final TextKey text, final String initialText) {
     try {
       javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
@@ -144,6 +159,19 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
       if (key != null) {
         LOGGER.warn("Requested option key {} not available; using arbitrary option key instead.", key.name());
       }
+      addOption(ResourceCache.get(text), event);
+      return;
+    }
+    
+    addOption(text, key, event);
+  }
+  
+  protected void addOption(final Key key, final TextWrapper text, final Event<?> event) {
+    final boolean keyIsAvailable = this.availableOptionKeys.remove(key);
+    if (!keyIsAvailable) {
+      if (key != null) {
+        LOGGER.warn("Requested option key {} not available; using arbitrary option key instead.", key.name());
+      }
       addOption(text, event);
       return;
     }
@@ -152,6 +180,10 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
   }
   
   protected void addOption(final TextKey text, final Event<?> event) {
+    addOption(ResourceCache.get(text), event);
+  }
+  
+  protected void addOption(final TextWrapper text, final Event<?> event) {
     this.optionsWithArbitraryKey.put(event, text);
   }
   
@@ -168,11 +200,11 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
   }
   
   private void addOptionsWithArbitraryKeys() {
-    for (final Map.Entry<Event<?>, TextKey> entry : this.optionsWithArbitraryKey.entrySet()) {
+    for (final Map.Entry<Event<?>, TextWrapper> entry : this.optionsWithArbitraryKey.entrySet()) {
       final Event<?> event = entry.getKey();
-      final TextKey text = entry.getValue();
+      final TextWrapper text = entry.getValue();
       if (this.availableOptionKeys.isEmpty()) {
-        LOGGER.error("No more option keys available; dropping option " + ResourceCache.get(text).getValue());
+        LOGGER.error("No more option keys available; dropping option " + text.getValue());
         continue;
       }
       final Key key = this.availableOptionKeys.remove(0);
@@ -182,6 +214,11 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
   }
   
   private void addOption(final TextKey text, final Key key, final Event<?> event) {
+    this.registeredEvents.put(key, event.getActualEvent(this));
+    setOption(text, key);
+  }
+  
+  private void addOption(final TextWrapper text, final Key key, final Event<?> event) {
     this.registeredEvents.put(key, event.getActualEvent(this));
     setOption(text, key);
   }
@@ -235,7 +272,9 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
    * object</b>
    */
   
-  abstract protected ImgChange updateImageArea();
+  protected ImgChange updateImageArea() {
+    return ImgChange.noChange();
+  }
   
   @Override
   public final Collection<ImageKey> getAllUsedImages() {

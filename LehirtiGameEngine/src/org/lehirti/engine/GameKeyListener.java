@@ -18,19 +18,11 @@ public class GameKeyListener implements KeyListener {
   private static final Logger LOGGER = LoggerFactory.getLogger(GameKeyListener.class);
   
   @Override
-  public void keyPressed(final KeyEvent e) {
-  }
-  
-  @Override
-  public void keyReleased(final KeyEvent e) {
-  }
-  
-  @Override
-  public synchronized void keyTyped(final KeyEvent e) {
-    LOGGER.info("Key {} typed", e.getKeyChar());
+  public synchronized void keyPressed(final KeyEvent e) {
+    LOGGER.info("Key {} {} {} pressed", new Object[] { e.getKeyCode(), e.getModifiers(), e.getKeyChar() });
     // note the synchronized: making sure to only process one key event at a time
     try {
-      final Key key = Key.getByChar(e.getKeyChar());
+      final Key key = Key.getByCodeAndModifiers(e.getKeyCode(), e.getModifiers());
       
       if (key == null) {
         // key unrelated to core game
@@ -51,10 +43,10 @@ public class GameKeyListener implements KeyListener {
       }
       
       // let the game engine handle key event
-      if (key == Key.CTRL_I) {
+      if (key == Key.IMAGE_EDITOR) {
         editImages();
         return;
-      } else if (key == Key.CTRL_T) {
+      } else if (key == Key.TEXT_EDITOR) {
         editTexts();
         return;
       } else if (key == Key.CYCLE_TEXT_PAGES) {
@@ -69,9 +61,9 @@ public class GameKeyListener implements KeyListener {
         }
       }
       
-      if (key == Key.CTRL_S) {
+      if (key == Key.SAVE) {
         Main.saveGame();
-      } else if (key == Key.CTRL_L) {
+      } else if (key == Key.LOAD) {
         Main.loadGame();
       } else if (key == Key.SHOW_INVENTORY) {
         final Event<?> oldEvent = Main.getCurrentEvent();
@@ -97,6 +89,14 @@ public class GameKeyListener implements KeyListener {
     } finally {
       e.consume();
     }
+  }
+  
+  @Override
+  public void keyReleased(final KeyEvent e) {
+  }
+  
+  @Override
+  public synchronized void keyTyped(final KeyEvent e) {
   }
   
   private void editImages() {

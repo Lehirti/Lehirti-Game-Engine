@@ -87,7 +87,7 @@ public class OptionArea extends JComponent implements Externalizable {
       for (final Map.Entry<Key, TextWrapper> option : this.options.entrySet()) {
         final Key key = option.getKey();
         final TextWrapper wrapper = ResourceCache.get(CommonText.KEY_OPTION);
-        wrapper.addParameter(String.valueOf(key.mapping));
+        wrapper.addParameter(key.getKeyText());
         final TextWrapper text = option.getValue();
         final int x = key.col * sizeOfOneOptionField.width;
         final int y = key.row * sizeOfOneOptionField.height + yOffset;
@@ -97,9 +97,9 @@ public class OptionArea extends JComponent implements Externalizable {
         
         g.drawImage(key.getButtonImage(), key.col * sizeOfOneOptionField.width, key.row * sizeOfOneOptionField.height,
             sizeOfOneOptionField.height, sizeOfOneOptionField.height, null);
-        final Rectangle2D keyBounds = fontMetrics.getStringBounds(String.valueOf(key.mapping), g);
+        final Rectangle2D keyBounds = fontMetrics.getStringBounds(key.getKeyText(), g);
         final int xOffsetKey = (int) ((sizeOfOneOptionField.height - keyBounds.getWidth()) / 2);
-        g.drawString(String.valueOf(key.mapping), key.col * sizeOfOneOptionField.width + xOffsetKey, key.row
+        g.drawString(key.getKeyText(), key.col * sizeOfOneOptionField.width + xOffsetKey, key.row
             * sizeOfOneOptionField.height + yOffset);
         
         final Dimension sizeOfOneOptionFieldWOKey = new Dimension(sizeOfOneOptionField.width
@@ -215,6 +215,12 @@ public class OptionArea extends JComponent implements Externalizable {
   // TODO: error on non-option keys
   public void setOption(final TextKey text, final Key key) {
     this.options.put(key, ResourceCache.get(text));
+    repaint();
+  }
+  
+  // TODO: error on non-option keys
+  public void setOption(final TextWrapper text, final Key key) {
+    this.options.put(key, text);
     repaint();
   }
   

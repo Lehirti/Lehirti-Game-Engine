@@ -29,7 +29,7 @@ public final class GoEastWithoutTree extends EventNode<NullState> {
     if (State.getEventCount(GoEastWithoutTree.class) == 0) {
       return ImgChange.setBGAndFG(Img.CLIMB_AND_FALL);
     } else {
-      return ImgChange.nullChange();
+      return ImgChange.noChange();
     }
   }
   

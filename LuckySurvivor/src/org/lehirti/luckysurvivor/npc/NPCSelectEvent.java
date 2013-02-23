@@ -8,12 +8,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.lehirti.engine.events.Event;
-import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Event.NullState;
+import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
+import org.lehirti.engine.res.text.TextKey;
 
 public class NPCSelectEvent extends EventNode<NullState> implements Externalizable {
   
@@ -70,7 +71,7 @@ public class NPCSelectEvent extends EventNode<NullState> implements Externalizab
   
   @Override
   protected void doEvent() {
-    setText(null); // TODO ?
+    setText((TextKey) null); // TODO ?
     
     for (int i = 0; i < this.npcs.size(); i++) {
       if (i == this.selectedNPC) {

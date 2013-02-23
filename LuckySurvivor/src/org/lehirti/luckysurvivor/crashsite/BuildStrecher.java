@@ -17,7 +17,7 @@ public class BuildStrecher extends EventNode<NullState> {
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.nullChange();
+    return ImgChange.noChange();
   }
   
   @Override

@@ -27,5 +27,6 @@ public enum CommonText implements TextKey {
   OPTION_USE_IT,
   NEWLINE,
   PARAMETER,
-  UNKNOWN_NAME;
+  UNKNOWN_NAME,
+  NEW_PARAGRAPH;
 }

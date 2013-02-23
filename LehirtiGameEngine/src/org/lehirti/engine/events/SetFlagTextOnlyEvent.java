@@ -60,7 +60,7 @@ public class SetFlagTextOnlyEvent extends EventNode<NullState> implements Extern
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.nullChange();
+    return ImgChange.noChange();
   }
   
   @Override

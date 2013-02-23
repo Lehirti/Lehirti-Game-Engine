@@ -25,7 +25,7 @@ public class Startscreen extends EventNode<NullState> {
     setText(Text.STARTSCREEN_DESCRIPTION);
     
     addOption(Key.OPTION_ENTER, Text.OPTION_START, new CheckIn());
-    addOption(Key.OPTION_LEAVE, Text.OPTION_INSTRUCTIONS, new Instructions());
+    addOption(Key.OPTION_LEAVE, Text.OPTION_INSTRUCTIONS, new Controls());
     addOption(Key.OPTION_WEST, Text.OPTION_THANKS,
         new Credits(Credits.Contributor.values()[State.DIE.nextInt(Credits.Contributor.values().length)]));
   }

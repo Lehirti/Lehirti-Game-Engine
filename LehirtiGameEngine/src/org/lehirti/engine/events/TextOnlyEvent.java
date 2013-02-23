@@ -47,7 +47,7 @@ public class TextOnlyEvent extends EventNode<NullState> implements Externalizabl
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.nullChange();
+    return ImgChange.noChange();
   }
   
   @Override

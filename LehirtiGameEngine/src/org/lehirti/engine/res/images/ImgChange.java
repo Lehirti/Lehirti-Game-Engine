@@ -99,7 +99,7 @@ public class ImgChange {
   /**
    * change nothing
    */
-  public static ImgChange nullChange() {
+  public static ImgChange noChange() {
     return new ImgChange(false, false, null);
   }
   
