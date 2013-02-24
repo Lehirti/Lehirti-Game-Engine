@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.util.PathFinder;
 
@@ -23,6 +24,7 @@ public class TextEditor extends JFrame implements ActionListener {
   
   JPanel controls = new JPanel();
   final JComboBox contentDir;
+  JButton prev = new JButton("Previous");
   JButton next = new JButton("Next");
   
   JButton save = new JButton("Save");
@@ -53,8 +55,9 @@ public class TextEditor extends JFrame implements ActionListener {
     
     this.contentDir = new JComboBox(PathFinder.getContentDirs());
     
-    this.controls.setLayout(new GridLayout(3, 1));
+    this.controls.setLayout(new GridLayout(4, 1));
     this.controls.setPreferredSize(new Dimension(300, 800));
+    this.controls.add(this.prev);
     this.controls.add(this.next);
     this.controls.add(this.contentDir);
     this.controls.add(this.save);
@@ -63,8 +66,11 @@ public class TextEditor extends JFrame implements ActionListener {
     this.all.add(this.controls, BorderLayout.EAST);
     this.all.add(this.textArea, BorderLayout.CENTER);
     
+    setTitle();
+    
     getContentPane().add(this.all, BorderLayout.CENTER);
     
+    this.prev.addActionListener(this);
     this.next.addActionListener(this);
     this.save.addActionListener(this);
     
@@ -73,6 +79,38 @@ public class TextEditor extends JFrame implements ActionListener {
     setSize(1200, 800);
     
     setVisible(true);
+  }
+  
+  private void setTitle() {
+    TextKey textKey = null;
+    if (this.selectedOptionNr != -1) {
+      textKey = this.allOptions.get(this.selectedOptionNr).getTextKey();
+    } else if (this.selectedTextNr != -1) {
+      textKey = this.allTexts.get(this.selectedTextNr).getTextKey();
+    }
+    
+    if (textKey != null) {
+      setTitle(textKey.getClass().getName() + "." + textKey.name());
+    } else {
+      setTitle("No texts!");
+    }
+  }
+  
+  private void selectPrev() {
+    if (this.selectedTextNr != -1) {
+      if (!selectPrevText()) {
+        if (!selectLastOption()) {
+          selectLastText();
+        }
+      }
+    } else if (this.selectedOptionNr != -1) {
+      if (!selectPrevOption()) {
+        if (!selectLastText()) {
+          selectLastOption();
+        }
+      }
+    }
+    setTitle();
   }
   
   private void selectNext() {
@@ -88,12 +126,17 @@ public class TextEditor extends JFrame implements ActionListener {
           selectFirstOption();
         }
       }
-    } else {
-      if (this.allTexts.isEmpty()) {
-        setTitle("No Text available");
-        return;
-      }
     }
+    setTitle();
+  }
+  
+  private boolean selectLastOption() {
+    if (this.allOptions.isEmpty()) {
+      return false;
+    }
+    this.selectedOptionNr = this.allOptions.size() - 1;
+    this.textArea.setText(this.allOptions.get(this.selectedOptionNr).getRawValue());
+    return true;
   }
   
   private boolean selectFirstOption() {
@@ -102,6 +145,15 @@ public class TextEditor extends JFrame implements ActionListener {
     }
     this.selectedOptionNr = 0;
     this.textArea.setText(this.allOptions.get(this.selectedOptionNr).getRawValue());
+    return true;
+  }
+  
+  private boolean selectLastText() {
+    if (this.allTexts.isEmpty()) {
+      return false;
+    }
+    this.selectedTextNr = this.allTexts.size() - 1;
+    this.textArea.setText(this.allTexts.get(this.selectedTextNr).getRawValue());
     return true;
   }
   
@@ -114,6 +166,15 @@ public class TextEditor extends JFrame implements ActionListener {
     return true;
   }
   
+  private boolean selectPrevOption() {
+    this.selectedOptionNr--;
+    if (this.selectedOptionNr == -1) {
+      return false;
+    }
+    this.textArea.setText(this.allOptions.get(this.selectedOptionNr).getRawValue());
+    return true;
+  }
+  
   private boolean selectNextOption() {
     this.selectedOptionNr++;
     if (this.selectedOptionNr >= this.allOptions.size()) {
@@ -121,6 +182,15 @@ public class TextEditor extends JFrame implements ActionListener {
       return false;
     }
     this.textArea.setText(this.allOptions.get(this.selectedOptionNr).getRawValue());
+    return true;
+  }
+  
+  private boolean selectPrevText() {
+    this.selectedTextNr--;
+    if (this.selectedTextNr == -1) {
+      return false;
+    }
+    this.textArea.setText(this.allTexts.get(this.selectedTextNr).getRawValue());
     return true;
   }
   
@@ -135,7 +205,9 @@ public class TextEditor extends JFrame implements ActionListener {
   }
   
   public void actionPerformed(final ActionEvent e) {
-    if (e.getSource() == this.next) {
+    if (e.getSource() == this.prev) {
+      selectPrev();
+    } else if (e.getSource() == this.next) {
       selectNext();
     } else if (e.getSource() == this.save) {
       final String contentDir = (String) this.contentDir.getSelectedItem();

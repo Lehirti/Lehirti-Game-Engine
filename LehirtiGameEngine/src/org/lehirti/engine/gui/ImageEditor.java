@@ -7,8 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.swing.InputVerifier;
 import javax.swing.JButton;
@@ -22,8 +22,9 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.lehirti.engine.res.images.ImageWrapper;
+import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.images.ImageProxy.ProxyProps;
+import org.lehirti.engine.res.images.ImageWrapper;
 import org.lehirti.engine.util.PathFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,7 +140,7 @@ public class ImageEditor extends JFrame implements ActionListener {
     this.allImages = allImages;
     if (!this.allImages.isEmpty()) {
       this.selectedImageNr = 0;
-      setImage(0);
+      setImage();
     }
     
     this.contentDir = new JComboBox(PathFinder.getContentDirs());
@@ -192,13 +193,26 @@ public class ImageEditor extends JFrame implements ActionListener {
     
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     
+    setTitle();
+    
     setSize(1200, 800);
     
     setVisible(true);
   }
   
-  private void setImage(final int nr) {
-    LOGGER.debug("setImage({});", nr);
+  private void setTitle() {
+    if (this.selectedImageNr != -1) {
+      final ImageKey key = this.allImages.get(this.selectedImageNr).getKey();
+      setTitle(key.getClass().getName() + "." + key.name());
+    } else {
+      setTitle("No images!");
+    }
+  }
+  
+  private void setImage() {
+    LOGGER.debug("setImage({});", this.selectedImageNr);
+    
+    setTitle();
     
     this.alignX.setText("");
     this.alignY.setText("");
@@ -209,10 +223,10 @@ public class ImageEditor extends JFrame implements ActionListener {
     this.scaleX.setText("");
     this.scaleY.setText("");
     
-    final ImageWrapper imageWrapper = this.allImages.get(nr);
+    final ImageWrapper imageWrapper = this.allImages.get(this.selectedImageNr);
     this.imageArea.setImage(imageWrapper);
-    this.selectedImage.setText(this.allImages.get(nr).toButtonString());
-    this.selectedImage.setToolTipText(this.allImages.get(nr).toButtonString());
+    this.selectedImage.setText(this.allImages.get(this.selectedImageNr).toButtonString());
+    this.selectedImage.setToolTipText(this.allImages.get(this.selectedImageNr).toButtonString());
     this.selectedAlternativeNr = imageWrapper.getCurrentImageNr();
     this.selectedAlternative.setText(String.valueOf(this.selectedAlternativeNr));
     final Properties placement = imageWrapper.getPlacement();
@@ -256,7 +270,7 @@ public class ImageEditor extends JFrame implements ActionListener {
     if (this.selectedImageNr >= this.allImages.size()) {
       this.selectedImageNr = 0;
     }
-    setImage(this.selectedImageNr);
+    setImage();
   }
   
   public void actionPerformed(final ActionEvent e) {
@@ -300,7 +314,7 @@ public class ImageEditor extends JFrame implements ActionListener {
     } else if (e.getSource() == this.selectedAlternative) {
       LOGGER.debug("selectNextAlternative()");
       this.allImages.get(this.selectedImageNr).pinNextImage();
-      setImage(this.selectedImageNr);
+      setImage();
     } else if (e.getSource() == this.newAlternative) {
       LOGGER.debug("addAlternative()");
       final JFileChooser fc = new JFileChooser(CURRENT_DIRECTORY);
@@ -313,7 +327,7 @@ public class ImageEditor extends JFrame implements ActionListener {
         this.allImages.get(this.selectedImageNr).addAlternativeImage(file, contentDir);
         this.selectedAlternativeNr = this.allImages.get(this.selectedImageNr).getCurrentImageNr();
         this.selectedAlternative.setText(String.valueOf(this.selectedAlternativeNr));
-        setImage(this.selectedImageNr);
+        setImage();
       } else {
         LOGGER.debug("aborted");
       }

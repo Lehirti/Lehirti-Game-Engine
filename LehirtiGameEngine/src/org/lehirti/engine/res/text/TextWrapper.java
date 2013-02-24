@@ -196,6 +196,10 @@ public class TextWrapper implements Externalizable {
     return allTexts;
   }
   
+  public TextKey getTextKey() {
+    return this.key;
+  }
+  
   @Override
   public int hashCode() {
     return this.key.hashCode();
