@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
@@ -23,6 +25,7 @@ import javax.swing.JFrame;
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.gui.ImageArea;
 import org.lehirti.engine.gui.ImageEditor;
+import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.gui.OptionArea;
 import org.lehirti.engine.gui.ProgressImageArea;
 import org.lehirti.engine.gui.StatsArea;
@@ -31,7 +34,6 @@ import org.lehirti.engine.gui.TextEditor;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.images.CommonImage;
 import org.lehirti.engine.res.images.ImageKey;
-import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.state.BoolState;
 import org.lehirti.engine.state.IntState;
 import org.lehirti.engine.state.State;
@@ -65,17 +67,9 @@ public abstract class Main {
   
   public static StatsArea STATS_AREA;
   
-  public static TextArea TEXT_AREA;
-  public static ImageArea IMAGE_AREA;
-  public static OptionArea OPTION_AREA;
-  
-  public static TextArea INVENTORY_TEXT_AREA;
-  public static ImageArea INVENTORY_IMAGE_AREA;
-  public static OptionArea INVENTORY_OPTION_AREA;
-  
-  public static TextArea PROGRESS_TEXT_AREA;
-  public static ImageArea PROGRESS_IMAGE_AREA;
-  public static OptionArea PROGRESS_OPTION_AREA;
+  private static Map<Key, TextArea> TEXT_AREAS = new LinkedHashMap<Key, TextArea>();
+  private static Map<Key, ImageArea> IMAGE_AREAS = new LinkedHashMap<Key, ImageArea>();
+  private static Map<Key, OptionArea> OPTION_AREAS = new LinkedHashMap<Key, OptionArea>();
   
   private static volatile ImageArea currentImageArea = null;
   private static volatile TextArea currentTextArea = null;
@@ -95,45 +89,42 @@ public abstract class Main {
     MAIN_WINDOW.getContentPane().setLayout(new GridBagLayout());
     MAIN_WINDOW.addKeyListener(KEY_LISTENER);
     
-    TEXT_AREA = new TextArea(SCREEN_X, SCREEN_Y, 16.0, 36.0);
-    IMAGE_AREA = new ImageArea(SCREEN_X, SCREEN_Y, 48.0, 36.0);
     STATS_AREA = new StatsArea(SCREEN_X, SCREEN_Y, 64.0, 6.0);
-    OPTION_AREA = new OptionArea(SCREEN_X, SCREEN_Y, 64.0, 6.0, 4, 3);
     
-    INVENTORY_TEXT_AREA = new TextArea(SCREEN_X, SCREEN_Y, 16.0, 36.0);
-    INVENTORY_TEXT_AREA.addKeyListener(KEY_LISTENER);
-    INVENTORY_TEXT_AREA.setVisible(false);
-    INVENTORY_IMAGE_AREA = new ImageArea(SCREEN_X, SCREEN_Y, 48.0, 36.0);
-    INVENTORY_IMAGE_AREA.setVisible(false);
-    INVENTORY_OPTION_AREA = new OptionArea(SCREEN_X, SCREEN_Y, 64.0, 6.0, 4, 3);
-    INVENTORY_OPTION_AREA.setVisible(false);
+    TEXT_AREAS.put(null, new TextArea(SCREEN_X, SCREEN_Y, 16.0, 36.0));
+    IMAGE_AREAS.put(null, new ImageArea(SCREEN_X, SCREEN_Y, 48.0, 36.0));
+    OPTION_AREAS.put(null, new OptionArea(SCREEN_X, SCREEN_Y, 64.0, 6.0, 4, 3));
     
-    INVENTORY_IMAGE_AREA.setBackgroundImage(CommonImage.INVENTORY_BACKGROUND);
-    INVENTORY_TEXT_AREA.setText(ResourceCache.get(CommonText.INVENTORY));
+    TEXT_AREAS.put(Key.SHOW_INVENTORY, new TextArea(SCREEN_X, SCREEN_Y, 16.0, 36.0));
+    IMAGE_AREAS.put(Key.SHOW_INVENTORY, new ImageArea(SCREEN_X, SCREEN_Y, 48.0, 36.0));
+    OPTION_AREAS.put(Key.SHOW_INVENTORY, new OptionArea(SCREEN_X, SCREEN_Y, 64.0, 6.0, 4, 3));
     
-    PROGRESS_TEXT_AREA = new TextArea(SCREEN_X, SCREEN_Y, 16.0, 36.0);
-    PROGRESS_TEXT_AREA.addKeyListener(KEY_LISTENER);
-    PROGRESS_TEXT_AREA.setVisible(false);
-    PROGRESS_IMAGE_AREA = new ProgressImageArea(SCREEN_X, SCREEN_Y, 48.0, 36.0);
-    PROGRESS_IMAGE_AREA.setVisible(false);
-    PROGRESS_OPTION_AREA = new OptionArea(SCREEN_X, SCREEN_Y, 64.0, 6.0, 4, 3);
-    PROGRESS_OPTION_AREA.setVisible(false);
+    TEXT_AREAS.put(Key.SHOW_PROGRESS, new TextArea(SCREEN_X, SCREEN_Y, 16.0, 36.0));
+    IMAGE_AREAS.put(Key.SHOW_PROGRESS, new ProgressImageArea(SCREEN_X, SCREEN_Y, 48.0, 36.0));
+    OPTION_AREAS.put(Key.SHOW_PROGRESS, new OptionArea(SCREEN_X, SCREEN_Y, 64.0, 6.0, 4, 3));
     
-    PROGRESS_IMAGE_AREA.setBackgroundImage(CommonImage.PROGRESS_BACKGROUND);
+    IMAGE_AREAS.get(Key.SHOW_INVENTORY).setBackgroundImage(CommonImage.INVENTORY_BACKGROUND);
+    IMAGE_AREAS.get(Key.SHOW_PROGRESS).setBackgroundImage(CommonImage.PROGRESS_BACKGROUND);
     
-    GridBagConstraints c = new GridBagConstraints();
-    c.gridx = 0;
-    c.gridy = 0;
-    c.gridwidth = 1;
-    c.gridheight = 1;
-    MAIN_WINDOW.getContentPane().add(IMAGE_AREA, c);
+    GridBagConstraints c;
     
-    c = new GridBagConstraints();
-    c.gridx = 1;
-    c.gridy = 0;
-    c.gridwidth = 1;
-    c.gridheight = 1;
-    MAIN_WINDOW.getContentPane().add(TEXT_AREA, c);
+    for (final ImageArea imageArea : IMAGE_AREAS.values()) {
+      c = new GridBagConstraints();
+      c.gridx = 0;
+      c.gridy = 0;
+      c.gridwidth = 1;
+      c.gridheight = 1;
+      MAIN_WINDOW.getContentPane().add(imageArea, c);
+    }
+    
+    for (final TextArea textArea : TEXT_AREAS.values()) {
+      c = new GridBagConstraints();
+      c.gridx = 1;
+      c.gridy = 0;
+      c.gridwidth = 1;
+      c.gridheight = 1;
+      MAIN_WINDOW.getContentPane().add(textArea, c);
+    }
     
     c = new GridBagConstraints();
     c.gridx = 0;
@@ -142,59 +133,19 @@ public abstract class Main {
     c.gridheight = 1;
     MAIN_WINDOW.getContentPane().add(STATS_AREA, c);
     
-    c = new GridBagConstraints();
-    c.gridx = 0;
-    c.gridy = 2;
-    c.gridwidth = 2;
-    c.gridheight = 1;
-    MAIN_WINDOW.getContentPane().add(OPTION_AREA, c);
+    for (final OptionArea optionArea : OPTION_AREAS.values()) {
+      c = new GridBagConstraints();
+      c.gridx = 0;
+      c.gridy = 2;
+      c.gridwidth = 2;
+      c.gridheight = 1;
+      MAIN_WINDOW.getContentPane().add(optionArea, c);
+    }
     
-    c = new GridBagConstraints();
-    c.gridx = 0;
-    c.gridy = 0;
-    c.gridwidth = 1;
-    c.gridheight = 1;
-    MAIN_WINDOW.getContentPane().add(INVENTORY_IMAGE_AREA, c);
-    
-    c = new GridBagConstraints();
-    c.gridx = 1;
-    c.gridy = 0;
-    c.gridwidth = 1;
-    c.gridheight = 1;
-    MAIN_WINDOW.getContentPane().add(INVENTORY_TEXT_AREA, c);
-    
-    c = new GridBagConstraints();
-    c.gridx = 0;
-    c.gridy = 2;
-    c.gridwidth = 2;
-    c.gridheight = 1;
-    MAIN_WINDOW.getContentPane().add(INVENTORY_OPTION_AREA, c);
-    
-    c = new GridBagConstraints();
-    c.gridx = 0;
-    c.gridy = 0;
-    c.gridwidth = 1;
-    c.gridheight = 1;
-    MAIN_WINDOW.getContentPane().add(PROGRESS_IMAGE_AREA, c);
-    
-    c = new GridBagConstraints();
-    c.gridx = 1;
-    c.gridy = 0;
-    c.gridwidth = 1;
-    c.gridheight = 1;
-    MAIN_WINDOW.getContentPane().add(PROGRESS_TEXT_AREA, c);
-    
-    c = new GridBagConstraints();
-    c.gridx = 0;
-    c.gridy = 2;
-    c.gridwidth = 2;
-    c.gridheight = 1;
-    MAIN_WINDOW.getContentPane().add(PROGRESS_OPTION_AREA, c);
-    
-    setCurrentImageArea(IMAGE_AREA);
-    setCurrentTextArea(TEXT_AREA);
+    setCurrentImageArea(IMAGE_AREAS.get(null));
+    setCurrentTextArea(TEXT_AREAS.get(null));
     setCurrentStatsArea(STATS_AREA);
-    setCurrentOptionArea(OPTION_AREA);
+    setCurrentOptionArea(OPTION_AREAS.get(null));
     
     MAIN_WINDOW.validate();
     MAIN_WINDOW.repaint();
@@ -217,17 +168,22 @@ public abstract class Main {
       fis = new FileInputStream(sav);
       ois = new ObjectInputStream(fis);
       State.load(ois);
-      IMAGE_AREA.readExternal(ois);
-      TEXT_AREA.readExternal(ois);
       STATS_AREA.readExternal(ois);
-      OPTION_AREA.readExternal(ois);
-      OPTION_AREA.repaint();
-      INVENTORY_IMAGE_AREA.readExternal(ois);
-      INVENTORY_TEXT_AREA.readExternal(ois);
-      INVENTORY_OPTION_AREA.readExternal(ois);
-      PROGRESS_IMAGE_AREA.readExternal(ois);
-      PROGRESS_TEXT_AREA.readExternal(ois);
-      PROGRESS_OPTION_AREA.readExternal(ois);
+      int size = ois.readInt();
+      for (int i = 0; i < size; i++) {
+        final Key key = (Key) ois.readObject();
+        IMAGE_AREAS.get(key).readExternal(ois);
+      }
+      size = ois.readInt();
+      for (int i = 0; i < size; i++) {
+        final Key key = (Key) ois.readObject();
+        TEXT_AREAS.get(key).readExternal(ois);
+      }
+      size = ois.readInt();
+      for (int i = 0; i < size; i++) {
+        final Key key = (Key) ois.readObject();
+        OPTION_AREAS.get(key).readExternal(ois);
+      }
       final Event<?> oldEvent = currentEvent;
       currentEvent = (Event<?>) ois.readObject();
       currentInventoryEvent = (Event<?>) ois.readObject();
@@ -275,16 +231,22 @@ public abstract class Main {
       fos = new FileOutputStream(sav);
       oos = new ObjectOutputStream(fos);
       State.save(oos);
-      IMAGE_AREA.writeExternal(oos);
-      TEXT_AREA.writeExternal(oos);
       STATS_AREA.writeExternal(oos);
-      OPTION_AREA.writeExternal(oos);
-      INVENTORY_IMAGE_AREA.writeExternal(oos);
-      INVENTORY_TEXT_AREA.writeExternal(oos);
-      INVENTORY_OPTION_AREA.writeExternal(oos);
-      PROGRESS_IMAGE_AREA.writeExternal(oos);
-      PROGRESS_TEXT_AREA.writeExternal(oos);
-      PROGRESS_OPTION_AREA.writeExternal(oos);
+      oos.writeInt(IMAGE_AREAS.size());
+      for (final Map.Entry<Key, ImageArea> entry : IMAGE_AREAS.entrySet()) {
+        oos.writeObject(entry.getKey());
+        entry.getValue().writeExternal(oos);
+      }
+      oos.writeInt(TEXT_AREAS.size());
+      for (final Map.Entry<Key, TextArea> entry : TEXT_AREAS.entrySet()) {
+        oos.writeObject(entry.getKey());
+        entry.getValue().writeExternal(oos);
+      }
+      oos.writeInt(OPTION_AREAS.size());
+      for (final Map.Entry<Key, OptionArea> entry : OPTION_AREAS.entrySet()) {
+        oos.writeObject(entry.getKey());
+        entry.getValue().writeExternal(oos);
+      }
       oos.writeObject(currentEvent);
       oos.writeObject(currentInventoryEvent);
       oos.writeObject(currentProgressEvent);
@@ -313,23 +275,37 @@ public abstract class Main {
   }
   
   public static synchronized Event<?> getCurrentEvent() {
-    if (currentImageArea == IMAGE_AREA) {
-      return Main.currentEvent;
+    for (final Map.Entry<Key, ImageArea> entry : IMAGE_AREAS.entrySet()) {
+      if (entry.getValue() == currentImageArea) {
+        if (entry.getKey() == null) {
+          return currentEvent;
+        }
+        if (entry.getKey() == Key.SHOW_INVENTORY) {
+          return currentInventoryEvent;
+        }
+        return currentProgressEvent;
+      }
     }
-    if (currentImageArea == INVENTORY_IMAGE_AREA) {
-      return Main.currentInventoryEvent;
-    }
-    return Main.currentProgressEvent;
+    return currentEvent;
   }
   
   public static synchronized void setCurrentEvent(final Event<?> event) {
-    if (currentImageArea == IMAGE_AREA) {
-      Main.currentEvent = event;
-    } else if (currentImageArea == INVENTORY_IMAGE_AREA) {
-      Main.currentInventoryEvent = event;
-    } else {
-      Main.currentProgressEvent = event;
+    for (final Map.Entry<Key, ImageArea> entry : IMAGE_AREAS.entrySet()) {
+      if (entry.getValue() == currentImageArea) {
+        if (entry.getKey() == null) {
+          currentEvent = event;
+          return;
+        }
+        if (entry.getKey() == Key.SHOW_INVENTORY) {
+          currentInventoryEvent = event;
+          return;
+        }
+        currentProgressEvent = event;
+        return;
+      }
     }
+    currentEvent = event;
+    return;
   }
   
   public static TextArea getCurrentTextArea() {
@@ -348,33 +324,48 @@ public abstract class Main {
     return currentOptionsArea;
   }
   
-  public static void setCurrentTextArea(final TextArea textArea) {
-    INVENTORY_TEXT_AREA.setVisible(false);
-    PROGRESS_TEXT_AREA.setVisible(false);
-    TEXT_AREA.setVisible(false);
+  public static void setCurrentAreas(final Key key) {
+    if (!key.isAltScreen) {
+      return; // TODO error message
+    }
+    setCurrentImageArea(IMAGE_AREAS.get(key));
+    setCurrentTextArea(TEXT_AREAS.get(key));
+    setCurrentOptionArea(OPTION_AREAS.get(key));
+  }
+  
+  private static void setCurrentTextArea(final TextArea textArea) {
+    for (final TextArea txtArea : TEXT_AREAS.values()) {
+      if (txtArea != textArea) {
+        txtArea.setVisible(false);
+      }
+    }
     
     textArea.setVisible(true);
     textArea.requestFocusInWindow();
     currentTextArea = textArea;
   }
   
-  public static void setCurrentImageArea(final ImageArea imageArea) {
-    INVENTORY_IMAGE_AREA.setVisible(false);
-    PROGRESS_IMAGE_AREA.setVisible(false);
-    IMAGE_AREA.setVisible(false);
+  private static void setCurrentImageArea(final ImageArea imageArea) {
+    for (final ImageArea imgArea : IMAGE_AREAS.values()) {
+      if (imgArea != imageArea) {
+        imgArea.setVisible(false);
+      }
+    }
     
     imageArea.setVisible(true);
     currentImageArea = imageArea;
   }
   
-  public static void setCurrentStatsArea(final StatsArea statsArea) {
+  private static void setCurrentStatsArea(final StatsArea statsArea) {
     currentStatsArea = statsArea;
   }
   
-  public static void setCurrentOptionArea(final OptionArea optionArea) {
-    INVENTORY_OPTION_AREA.setVisible(false);
-    PROGRESS_OPTION_AREA.setVisible(false);
-    OPTION_AREA.setVisible(false);
+  private static void setCurrentOptionArea(final OptionArea optionArea) {
+    for (final OptionArea optArea : OPTION_AREAS.values()) {
+      if (optArea != optionArea) {
+        optArea.setVisible(false);
+      }
+    }
     
     optionArea.setVisible(true);
     currentOptionsArea = optionArea;

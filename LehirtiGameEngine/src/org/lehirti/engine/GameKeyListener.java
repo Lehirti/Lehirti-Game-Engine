@@ -67,18 +67,14 @@ public class GameKeyListener implements KeyListener {
         Main.loadGame();
       } else if (key == Key.SHOW_INVENTORY) {
         final Event<?> oldEvent = Main.getCurrentEvent();
-        Main.setCurrentImageArea(Main.INVENTORY_IMAGE_AREA);
-        Main.setCurrentTextArea(Main.INVENTORY_TEXT_AREA);
-        Main.setCurrentOptionArea(Main.INVENTORY_OPTION_AREA);
+        Main.setCurrentAreas(key);
         Main.setCurrentEvent(new InventoryEvent(InventoryMap.getSelectedItem()));
         synchronized (oldEvent) {
           oldEvent.notifyAll();
         }
       } else if (key == Key.SHOW_PROGRESS) {
         final Event<?> oldEvent = Main.getCurrentEvent();
-        Main.setCurrentImageArea(Main.PROGRESS_IMAGE_AREA);
-        Main.setCurrentTextArea(Main.PROGRESS_TEXT_AREA);
-        Main.setCurrentOptionArea(Main.PROGRESS_OPTION_AREA);
+        Main.setCurrentAreas(key);
         Main.setCurrentEvent(new ProgressEvent(TestGraph.class));
         synchronized (oldEvent) {
           oldEvent.notifyAll();

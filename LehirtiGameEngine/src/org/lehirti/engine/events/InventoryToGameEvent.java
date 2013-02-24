@@ -17,8 +17,6 @@ public final class InventoryToGameEvent extends EventNode<NullState> implements 
   
   @Override
   protected void doEvent() {
-    Main.setCurrentImageArea(Main.IMAGE_AREA);
-    Main.setCurrentTextArea(Main.TEXT_AREA);
-    Main.setCurrentOptionArea(Main.OPTION_AREA);
+    Main.setCurrentAreas(null);
   }
 }

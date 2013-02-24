@@ -29,10 +29,9 @@ public enum Key {
   
   TEXT_INPUT_OPTION_ENTER(10, 0, TextFunction.ENTER),
   
-  //
-  SHOW_INVENTORY(49, 0, TextFunction.SHOW_INVENTORY),
-  
-  SHOW_PROGRESS(50, 0, TextFunction.SHOW_PROGRESS),
+  // non main-game screens
+  SHOW_INVENTORY(49, 0, TextFunction.SHOW_INVENTORY, true),
+  SHOW_PROGRESS(50, 0, TextFunction.SHOW_PROGRESS, true),
   
   CYCLE_TEXT_PAGES(32, 0, TextFunction.CYCLE_TEXT_PAGES),
   
@@ -58,6 +57,7 @@ public enum Key {
   private int code;
   private int modifiers;
   private final TextKey textFunction;
+  public final boolean isAltScreen;
   public final boolean isOptionKey;
   public final int col;
   public final int row;
@@ -69,6 +69,7 @@ public enum Key {
     this.code = KeyMapping.getMappingFor(name(), defaultCode);
     this.modifiers = KeyMapping.getMappingFor(name() + "mod", defaultModifiers);
     this.textFunction = textFunction;
+    this.isAltScreen = false;
     this.isOptionKey = true;
     this.col = col;
     this.row = row;
@@ -79,6 +80,18 @@ public enum Key {
     this.code = KeyMapping.getMappingFor(name(), defaultCode);
     this.modifiers = KeyMapping.getMappingFor(name() + "mod", defaultModifiers);
     this.textFunction = textFunction;
+    this.isAltScreen = false;
+    this.isOptionKey = false;
+    this.col = -1;
+    this.row = -1;
+    this.buttonImageKey = null;
+  }
+  
+  private Key(final int defaultCode, final int defaultModifiers, final TextKey textFunction, final boolean isAltScreen) {
+    this.code = KeyMapping.getMappingFor(name(), defaultCode);
+    this.modifiers = KeyMapping.getMappingFor(name() + "mod", defaultModifiers);
+    this.textFunction = textFunction;
+    this.isAltScreen = isAltScreen;
     this.isOptionKey = false;
     this.col = -1;
     this.row = -1;

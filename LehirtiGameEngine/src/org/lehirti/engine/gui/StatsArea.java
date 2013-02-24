@@ -30,6 +30,7 @@ public class StatsArea extends JPanel implements Externalizable {
   
   @Override
   public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+    repaint();
   }
   
   @Override
@@ -84,7 +85,6 @@ public class StatsArea extends JPanel implements Externalizable {
   public void paintComponent(final Graphics g) {
     clear(g);
     dateTime(g);
-    
   }
   
   private void clear(final Graphics g) {

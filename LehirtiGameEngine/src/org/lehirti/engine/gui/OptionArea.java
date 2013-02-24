@@ -195,6 +195,7 @@ public class OptionArea extends JComponent implements Externalizable {
     for (int i = 0; i < nrOfTexts; i++) {
       this.options.put((Key) in.readObject(), (TextWrapper) in.readObject());
     }
+    repaint();
   }
   
   @Override
