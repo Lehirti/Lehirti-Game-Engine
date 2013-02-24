@@ -41,7 +41,7 @@ public enum Key {
   
   // save and load
   SAVE(83, InputEvent.CTRL_MASK, TextFunction.SAVE),
-  LOAD(76, InputEvent.CTRL_MASK, TextFunction.LOAD);
+  LOAD(76, InputEvent.CTRL_MASK, TextFunction.LOAD, true);
   
   private static final List<Key> OPTION_KEYS = new ArrayList<Key>(values().length);
   

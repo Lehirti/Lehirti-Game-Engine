@@ -242,7 +242,7 @@ public class PathFinder {
     return new File(SAVE_DIR, SAVEGAME_PREFIX + System.currentTimeMillis() + "-" + flavor + "-" + build);
   }
   
-  public static List<File> getAllSaveFiles() {
+  public static List<File> getAllSavegames() {
     if (!SAVE_DIR.exists()) {
       return Collections.emptyList();
     }

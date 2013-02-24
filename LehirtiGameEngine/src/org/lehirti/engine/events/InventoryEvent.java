@@ -98,6 +98,6 @@ public final class InventoryEvent extends EventNode<NullState> implements Extern
             .getKey()));
       }
     }
-    addOption(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new InventoryToGameEvent());
+    addOption(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new AltScreenToGameEvent());
   }
 }

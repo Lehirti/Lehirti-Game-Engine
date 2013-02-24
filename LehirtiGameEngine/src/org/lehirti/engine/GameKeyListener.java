@@ -2,15 +2,22 @@ package org.lehirti.engine;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.util.List;
 
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.InventoryEvent;
+import org.lehirti.engine.events.LoadGameScreenEvent;
 import org.lehirti.engine.gui.ImageEditor;
 import org.lehirti.engine.gui.Key;
+import org.lehirti.engine.gui.Notification;
 import org.lehirti.engine.gui.TextEditor;
 import org.lehirti.engine.progressgraph.ProgressEvent;
 import org.lehirti.engine.progressgraph.TestGraph;
+import org.lehirti.engine.res.ResourceCache;
+import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.state.InventoryMap;
+import org.lehirti.engine.util.PathFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +77,18 @@ public class GameKeyListener implements KeyListener {
       if (key == Key.SAVE) {
         this.main.saveGame();
       } else if (key == Key.LOAD) {
-        Main.loadGame();
+        final List<File> allSavegames = PathFinder.getAllSavegames();
+        if (allSavegames.isEmpty()) {
+          // no savegames found
+          new Notification(Main.MAIN_WINDOW, ResourceCache.get(CommonText.NO_SAVEGAME_FOUND), 1500);
+        } else {
+          final Event<?> oldEvent = Main.getCurrentEvent();
+          Main.setCurrentAreas(key);
+          Main.setCurrentEvent(new LoadGameScreenEvent(0, allSavegames));
+          synchronized (oldEvent) {
+            oldEvent.notifyAll();
+          }
+        }
       } else if (key == Key.SHOW_INVENTORY) {
         final Event<?> oldEvent = Main.getCurrentEvent();
         Main.setCurrentAreas(key);

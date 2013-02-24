@@ -14,7 +14,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
@@ -108,6 +107,10 @@ public abstract class Main {
     IMAGE_AREAS.put(Key.SHOW_PROGRESS, new ProgressImageArea(SCREEN_X, SCREEN_Y, 48.0, 36.0));
     OPTION_AREAS.put(Key.SHOW_PROGRESS, new OptionArea(SCREEN_X, SCREEN_Y, 64.0, 6.0, 4, 3));
     
+    TEXT_AREAS.put(Key.LOAD, new TextArea(SCREEN_X, SCREEN_Y, 16.0, 36.0));
+    IMAGE_AREAS.put(Key.LOAD, new ImageArea(SCREEN_X, SCREEN_Y, 48.0, 36.0));
+    OPTION_AREAS.put(Key.LOAD, new OptionArea(SCREEN_X, SCREEN_Y, 64.0, 6.0, 4, 3));
+    
     IMAGE_AREAS.get(Key.SHOW_INVENTORY).setBackgroundImage(CommonImage.INVENTORY_BACKGROUND);
     IMAGE_AREAS.get(Key.SHOW_PROGRESS).setBackgroundImage(CommonImage.PROGRESS_BACKGROUND);
     
@@ -160,13 +163,7 @@ public abstract class Main {
     MAIN_WINDOW.setExtendedState(Frame.MAXIMIZED_BOTH);
   }
   
-  protected static void loadGame() {
-    final List<File> savegames = PathFinder.getAllSaveFiles();
-    if (savegames.isEmpty()) {
-      LOGGER.error("No Savegames found.");
-      return;
-    }
-    final File sav = savegames.get(0); // get newest
+  public static void loadGame(final File sav) {
     FileInputStream fis = null;
     ObjectInputStream ois = null;
     try {
@@ -174,7 +171,6 @@ public abstract class Main {
         LOGGER.warn("Another game cannot be loaded right now"); // better notification for user
         return;
       }
-      
       fis = new FileInputStream(sav);
       ois = new ObjectInputStream(fis);
       State.load(ois);
@@ -338,7 +334,7 @@ public abstract class Main {
   }
   
   public static void setCurrentAreas(final Key key) {
-    if (!key.isAltScreen) {
+    if (key != null && !key.isAltScreen) {
       return; // TODO error message
     }
     setCurrentImageArea(IMAGE_AREAS.get(key));

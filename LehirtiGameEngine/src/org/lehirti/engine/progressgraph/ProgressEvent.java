@@ -9,7 +9,7 @@ import java.util.Vector;
 
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.events.EventNode;
-import org.lehirti.engine.events.InventoryToGameEvent;
+import org.lehirti.engine.events.AltScreenToGameEvent;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.progressgraph.ProgressGraph.ProgressCommon;
 import org.lehirti.engine.res.ResourceCache;
@@ -120,6 +120,6 @@ public final class ProgressEvent extends EventNode<NullState> implements Externa
     if (!nexts.isEmpty()) {
       addOption(Key.OPTION_EAST, nextProg, new ProgressEvent(nexts.get(0)));
     }
-    addOption(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new InventoryToGameEvent());
+    addOption(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new AltScreenToGameEvent());
   }
 }

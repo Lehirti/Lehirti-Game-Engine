@@ -29,5 +29,8 @@ public enum CommonText implements TextKey {
   PARAMETER,
   UNKNOWN_NAME,
   NEW_PARAGRAPH,
-  GAME_SAVED;
+  GAME_SAVED,
+  NO_SAVEGAME_FOUND,
+  SAVEGAMES,
+  LOAD_SAVEGAME;
 }
