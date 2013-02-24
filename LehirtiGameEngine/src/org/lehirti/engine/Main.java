@@ -26,6 +26,7 @@ import org.lehirti.engine.events.Event;
 import org.lehirti.engine.gui.ImageArea;
 import org.lehirti.engine.gui.ImageEditor;
 import org.lehirti.engine.gui.Key;
+import org.lehirti.engine.gui.Notification;
 import org.lehirti.engine.gui.OptionArea;
 import org.lehirti.engine.gui.ProgressImageArea;
 import org.lehirti.engine.gui.StatsArea;
@@ -34,6 +35,7 @@ import org.lehirti.engine.gui.TextEditor;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.images.CommonImage;
 import org.lehirti.engine.res.images.ImageKey;
+import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.state.BoolState;
 import org.lehirti.engine.state.IntState;
 import org.lehirti.engine.state.State;
@@ -260,6 +262,8 @@ public abstract class Main {
       oos.writeObject(currentProgressEvent);
       
       LOGGER.info("Game saved");
+      
+      new Notification(MAIN_WINDOW, ResourceCache.get(CommonText.GAME_SAVED), 1500);
       
     } catch (final FileNotFoundException e) {
       LOGGER.error("Savegame " + sav.getAbsolutePath() + " not found for saving", e);

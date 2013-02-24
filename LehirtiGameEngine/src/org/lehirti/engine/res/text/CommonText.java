@@ -28,5 +28,6 @@ public enum CommonText implements TextKey {
   NEWLINE,
   PARAMETER,
   UNKNOWN_NAME,
-  NEW_PARAGRAPH;
+  NEW_PARAGRAPH,
+  GAME_SAVED;
 }
