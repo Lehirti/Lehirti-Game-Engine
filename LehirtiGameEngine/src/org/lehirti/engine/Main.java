@@ -4,7 +4,6 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -15,6 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
@@ -60,7 +60,6 @@ public abstract class Main {
   private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
   
   public static JFrame MAIN_WINDOW;
-  private static KeyListener KEY_LISTENER = new GameKeyListener();
   
   private static final double SCREEN_X = 64.0;
   private static final double SCREEN_Y = 48.0;
@@ -82,12 +81,16 @@ public abstract class Main {
   private static volatile Event<?> currentInventoryEvent = null;
   private static volatile Event<?> currentProgressEvent = null;
   
+  private String flavor = "flavor";
+  
+  private String build = "build";
+  
   private void createAndShowGUI() {
     
     Main.MAIN_WINDOW = new JFrame(getGameName());
     MAIN_WINDOW.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     MAIN_WINDOW.getContentPane().setLayout(new GridBagLayout());
-    MAIN_WINDOW.addKeyListener(KEY_LISTENER);
+    MAIN_WINDOW.addKeyListener(new GameKeyListener(this));
     
     STATS_AREA = new StatsArea(SCREEN_X, SCREEN_Y, 64.0, 6.0);
     
@@ -156,7 +159,12 @@ public abstract class Main {
   }
   
   protected static void loadGame() {
-    final File sav = new File("save"); // TODO save file name
+    final List<File> savegames = PathFinder.getAllSaveFiles();
+    if (savegames.isEmpty()) {
+      LOGGER.error("No Savegames found.");
+      return;
+    }
+    final File sav = savegames.get(0); // get newest
     FileInputStream fis = null;
     ObjectInputStream ois = null;
     try {
@@ -218,8 +226,8 @@ public abstract class Main {
     }
   }
   
-  protected static void saveGame() {
-    final File sav = new File("save"); // TODO save file name
+  protected void saveGame() {
+    final File sav = PathFinder.getNewSaveFile(this.flavor, this.build);
     FileOutputStream fos = null;
     ObjectOutputStream oos = null;
     try {
@@ -252,6 +260,7 @@ public abstract class Main {
       oos.writeObject(currentProgressEvent);
       
       LOGGER.info("Game saved");
+      
     } catch (final FileNotFoundException e) {
       LOGGER.error("Savegame " + sav.getAbsolutePath() + " not found for saving", e);
     } catch (final IOException e) {
@@ -490,9 +499,10 @@ public abstract class Main {
       IS_DEVELOPMENT_VERSION = true;
       return;
     }
+    this.flavor = versionProps.getProperty("flavor");
+    this.build = versionProps.getProperty("build");
     
-    LOGGER.info(getGameName() + " " + versionProps.getProperty("flavor") + " Build "
-        + versionProps.getProperty("build") + " " + versionProps.getProperty("date"));
+    LOGGER.info(getGameName() + " " + this.flavor + " Build " + this.build + " " + versionProps.getProperty("date"));
   }
   
   abstract protected void readContent();

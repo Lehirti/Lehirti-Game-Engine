@@ -17,6 +17,12 @@ import org.slf4j.LoggerFactory;
 public class GameKeyListener implements KeyListener {
   private static final Logger LOGGER = LoggerFactory.getLogger(GameKeyListener.class);
   
+  private final Main main;
+  
+  public GameKeyListener(final Main main) {
+    this.main = main;
+  }
+  
   @Override
   public synchronized void keyPressed(final KeyEvent e) {
     LOGGER.info("Key {} {} {} pressed", new Object[] { e.getKeyCode(), e.getModifiers(), e.getKeyChar() });
@@ -62,7 +68,7 @@ public class GameKeyListener implements KeyListener {
       }
       
       if (key == Key.SAVE) {
-        Main.saveGame();
+        this.main.saveGame();
       } else if (key == Key.LOAD) {
         Main.loadGame();
       } else if (key == Key.SHOW_INVENTORY) {

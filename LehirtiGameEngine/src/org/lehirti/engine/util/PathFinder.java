@@ -5,7 +5,10 @@ import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +24,8 @@ public class PathFinder {
   private static final String VERSION_FILE_LOCATION = "version";
   
   private static final String RES = "res";
+  
+  private static final String SAVE = "savegames";
   
   private static final String DEFAULTS = "defaults";
   
@@ -45,11 +50,15 @@ public class PathFinder {
   
   public static final File MOD_DEFAULTS_DIR = new File(MOD_BASE_DIR, DEFAULTS);
   
+  private static final File SAVE_DIR = new File(SAVE);
+  
   public static final String PROXY_FILENAME_SUFFIX = ".proxy";
   
   public static final String PROPERTIES_FILENAME_SUFFIX = ".properties";
   
   public static final File CONFIG_DIR = new File("config");
+  
+  private static final String SAVEGAME_PREFIX = "savegame-";
   
   public static File getCoreFile(final TextKey key) {
     return get(key, CORE_TEXT_CACHE, CORE_CONTENT_DIRS);
@@ -221,5 +230,34 @@ public class PathFinder {
   
   public static File getModDefaultProperties(final Class<? extends AbstractState> stateClass) {
     return new File(MOD_DEFAULTS_DIR, stateClass.getName() + PROPERTIES_FILENAME_SUFFIX);
+  }
+  
+  public static File getNewSaveFile(final String flavor, final String build) {
+    // ensure save dir exists
+    if (!SAVE_DIR.exists()) {
+      if (!SAVE_DIR.mkdirs()) {
+        throw new RuntimeException("Failed to create directory " + SAVE_DIR.getAbsolutePath());
+      }
+    }
+    return new File(SAVE_DIR, SAVEGAME_PREFIX + System.currentTimeMillis() + "-" + flavor + "-" + build);
+  }
+  
+  public static List<File> getAllSaveFiles() {
+    if (!SAVE_DIR.exists()) {
+      return Collections.emptyList();
+    }
+    final List<File> savegames = new LinkedList<File>();
+    for (final File file : SAVE_DIR.listFiles()) {
+      if (file.getName().startsWith(SAVEGAME_PREFIX)) {
+        savegames.add(file);
+      }
+    }
+    Collections.sort(savegames, new Comparator<File>() {
+      @Override
+      public int compare(final File o1, final File o2) {
+        return -o1.getName().compareTo(o2.getName());
+      }
+    });
+    return savegames;
   }
 }
