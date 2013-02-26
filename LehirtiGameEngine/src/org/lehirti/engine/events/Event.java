@@ -49,7 +49,7 @@ public interface Event<STATE extends Enum<?>> {
   
   public TimeInterval getRequiredTimeInterval();
   
-  public boolean handleKeyEvent(KeyEvent e);
+  public boolean handleKeyEvent(KeyEvent e, Key key);
   
   public void keyPressed(Key key);
 }

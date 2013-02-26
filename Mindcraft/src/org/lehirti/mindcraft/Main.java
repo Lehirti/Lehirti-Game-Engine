@@ -3,8 +3,8 @@ package org.lehirti.mindcraft;
 import java.lang.reflect.InvocationTargetException;
 
 import org.lehirti.engine.util.ContentUtils;
-import org.lehirti.engine.util.PathFinder;
 import org.lehirti.engine.util.ContentUtils.CheckResult;
+import org.lehirti.engine.util.PathFinder;
 import org.lehirti.mindcraft.intro.Night1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,5 +52,10 @@ public class Main extends org.lehirti.engine.Main {
             + " is not present. You need to download the content pack, if you want this particular content.");
       }
     }
+  }
+  
+  @Override
+  protected String getSavegameName() {
+    return "TODO"; // TODO
   }
 }

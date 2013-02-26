@@ -39,7 +39,7 @@ public class ChangeKeyMapping extends EventNode<NullState> {
   }
   
   @Override
-  public boolean handleKeyEvent(final KeyEvent e) {
+  public boolean handleKeyEvent(final KeyEvent e, final Key ignore) {
     this.key.setCodeAndModifiers(e.getKeyCode(), e.getModifiers());
     return handleKeyEvent(Key.OPTION_LEAVE);
   }

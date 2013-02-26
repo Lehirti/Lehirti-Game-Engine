@@ -37,12 +37,12 @@ public class GameKeyListener implements KeyListener {
     try {
       final Key key = Key.getByCodeAndModifiers(e.getKeyCode(), e.getModifiers());
       
-      if (key == null) {
+      if (key == null || key == Key.TEXT_INPUT_OPTION_ENTER) {
         // key unrelated to core game
         
         // handle key text input events of non-core-game keys
         if (Main.getCurrentEvent() != null) {
-          Main.getCurrentEvent().handleKeyEvent(e);
+          Main.getCurrentEvent().handleKeyEvent(e, key);
         }
         return;
       }
@@ -69,7 +69,7 @@ public class GameKeyListener implements KeyListener {
       
       // handle key text input events of core-game keys
       if (Main.getCurrentEvent() != null) {
-        if (Main.getCurrentEvent().handleKeyEvent(e)) {
+        if (Main.getCurrentEvent().handleKeyEvent(e, key)) {
           return;
         }
       }

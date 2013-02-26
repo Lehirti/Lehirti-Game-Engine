@@ -345,9 +345,9 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
   }
   
   @Override
-  public boolean handleKeyEvent(final KeyEvent e) {
+  public boolean handleKeyEvent(final KeyEvent e, final Key key) {
     if (this.isTextInput) {
-      if (e.getKeyChar() == '\n') {
+      if (key == Key.TEXT_INPUT_OPTION_ENTER) {
         final String finalTextInput = Main.getCurrentOptionArea().getCurrentTextInput();
         if (handleTextInput(finalTextInput)) {
           return handleKeyEvent(Key.TEXT_INPUT_OPTION_ENTER);

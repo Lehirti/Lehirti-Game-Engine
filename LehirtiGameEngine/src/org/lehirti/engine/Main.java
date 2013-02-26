@@ -14,6 +14,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
@@ -34,6 +36,7 @@ import org.lehirti.engine.gui.TextEditor;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.images.CommonImage;
 import org.lehirti.engine.res.images.ImageKey;
+import org.lehirti.engine.res.images.ImageWrapper;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.state.BoolState;
 import org.lehirti.engine.state.IntState;
@@ -173,6 +176,11 @@ public abstract class Main {
       }
       fis = new FileInputStream(sav);
       ois = new ObjectInputStream(fis);
+      
+      // for load screen preview
+      ois.readUTF();
+      ois.readObject();
+      
       State.load(ois);
       STATS_AREA.readExternal(ois);
       int size = ois.readInt();
@@ -200,6 +208,9 @@ public abstract class Main {
       }
       
       LOGGER.info("Game loaded");
+      
+      MAIN_WINDOW.repaint();
+      
     } catch (final FileNotFoundException e) {
       LOGGER.error("Savegame " + sav.getAbsolutePath() + " not found for loading", e);
     } catch (final IOException e) {
@@ -236,6 +247,16 @@ public abstract class Main {
       
       fos = new FileOutputStream(sav);
       oos = new ObjectOutputStream(fos);
+      
+      // for load screen preview
+      oos.writeUTF(getSavegameName());
+      final List<ImageWrapper> allImages = IMAGE_AREAS.get(null).getAllImages();
+      final List<ImageKey> allImageKeys = new LinkedList<ImageKey>();
+      for (final ImageWrapper wrapper : allImages) {
+        allImageKeys.add(wrapper.getKey());
+      }
+      oos.writeObject(allImageKeys);
+      
       State.save(oos);
       STATS_AREA.writeExternal(oos);
       oos.writeInt(IMAGE_AREAS.size());
@@ -282,6 +303,8 @@ public abstract class Main {
       }
     }
   }
+  
+  protected abstract String getSavegameName();
   
   public static synchronized Event<?> getCurrentEvent() {
     for (final Map.Entry<Key, ImageArea> entry : IMAGE_AREAS.entrySet()) {

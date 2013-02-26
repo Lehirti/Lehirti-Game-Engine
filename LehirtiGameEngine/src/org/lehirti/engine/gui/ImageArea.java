@@ -252,11 +252,6 @@ public class ImageArea extends JComponent implements Externalizable {
     this.foregroundImages.add(images);
   }
   
-  void setImages(final List<ImageWrapper> allImages) {
-    this.foregroundImages.clear();
-    this.foregroundImages.addAll(allImages);
-  }
-  
   public List<ImageWrapper> getAllImages() {
     final List<ImageWrapper> allImages = new ArrayList<ImageWrapper>(16);
     if (this.backgroundImage != null) {

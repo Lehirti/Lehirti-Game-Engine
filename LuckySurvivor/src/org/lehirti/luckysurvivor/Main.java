@@ -2,10 +2,12 @@ package org.lehirti.luckysurvivor;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.lehirti.engine.state.State;
 import org.lehirti.engine.util.ContentUtils;
-import org.lehirti.engine.util.PathFinder;
 import org.lehirti.engine.util.ContentUtils.CheckResult;
+import org.lehirti.engine.util.PathFinder;
 import org.lehirti.luckysurvivor.intro.Startscreen;
+import org.lehirti.luckysurvivor.pc.PC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +29,11 @@ public class Main extends org.lehirti.engine.Main {
   @Override
   protected String getGameName() {
     return "[WIP] Lucky Survivor";
+  }
+  
+  @Override
+  protected String getSavegameName() {
+    return State.get(PC.String.NAME);
   }
   
   @Override
