@@ -11,6 +11,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -46,6 +47,8 @@ public class OptionArea extends JComponent implements Externalizable {
   private boolean isTextInput = false;
   private TextKey textInputLabel = null;
   private String currentTextInput = null;
+  
+  private volatile boolean repaintNeeded = false;
   
   final ImageWrapper optionAreaBackground;
   
@@ -208,28 +211,51 @@ public class OptionArea extends JComponent implements Externalizable {
   }
   
   public void clearOptions() {
-    this.options.clear();
     this.isTextInput = false;
-    repaint();
+    if (!this.options.isEmpty()) {
+      this.options.clear();
+      this.repaintNeeded = true;
+    }
   }
   
   // TODO: error on non-option keys
   public void setOption(final TextKey text, final Key key) {
     this.options.put(key, ResourceCache.get(text));
-    repaint();
+    this.repaintNeeded = true;
   }
   
   // TODO: error on non-option keys
   public void setOption(final TextWrapper text, final Key key) {
     this.options.put(key, text);
-    repaint();
+    this.repaintNeeded = true;
   }
   
   public void setTextInputOption(final TextKey text, final String initialTextInput) {
     this.isTextInput = true;
     this.textInputLabel = text;
     this.currentTextInput = initialTextInput;
-    repaint();
+    this.repaintNeeded = true;
+  }
+  
+  /**
+   * callable from non-gui thread
+   */
+  public void repaintIfNeeded() {
+    if (this.repaintNeeded) {
+      try {
+        javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
+          public void run() {
+            repaint();
+          }
+        });
+      } catch (final InterruptedException e) {
+        LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
+        throw new ThreadDeath();
+      } catch (final InvocationTargetException e) {
+        LOGGER.error("InvocationTargetException trying to add text to text area", e);
+      }
+      this.repaintNeeded = false;
+    }
   }
   
   public String getCurrentTextInput() {

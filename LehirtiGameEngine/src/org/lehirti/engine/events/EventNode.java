@@ -89,66 +89,6 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
     }
   }
   
-  private void clearOptions() {
-    try {
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
-        public void run() {
-          Main.getCurrentOptionArea().clearOptions();
-        }
-      });
-    } catch (final InterruptedException e) {
-      LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
-      throw new ThreadDeath();
-    } catch (final InvocationTargetException e) {
-      LOGGER.error("InvocationTargetException trying to add text to text area", e);
-    }
-  }
-  
-  private void setOption(final TextKey text, final Key key) {
-    try {
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
-        public void run() {
-          Main.getCurrentOptionArea().setOption(text, key);
-        }
-      });
-    } catch (final InterruptedException e) {
-      LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
-      throw new ThreadDeath();
-    } catch (final InvocationTargetException e) {
-      LOGGER.error("InvocationTargetException trying to add text to text area", e);
-    }
-  }
-  
-  private void setOption(final TextWrapper text, final Key key) {
-    try {
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
-        public void run() {
-          Main.getCurrentOptionArea().setOption(text, key);
-        }
-      });
-    } catch (final InterruptedException e) {
-      LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
-      throw new ThreadDeath();
-    } catch (final InvocationTargetException e) {
-      LOGGER.error("InvocationTargetException trying to add text to text area", e);
-    }
-  }
-  
-  private void setTextInputOption(final TextKey text, final String initialText) {
-    try {
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
-        public void run() {
-          Main.getCurrentOptionArea().setTextInputOption(text, initialText);
-        }
-      });
-    } catch (final InterruptedException e) {
-      LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
-      throw new ThreadDeath();
-    } catch (final InvocationTargetException e) {
-      LOGGER.error("InvocationTargetException trying to add text to text area", e);
-    }
-  }
-  
   protected void addText(final TextKey key) {
     addText(ResourceCache.get(key));
   }
@@ -196,7 +136,7 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
   protected void setTextInputOption(final TextKey text, final String initialText, final Event<?> event) {
     this.registeredEvents.put(Key.TEXT_INPUT_OPTION_ENTER, event.getActualEvent(this));
     this.isTextInput = true;
-    setTextInputOption(text, initialText);
+    Main.getCurrentOptionArea().setTextInputOption(text, initialText);
   }
   
   private void addOptionsWithArbitraryKeys() {
@@ -215,12 +155,12 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
   
   private void addOption(final TextKey text, final Key key, final Event<?> event) {
     this.registeredEvents.put(key, event.getActualEvent(this));
-    setOption(text, key);
+    Main.getCurrentOptionArea().setOption(text, key);
   }
   
   private void addOption(final TextWrapper text, final Key key, final Event<?> event) {
     this.registeredEvents.put(key, event.getActualEvent(this));
-    setOption(text, key);
+    Main.getCurrentOptionArea().setOption(text, key);
   }
   
   public void execute() {
@@ -231,7 +171,7 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
     if (!this.savePointReached) {
       performImageAreaUpdates();
       
-      clearOptions();
+      Main.getCurrentOptionArea().clearOptions();
       
       // must be called before doEvent(); otherwise event hooks don't work properly
       // must be called after performImageAreaUpdates(); otherwise the count would be inconsistent in updateImageArea()
@@ -244,6 +184,7 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
       getRequiredTimeInterval().advance();
     }
     repaintImagesIfNeeded();
+    Main.getCurrentOptionArea().repaintIfNeeded();
     
     backgroundLoadNextImages();
     
