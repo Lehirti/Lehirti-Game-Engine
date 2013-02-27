@@ -16,7 +16,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import org.lehirti.engine.Main;
+import org.lehirti.engine.gui.Main;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.ResourceState;
 import org.lehirti.engine.res.images.ImageKey;

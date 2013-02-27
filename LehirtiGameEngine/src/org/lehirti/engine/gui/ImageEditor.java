@@ -2,6 +2,7 @@ package org.lehirti.engine.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.lehirti.engine.gui.WindowLocation.WinLoc;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.images.ImageProxy.ProxyProps;
 import org.lehirti.engine.res.images.ImageWrapper;
@@ -195,9 +197,18 @@ public class ImageEditor extends JFrame implements ActionListener {
     
     setTitle();
     
-    setSize(1200, 800);
+    pack();
     
     setVisible(true);
+    
+    final WinLoc winLoc = WindowLocation.getLocationFor("ImageEditor");
+    if (!winLoc.isMax) {
+      setLocation(winLoc.x, winLoc.y);
+      setSize(winLoc.width, winLoc.height);
+    } else {
+      setExtendedState(Frame.MAXIMIZED_BOTH);
+    }
+    addWindowListener(new WindowCloseListener(this, "ImageEditor"));
   }
   
   private void setTitle() {

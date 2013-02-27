@@ -1,4 +1,4 @@
-package org.lehirti.engine;
+package org.lehirti.engine.gui;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -8,10 +8,6 @@ import java.util.List;
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.InventoryEvent;
 import org.lehirti.engine.events.LoadGameScreenEvent;
-import org.lehirti.engine.gui.ImageEditor;
-import org.lehirti.engine.gui.Key;
-import org.lehirti.engine.gui.Notification;
-import org.lehirti.engine.gui.TextEditor;
 import org.lehirti.engine.progressgraph.ProgressEvent;
 import org.lehirti.engine.progressgraph.TestGraph;
 import org.lehirti.engine.res.ResourceCache;

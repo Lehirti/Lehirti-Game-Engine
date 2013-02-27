@@ -11,7 +11,7 @@ import org.lehirti.luckysurvivor.pc.PC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Main extends org.lehirti.engine.Main {
+public class Main extends org.lehirti.engine.gui.Main {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
   

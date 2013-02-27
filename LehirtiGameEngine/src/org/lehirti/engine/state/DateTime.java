@@ -1,6 +1,6 @@
 package org.lehirti.engine.state;
 
-import org.lehirti.engine.Main;
+import org.lehirti.engine.gui.Main;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;

@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.lehirti.engine.Main;
 import org.lehirti.engine.events.hooks.EventHook;
 import org.lehirti.engine.gui.Key;
+import org.lehirti.engine.gui.Main;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.state.EventState;
 import org.lehirti.engine.state.State;

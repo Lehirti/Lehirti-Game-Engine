@@ -11,9 +11,9 @@ import java.io.ObjectOutput;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.lehirti.engine.Main;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
+import org.lehirti.engine.gui.Main;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.images.ImgChange;

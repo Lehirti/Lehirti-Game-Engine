@@ -20,7 +20,6 @@ import java.util.Map.Entry;
 
 import javax.swing.JComponent;
 
-import org.lehirti.engine.Main;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.images.CommonImage;
 import org.lehirti.engine.res.images.ImageWrapper;

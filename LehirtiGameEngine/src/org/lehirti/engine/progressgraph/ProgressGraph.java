@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.lehirti.engine.Main;
+import org.lehirti.engine.gui.Main;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.state.StringState;
 import org.lehirti.engine.util.MiscUtils;

@@ -1,9 +1,13 @@
-package org.lehirti.engine;
+package org.lehirti.engine.gui;
 
+import java.awt.AWTException;
+import java.awt.BufferCapabilities;
+import java.awt.BufferCapabilities.FlipContents;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.ImageCapabilities;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,15 +28,7 @@ import java.util.concurrent.BlockingQueue;
 import javax.swing.JFrame;
 
 import org.lehirti.engine.events.Event;
-import org.lehirti.engine.gui.ImageArea;
-import org.lehirti.engine.gui.ImageEditor;
-import org.lehirti.engine.gui.Key;
-import org.lehirti.engine.gui.Notification;
-import org.lehirti.engine.gui.OptionArea;
-import org.lehirti.engine.gui.ProgressImageArea;
-import org.lehirti.engine.gui.StatsArea;
-import org.lehirti.engine.gui.TextArea;
-import org.lehirti.engine.gui.TextEditor;
+import org.lehirti.engine.gui.WindowLocation.WinLoc;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.images.CommonImage;
 import org.lehirti.engine.res.images.ImageKey;
@@ -162,8 +158,23 @@ public abstract class Main {
     MAIN_WINDOW.repaint();
     
     MAIN_WINDOW.pack();
+    try {
+      MAIN_WINDOW.createBufferStrategy(2, new BufferCapabilities(new ImageCapabilities(true), new ImageCapabilities(
+          true), FlipContents.PRIOR));
+    } catch (final AWTException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     MAIN_WINDOW.setVisible(true);
-    MAIN_WINDOW.setExtendedState(Frame.MAXIMIZED_BOTH);
+    
+    final WinLoc winLoc = WindowLocation.getLocationFor("Main");
+    if (!winLoc.isMax) {
+      MAIN_WINDOW.setLocation(winLoc.x, winLoc.y);
+      MAIN_WINDOW.setSize(winLoc.width, winLoc.height);
+    } else {
+      MAIN_WINDOW.setExtendedState(Frame.MAXIMIZED_BOTH);
+    }
+    MAIN_WINDOW.addWindowListener(new WindowCloseListener(MAIN_WINDOW, "Main"));
   }
   
   public static void loadGame(final File sav) {

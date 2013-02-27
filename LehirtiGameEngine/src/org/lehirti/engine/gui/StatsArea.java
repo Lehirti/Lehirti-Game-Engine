@@ -11,7 +11,6 @@ import java.io.ObjectOutput;
 
 import javax.swing.JPanel;
 
-import org.lehirti.engine.Main;
 import org.lehirti.engine.state.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

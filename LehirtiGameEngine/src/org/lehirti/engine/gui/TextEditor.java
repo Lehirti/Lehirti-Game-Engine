@@ -2,6 +2,7 @@ package org.lehirti.engine.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import org.lehirti.engine.gui.WindowLocation.WinLoc;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.util.PathFinder;
@@ -76,9 +78,18 @@ public class TextEditor extends JFrame implements ActionListener {
     
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     
-    setSize(1200, 800);
+    pack();
     
     setVisible(true);
+    
+    final WinLoc winLoc = WindowLocation.getLocationFor("TextEditor");
+    if (!winLoc.isMax) {
+      setLocation(winLoc.x, winLoc.y);
+      setSize(winLoc.width, winLoc.height);
+    } else {
+      setExtendedState(Frame.MAXIMIZED_BOTH);
+    }
+    addWindowListener(new WindowCloseListener(this, "TextEditor"));
   }
   
   private void setTitle() {
