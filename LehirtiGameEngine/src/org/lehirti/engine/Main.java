@@ -179,6 +179,11 @@ public abstract class Main {
       
       // for load screen preview
       ois.readUTF();
+      final int nrImages = ois.readInt();
+      for (int i = 0; i < nrImages; i++) {
+        ImageKey.IO.read(ois);
+      }
+      
       ois.readObject();
       
       State.load(ois);
@@ -255,7 +260,10 @@ public abstract class Main {
       for (final ImageWrapper wrapper : allImages) {
         allImageKeys.add(wrapper.getKey());
       }
-      oos.writeObject(allImageKeys);
+      oos.writeInt(allImageKeys.size());
+      for (final ImageKey key : allImageKeys) {
+        ImageKey.IO.write(key, oos);
+      }
       
       State.save(oos);
       STATS_AREA.writeExternal(oos);

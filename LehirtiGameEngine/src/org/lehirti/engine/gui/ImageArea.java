@@ -17,6 +17,7 @@ import javax.swing.JComponent;
 
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.images.ImageKey;
+import org.lehirti.engine.res.images.ImageKey.IO;
 import org.lehirti.engine.res.images.ImageWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +26,6 @@ public class ImageArea extends JComponent implements Externalizable {
   private static final long serialVersionUID = 1L;
   
   private static final Logger LOGGER = LoggerFactory.getLogger(ImageArea.class);
-  
-  private static final String IMAGE_AREA_END_OBJECT = "IMAGE_AREA_END_OBJECT";
   
   private VolatileImage backBuffer;
   
@@ -93,32 +92,19 @@ public class ImageArea extends JComponent implements Externalizable {
     
     final boolean hasBackgroundImage = in.readBoolean();
     if (hasBackgroundImage) {
-      final String className = (String) in.readObject();
-      final ImageKey backgroundImageKey = readImageKey(in, className);
+      final ImageKey backgroundImageKey = IO.read(in);
       if (backgroundImageKey != null) {
         setBackgroundImage(backgroundImageKey);
       }
     }
-    String className = (String) in.readObject();
-    while (!className.equals(IMAGE_AREA_END_OBJECT)) {
-      final ImageKey imgKey = readImageKey(in, className);
+    final int nrFG = in.readInt();
+    for (int i = 0; i < nrFG; i++) {
+      final ImageKey imgKey = IO.read(in);
       if (imgKey != null) {
         addImage(imgKey);
       }
-      className = (String) in.readObject();
     }
     repaint();
-  }
-  
-  private static ImageKey readImageKey(final ObjectInput in, final String className) throws ClassNotFoundException,
-      IOException {
-    final String key = (String) in.readObject();
-    try {
-      return (ImageKey) Enum.valueOf((Class<? extends Enum>) Class.forName(className), key);
-    } catch (final ClassNotFoundException e) {
-      LOGGER.warn("Failed to reconstruct ImageKey from className " + className + " and key " + key, e);
-    }
-    return null;
   }
   
   @Override
@@ -126,19 +112,14 @@ public class ImageArea extends JComponent implements Externalizable {
     out.writeLong(serialVersionUID);
     if (this.backgroundImage != null) {
       out.writeBoolean(true);
-      writeImageKey(out, this.backgroundImage.getKey());
+      ImageKey.IO.write(this.backgroundImage.getKey(), out);
     } else {
       out.writeBoolean(false);
     }
+    out.writeInt(this.foregroundImages.size());
     for (final ImageWrapper img : this.foregroundImages) {
-      writeImageKey(out, img.getKey());
+      ImageKey.IO.write(img.getKey(), out);
     }
-    out.writeObject(IMAGE_AREA_END_OBJECT);
-  }
-  
-  private static void writeImageKey(final ObjectOutput out, final ImageKey key) throws IOException {
-    out.writeObject(key.getClass().getName());
-    out.writeObject(key.name());
   }
   
   @Override

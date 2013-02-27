@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.lehirti.engine.Main;
@@ -27,7 +27,7 @@ public final class LoadGameScreenEvent extends EventNode<NullState> implements E
   private int selectedItem;
   private final List<File> allSavegames;
   private String nameOfSavegame;
-  private List<ImageKey> allImages = Collections.emptyList();
+  private final List<ImageKey> allImages = new LinkedList<ImageKey>();
   
   private static final Logger LOGGER = LoggerFactory.getLogger(LoadGameScreenEvent.class);
   
@@ -66,7 +66,13 @@ public final class LoadGameScreenEvent extends EventNode<NullState> implements E
       
       // for load screen preview
       this.nameOfSavegame = ois.readUTF();
-      this.allImages = (List<ImageKey>) ois.readObject();
+      final int nrImages = ois.readInt();
+      for (int i = 0; i < nrImages; i++) {
+        final ImageKey key = ImageKey.IO.read(ois);
+        if (key != null) {
+          this.allImages.add(key);
+        }
+      }
       
       Main.MAIN_WINDOW.repaint();
       
