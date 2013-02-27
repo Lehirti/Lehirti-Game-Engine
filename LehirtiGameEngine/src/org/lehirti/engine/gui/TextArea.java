@@ -12,9 +12,10 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.ArrayList;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
@@ -30,7 +31,7 @@ public class TextArea extends JTextPane implements Externalizable {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(TextArea.class);
   
-  private final List<TextWrapper> allTexts = new ArrayList<TextWrapper>(25);
+  private final ConcurrentLinkedQueue<TextWrapper> allTexts = new ConcurrentLinkedQueue<TextWrapper>();
   
   private final double screenX;
   private final double screenY;
@@ -39,6 +40,8 @@ public class TextArea extends JTextPane implements Externalizable {
   
   private int currentPage = 0;
   private int totalNumberOfPages = 0;
+  
+  private boolean repaintIfNeeded = false;
   
   public TextArea(final double screenX, final double screenY, final double sizeX, final double sizeY) {
     this.screenX = screenX;
@@ -117,6 +120,7 @@ public class TextArea extends JTextPane implements Externalizable {
   public void setText(final TextWrapper text) {
     this.allTexts.clear();
     addText(text);
+    this.repaintIfNeeded = true;
   }
   
   public void addText(final TextWrapper text) {
@@ -124,10 +128,28 @@ public class TextArea extends JTextPane implements Externalizable {
       this.allTexts.add(text);
     }
     this.currentPage = 0;
-    refresh();
+    this.repaintIfNeeded = true;
   }
   
-  public void refresh() {
+  public void repaintIfNeeded() {
+    if (this.repaintIfNeeded) {
+      this.repaintIfNeeded = false;
+      try {
+        javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
+          public void run() {
+            refresh();
+          }
+        });
+      } catch (final InterruptedException e) {
+        LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
+        throw new ThreadDeath();
+      } catch (final InvocationTargetException e) {
+        LOGGER.error("InvocationTargetException trying to set text to text area", e);
+      }
+    }
+  }
+  
+  void refresh() {
     final StringBuilder sb = new StringBuilder();
     for (final TextWrapper text : this.allTexts) {
       sb.append(text.getValue());

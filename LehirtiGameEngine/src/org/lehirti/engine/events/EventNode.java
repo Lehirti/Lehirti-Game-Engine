@@ -5,7 +5,6 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -51,18 +50,7 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
    * @param text
    */
   protected void setText(final TextWrapper text) {
-    try {
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
-        public void run() {
-          Main.getCurrentTextArea().setText(text);
-        }
-      });
-    } catch (final InterruptedException e) {
-      LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
-      throw new ThreadDeath();
-    } catch (final InvocationTargetException e) {
-      LOGGER.error("InvocationTargetException trying to set text to text area", e);
-    }
+    Main.getCurrentTextArea().setText(text);
   }
   
   protected void setText(final TextKey key) {
@@ -75,18 +63,7 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
    * @param text
    */
   protected void addText(final TextWrapper text) {
-    try {
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
-        public void run() {
-          Main.getCurrentTextArea().addText(text);
-        }
-      });
-    } catch (final InterruptedException e) {
-      LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
-      throw new ThreadDeath();
-    } catch (final InvocationTargetException e) {
-      LOGGER.error("InvocationTargetException trying to add text to text area", e);
-    }
+    Main.getCurrentTextArea().addText(text);
   }
   
   protected void addText(final TextKey key) {
@@ -185,6 +162,7 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
     }
     repaintImagesIfNeeded();
     Main.getCurrentOptionArea().repaintIfNeeded();
+    Main.getCurrentTextArea().repaintIfNeeded();
     
     backgroundLoadNextImages();
     
