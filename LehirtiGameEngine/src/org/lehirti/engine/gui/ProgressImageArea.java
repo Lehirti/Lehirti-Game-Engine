@@ -15,9 +15,10 @@ public class ProgressImageArea extends ImageArea {
   
   @Override
   void drawImages(final Graphics2D g2d) {
-    if (this.backgroundImage != null) {
-      final int[] coords = this.backgroundImage.calculateCoordinates(getWidth(), getHeight());
-      g2d.drawImage(this.backgroundImage.getImage(), coords[0], coords[1], coords[2], coords[3], null);
+    final ImageWrapper bgImage = this.backgroundImage.get();
+    if (bgImage != null) {
+      final int[] coords = bgImage.calculateCoordinates(getWidth(), getHeight());
+      g2d.drawImage(bgImage.getImage(), coords[0], coords[1], coords[2], coords[3], null);
     }
     
     ProgressGraph pg = null;

@@ -224,6 +224,7 @@ public class State implements Externalizable {
   
   public static void load(final ObjectInputStream ois) {
     try {
+      // this looks like a glaring bug at first, but calling readObject is enough to load the stored state
       ois.readObject();
     } catch (final IOException e) {
       LOGGER.error("Unable to load state", e);

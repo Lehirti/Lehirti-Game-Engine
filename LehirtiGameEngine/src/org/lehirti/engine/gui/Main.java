@@ -195,8 +195,6 @@ public abstract class Main {
         ImageKey.IO.read(ois);
       }
       
-      ois.readObject();
-      
       State.load(ois);
       STATS_AREA.readExternal(ois);
       int size = ois.readInt();

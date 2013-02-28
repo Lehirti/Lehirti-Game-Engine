@@ -12,6 +12,8 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.JComponent;
 
@@ -29,9 +31,9 @@ public class ImageArea extends JComponent implements Externalizable {
   
   private VolatileImage backBuffer;
   
-  ImageWrapper backgroundImage = null;
+  final AtomicReference<ImageWrapper> backgroundImage = new AtomicReference<ImageWrapper>();
   
-  final List<ImageWrapper> foregroundImages = new ArrayList<ImageWrapper>(15);
+  final ConcurrentLinkedQueue<ImageWrapper> foregroundImages = new ConcurrentLinkedQueue<ImageWrapper>();
   
   private final double screenX;
   private final double screenY;
@@ -87,7 +89,7 @@ public class ImageArea extends JComponent implements Externalizable {
   }
   
   private void readExternal1(final ObjectInput in) throws ClassNotFoundException, IOException {
-    this.backgroundImage = null;
+    this.backgroundImage.set(null);
     this.foregroundImages.clear();
     
     final boolean hasBackgroundImage = in.readBoolean();
@@ -112,7 +114,7 @@ public class ImageArea extends JComponent implements Externalizable {
     out.writeLong(serialVersionUID);
     if (this.backgroundImage != null) {
       out.writeBoolean(true);
-      ImageKey.IO.write(this.backgroundImage.getKey(), out);
+      ImageKey.IO.write(this.backgroundImage.get().getKey(), out);
     } else {
       out.writeBoolean(false);
     }
@@ -148,9 +150,10 @@ public class ImageArea extends JComponent implements Externalizable {
   }
   
   void drawImages(final Graphics2D g2d) {
-    if (this.backgroundImage != null) {
-      final int[] coords = this.backgroundImage.calculateCoordinates(getWidth(), getHeight());
-      g2d.drawImage(this.backgroundImage.getImage(), coords[0], coords[1], coords[2], coords[3], null);
+    final ImageWrapper bgImage = this.backgroundImage.get();
+    if (bgImage != null) {
+      final int[] coords = bgImage.calculateCoordinates(getWidth(), getHeight());
+      g2d.drawImage(bgImage.getImage(), coords[0], coords[1], coords[2], coords[3], null);
     }
     
     for (final ImageWrapper image : this.foregroundImages) {
@@ -207,7 +210,7 @@ public class ImageArea extends JComponent implements Externalizable {
     } else {
       backgroundImage = null;
     }
-    this.backgroundImage = backgroundImage;
+    this.backgroundImage.set(backgroundImage);
   }
   
   public void setImage(final ImageKey imageKey) {
@@ -235,8 +238,9 @@ public class ImageArea extends JComponent implements Externalizable {
   
   public List<ImageWrapper> getAllImages() {
     final List<ImageWrapper> allImages = new ArrayList<ImageWrapper>(16);
-    if (this.backgroundImage != null) {
-      allImages.add(this.backgroundImage);
+    final ImageWrapper bgImage = this.backgroundImage.get();
+    if (bgImage != null) {
+      allImages.add(bgImage);
     }
     allImages.addAll(this.foregroundImages);
     return allImages;
