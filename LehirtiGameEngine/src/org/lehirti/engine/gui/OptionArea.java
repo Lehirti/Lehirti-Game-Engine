@@ -64,7 +64,7 @@ public class OptionArea extends JComponent implements Externalizable {
   }
   
   @Override
-  public void paintComponent(final Graphics g) {
+  public synchronized void paintComponent(final Graphics g) {
     g.setColor(Color.WHITE);
     g.fillRect(0, 0, getWidth(), getHeight());
     g.drawImage(this.optionAreaBackground.getImage(), 0, 0, getWidth(), getHeight(), null);
@@ -191,7 +191,7 @@ public class OptionArea extends JComponent implements Externalizable {
   }
   
   @Override
-  public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+  public synchronized void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
     this.options.clear();
     final int nrOfTexts = in.readInt();
     for (int i = 0; i < nrOfTexts; i++) {
@@ -201,7 +201,7 @@ public class OptionArea extends JComponent implements Externalizable {
   }
   
   @Override
-  public void writeExternal(final ObjectOutput out) throws IOException {
+  public synchronized void writeExternal(final ObjectOutput out) throws IOException {
     out.writeInt(this.options.size());
     for (final Entry<Key, TextWrapper> entry : this.options.entrySet()) {
       out.writeObject(entry.getKey());
@@ -209,7 +209,7 @@ public class OptionArea extends JComponent implements Externalizable {
     }
   }
   
-  public void clearOptions() {
+  public synchronized void clearOptions() {
     this.isTextInput = false;
     if (!this.options.isEmpty()) {
       this.options.clear();
@@ -218,18 +218,18 @@ public class OptionArea extends JComponent implements Externalizable {
   }
   
   // TODO: error on non-option keys
-  public void setOption(final TextKey text, final Key key) {
+  public synchronized void setOption(final TextKey text, final Key key) {
     this.options.put(key, ResourceCache.get(text));
     this.repaintNeeded = true;
   }
   
   // TODO: error on non-option keys
-  public void setOption(final TextWrapper text, final Key key) {
+  public synchronized void setOption(final TextWrapper text, final Key key) {
     this.options.put(key, text);
     this.repaintNeeded = true;
   }
   
-  public void setTextInputOption(final TextKey text, final String initialTextInput) {
+  public synchronized void setTextInputOption(final TextKey text, final String initialTextInput) {
     this.isTextInput = true;
     this.textInputLabel = text;
     this.currentTextInput = initialTextInput;
@@ -257,11 +257,11 @@ public class OptionArea extends JComponent implements Externalizable {
     }
   }
   
-  public String getCurrentTextInput() {
+  public synchronized String getCurrentTextInput() {
     return this.currentTextInput;
   }
   
-  public boolean handleKeyEvent(final KeyEvent e) {
+  public synchronized boolean handleKeyEvent(final KeyEvent e) {
     final char keyChar = e.getKeyChar();
     if (keyChar == KeyEvent.CHAR_UNDEFINED) {
       return false;
