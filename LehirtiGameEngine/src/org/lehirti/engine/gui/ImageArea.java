@@ -135,7 +135,7 @@ public class ImageArea extends JComponent implements Externalizable {
       
       // rendering to the back buffer:
       final Graphics2D g2d = (Graphics2D) this.backBuffer.getGraphics();
-      g2d.setComposite(AlphaComposite.SrcAtop);
+      g2d.setComposite(AlphaComposite.SrcOver);
       
       g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, this.interpolation);
       g2d.setRenderingHint(RenderingHints.KEY_RENDERING, this.renderQuality);
