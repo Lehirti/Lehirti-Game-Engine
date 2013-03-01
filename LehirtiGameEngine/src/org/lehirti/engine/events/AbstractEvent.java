@@ -24,12 +24,12 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractEvent<STATE extends Enum<?> & EventState> implements Event<STATE> {
   private static final Logger LOGGER = LoggerFactory.getLogger(AbstractEvent.class);
   
-  private static final Map<Class<? extends Event<?>>, Set<EventHook>> EVENT_DISPATCHERS = new HashMap<Class<? extends Event<?>>, Set<EventHook>>();
+  private static final Map<Class<? extends Event<?>>, Set<EventHook>> EVENT_DISPATCHERS = new HashMap<>();
   
   public static synchronized void registerHook(final Class<? extends Event<?>> event, final EventHook eventHook) {
     Set<EventHook> dispatchers = EVENT_DISPATCHERS.get(event);
     if (dispatchers == null) {
-      dispatchers = new HashSet<EventHook>();
+      dispatchers = new HashSet<>();
       EVENT_DISPATCHERS.put(event, dispatchers);
     }
     dispatchers.add(eventHook);
@@ -115,7 +115,7 @@ public abstract class AbstractEvent<STATE extends Enum<?> & EventState> implemen
   public Event<?> getActualEvent(final Event<?> previousEvent) {
     final Set<EventHook> dispatchersForThisLocation = EVENT_DISPATCHERS.get(this.getClass());
     
-    final Map<Event<?>, Double> probablityPerEventMap = new HashMap<Event<?>, Double>();
+    final Map<Event<?>, Double> probablityPerEventMap = new HashMap<>();
     if (dispatchersForThisLocation != null) {
       for (final EventHook dispatcher : dispatchersForThisLocation) {
         probablityPerEventMap.putAll(dispatcher.getCurrentEvents(previousEvent));
@@ -162,7 +162,7 @@ public abstract class AbstractEvent<STATE extends Enum<?> & EventState> implemen
       return Collections.emptyMap();
     }
     final Double probabilityPerDefaultEvent = Double.valueOf(remainingProbability / defaultEvents.size());
-    final Map<Event<?>, Double> defaultEventsMap = new HashMap<Event<?>, Double>();
+    final Map<Event<?>, Double> defaultEventsMap = new HashMap<>();
     for (final Event<?> defaultEvent : defaultEvents) {
       defaultEventsMap.put(defaultEvent, probabilityPerDefaultEvent);
     }
@@ -172,7 +172,7 @@ public abstract class AbstractEvent<STATE extends Enum<?> & EventState> implemen
   private static double getTotalProbablility(final Collection<Double> probabilities) {
     double total = 0.0D;
     for (final Double prob : probabilities) {
-      total += prob;
+      total += prob.doubleValue();
     }
     return total;
   }
@@ -182,11 +182,11 @@ public abstract class AbstractEvent<STATE extends Enum<?> & EventState> implemen
    * @return regular events
    */
   private static Map<Event<?>, Double> removeRegularEvents(final Map<Event<?>, Double> probablityPerEventMap) {
-    final Map<Event<?>, Double> regularEvents = new HashMap<Event<?>, Double>();
+    final Map<Event<?>, Double> regularEvents = new HashMap<>();
     final Iterator<Map.Entry<Event<?>, Double>> itr = probablityPerEventMap.entrySet().iterator();
     while (itr.hasNext()) {
       final Entry<Event<?>, Double> eventEntry = itr.next();
-      if (eventEntry.getValue().doubleValue() > EventHook.PROBABILITY_DEFAULT + 0.5 /* rounding errors */) {
+      if (eventEntry.getValue().doubleValue() > EventHook.PROBABILITY_DEFAULT.doubleValue() + 0.5 /* rounding errors */) {
         regularEvents.put(eventEntry.getKey(), eventEntry.getValue());
         itr.remove();
       }
@@ -213,9 +213,9 @@ public abstract class AbstractEvent<STATE extends Enum<?> & EventState> implemen
   }
   
   private static List<Event<?>> getProbabilityAlwaysEvents(final Map<Event<?>, Double> probablityPerEventMap) {
-    final List<Event<?>> probAlwaysEvents = new LinkedList<Event<?>>();
+    final List<Event<?>> probAlwaysEvents = new LinkedList<>();
     for (final Map.Entry<Event<?>, Double> entry : probablityPerEventMap.entrySet()) {
-      if (entry.getValue().doubleValue() < EventHook.PROBABILITY_ALWAYS + 0.5 /* rounding errors */) {
+      if (entry.getValue().doubleValue() < EventHook.PROBABILITY_ALWAYS.doubleValue() + 0.5 /* rounding errors */) {
         probAlwaysEvents.add(entry.getKey());
       }
     }

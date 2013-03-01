@@ -7,11 +7,13 @@ import java.util.List;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.TextAndImageKey;
 import org.lehirti.engine.res.images.ImageKey;
+import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.sex.Sex;
 import org.lehirti.engine.state.IntState;
 import org.lehirti.engine.state.State;
+import org.lehirti.engine.state.StringState;
 import org.lehirti.luckysurvivor.npc.AbstractNPC;
 import org.lehirti.luckysurvivor.sss.ReactionToSexAct;
 import org.lehirti.luckysurvivor.sss.SexAct;
@@ -26,8 +28,11 @@ public class Susan extends AbstractNPC {
   }
   
   public static enum Text implements TextKey {
-    NAME,
     GENERAL_DESCRIPTION;
+  }
+  
+  public static enum String implements StringState {
+    NAME,
   }
   
   public static enum ReactionToSexActImage implements TextAndImageKey {
@@ -121,8 +126,15 @@ public class Susan extends AbstractNPC {
   }
   
   @Override
-  public TextKey getName() {
-    return Text.NAME;
+  public StringState getName() {
+    return String.NAME;
+  }
+  
+  @Override
+  public TextWrapper getNameTextWrapper() {
+    final TextWrapper textWrapper = ResourceCache.get(CommonText.PARAMETER);
+    textWrapper.addParameter(State.get(String.NAME));
+    return textWrapper;
   }
   
   @Override
@@ -132,7 +144,7 @@ public class Susan extends AbstractNPC {
   
   @Override
   public List<TextWrapper> getGeneralDescription() {
-    final List<TextWrapper> generalDescription = new LinkedList<TextWrapper>();
+    final List<TextWrapper> generalDescription = new LinkedList<>();
     generalDescription.add(ResourceCache.get(Text.GENERAL_DESCRIPTION));
     return generalDescription;
   }
@@ -181,7 +193,7 @@ public class Susan extends AbstractNPC {
   protected List<TextWrapper> getReactionText(final ReactionToSexAct reaction) {
     final TextKey text = getReactionImage(reaction);
     final TextWrapper textWrapper = ResourceCache.get(text);
-    final List<TextWrapper> texts = new LinkedList<TextWrapper>();
+    final List<TextWrapper> texts = new LinkedList<>();
     texts.add(textWrapper);
     return texts;
   }

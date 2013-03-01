@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 public class PropertyUtils {
   private static final Logger LOGGER = LoggerFactory.getLogger(PropertyUtils.class);
   
-  private static final Map<String, Properties> CACHE = new HashMap<String, Properties>();
+  private static final Map<String, Properties> CACHE = new HashMap<>();
   
   public static Properties getDefaultProperties(final Class<? extends AbstractState> stateClass) {
     final Properties properties = CACHE.get(stateClass.getName());
@@ -115,7 +115,8 @@ public class PropertyUtils {
     }
   }
   
-  public static void setDefaultProperties(final Class<? extends AbstractState> stateClass, final Properties defaultProperties) {
+  public static void setDefaultProperties(final Class<? extends AbstractState> stateClass,
+      final Properties defaultProperties) {
     CACHE.put(stateClass.getName(), defaultProperties);
     
     // in development environment: write to props file to src dir

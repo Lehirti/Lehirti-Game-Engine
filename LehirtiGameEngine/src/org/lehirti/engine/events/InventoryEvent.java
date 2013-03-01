@@ -1,6 +1,5 @@
 package org.lehirti.engine.events;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -20,7 +19,7 @@ import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.state.Inventory;
 import org.lehirti.engine.state.InventoryMap;
 
-public final class InventoryEvent extends EventNode<NullState> implements Externalizable {
+public final class InventoryEvent extends EventNode<NullState> {
   private Inventory selectedItem;
   
   // for loading/saving
@@ -60,7 +59,7 @@ public final class InventoryEvent extends EventNode<NullState> implements Extern
       
       final SortedMap<String, LinkedHashMap<Inventory, Object>> sortedInventory = InventoryMap.getSortedInventory();
       
-      final List<Map.Entry<Inventory, Object>> items = new LinkedList<Map.Entry<Inventory, Object>>();
+      final List<Map.Entry<Inventory, Object>> items = new LinkedList<>();
       int indexOfSelectedItem = 0;
       
       for (final LinkedHashMap<Inventory, Object> map : sortedInventory.values()) {

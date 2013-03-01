@@ -33,12 +33,13 @@ import org.slf4j.LoggerFactory;
 
 public abstract class EventNode<STATE extends Enum<?> & EventState> extends AbstractEvent<STATE> implements
     Externalizable {
-  private static final long serialVersionUID = 1L;
+  public static final long serialVersionUID = 1L; // yes, public!
+  
   private static final Logger LOGGER = LoggerFactory.getLogger(EventNode.class);
   
-  private final ConcurrentMap<Key, Event<?>> registeredEvents = new ConcurrentHashMap<Key, Event<?>>();
+  private final ConcurrentMap<Key, Event<?>> registeredEvents = new ConcurrentHashMap<>();
   private transient final List<Key> availableOptionKeys = Key.getOptionKeys();
-  private transient final Map<Event<?>, TextWrapper> optionsWithArbitraryKey = new LinkedHashMap<Event<?>, TextWrapper>();
+  private transient final Map<Event<?>, TextWrapper> optionsWithArbitraryKey = new LinkedHashMap<>();
   
   private transient boolean savePointReached = false;
   private transient boolean newEventHasBeenLoaded = false;
@@ -198,7 +199,7 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
   @Override
   public final Collection<ImageKey> getAllUsedImages() {
     final ImgChange change = updateImageArea();
-    final Set<ImageKey> allUsedImages = new HashSet<ImageKey>();
+    final Set<ImageKey> allUsedImages = new HashSet<>();
     if (change.isUpdateBackground()) {
       final ImageKey background = change.getBackground();
       if (background != null) {

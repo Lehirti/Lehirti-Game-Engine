@@ -28,7 +28,7 @@ public class TextWrapper implements Externalizable {
   private TextKey key;
   private String rawValue; // as stored on disc; may be different from what's displayed on screen
   
-  private final List<Object> parameters = new LinkedList<Object>();
+  private final List<Object> parameters = new LinkedList<>();
   
   private final ResourceState state;
   
@@ -134,7 +134,7 @@ public class TextWrapper implements Externalizable {
           return ((TextWrapper) param).getValue();
         }
       } else {
-        LOGGER.error("{} is missing explicitly set parameter #{}", toString(), parsedInt);
+        LOGGER.error("{} is missing explicitly set parameter #{}", toString(), Integer.valueOf(parsedInt));
         return "[MISSING PARAMETER #" + parameter + "]";
       }
     } catch (final NumberFormatException ignore) {
@@ -186,7 +186,7 @@ public class TextWrapper implements Externalizable {
    * @return this TextWrapper and all (recursively) contained (as parameters) TextWrappers
    */
   public List<TextWrapper> getAllTexts() {
-    final List<TextWrapper> allTexts = new LinkedList<TextWrapper>();
+    final List<TextWrapper> allTexts = new LinkedList<>();
     allTexts.add(this);
     for (final Object param : this.parameters) {
       if (param instanceof TextWrapper) {

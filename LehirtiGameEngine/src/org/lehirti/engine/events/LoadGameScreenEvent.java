@@ -1,6 +1,5 @@
 package org.lehirti.engine.events;
 
-import java.io.Externalizable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,11 +22,11 @@ import org.lehirti.engine.util.PathFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class LoadGameScreenEvent extends EventNode<NullState> implements Externalizable {
+public final class LoadGameScreenEvent extends EventNode<NullState> {
   private int selectedItem;
   private final List<File> allSavegames;
   private String nameOfSavegame;
-  private final List<ImageKey> allImages = new LinkedList<ImageKey>();
+  private final List<ImageKey> allImages = new LinkedList<>();
   
   private static final Logger LOGGER = LoggerFactory.getLogger(LoadGameScreenEvent.class);
   

@@ -221,7 +221,7 @@ public class TextEditor extends JFrame implements ActionListener {
     } else if (e.getSource() == this.next) {
       selectNext();
     } else if (e.getSource() == this.save) {
-      final String contentDir = (String) this.contentDir.getSelectedItem();
+      final String contentDirectory = (String) this.contentDir.getSelectedItem();
       TextWrapper textWrapper = null;
       if (this.selectedTextNr != -1) {
         textWrapper = this.allTexts.get(this.selectedTextNr);
@@ -229,7 +229,7 @@ public class TextEditor extends JFrame implements ActionListener {
         textWrapper = this.allOptions.get(this.selectedOptionNr);
       }
       if (textWrapper != null) {
-        textWrapper.setValue(this.textArea.getText(), contentDir);
+        textWrapper.setValue(this.textArea.getText(), contentDirectory);
       }
     }
     this.gameTextArea.refresh();

@@ -1,6 +1,5 @@
 package org.lehirti.luckysurvivor.sss;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -15,7 +14,7 @@ import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.luckysurvivor.npc.NPC;
 
-public class SelectSexToyEvent extends EventNode<NullState> implements Externalizable {
+public class SelectSexToyEvent extends EventNode<NullState> {
   
   private NPC npc;
   private SexAct act;

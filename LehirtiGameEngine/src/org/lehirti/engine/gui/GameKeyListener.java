@@ -8,8 +8,8 @@ import java.util.List;
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.InventoryEvent;
 import org.lehirti.engine.events.LoadGameScreenEvent;
+import org.lehirti.engine.progressgraph.AllPGs;
 import org.lehirti.engine.progressgraph.ProgressEvent;
-import org.lehirti.engine.progressgraph.TestGraph;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.state.InventoryMap;
@@ -28,7 +28,10 @@ public class GameKeyListener implements KeyListener {
   
   @Override
   public synchronized void keyPressed(final KeyEvent e) {
-    LOGGER.info("Key {} {} {} pressed", new Object[] { e.getKeyCode(), e.getModifiers(), e.getKeyChar() });
+    LOGGER.debug(
+        "Key {} {} {} pressed",
+        new Object[] { Integer.valueOf(e.getKeyCode()), Integer.valueOf(e.getModifiers()),
+            Character.valueOf(e.getKeyChar()) });
     // note the synchronized: making sure to only process one key event at a time
     try {
       final Key key = Key.getByCodeAndModifiers(e.getKeyCode(), e.getModifiers());
@@ -95,7 +98,7 @@ public class GameKeyListener implements KeyListener {
       } else if (key == Key.SHOW_PROGRESS) {
         final Event<?> oldEvent = Main.getCurrentEvent();
         Main.setCurrentAreas(key);
-        Main.setCurrentEvent(new ProgressEvent(TestGraph.class));
+        Main.setCurrentEvent(new ProgressEvent(AllPGs.getCurrent()));
         synchronized (oldEvent) {
           oldEvent.notifyAll();
         }
@@ -115,11 +118,11 @@ public class GameKeyListener implements KeyListener {
   public synchronized void keyTyped(final KeyEvent e) {
   }
   
-  private void editImages() {
+  private static void editImages() {
     new ImageEditor(Main.getCurrentImageArea().getAllImages(), Main.getCurrentImageArea());
   }
   
-  private void editTexts() {
+  private static void editTexts() {
     new TextEditor(Main.getCurrentTextArea(), Main.getCurrentOptionArea(), Main.getCurrentTextArea().getAllTexts());
   }
 }

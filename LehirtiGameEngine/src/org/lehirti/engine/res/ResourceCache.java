@@ -30,7 +30,7 @@ public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
     }
   };
   
-  private static final BlockingQueue<ImageKey> IMAGES_TO_PRELOAD = new LinkedBlockingQueue<ImageKey>();
+  private static final BlockingQueue<ImageKey> IMAGES_TO_PRELOAD = new LinkedBlockingQueue<>();
   
   private static final ResourceCache<ImageKey, ImageWrapper> IMAGE_CACHE = new ResourceCache<ImageKey, ImageWrapper>() {
     @Override
@@ -39,7 +39,7 @@ public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
     }
   };
   
-  private final Map<KEY, VALUE> cache = new HashMap<KEY, VALUE>();
+  private final Map<KEY, VALUE> cache = new HashMap<>();
   
   private VALUE _get(final KEY key) {
     VALUE value = this.cache.get(key);

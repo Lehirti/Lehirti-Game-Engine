@@ -40,7 +40,7 @@ public class JavaElementRenameParticipant extends RenameParticipant {
     return getType(arg0) != null;
   }
   
-  private Object getType(final Object arg) {
+  private static Object getType(final Object arg) {
     if (arg instanceof IField) {
       final IField field = (IField) arg;
       try {

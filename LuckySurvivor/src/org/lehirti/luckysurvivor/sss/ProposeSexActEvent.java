@@ -1,19 +1,18 @@
 package org.lehirti.luckysurvivor.sss;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import org.lehirti.engine.events.Event;
+import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Option;
-import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.luckysurvivor.npc.NPC;
 
-public class ProposeSexActEvent extends EventNode<NullState> implements Externalizable {
+public class ProposeSexActEvent extends EventNode<NullState> {
   
   private NPC npc;
   private SexAct act;

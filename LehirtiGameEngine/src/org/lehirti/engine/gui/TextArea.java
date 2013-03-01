@@ -31,7 +31,7 @@ public class TextArea extends JTextPane implements Externalizable {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(TextArea.class);
   
-  private final ConcurrentLinkedQueue<TextWrapper> allTexts = new ConcurrentLinkedQueue<TextWrapper>();
+  private final ConcurrentLinkedQueue<TextWrapper> allTexts = new ConcurrentLinkedQueue<>();
   
   private final double screenX;
   private final double screenY;
@@ -166,7 +166,7 @@ public class TextArea extends JTextPane implements Externalizable {
       super.setText(t);
       return;
     }
-    final List<String> pages = new LinkedList<String>();
+    final List<String> pages = new LinkedList<>();
     final String[] paragraphs = t.split("\\r?\\n|\\r");
     for (int i = 0; i < paragraphs.length;) {
       String page = paragraphs[i++];
@@ -244,7 +244,7 @@ public class TextArea extends JTextPane implements Externalizable {
   }
   
   public List<TextWrapper> getAllTexts() {
-    final List<TextWrapper> allTextsIncludeCascaded = new LinkedList<TextWrapper>();
+    final List<TextWrapper> allTextsIncludeCascaded = new LinkedList<>();
     for (final TextWrapper txtWrp : this.allTexts) {
       allTextsIncludeCascaded.addAll(txtWrp.getAllTexts());
     }

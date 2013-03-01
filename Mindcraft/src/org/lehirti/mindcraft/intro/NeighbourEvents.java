@@ -15,7 +15,7 @@ public class NeighbourEvents implements EventHook {
   
   @Override
   public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent) {
-    final Map<Event<?>, Double> events = new HashMap<Event<?>, Double>();
+    final Map<Event<?>, Double> events = new HashMap<>();
     if (State.get(MeetDitaOutsideHerHouse.class) == null) {
       events.put(new MeetDitaOutsideHerHouse(), Double.valueOf(100.0d));
     } else if (State.is(Bool.GOT_BLOWJOB_IN_BATHHOUSE) && State.is(Bool.MARKET_SELLER_FUCKED)) {

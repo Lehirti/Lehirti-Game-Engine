@@ -1,15 +1,14 @@
 package org.lehirti.engine.progressgraph;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.List;
 import java.util.Vector;
 
+import org.lehirti.engine.events.AltScreenToGameEvent;
 import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.events.EventNode;
-import org.lehirti.engine.events.AltScreenToGameEvent;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.progressgraph.ProgressGraph.ProgressCommon;
 import org.lehirti.engine.res.ResourceCache;
@@ -21,7 +20,7 @@ import org.lehirti.engine.util.ClassFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class ProgressEvent extends EventNode<NullState> implements Externalizable {
+public final class ProgressEvent extends EventNode<NullState> {
   private static final Logger LOGGER = LoggerFactory.getLogger(ProgressEvent.class);
   static {
     /*

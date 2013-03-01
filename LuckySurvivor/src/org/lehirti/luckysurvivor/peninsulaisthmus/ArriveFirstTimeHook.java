@@ -15,11 +15,11 @@ public final class ArriveFirstTimeHook implements EventHook {
   
   @Override
   public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent) {
-    final Map<Event<?>, Double> events = new HashMap<Event<?>, Double>();
+    final Map<Event<?>, Double> events = new HashMap<>();
     
     // first time you come to MapToPeninsulaIsthmus, the ArriveFirstTime one-time event will show instead
     if (State.getEventCount(ArriveFirstTime.class) == 0) {
-      events.put(new ArriveFirstTime(), Double.valueOf(EventHook.PROBABILITY_ALWAYS));
+      events.put(new ArriveFirstTime(), EventHook.PROBABILITY_ALWAYS);
     }
     return events;
   }

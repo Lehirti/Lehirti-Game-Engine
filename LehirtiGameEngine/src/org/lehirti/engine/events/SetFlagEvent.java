@@ -1,6 +1,5 @@
 package org.lehirti.engine.events;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -13,7 +12,7 @@ import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.state.BoolState;
 
-public class SetFlagEvent extends EventNode<NullState> implements Externalizable {
+public class SetFlagEvent extends EventNode<NullState> {
   
   private BoolState flag;
   private ImageKey image;

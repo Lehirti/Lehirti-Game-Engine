@@ -43,7 +43,7 @@ public enum Key {
   SAVE(83, InputEvent.CTRL_MASK, TextFunction.SAVE),
   LOAD(76, InputEvent.CTRL_MASK, TextFunction.LOAD, true);
   
-  private static final List<Key> OPTION_KEYS = new ArrayList<Key>(values().length);
+  private static final List<Key> OPTION_KEYS = new ArrayList<>(values().length);
   
   static {
     KeyMapping.store();
@@ -160,7 +160,7 @@ public enum Key {
   }
   
   public static List<Key> getOptionKeys() {
-    final List<Key> optionKeys = new LinkedList<Key>(OPTION_KEYS);
+    final List<Key> optionKeys = new LinkedList<>(OPTION_KEYS);
     return optionKeys;
   }
 }

@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class OneTimeEventHook implements EventHook {
   private static final Logger LOGGER = LoggerFactory.getLogger(OneTimeEventHook.class);
   
-  private final Map<Class<? extends Event<?>>, Double> oneTimeEventMap = new HashMap<Class<? extends Event<?>>, Double>();
+  private final Map<Class<? extends Event<?>>, Double> oneTimeEventMap = new HashMap<>();
   
   public OneTimeEventHook(final Class<? extends Event<?>> eventClassWithStandardConstructor, final Double probability) {
     add(eventClassWithStandardConstructor, probability);
@@ -38,7 +38,7 @@ public class OneTimeEventHook implements EventHook {
   
   @Override
   public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent) {
-    final Map<Event<?>, Double> events = new HashMap<Event<?>, Double>();
+    final Map<Event<?>, Double> events = new HashMap<>();
     
     for (final Entry<Class<? extends Event<?>>, Double> entry : this.oneTimeEventMap.entrySet()) {
       final Class<? extends Event<?>> eventClassWithStandardConstructor = entry.getKey();

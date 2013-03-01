@@ -31,9 +31,9 @@ public class ImageArea extends JComponent implements Externalizable {
   
   private VolatileImage backBuffer;
   
-  final AtomicReference<ImageWrapper> backgroundImage = new AtomicReference<ImageWrapper>();
+  final AtomicReference<ImageWrapper> backgroundImage = new AtomicReference<>();
   
-  final ConcurrentLinkedQueue<ImageWrapper> foregroundImages = new ConcurrentLinkedQueue<ImageWrapper>();
+  final ConcurrentLinkedQueue<ImageWrapper> foregroundImages = new ConcurrentLinkedQueue<>();
   
   private final double screenX;
   private final double screenY;
@@ -50,28 +50,28 @@ public class ImageArea extends JComponent implements Externalizable {
     this.sizeX = sizeX;
     this.sizeY = sizeY;
     
-    final String interpolation = DisplayOptions.getDisplayOptionFor("INTERPOLATION", "BILINEAR");
-    if ("NEAREST_NEIGHBOR".equals(interpolation)) {
+    final String interpolationString = DisplayOptions.getDisplayOptionFor("INTERPOLATION", "BILINEAR");
+    if ("NEAREST_NEIGHBOR".equals(interpolationString)) {
       this.interpolation = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;
-    } else if ("BILINEAR".equals(interpolation)) {
+    } else if ("BILINEAR".equals(interpolationString)) {
       this.interpolation = RenderingHints.VALUE_INTERPOLATION_BILINEAR;
     } else {
       this.interpolation = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
     }
     
-    final String renderQuality = DisplayOptions.getDisplayOptionFor("RENDERING", "DEFAULT");
-    if ("SPEED".equals(renderQuality)) {
+    final String renderQualityString = DisplayOptions.getDisplayOptionFor("RENDERING", "DEFAULT");
+    if ("SPEED".equals(renderQualityString)) {
       this.renderQuality = RenderingHints.VALUE_RENDER_SPEED;
-    } else if ("DEFAULT".equals(renderQuality)) {
+    } else if ("DEFAULT".equals(renderQualityString)) {
       this.renderQuality = RenderingHints.VALUE_RENDER_DEFAULT;
     } else {
       this.renderQuality = RenderingHints.VALUE_RENDER_QUALITY;
     }
     
-    final String antiAliasing = DisplayOptions.getDisplayOptionFor("ANTIALIASING", "OFF");
-    if ("DEFAULT".equals(antiAliasing)) {
+    final String antiAliasingString = DisplayOptions.getDisplayOptionFor("ANTIALIASING", "OFF");
+    if ("DEFAULT".equals(antiAliasingString)) {
       this.antiAliasing = RenderingHints.VALUE_ANTIALIAS_DEFAULT;
-    } else if ("OFF".equals(antiAliasing)) {
+    } else if ("OFF".equals(antiAliasingString)) {
       this.antiAliasing = RenderingHints.VALUE_ANTIALIAS_OFF;
     } else {
       this.antiAliasing = RenderingHints.VALUE_ANTIALIAS_ON;
@@ -112,7 +112,7 @@ public class ImageArea extends JComponent implements Externalizable {
   @Override
   public void writeExternal(final ObjectOutput out) throws IOException {
     out.writeLong(serialVersionUID);
-    if (this.backgroundImage != null) {
+    if (this.backgroundImage.get() != null) {
       out.writeBoolean(true);
       ImageKey.IO.write(this.backgroundImage.get().getKey(), out);
     } else {
@@ -203,14 +203,14 @@ public class ImageArea extends JComponent implements Externalizable {
    */
   public void setBackgroundImage(final ImageKey imageKey) {
     LOGGER.debug("Setting background image to {}", imageKey);
-    final ImageWrapper backgroundImage;
+    final ImageWrapper bgImage;
     if (imageKey != null) {
-      backgroundImage = ResourceCache.get(imageKey);
-      backgroundImage.pinRandomImage();
+      bgImage = ResourceCache.get(imageKey);
+      bgImage.pinRandomImage();
     } else {
-      backgroundImage = null;
+      bgImage = null;
     }
-    this.backgroundImage.set(backgroundImage);
+    this.backgroundImage.set(bgImage);
   }
   
   public void setImage(final ImageKey imageKey) {
@@ -237,7 +237,7 @@ public class ImageArea extends JComponent implements Externalizable {
   }
   
   public List<ImageWrapper> getAllImages() {
-    final List<ImageWrapper> allImages = new ArrayList<ImageWrapper>(16);
+    final List<ImageWrapper> allImages = new ArrayList<>(16);
     final ImageWrapper bgImage = this.backgroundImage.get();
     if (bgImage != null) {
       allImages.add(bgImage);

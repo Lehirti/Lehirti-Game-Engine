@@ -26,7 +26,7 @@ public final class UsefullThingsToFindInFuselage implements EventHook {
   
   @Override
   public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent) {
-    final Map<Event<?>, Double> availableEvents = new HashMap<Event<?>, Double>();
+    final Map<Event<?>, Double> availableEvents = new HashMap<>();
     if (!State.is(CrashSiteBoolInventory.METAL_STRUT)) {
       availableEvents.put(new SetFlagTextOnlyEvent(CrashSiteBoolInventory.METAL_STRUT, Key.OPTION_ENTER,
           Text.FIND_METAL_STRUT, new Plane2_Fuselage()), Double.valueOf(20));

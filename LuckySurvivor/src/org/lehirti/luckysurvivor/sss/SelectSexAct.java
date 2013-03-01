@@ -1,6 +1,5 @@
 package org.lehirti.luckysurvivor.sss;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -8,16 +7,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.lehirti.engine.events.Event;
+import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Option;
-import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.luckysurvivor.npc.NPC;
 
-public class SelectSexAct extends EventNode<NullState> implements Externalizable {
+public class SelectSexAct extends EventNode<NullState> {
   
   public static enum Text implements TextKey {
     TEXT_SELECT_SEX_ACT,

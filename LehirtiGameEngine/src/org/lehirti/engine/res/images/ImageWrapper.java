@@ -30,7 +30,7 @@ public final class ImageWrapper {
   public ImageWrapper(final ImageKey key) {
     this.key = key;
     LOGGER.debug("Creating new ImageWrapper for {}", toString());
-    this.proxies = new ArrayList<ImageProxy>(5);
+    this.proxies = new ArrayList<>(5);
     final File[] coreImageProxyFiles = PathFinder.getCoreImageProxyFiles(key);
     final File[] modImageProxyFiles = PathFinder.getModImageProxyFiles(key);
     
@@ -98,7 +98,7 @@ public final class ImageWrapper {
       this.image = new ImageProxy(this.key);
     } else {
       this.currentlyDisplayedImageNr = State.DIE.nextInt(this.proxies.size());
-      LOGGER.debug("Pin image {} alternative {}", toString(), this.currentlyDisplayedImageNr);
+      LOGGER.debug("Pin image {} alternative {}", toString(), Integer.valueOf(this.currentlyDisplayedImageNr));
       this.image = this.proxies.get(this.currentlyDisplayedImageNr);
     }
   }

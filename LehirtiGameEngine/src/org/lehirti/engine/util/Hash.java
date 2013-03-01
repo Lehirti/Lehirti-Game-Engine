@@ -68,7 +68,7 @@ public class Hash {
   private static String toHex(final byte[] byteArray) {
     final Formatter formatter = new Formatter();
     for (final byte b : byteArray) {
-      formatter.format("%02x", b);
+      formatter.format("%02x", Byte.valueOf(b));
     }
     return formatter.toString();
   }

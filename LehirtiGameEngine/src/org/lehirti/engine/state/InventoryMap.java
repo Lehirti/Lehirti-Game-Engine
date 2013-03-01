@@ -13,9 +13,9 @@ import org.lehirti.engine.res.text.TextKey;
 public class InventoryMap<K extends AbstractState, V> extends LinkedHashMap<K, V> {
   private static final long serialVersionUID = 1L;
   
-  private static final Map<Inventory, Object> INVENTORY = new HashMap<Inventory, Object>();
+  private static final Map<Inventory, Object> INVENTORY = new HashMap<>();
   
-  private static Stack<Inventory> LAST_SELECTED_ITEMS = new Stack<Inventory>();
+  private static Stack<Inventory> LAST_SELECTED_ITEMS = new Stack<>();
   
   @Override
   public V put(final K key, final V value) {
@@ -74,12 +74,12 @@ public class InventoryMap<K extends AbstractState, V> extends LinkedHashMap<K, V
   }
   
   public static SortedMap<String, LinkedHashMap<Inventory, Object>> getSortedInventory() {
-    final SortedMap<String, LinkedHashMap<Inventory, Object>> sortedInventory = new TreeMap<String, LinkedHashMap<Inventory, Object>>();
+    final SortedMap<String, LinkedHashMap<Inventory, Object>> sortedInventory = new TreeMap<>();
     for (final Map.Entry<Inventory, Object> invEntry : INVENTORY.entrySet()) {
       final String rawValue = ResourceCache.get((TextKey) invEntry.getKey()).getRawValue();
       LinkedHashMap<Inventory, Object> inventoryPerName = sortedInventory.get(rawValue);
       if (inventoryPerName == null) {
-        inventoryPerName = new LinkedHashMap<Inventory, Object>();
+        inventoryPerName = new LinkedHashMap<>();
         sortedInventory.put(rawValue, inventoryPerName);
       }
       inventoryPerName.put(invEntry.getKey(), invEntry.getValue());

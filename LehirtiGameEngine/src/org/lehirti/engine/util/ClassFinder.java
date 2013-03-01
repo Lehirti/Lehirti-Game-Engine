@@ -24,20 +24,17 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * This utility class was based originally on <a
- * href="private.php?do=newpm&u=47838">Daniel Le Berre</a>'s <code>RTSI</code>
- * class. This class can be called in different modes, but the principal use is
- * to determine what subclasses/implementations of a given class/interface exist
- * in the current runtime environment.
+ * This utility class was based originally on <a href="private.php?do=newpm&u=47838">Daniel Le Berre</a>'s
+ * <code>RTSI</code> class. This class can be called in different modes, but the principal use is to determine what
+ * subclasses/implementations of a given class/interface exist in the current runtime environment.
  * 
  * @author Daniel Le Berre, Elliott Wade
  */
 public class ClassFinder {
   private Class<?> searchClass = null;
-  private Map<URL, String> classpathLocations = new HashMap<URL, String>();
-  private Map<Class<?>, URL> results = new HashMap<Class<?>, URL>();
-  private List<Throwable> errors = new ArrayList<Throwable>();
-  private boolean working = false;
+  private Map<URL, String> classpathLocations = new HashMap<>();
+  private Map<Class<?>, URL> results = new HashMap<>();
+  private List<Throwable> errors = new ArrayList<>();
   
   public ClassFinder() {
     refreshLocations();
@@ -59,48 +56,41 @@ public class ClassFinder {
   public final Vector<Class<?>> findSubclasses(final String fqcn) {
     synchronized (this.classpathLocations) {
       synchronized (this.results) {
-        try {
-          this.working = true;
-          this.searchClass = null;
-          this.errors = new ArrayList<Throwable>();
-          this.results = new TreeMap<Class<?>, URL>(CLASS_COMPARATOR);
-          
-          //
-          // filter malformed FQCN
-          //
-          if (fqcn.startsWith(".") || fqcn.endsWith(".")) {
-            return new Vector<Class<?>>();
-          }
-          
-          //
-          // Determine search class from fqcn
-          //
-          try {
-            this.searchClass = Class.forName(fqcn);
-          } catch (final ClassNotFoundException ex) {
-            // if class not found, let empty vector return...
-            this.errors.add(ex);
-            return new Vector<Class<?>>();
-          }
-          
-          return findSubclasses(this.searchClass, this.classpathLocations);
-        } finally {
-          this.working = false;
+        this.searchClass = null;
+        this.errors = new ArrayList<>();
+        this.results = new TreeMap<>(CLASS_COMPARATOR);
+        
+        //
+        // filter malformed FQCN
+        //
+        if (fqcn.startsWith(".") || fqcn.endsWith(".")) {
+          return new Vector<>();
         }
+        
+        //
+        // Determine search class from fqcn
+        //
+        try {
+          this.searchClass = Class.forName(fqcn);
+        } catch (final ClassNotFoundException ex) {
+          // if class not found, let empty vector return...
+          this.errors.add(ex);
+          return new Vector<>();
+        }
+        
+        return findSubclasses(this.searchClass, this.classpathLocations);
       }
     }
   }
   
   public final List<Throwable> getErrors() {
-    return new ArrayList<Throwable>(this.errors);
+    return new ArrayList<>(this.errors);
   }
   
   /**
-   * The result of the last search is cached in this object, along with the URL
-   * that corresponds to each class returned. This method may be called to query
-   * the cache for the location at which the given class was found.
-   * <code>null</code> will be returned if the given class was not found during
-   * the last search, or if the result cache has been cleared.
+   * The result of the last search is cached in this object, along with the URL that corresponds to each class returned.
+   * This method may be called to query the cache for the location at which the given class was found. <code>null</code>
+   * will be returned if the given class was not found during the last search, or if the result cache has been cleared.
    */
   public final URL getLocationOf(final Class<?> cls) {
     if (this.results != null) {
@@ -111,11 +101,10 @@ public class ClassFinder {
   }
   
   /**
-   * Determine every URL location defined by the current classpath, and it's
-   * associated package name.
+   * Determine every URL location defined by the current classpath, and it's associated package name.
    */
   public final Map<URL, String> getClasspathLocations() {
-    final Map<URL, String> map = new TreeMap<URL, String>(URL_COMPARATOR);
+    final Map<URL, String> map = new TreeMap<>(URL_COMPARATOR);
     File file = null;
     
     final String pathSep = System.getProperty("path.separator");
@@ -190,7 +179,7 @@ public class ClassFinder {
     }
   }
   
-  private final void includeJar(final File file, final Map<URL, String> map) {
+  private final static void includeJar(final File file, final Map<URL, String> map) {
     if (file.isDirectory()) {
       return;
     }
@@ -212,7 +201,7 @@ public class ClassFinder {
       return;
     }
     
-    if (jar == null || jarURL == null) {
+    if (jar == null) {
       return;
     }
     
@@ -274,7 +263,7 @@ public class ClassFinder {
   }
   
   private final Vector<Class<?>> findSubclasses(final Class<?> superClass, final Map<URL, String> locations) {
-    final Vector<Class<?>> v = new Vector<Class<?>>();
+    final Vector<Class<?>> v = new Vector<>();
     
     Vector<Class<?>> w = null; // new Vector<Class<?>> ();
     
@@ -305,14 +294,14 @@ public class ClassFinder {
     synchronized (this.results) {
       
       // hash guarantees unique names...
-      final Map<Class<?>, URL> thisResult = new TreeMap<Class<?>, URL>(CLASS_COMPARATOR);
-      final Vector<Class<?>> v = new Vector<Class<?>>(); // ...but return a
+      final Map<Class<?>, URL> thisResult = new TreeMap<>(CLASS_COMPARATOR);
+      final Vector<Class<?>> v = new Vector<>(); // ...but return a
       // vector
       
       // TODO: double-check for null search class
       final String fqcn = this.searchClass.getName();
       
-      final List<URL> knownLocations = new ArrayList<URL>();
+      final List<URL> knownLocations = new ArrayList<>();
       knownLocations.add(location);
       // TODO: add getResourceLocations() to this list
       

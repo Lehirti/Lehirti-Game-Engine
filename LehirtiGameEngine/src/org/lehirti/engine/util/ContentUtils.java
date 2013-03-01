@@ -65,8 +65,8 @@ public class ContentUtils {
     
     boolean anErrorHasOccurred = false;
     
-    final Set<String> requiredResources = new LinkedHashSet<String>();
-    final Set<String> foundResources = new LinkedHashSet<String>();
+    final Set<String> requiredResources = new LinkedHashSet<>();
+    final Set<String> foundResources = new LinkedHashSet<>();
     
     // unpack newest content version zip file
     final Enumeration<? extends ZipEntry> entries = reqVerZipFile.entries();
@@ -141,7 +141,7 @@ public class ContentUtils {
    */
   public static SortedMap<Integer, ZipFile> getContentZipFiles(final String contentKey, final File rootDir) {
     LOGGER.debug("Getting zip files for {}", contentKey);
-    final SortedMap<Integer, ZipFile> map = new TreeMap<Integer, ZipFile>(Collections.reverseOrder());
+    final SortedMap<Integer, ZipFile> map = new TreeMap<>(Collections.reverseOrder());
     LOGGER.debug("Looking for zip files in {}", rootDir.getAbsolutePath());
     final File[] contentZipFiles = rootDir.listFiles(new FilenameFilter() {
       @Override
@@ -162,7 +162,7 @@ public class ContentUtils {
       }
       try {
         map.put(versionNumber, new ZipFile(zipFile));
-        LOGGER.debug("Zip file {} has version number {}", name, Integer.valueOf(versionNumber));
+        LOGGER.debug("Zip file {} has version number {}", name, versionNumber);
       } catch (final ZipException e) {
         LOGGER.error("Unable to read zip file " + zipFile.getAbsolutePath(), e);
       } catch (final IOException e) {
@@ -173,7 +173,7 @@ public class ContentUtils {
   }
   
   public static List<ImageWrapper> getImageWrappers(final boolean withoutImagesOnly) {
-    final List<ImageWrapper> imageWrapperList = new ArrayList<ImageWrapper>(10000);
+    final List<ImageWrapper> imageWrapperList = new ArrayList<>(10000);
     final Vector<Class<?>> imageEnums = new ClassFinder().findSubclasses(ImageKey.class.getName());
     for (final Class<?> imageEnum : imageEnums) {
       final ImageKey[] imageKeys = (ImageKey[]) imageEnum.getEnumConstants();
@@ -191,7 +191,7 @@ public class ContentUtils {
   }
   
   public static List<TextWrapper> getTextWrappers(final boolean withoutImagesOnly) {
-    final List<TextWrapper> textWrapperList = new ArrayList<TextWrapper>(10000);
+    final List<TextWrapper> textWrapperList = new ArrayList<>(10000);
     final Vector<Class<?>> textEnums = new ClassFinder().findSubclasses(TextKey.class.getName());
     for (final Class<?> textEnum : textEnums) {
       final TextKey[] textKeys = (TextKey[]) textEnum.getEnumConstants();

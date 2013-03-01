@@ -40,7 +40,7 @@ public final class ProgressGraph {
     if (nodes == null || nodes.length == 0) {
       throw new RuntimeException(pgClass.getName() + " has no constants");
     }
-    final Map<PG, ProgressNode> allNodes = new LinkedHashMap<PG, ProgressNode>();
+    final Map<PG, ProgressNode> allNodes = new LinkedHashMap<>();
     this.rootNode = new ProgressNode(nodes[0]);
     if (!this.rootNode.hasBeenReached()) {
       this.rootNode.setActive();
@@ -98,7 +98,8 @@ public final class ProgressGraph {
     return bimg;
   }
   
-  private int determineNodeSize(final int width, final int height, final int maxWIdthPerLevel, final int totalGraphDepth) {
+  private static int determineNodeSize(final int width, final int height, final int maxWIdthPerLevel,
+      final int totalGraphDepth) {
     final int x = width / maxWIdthPerLevel;
     final int y = height / totalGraphDepth;
     return x < y ? x / 2 : y / 2;

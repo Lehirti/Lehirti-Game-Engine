@@ -18,7 +18,7 @@ public final class ShelterHook implements EventHook {
   
   @Override
   public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent) {
-    final Map<Event<?>, Double> events = new HashMap<Event<?>, Double>();
+    final Map<Event<?>, Double> events = new HashMap<>();
     
     if (!previousEvent.getClass().equals(Shelter.class)) { // is entering shelter (not already inside)
       if (State.getEventCount(MeetHazel.class) != 0 // AND has met hazel

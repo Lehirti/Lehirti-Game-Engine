@@ -91,7 +91,7 @@ public class StatsArea extends JPanel implements Externalizable {
     g.fillRect(0, 0, getWidth(), getHeight());
   }
   
-  private void dateTime(final Graphics g) {
+  private static void dateTime(final Graphics g) {
     g.setColor(Color.BLACK);
     final String dateTimeString = DateTime.getDateFormatedForStatsArea();
     final Font font = Main.getCurrentTextArea().getScaledFont();

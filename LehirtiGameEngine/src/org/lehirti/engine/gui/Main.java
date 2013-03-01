@@ -66,9 +66,9 @@ public abstract class Main {
   
   public static StatsArea STATS_AREA;
   
-  private static Map<Key, TextArea> TEXT_AREAS = new LinkedHashMap<Key, TextArea>();
-  private static Map<Key, ImageArea> IMAGE_AREAS = new LinkedHashMap<Key, ImageArea>();
-  private static Map<Key, OptionArea> OPTION_AREAS = new LinkedHashMap<Key, OptionArea>();
+  private static Map<Key, TextArea> TEXT_AREAS = new LinkedHashMap<>();
+  private static Map<Key, ImageArea> IMAGE_AREAS = new LinkedHashMap<>();
+  private static Map<Key, OptionArea> OPTION_AREAS = new LinkedHashMap<>();
   
   private static volatile ImageArea currentImageArea = null;
   private static volatile TextArea currentTextArea = null;
@@ -265,7 +265,7 @@ public abstract class Main {
       // for load screen preview
       oos.writeUTF(getSavegameName());
       final List<ImageWrapper> allImages = IMAGE_AREAS.get(null).getAllImages();
-      final List<ImageKey> allImageKeys = new LinkedList<ImageKey>();
+      final List<ImageKey> allImageKeys = new LinkedList<>();
       for (final ImageWrapper wrapper : allImages) {
         allImageKeys.add(wrapper.getKey());
       }

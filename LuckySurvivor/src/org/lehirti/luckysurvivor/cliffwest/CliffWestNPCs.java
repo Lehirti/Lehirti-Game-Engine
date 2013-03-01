@@ -14,7 +14,7 @@ public class CliffWestNPCs {
    * instead of Tifa and Hinata
    */
   public static List<NPC> getNPCs() {
-    final List<NPC> list = new LinkedList<NPC>();
+    final List<NPC> list = new LinkedList<>();
     list.add(new Tifa());
     list.add(new Hinata());
     return list;

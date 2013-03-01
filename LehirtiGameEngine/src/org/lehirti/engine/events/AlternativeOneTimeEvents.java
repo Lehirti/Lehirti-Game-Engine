@@ -1,6 +1,5 @@
 package org.lehirti.engine.events;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -14,7 +13,7 @@ import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.state.State;
 
-public class AlternativeOneTimeEvents extends EventNode<NullState> implements Externalizable {
+public class AlternativeOneTimeEvents extends EventNode<NullState> {
   
   private TextAndImageKeyWithFlag selectedEvent;
   private Event<?> nextEvent;
@@ -40,7 +39,7 @@ public class AlternativeOneTimeEvents extends EventNode<NullState> implements Ex
   
   public AlternativeOneTimeEvents(final Event<?> nextEvent, final TextAndImageKeyWithFlag defaultEvent,
       final TextAndImageKeyWithFlag... oneTimeRandomEvents) {
-    final List<TextAndImageKeyWithFlag> availableRandomEvents = new LinkedList<TextAndImageKeyWithFlag>();
+    final List<TextAndImageKeyWithFlag> availableRandomEvents = new LinkedList<>();
     for (final TextAndImageKeyWithFlag oneRandomEvent : oneTimeRandomEvents) {
       if (is(oneRandomEvent)) {
         // this event has already been displayed

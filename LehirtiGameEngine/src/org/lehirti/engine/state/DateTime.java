@@ -124,8 +124,7 @@ public enum DateTime implements IntState {
   }
   
   public static String getDateFormatedForStatsArea() {
-    if (Long.valueOf(0).equals(State.get(DAY)) && Long.valueOf(0).equals(State.get(HOUR))
-        && Long.valueOf(0).equals(State.get(MINUTE)) && Long.valueOf(0).equals(State.get(SECOND))) {
+    if (State.get(DAY) == 0L && State.get(HOUR) == 0L && State.get(MINUTE) == 0L && State.get(SECOND) == 0L) {
       return "";
     }
     

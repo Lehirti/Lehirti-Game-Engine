@@ -51,7 +51,7 @@ public abstract class AbstractNPC implements NPC {
   
   @Override
   public List<Option> getOverviewOptions(final Event<?> returnEvent) {
-    final List<Option> options = new ArrayList<Option>(11);
+    final List<Option> options = new ArrayList<>(11);
     options.add(new Option(Key.OPTION_A, Text.OPTION_EXAMINE, new NPCExamine(this, returnEvent)));
     options.add(new Option(Key.OPTION_WEST, Text.OPTION_GO_OGLE, new NPCGoOgle(this, returnEvent)));
     options.add(new Option(Key.OPTION_SOUTH, Text.OPTION_TALK_TO, new NPCTalkTo(this, returnEvent)));
@@ -63,7 +63,7 @@ public abstract class AbstractNPC implements NPC {
   
   @Override
   public List<Option> getExamineOptions(final Event<?> returnEvent) {
-    final List<Option> options = new ArrayList<Option>(11);
+    final List<Option> options = new ArrayList<>(11);
     options.add(new Option(Key.OPTION_WEST, Text.OPTION_BODY, new NPCExamine(this, returnEvent))); // TODO
     options.add(new Option(Key.OPTION_SOUTH, Text.OPTION_BIO, new NPCExamine(this, returnEvent))); // TODO
     options.add(new Option(Key.OPTION_EAST, Text.OPTION_QUESTS, new NPCExamine(this, returnEvent))); // TODO
@@ -73,38 +73,38 @@ public abstract class AbstractNPC implements NPC {
   
   @Override
   public List<Option> getGoOgleOptions(final Event<?> returnEvent) {
-    final List<Option> options = new ArrayList<Option>(11);
+    final List<Option> options = new ArrayList<>(11);
     return options;
   }
   
   @Override
   public List<Option> getTalkToOptions(final Event<?> returnEvent) {
-    final List<Option> options = new ArrayList<Option>(11);
+    final List<Option> options = new ArrayList<>(11);
     return options;
   }
   
   @Override
   public List<Option> getGiveItemOptions(final Event<?> returnEvent) {
-    final List<Option> options = new ArrayList<Option>(11);
+    final List<Option> options = new ArrayList<>(11);
     return options;
   }
   
   @Override
   public List<Option> getFlirtWithOptions(final Event<?> returnEvent) {
-    final List<Option> options = new ArrayList<Option>(11);
+    final List<Option> options = new ArrayList<>(11);
     // options.add(new Option(Key.OPTION_ENTER, Text.OPTION_HAVE_SEX_WITH_HER, new StartSexSession(this, returnEvent)));
     return options;
   }
   
   @Override
   public List<Option> getInventoryOptions(final Event<?> returnEvent) {
-    final List<Option> options = new ArrayList<Option>(11);
+    final List<Option> options = new ArrayList<>(11);
     return options;
   }
   
   @Override
   public List<SexAct> getAvailableSexActs() {
-    final List<SexAct> availableSexActs = new LinkedList<SexAct>();
+    final List<SexAct> availableSexActs = new LinkedList<>();
     final Set<SexAct> physicallyPossibleSexActs = SexAct.getPhysicallyPossible(new PC().getSex(), getSex());
     for (final SexAct act : physicallyPossibleSexActs) {
       if (act.getRequiredSexToy() == SexToyCategory.NONE || !SexToy.getAllAvailable(act.getRequiredSexToy()).isEmpty()) {
@@ -211,7 +211,7 @@ public abstract class AbstractNPC implements NPC {
   
   @Override
   public List<Option> getReactionOptions(final SexAct act, final SexToy toy, final Event<?> returnEvent) {
-    final List<Option> options = new ArrayList<Option>(12);
+    final List<Option> options = new ArrayList<>(12);
     final List<SexAct> availableSexActs = getAvailableSexActs();
     final int selectedAct = act.getSelectedIndex(availableSexActs);
     options.add(new Option(Key.OPTION_LEAVE, Text.OPTION_CHANGE_SEX_ACT, new SelectSexAct(this, availableSexActs,
@@ -223,7 +223,7 @@ public abstract class AbstractNPC implements NPC {
   
   @Override
   public List<Option> getSexActPerformedOptions(final SexAct act, final SexToy toy, final Event<?> returnEvent) {
-    final List<Option> options = new ArrayList<Option>(12);
+    final List<Option> options = new ArrayList<>(12);
     if (isOrgasming() || PC.PLAYER.isOrgasming()) {
       options.add(new Option(Key.OPTION_ENTER, Text.OPTION_ORGASM, new Orgasm(this, act, toy, returnEvent)));
     } else if (isExhausted() || PC.PLAYER.isExhausted()) {

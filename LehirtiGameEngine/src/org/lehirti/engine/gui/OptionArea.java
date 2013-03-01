@@ -42,7 +42,7 @@ public class OptionArea extends JComponent implements Externalizable {
   private final int cols;
   private final int rows;
   
-  private final Map<Key, TextWrapper> options = new EnumMap<Key, TextWrapper>(Key.class);
+  private final Map<Key, TextWrapper> options = new EnumMap<>(Key.class);
   private boolean isTextInput = false;
   private TextKey textInputLabel = null;
   private String currentTextInput = null;
@@ -117,7 +117,7 @@ public class OptionArea extends JComponent implements Externalizable {
     }
   }
   
-  private void fitStringIntoOptionField(final Graphics g, final String optionString, final int xOffset,
+  private static void fitStringIntoOptionField(final Graphics g, final String optionString, final int xOffset,
       final int yOffset, final Dimension optionField, final int fontSize) {
     final String[] words = optionString.split(" ");
     for (int i = fontSize; i > 0; i--) {
@@ -125,7 +125,7 @@ public class OptionArea extends JComponent implements Externalizable {
       final Font newFont = new Font(font.getName(), font.getStyle(), i);
       final FontMetrics metrics = g.getFontMetrics(newFont);
       final int nrLines = optionField.height / metrics.getHeight();
-      final List<String> lines = new ArrayList<String>(nrLines);
+      final List<String> lines = new ArrayList<>(nrLines);
       int k = 0;
       for (int j = 0; j < nrLines; j++) {
         if (k >= words.length) {
@@ -187,7 +187,7 @@ public class OptionArea extends JComponent implements Externalizable {
   }
   
   public List<TextWrapper> getAllOptions() {
-    return new ArrayList<TextWrapper>(this.options.values());
+    return new ArrayList<>(this.options.values());
   }
   
   @Override

@@ -19,7 +19,7 @@ public final class MapToCrashSiteHook implements EventHook {
   
   @Override
   public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent) {
-    final Map<Event<?>, Double> events = new HashMap<Event<?>, Double>();
+    final Map<Event<?>, Double> events = new HashMap<>();
     
     if (previousEvent.getClass().equals(org.lehirti.luckysurvivor.map.Map.class)) { // is coming from the map
       if (State.getEventCount(SeeAngryDiscussion.class) == 0) { // AND has not seen the angry discussion

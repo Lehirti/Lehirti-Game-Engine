@@ -1,6 +1,5 @@
 package org.lehirti.engine.events;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -11,7 +10,7 @@ import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 
-public class TextOnlyEvent extends EventNode<NullState> implements Externalizable {
+public class TextOnlyEvent extends EventNode<NullState> {
   private static final long serialVersionUID = 1L;
   
   private Key key;

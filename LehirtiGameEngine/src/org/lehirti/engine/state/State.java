@@ -53,11 +53,11 @@ public class State implements Externalizable {
   }
   
   // SortedMap produces class cast exceptions
-  private final Map<BoolState, Boolean> BOOL_MAP = new InventoryMap<BoolState, Boolean>();
-  private final Map<IntState, Long> INT_MAP = new InventoryMap<IntState, Long>();
-  private final Map<ObjState, Serializable> OBJ_MAP = new InventoryMap<ObjState, Serializable>();
-  private final Map<StringState, String> STRING_MAP = new InventoryMap<StringState, String>();
-  private final Map<Class<?>, EventState> PER_CLASS_STATE_MAP = new LinkedHashMap<Class<?>, EventState>();
+  private final Map<BoolState, Boolean> BOOL_MAP = new InventoryMap<>();
+  private final Map<IntState, Long> INT_MAP = new InventoryMap<>();
+  private final Map<ObjState, Serializable> OBJ_MAP = new InventoryMap<>();
+  private final Map<StringState, String> STRING_MAP = new InventoryMap<>();
+  private final Map<Class<?>, EventState> PER_CLASS_STATE_MAP = new LinkedHashMap<>();
   
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // initialize defaults
@@ -86,7 +86,7 @@ public class State implements Externalizable {
         updateNecessary = true;
       }
     }
-    final Set<Object> keySet = new HashSet<Object>(defaultProperties.keySet());
+    final Set<Object> keySet = new HashSet<>(defaultProperties.keySet());
     KEYS: for (final Object key : keySet) {
       for (final AbstractState state : states) {
         if (state.name().equals(key)) {
@@ -176,7 +176,7 @@ public class State implements Externalizable {
   public static void incrementEventCount(final Event<?> event) {
     Map<String, Integer> eventCountMap = (Map<String, Integer>) get(InternalGameState.EVENT_COUNT);
     if (eventCountMap == null) {
-      eventCountMap = new TreeMap<String, Integer>();
+      eventCountMap = new TreeMap<>();
       set(InternalGameState.EVENT_COUNT, (Serializable) eventCountMap);
     }
     final String eventClassName = event.getClass().getName();
@@ -195,7 +195,6 @@ public class State implements Externalizable {
     return getEventCount(event.getClass());
   }
   
-  @SuppressWarnings("unchecked")
   public static int getEventCount(final Class<? extends Event> eventClass) {
     final Map<String, Integer> eventCountMap = (Map<String, Integer>) get(InternalGameState.EVENT_COUNT);
     if (eventCountMap == null) {
@@ -297,7 +296,7 @@ public class State implements Externalizable {
     out.writeObject(OnDiskDelim.END_STATE_OBJECT.name());
   }
   
-  private void writePerClassMap(final ObjectOutput out, final Map<Class<?>, EventState> map) throws IOException {
+  private static void writePerClassMap(final ObjectOutput out, final Map<Class<?>, EventState> map) throws IOException {
     for (final Entry<Class<?>, EventState> entry : map.entrySet()) {
       out.writeObject(entry.getKey().getName());
       final EventState value = entry.getValue();
@@ -306,7 +305,7 @@ public class State implements Externalizable {
     }
   }
   
-  private void writeMap(final ObjectOutput out, final Map<? extends AbstractState, ? extends Object> map)
+  private static void writeMap(final ObjectOutput out, final Map<? extends AbstractState, ? extends Object> map)
       throws IOException {
     for (final Map.Entry<? extends AbstractState, ? extends Object> entry : map.entrySet()) {
       out.writeObject(entry.getKey().getClass().getName());
@@ -325,7 +324,7 @@ public class State implements Externalizable {
     }
   }
   
-  private void readObject1(final ObjectInput in) throws IOException, ClassNotFoundException {
+  private static void readObject1(final ObjectInput in) throws IOException, ClassNotFoundException {
     INSTANCE.BOOL_MAP.clear();
     INSTANCE.INT_MAP.clear();
     INSTANCE.OBJ_MAP.clear();
@@ -338,8 +337,8 @@ public class State implements Externalizable {
     }
   }
   
-  @SuppressWarnings("unchecked")
-  private void readMap(final ObjectInput in, final OnDiskDelim startDelim) throws IOException, ClassNotFoundException {
+  private static void readMap(final ObjectInput in, final OnDiskDelim startDelim) throws IOException,
+      ClassNotFoundException {
     String className;
     final OnDiskDelim endDelim = startDelim.getNext();
     if (startDelim == OnDiskDelim.START_PER_CLASS_STATE_MAP) {
@@ -352,7 +351,7 @@ public class State implements Externalizable {
           final EventState value = (EventState) Enum.valueOf((Class<? extends Enum>) Class.forName(valueClassName),
               valueName);
           INSTANCE.PER_CLASS_STATE_MAP.put(key, value);
-        } catch (final RuntimeException e) {
+        } catch (final RuntimeException | ClassNotFoundException e) {
           LOGGER.warn("Ignoring state " + valueClassName + "." + valueName + " for class " + className, e);
         }
       }
@@ -380,7 +379,7 @@ public class State implements Externalizable {
           default:
             throw new RuntimeException("Unknown OnDiskDelim: " + startDelim.name());
           }
-        } catch (final RuntimeException e) {
+        } catch (final RuntimeException | ClassNotFoundException e) {
           LOGGER.warn("Ignoring unkown state {}.{}={}", new Object[] { className, keyName, value });
         }
       }

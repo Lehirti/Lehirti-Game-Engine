@@ -44,7 +44,7 @@ public class Main extends org.lehirti.engine.gui.Main {
         break;
       case NEEDS_UPDATE:
         LOGGER.info("Content " + content.name() + "-" + content.requiredVersion + " needs updating.");
-        ContentUtils.rebuild(content.name(), content.requiredVersion);
+        ContentUtils.rebuild(content.name(), Integer.valueOf(content.requiredVersion));
         PathFinder.registerContentDir(content.name());
         break;
       case MISSING:

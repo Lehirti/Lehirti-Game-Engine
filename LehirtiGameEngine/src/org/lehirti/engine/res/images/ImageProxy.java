@@ -50,14 +50,14 @@ public class ImageProxy {
     this.modProxyFile = PathFinder.toModFile(imageProxyFile);
     
     this.imageFile = imageFile;
-    this.image = new SoftReference<BufferedImage>(image);
+    this.image = new SoftReference<>(image);
     this.imageSizeX = image.getWidth();
     this.imageSizeY = image.getHeight();
   }
   
   ImageProxy(final ImageKey key) {
     this.key = key;
-    this.nullImage = new SoftReference<BufferedImage>(makeNullImage());
+    this.nullImage = new SoftReference<>(makeNullImage());
     this.imageFile = null;
     this.modProxyFile = null;
     this.imageSizeX = 800;
@@ -85,7 +85,7 @@ public class ImageProxy {
     _setPlacement(this.placement);
   }
   
-  private void _setPlacement(final Properties placement) {
+  private void _setPlacement(final Properties placementProps) {
     this.alignX = null;
     this.alignY = null;
     this.posX = null;
@@ -93,33 +93,33 @@ public class ImageProxy {
     this.scaleX = null;
     this.scaleY = null;
     
-    this.alignX = placement.getProperty(ProxyProps.ALIGN_X.name(), "CENTER");
-    this.alignY = placement.getProperty(ProxyProps.ALIGN_Y.name(), "CENTER");
-    final String posXString = placement.getProperty(ProxyProps.POS_X.name());
-    final String posYString = placement.getProperty(ProxyProps.POS_Y.name());
-    final String sizeXString = placement.getProperty(ProxyProps.SCALE_X.name());
-    final String sizeYString = placement.getProperty(ProxyProps.SCALE_Y.name());
+    this.alignX = placementProps.getProperty(ProxyProps.ALIGN_X.name(), "CENTER");
+    this.alignY = placementProps.getProperty(ProxyProps.ALIGN_Y.name(), "CENTER");
+    final String posXString = placementProps.getProperty(ProxyProps.POS_X.name());
+    final String posYString = placementProps.getProperty(ProxyProps.POS_Y.name());
+    final String sizeXString = placementProps.getProperty(ProxyProps.SCALE_X.name());
+    final String sizeYString = placementProps.getProperty(ProxyProps.SCALE_Y.name());
     
     if (posXString != null) {
-      this.posX = Double.parseDouble(posXString);
+      this.posX = Double.valueOf(posXString);
       if (this.alignX.equals("CENTER")) {
         this.alignX = "LEFT";
       }
     }
     
     if (posYString != null) {
-      this.posY = Double.parseDouble(posYString);
+      this.posY = Double.valueOf(posYString);
       if (this.alignY.equals("CENTER")) {
         this.alignY = "TOP";
       }
     }
     
     if (sizeXString != null) {
-      this.scaleX = Double.parseDouble(sizeXString);
+      this.scaleX = Double.valueOf(sizeXString);
     }
     
     if (sizeYString != null) {
-      this.scaleY = Double.parseDouble(sizeYString);
+      this.scaleY = Double.valueOf(sizeYString);
     }
   }
   
@@ -227,7 +227,7 @@ public class ImageProxy {
       BufferedImage bufferedImage = this.nullImage.get();
       if (bufferedImage == null) {
         bufferedImage = makeNullImage();
-        this.nullImage = new SoftReference<BufferedImage>(bufferedImage);
+        this.nullImage = new SoftReference<>(bufferedImage);
       }
       return bufferedImage;
     }
@@ -239,7 +239,7 @@ public class ImageProxy {
         LOGGER.error("Failed to read previously readable image " + this.imageFile.getAbsolutePath());
         return makeNullImage();
       } else {
-        this.image = new SoftReference<BufferedImage>(bufferedImage);
+        this.image = new SoftReference<>(bufferedImage);
       }
     }
     return bufferedImage;
@@ -459,7 +459,7 @@ public class ImageProxy {
     return sizes;
   }
   
-  private int determinePosBefore(final Double pos, final double xScale) {
+  private static int determinePosBefore(final Double pos, final double xScale) {
     if (pos != null) {
       return (int) (pos.doubleValue() * xScale);
     } else {
@@ -467,11 +467,11 @@ public class ImageProxy {
     }
   }
   
-  private int determinePosAfterCentered(final int size, final int toSubtract) {
+  private static int determinePosAfterCentered(final int size, final int toSubtract) {
     return (size - toSubtract) / 2;
   }
   
-  private int determinePosAfterEdge(final int size, final int toSubtract, final int offset) {
+  private static int determinePosAfterEdge(final int size, final int toSubtract, final int offset) {
     return size - toSubtract - offset;
   }
   

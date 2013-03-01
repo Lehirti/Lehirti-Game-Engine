@@ -27,7 +27,7 @@ public final class MapToCliffWestHook implements EventHook {
   @Override
   public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent) {
     // we start out with an empty map, meaning no events from this hook
-    final Map<Event<?>, Double> events = new HashMap<Event<?>, Double>();
+    final Map<Event<?>, Double> events = new HashMap<>();
     
     if (State.getEventCount(MapToCliffWest.class) > 0 // player has been here before
         && DateTime.gethhmmss() > 30000 // AND the necessary amount of time has passed

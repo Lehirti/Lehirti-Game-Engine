@@ -15,7 +15,7 @@ public final class GirlsPresentHook implements EventHook {
   
   @Override
   public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent) {
-    final Map<Event<?>, Double> events = new HashMap<Event<?>, Double>();
+    final Map<Event<?>, Double> events = new HashMap<>();
     
     /*
      * only allow the GirlsPresent event, if GIRLS_PRESENT is false, otherwise it would be possible to get the

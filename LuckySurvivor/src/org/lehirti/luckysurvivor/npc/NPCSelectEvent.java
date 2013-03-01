@@ -1,6 +1,5 @@
 package org.lehirti.luckysurvivor.npc;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -16,7 +15,7 @@ import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 
-public class NPCSelectEvent extends EventNode<NullState> implements Externalizable {
+public class NPCSelectEvent extends EventNode<NullState> {
   
   private ImageKey backgroundImage;
   private Event<?> returnEvent;
@@ -77,14 +76,14 @@ public class NPCSelectEvent extends EventNode<NullState> implements Externalizab
       if (i == this.selectedNPC) {
         addText(CommonText.MARKER);
       }
-      addText(this.npcs.get(i).getName());
+      addText(this.npcs.get(i).getNameTextWrapper());
       addText(CommonText.NEWLINE);
     }
     
     if (!this.npcs.isEmpty()) {
-      final NPC selectedNPC = this.npcs.get(this.selectedNPC);
-      addOption(Key.OPTION_ENTER, selectedNPC.getName(), new NPCOverviewEvent(selectedNPC, new NPCSelectEvent(
-          this.backgroundImage, this.returnEvent, this.npcs, this.selectedNPC)));
+      final NPC selNPC = this.npcs.get(this.selectedNPC);
+      addOption(Key.OPTION_ENTER, selNPC.getNameTextWrapper(), new NPCOverviewEvent(selNPC,
+          new NPCSelectEvent(this.backgroundImage, this.returnEvent, this.npcs, this.selectedNPC)));
       if (this.npcs.size() > 1) {
         int prev = this.selectedNPC - 1;
         if (prev < 0) {

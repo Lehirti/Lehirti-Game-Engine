@@ -1,20 +1,19 @@
 package org.lehirti.luckysurvivor.npc;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import org.lehirti.engine.events.Event;
+import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.Option;
-import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextWrapper;
 
-public class NPCInventory extends EventNode<NullState> implements Externalizable {
+public class NPCInventory extends EventNode<NullState> {
   
   private NPC npc;
   private Event<?> returnEvent;
@@ -50,7 +49,7 @@ public class NPCInventory extends EventNode<NullState> implements Externalizable
   
   @Override
   protected void doEvent() {
-    setText(this.npc.getName());
+    setText(this.npc.getNameTextWrapper());
     for (final TextWrapper txtWrp : this.npc.getInventoryDescription()) {
       addText(txtWrp);
     }

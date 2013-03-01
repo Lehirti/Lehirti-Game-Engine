@@ -36,14 +36,14 @@ public class PathFinder {
   
   private static final File MANIFEST_DIR = new File(CORE_BASE_DIR, "manifest");
   
-  private static final List<File> CORE_CONTENT_DIRS = new ArrayList<File>(25);
-  private static final List<File> MOD_CONTENT_DIRS = new ArrayList<File>(25);
+  private static final List<File> CORE_CONTENT_DIRS = new ArrayList<>(25);
+  private static final List<File> MOD_CONTENT_DIRS = new ArrayList<>(25);
   
-  private static final Map<TextKey, File> CORE_TEXT_CACHE = new HashMap<TextKey, File>(1024);
-  private static final Map<TextKey, File> MOD_TEXT_CACHE = new HashMap<TextKey, File>(1024);
+  private static final Map<TextKey, File> CORE_TEXT_CACHE = new HashMap<>(1024);
+  private static final Map<TextKey, File> MOD_TEXT_CACHE = new HashMap<>(1024);
   
-  private static final Map<ImageKey, File[]> CORE_IMAGE_CACHE = new HashMap<ImageKey, File[]>(1024);
-  private static final Map<ImageKey, File[]> MOD_IMAGE_CACHE = new HashMap<ImageKey, File[]>(1024);
+  private static final Map<ImageKey, File[]> CORE_IMAGE_CACHE = new HashMap<>(1024);
+  private static final Map<ImageKey, File[]> MOD_IMAGE_CACHE = new HashMap<>(1024);
   
   private static final File CORE_RES_DIR = new File(CORE_BASE_DIR, RES);
   private static final File MOD_RES_DIR = new File(MOD_BASE_DIR, RES);
@@ -69,7 +69,7 @@ public class PathFinder {
   }
   
   public static File getModFile(final TextKey key, final String contentDir) {
-    final Collection<File> contentDirs = new ArrayList<File>(1);
+    final Collection<File> contentDirs = new ArrayList<>(1);
     contentDirs.add(new File(MOD_BASE_DIR, contentDir));
     return get(key, new HashMap<TextKey, File>(), contentDirs);
   }
@@ -107,7 +107,7 @@ public class PathFinder {
   private static File[] get(final ImageKey key, final Map<ImageKey, File[]> cache, final Collection<File> dirs) {
     File[] files = cache.get(key);
     if (files == null) {
-      final Collection<File> proxyFiles = new ArrayList<File>(25);
+      final Collection<File> proxyFiles = new ArrayList<>(25);
       for (final File parentDir : dirs) {
         final File dir = getDir(parentDir, key);
         if (!dir.isDirectory()) {
@@ -246,7 +246,7 @@ public class PathFinder {
     if (!SAVE_DIR.exists()) {
       return Collections.emptyList();
     }
-    final List<File> savegames = new LinkedList<File>();
+    final List<File> savegames = new LinkedList<>();
     for (final File file : SAVE_DIR.listFiles()) {
       if (file.getName().startsWith(SAVEGAME_PREFIX)) {
         savegames.add(file);

@@ -13,9 +13,9 @@ import org.lehirti.engine.state.State;
 public final class ProgressNode {
   private final PG id;
   
-  private final List<ProgressNode> parents = new LinkedList<ProgressNode>();
+  private final List<ProgressNode> parents = new LinkedList<>();
   
-  private final List<ProgressNode> children = new LinkedList<ProgressNode>();
+  private final List<ProgressNode> children = new LinkedList<>();
   
   private int widthInGraph = 0;
   
@@ -146,7 +146,7 @@ public final class ProgressNode {
     }
   }
   
-  private Color determineNodeColor(final ProgressNode node) {
+  private static Color determineNodeColor(final ProgressNode node) {
     if (node.isActive()) {
       return Color.RED;
     }

@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -24,7 +24,7 @@ public final class ExportCoreContent {
   private static final File ROOT_DIR = new File("..");
   private static final File CORE_DIR = new File(ROOT_DIR, "core");
   private static final File DEST_DIR = new File("../../../luckysurvivor");
-  private static final Set<String> NEW_ZIP_ENTRIES = new HashSet<String>();
+  private static final Set<String> NEW_ZIP_ENTRIES = new HashSet<>();
   private static int errors = 0;
   
   public static void main(final String[] args) throws IOException {

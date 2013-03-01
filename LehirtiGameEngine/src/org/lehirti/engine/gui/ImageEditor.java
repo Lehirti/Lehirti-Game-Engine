@@ -221,7 +221,7 @@ public class ImageEditor extends JFrame implements ActionListener {
   }
   
   private void setImage() {
-    LOGGER.debug("setImage({});", this.selectedImageNr);
+    LOGGER.debug("setImage({});", Integer.valueOf(this.selectedImageNr));
     
     setTitle();
     
@@ -334,8 +334,8 @@ public class ImageEditor extends JFrame implements ActionListener {
       if (returnVal == JFileChooser.APPROVE_OPTION) {
         LOGGER.debug("file selected");
         final File file = fc.getSelectedFile();
-        final String contentDir = (String) this.contentDir.getSelectedItem();
-        this.allImages.get(this.selectedImageNr).addAlternativeImage(file, contentDir);
+        final String contentDirectory = (String) this.contentDir.getSelectedItem();
+        this.allImages.get(this.selectedImageNr).addAlternativeImage(file, contentDirectory);
         this.selectedAlternativeNr = this.allImages.get(this.selectedImageNr).getCurrentImageNr();
         this.selectedAlternative.setText(String.valueOf(this.selectedAlternativeNr));
         setImage();

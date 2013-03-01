@@ -30,7 +30,7 @@ public enum SexToy implements TextAndImageKeyWithFlag {
   }
   
   public static List<SexToy> getAllAvailable(final SexToyCategory category) {
-    final List<SexToy> availableToys = new LinkedList<SexToy>();
+    final List<SexToy> availableToys = new LinkedList<>();
     for (final SexToy toy : values()) {
       if (toy.belongsToCategory(category) && State.is(toy)) {
         availableToys.add(toy);

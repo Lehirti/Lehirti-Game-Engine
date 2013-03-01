@@ -14,12 +14,12 @@ public final class SusanVineRapeHook implements EventHook {
   }
   
   @Override
-  public Map<Event<?>, Double> getCurrentEvents(Event<?> previousEvent) {
-    final Map<Event<?>, Double> events = new HashMap<Event<?>, Double>();
+  public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent) {
+    final Map<Event<?>, Double> events = new HashMap<>();
     
     // this is how you inject a one-time event (in this case into MapToPeninsulaBasinJungle)
     if (State.getEventCount(SusanVineRape.class) == 0) {
-      events.put(new SusanVineRape(), Double.valueOf(EventHook.PROBABILITY_ALWAYS));
+      events.put(new SusanVineRape(), EventHook.PROBABILITY_ALWAYS);
     }
     
     return events;

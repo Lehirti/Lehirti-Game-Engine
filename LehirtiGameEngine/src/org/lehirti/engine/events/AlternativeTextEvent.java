@@ -1,6 +1,5 @@
 package org.lehirti.engine.events;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -12,7 +11,7 @@ import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.state.State;
 
-public class AlternativeTextEvent extends EventNode<NullState> implements Externalizable {
+public class AlternativeTextEvent extends EventNode<NullState> {
   
   private TextKey[] texts;
   private Event<?> nextEvent;
