@@ -212,7 +212,7 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
     return allUsedImages;
   }
   
-  private void stopBackgroundLoadingOfImages() {
+  private static void stopBackgroundLoadingOfImages() {
     ResourceCache.getImagesToPreload().clear();
   }
   

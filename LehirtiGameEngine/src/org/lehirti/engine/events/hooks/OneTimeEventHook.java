@@ -44,25 +44,12 @@ public class OneTimeEventHook implements EventHook {
       final Class<? extends Event<?>> eventClassWithStandardConstructor = entry.getKey();
       if (State.getEventCount(eventClassWithStandardConstructor) == 0) {
         Event<?> newEventInstance;
-        Exception ex = null;
         try {
           newEventInstance = eventClassWithStandardConstructor.getConstructor().newInstance();
           events.put(newEventInstance, entry.getValue());
-        } catch (final IllegalArgumentException e) {
-          ex = e;
-        } catch (final SecurityException e) {
-          ex = e;
-        } catch (final InstantiationException e) {
-          ex = e;
-        } catch (final IllegalAccessException e) {
-          ex = e;
-        } catch (final InvocationTargetException e) {
-          ex = e;
-        } catch (final NoSuchMethodException e) {
-          ex = e;
-        }
-        if (ex != null) {
-          LOGGER.error("Unable to create one-time event by reflection via standard constructor", ex);
+        } catch (final IllegalArgumentException | SecurityException | InstantiationException | IllegalAccessException
+            | InvocationTargetException | NoSuchMethodException e) {
+          LOGGER.error("Unable to create one-time event by reflection via standard constructor", e);
         }
       }
     }

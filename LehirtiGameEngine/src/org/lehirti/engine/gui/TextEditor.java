@@ -1,18 +1,23 @@
 package org.lehirti.engine.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.border.LineBorder;
 
 import org.lehirti.engine.gui.WindowLocation.WinLoc;
 import org.lehirti.engine.res.text.TextKey;
@@ -25,13 +30,13 @@ public class TextEditor extends JFrame implements ActionListener {
   JPanel all = new JPanel();
   
   JPanel controls = new JPanel();
-  final JComboBox contentDir;
+  final JComboBox<String> contentDir;
   JButton prev = new JButton("Previous");
   JButton next = new JButton("Next");
   
   JButton save = new JButton("Save");
   
-  JTextArea textArea = new JTextArea();
+  JPanel textAreas = new JPanel();
   
   final TextArea gameTextArea;
   final OptionArea gameOptionArea;
@@ -47,15 +52,15 @@ public class TextEditor extends JFrame implements ActionListener {
     this.allOptions = gameOptionArea.getAllOptions();
     if (!this.allTexts.isEmpty()) {
       this.selectedTextNr = 0;
-      this.textArea.setText(this.allTexts.get(0).getRawValue());
+      setTexts(this.allTexts.get(0).getRawValues());
     } else if (!this.allOptions.isEmpty()) {
       this.selectedOptionNr = 0;
-      this.textArea.setText(this.allOptions.get(0).getRawValue());
+      setTexts(this.allOptions.get(0).getRawValues());
     }
-    this.textArea.setLineWrap(true);
-    this.textArea.setWrapStyleWord(true);
     
-    this.contentDir = new JComboBox(PathFinder.getContentDirs());
+    this.textAreas.setLayout(new BoxLayout(this.textAreas, BoxLayout.Y_AXIS));
+    
+    this.contentDir = new JComboBox<>(PathFinder.getContentDirs());
     
     this.controls.setLayout(new GridLayout(4, 1));
     this.controls.setPreferredSize(new Dimension(300, 800));
@@ -66,7 +71,7 @@ public class TextEditor extends JFrame implements ActionListener {
     
     this.all.setLayout(new BorderLayout());
     this.all.add(this.controls, BorderLayout.EAST);
-    this.all.add(this.textArea, BorderLayout.CENTER);
+    this.all.add(this.textAreas, BorderLayout.CENTER);
     
     setTitle();
     
@@ -146,7 +151,7 @@ public class TextEditor extends JFrame implements ActionListener {
       return false;
     }
     this.selectedOptionNr = this.allOptions.size() - 1;
-    this.textArea.setText(this.allOptions.get(this.selectedOptionNr).getRawValue());
+    setTexts(this.allOptions.get(this.selectedOptionNr).getRawValues());
     return true;
   }
   
@@ -155,7 +160,7 @@ public class TextEditor extends JFrame implements ActionListener {
       return false;
     }
     this.selectedOptionNr = 0;
-    this.textArea.setText(this.allOptions.get(this.selectedOptionNr).getRawValue());
+    setTexts(this.allOptions.get(this.selectedOptionNr).getRawValues());
     return true;
   }
   
@@ -164,7 +169,7 @@ public class TextEditor extends JFrame implements ActionListener {
       return false;
     }
     this.selectedTextNr = this.allTexts.size() - 1;
-    this.textArea.setText(this.allTexts.get(this.selectedTextNr).getRawValue());
+    setTexts(this.allTexts.get(this.selectedTextNr).getRawValues());
     return true;
   }
   
@@ -173,7 +178,7 @@ public class TextEditor extends JFrame implements ActionListener {
       return false;
     }
     this.selectedTextNr = 0;
-    this.textArea.setText(this.allTexts.get(this.selectedTextNr).getRawValue());
+    setTexts(this.allTexts.get(this.selectedTextNr).getRawValues());
     return true;
   }
   
@@ -182,7 +187,7 @@ public class TextEditor extends JFrame implements ActionListener {
     if (this.selectedOptionNr == -1) {
       return false;
     }
-    this.textArea.setText(this.allOptions.get(this.selectedOptionNr).getRawValue());
+    setTexts(this.allOptions.get(this.selectedOptionNr).getRawValues());
     return true;
   }
   
@@ -192,7 +197,7 @@ public class TextEditor extends JFrame implements ActionListener {
       this.selectedOptionNr = -1;
       return false;
     }
-    this.textArea.setText(this.allOptions.get(this.selectedOptionNr).getRawValue());
+    setTexts(this.allOptions.get(this.selectedOptionNr).getRawValues());
     return true;
   }
   
@@ -201,7 +206,7 @@ public class TextEditor extends JFrame implements ActionListener {
     if (this.selectedTextNr == -1) {
       return false;
     }
-    this.textArea.setText(this.allTexts.get(this.selectedTextNr).getRawValue());
+    setTexts(this.allTexts.get(this.selectedTextNr).getRawValues());
     return true;
   }
   
@@ -211,7 +216,7 @@ public class TextEditor extends JFrame implements ActionListener {
       this.selectedTextNr = -1;
       return false;
     }
-    this.textArea.setText(this.allTexts.get(this.selectedTextNr).getRawValue());
+    setTexts(this.allTexts.get(this.selectedTextNr).getRawValues());
     return true;
   }
   
@@ -229,10 +234,46 @@ public class TextEditor extends JFrame implements ActionListener {
         textWrapper = this.allOptions.get(this.selectedOptionNr);
       }
       if (textWrapper != null) {
-        textWrapper.setValue(this.textArea.getText(), contentDirectory);
+        textWrapper.setValue(getTexts(), contentDirectory);
       }
     }
     this.gameTextArea.refresh();
     this.gameOptionArea.repaint();
+  }
+  
+  private String[] getTexts() {
+    final List<String> texts = new LinkedList<>();
+    
+    final Component[] components = this.textAreas.getComponents();
+    for (final Component area : components) {
+      final String text = ((JTextArea) area).getText();
+      if (!text.isEmpty()) {
+        texts.add(text);
+      }
+    }
+    if (texts.isEmpty()) {
+      final String[] ret = new String[] { "" };
+      return ret;
+    }
+    return texts.toArray(new String[texts.size()]);
+  }
+  
+  private void setTexts(final String[] texts) {
+    this.textAreas.removeAll();
+    for (final String text : texts) {
+      if (text != null) {
+        final JTextArea textArea = new JTextArea();
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setBorder(new LineBorder(Color.BLACK));
+        this.textAreas.add(textArea);
+        textArea.setText(text);
+      }
+    }
+    final JTextArea textArea = new JTextArea();
+    textArea.setLineWrap(true);
+    textArea.setWrapStyleWord(true);
+    textArea.setBorder(new LineBorder(Color.BLACK));
+    this.textAreas.add(textArea);
   }
 }

@@ -25,8 +25,15 @@ public class TextWrapper implements Externalizable {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(TextWrapper.class);
   
+  private static final String TEXT_DELIMITER = "\n\\$\n";
+  
   private TextKey key;
-  private String rawValue; // as stored on disc; may be different from what's displayed on screen
+  
+  /** as stored on disc; may contain alternative texts and be different from what's on screen */
+  private String[] rawValues = new String[1];
+  /** selected text alternative; possibly with place holders */
+  private String rawValu;
+  private int selectedRawValue = 0;
   
   private final List<Object> parameters = new LinkedList<>();
   
@@ -44,65 +51,112 @@ public class TextWrapper implements Externalizable {
     if (logModCoreDiff) {
       if (modFile.canRead()) {
         System.out.println(this.key.getClass().getName() + "." + this.key.name());
-        this.rawValue = FileUtils.readContentAsString(modFile);
+        this.rawValues = splitTextAlternatives(FileUtils.readContentAsString(modFile));
+        this.selectedRawValue = State.DIE.nextInt(this.rawValues.length);
         this.state = ResourceState.MOD;
         final File coreFile = PathFinder.getCoreFile(this.key);
         if (coreFile.canRead()) {
-          final String coreRawValue = FileUtils.readContentAsString(coreFile);
-          System.out.println("CORE: " + coreRawValue.replaceAll("\\n", "\\\\n"));
-          System.out.println("MOD:  " + this.rawValue.replaceAll("\\n", "\\\\n"));
-          final int length = coreRawValue.length() < this.rawValue.length() ? coreRawValue.length() : this.rawValue
-              .length();
-          final StringBuilder sb = new StringBuilder();
-          for (int i = 0; i < length; i++) {
-            if (coreRawValue.charAt(i) == this.rawValue.charAt(i)) {
-              sb.append(' ');
-            } else {
-              sb.append('*');
+          final String[] coreRawValues = splitTextAlternatives(FileUtils.readContentAsString(coreFile));
+          final int maxSize = coreRawValues.length > this.rawValues.length ? coreRawValues.length
+              : this.rawValues.length;
+          for (int i = 0; i < maxSize; i++) {
+            if (coreRawValues.length > i) {
+              System.out.println("CORE: " + coreRawValues[i].replaceAll("\\n", "\\\\n"));
+            }
+            if (this.rawValues.length > i) {
+              System.out.println("MOD:  " + this.rawValues[i].replaceAll("\\n", "\\\\n"));
+            }
+            if (coreRawValues.length > i && this.rawValues.length > i) {
+              final String coreRawValue = coreRawValues[i];
+              final String modRawValue = this.rawValues[i];
+              final int length = coreRawValue.length() < modRawValue.length() ? coreRawValue.length() : modRawValue
+                  .length();
+              final StringBuilder sb = new StringBuilder();
+              for (int k = 0; k < length; k++) {
+                if (coreRawValue.charAt(k) == modRawValue.charAt(k)) {
+                  sb.append(' ');
+                } else {
+                  sb.append('*');
+                }
+              }
+              final int lengthDiff = Math.abs(modRawValue.length() - coreRawValue.length());
+              for (int k = 0; k < lengthDiff; k++) {
+                sb.append('+');
+              }
+              if (sb.toString().trim().length() == 0) {
+                System.out.println("NO DIFF");
+              } else {
+                System.out.println("DIFF: " + sb.toString());
+              }
             }
           }
-          final int lengthDiff = Math.abs(this.rawValue.length() - coreRawValue.length());
-          for (int i = 0; i < lengthDiff; i++) {
-            sb.append('+');
-          }
-          if (sb.toString().trim().length() == 0) {
-            System.out.println("NO DIFF");
-          } else {
-            System.out.println("DIFF: " + sb.toString());
-          }
         } else {
-          System.out.println("NEW:  " + this.rawValue.replaceAll("\\n", "\\\\n"));
+          for (final String modRawValue : this.rawValues) {
+            System.out.println("NEW:  " + modRawValue.replaceAll("\\n", "\\\\n"));
+          }
         }
         System.out.println();
       } else {
         final File coreFile = PathFinder.getCoreFile(this.key);
         if (coreFile.canRead()) {
-          this.rawValue = FileUtils.readContentAsString(coreFile);
+          this.rawValues = splitTextAlternatives(FileUtils.readContentAsString(coreFile));
+          this.selectedRawValue = State.DIE.nextInt(this.rawValues.length);
           this.state = ResourceState.CORE;
         } else {
-          this.rawValue = "Ctrl-t: " + key.getClass().getSimpleName() + "." + key.name() + "\n\n";
+          this.selectedRawValue = 0;
+          this.rawValues[this.selectedRawValue] = "Ctrl-t: " + key.getClass().getSimpleName() + "." + key.name()
+              + "\n\n";
           this.state = ResourceState.MISSING;
         }
       }
     } else {
       if (modFile.canRead()) {
-        this.rawValue = FileUtils.readContentAsString(modFile);
+        this.rawValues = splitTextAlternatives(FileUtils.readContentAsString(modFile));
+        this.selectedRawValue = State.DIE.nextInt(this.rawValues.length);
         this.state = ResourceState.MOD;
       } else {
         final File coreFile = PathFinder.getCoreFile(this.key);
         if (coreFile.canRead()) {
-          this.rawValue = FileUtils.readContentAsString(coreFile);
+          this.rawValues = splitTextAlternatives(FileUtils.readContentAsString(coreFile));
+          this.selectedRawValue = State.DIE.nextInt(this.rawValues.length);
           this.state = ResourceState.CORE;
         } else {
-          this.rawValue = "Ctrl-t: " + key.getClass().getSimpleName() + "." + key.name() + "\n\n";
+          this.selectedRawValue = 0;
+          this.rawValues[this.selectedRawValue] = "Ctrl-t: " + key.getClass().getSimpleName() + "." + key.name()
+              + "\n\n";
           this.state = ResourceState.MISSING;
         }
       }
     }
+    this.rawValu = this.rawValues[this.selectedRawValue];
+  }
+  
+  private static String[] splitTextAlternatives(final String rawTextsFromFile) {
+    return rawTextsFromFile.split("\\Q" + TEXT_DELIMITER + "\\E");
+  }
+  
+  private static String joinTextAlternatives(final String[] rawValuesToJoin) {
+    final StringBuilder sb = new StringBuilder();
+    boolean isFirst = true;
+    for (final String value : rawValuesToJoin) {
+      if (value != null) {
+        if (!isFirst) {
+          sb.append(TEXT_DELIMITER);
+        } else {
+          isFirst = false;
+        }
+        sb.append(value);
+      }
+    }
+    return sb.toString();
   }
   
   public String getRawValue() {
-    return this.rawValue;
+    return this.rawValu;
+  }
+  
+  public String[] getRawValues() {
+    return this.rawValues;
   }
   
   public ResourceState getResourceState() {
@@ -110,7 +164,7 @@ public class TextWrapper implements Externalizable {
   }
   
   public String getValue() {
-    String val = this.rawValue;
+    String val = this.rawValu;
     int fromIndex = 0;
     while ((fromIndex = val.indexOf("{", fromIndex)) != -1) {
       final int toIndex = val.indexOf("}", fromIndex + 1);
@@ -169,9 +223,11 @@ public class TextWrapper implements Externalizable {
     return "[CANNOT RESOLVE PARAMETER \"" + parameter + "\"]";
   }
   
-  public void setValue(final String value, final String contentDir) {
-    this.rawValue = value;
-    FileUtils.writeContentToFile(PathFinder.getModFile(this.key, contentDir), value);
+  public void setValue(final String[] rawValues, final String contentDir) {
+    this.rawValues = rawValues;
+    this.selectedRawValue = State.DIE.nextInt(this.rawValues.length);
+    this.rawValu = this.rawValues[this.selectedRawValue];
+    FileUtils.writeContentToFile(PathFinder.getModFile(this.key, contentDir), joinTextAlternatives(this.rawValues));
   }
   
   public void addParameter(final String param) {
@@ -216,15 +272,18 @@ public class TextWrapper implements Externalizable {
   
   @Override
   public String toString() {
-    return this.key.getClass().getSimpleName() + "." + this.key.name() + "[" + this.rawValue + "]";
+    return this.key.getClass().getSimpleName() + "." + this.key.name() + "[" + this.rawValu + "]";
   }
   
   @Override
   public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+    // TODO make loading more robust to missing key enum constant
     final String className = (String) in.readObject();
     final String name = (String) in.readObject();
     this.key = (TextKey) Enum.valueOf((Class<? extends Enum>) Class.forName(className), name);
-    this.rawValue = (String) in.readObject();
+    this.rawValues = (String[]) in.readObject();
+    this.selectedRawValue = in.readInt();
+    this.rawValu = (String) in.readObject();
     final int nrOfParams = in.readInt();
     this.parameters.clear();
     for (int i = 0; i < nrOfParams; i++) {
@@ -236,7 +295,9 @@ public class TextWrapper implements Externalizable {
   public void writeExternal(final ObjectOutput out) throws IOException {
     out.writeObject(this.key.getClass().getName());
     out.writeObject(this.key.name());
-    out.writeObject(this.rawValue);
+    out.writeObject(this.rawValues);
+    out.writeInt(this.selectedRawValue);
+    out.writeObject(this.rawValu);
     out.writeInt(this.parameters.size());
     for (final Object param : this.parameters) {
       out.writeObject(param);

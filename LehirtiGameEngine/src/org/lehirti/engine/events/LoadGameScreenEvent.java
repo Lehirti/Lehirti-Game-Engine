@@ -57,12 +57,7 @@ public final class LoadGameScreenEvent extends EventNode<NullState> {
   private void readPreviewFromSavegame() {
     final File sav = this.allSavegames.get(this.selectedItem);
     
-    FileInputStream fis = null;
-    ObjectInputStream ois = null;
-    try {
-      fis = new FileInputStream(sav);
-      ois = new ObjectInputStream(fis);
-      
+    try (FileInputStream fis = new FileInputStream(sav); ObjectInputStream ois = new ObjectInputStream(fis)) {
       // for load screen preview
       this.nameOfSavegame = ois.readUTF();
       final int nrImages = ois.readInt();
@@ -81,21 +76,6 @@ public final class LoadGameScreenEvent extends EventNode<NullState> {
       LOGGER.error("IOException tryting to load from " + sav.getAbsolutePath(), e);
     } catch (final ClassNotFoundException e) {
       LOGGER.error("Savegame " + sav.getAbsolutePath() + " incompatible with current program version.", e);
-    } finally {
-      if (ois != null) {
-        try {
-          ois.close();
-        } catch (final IOException e) {
-          LOGGER.warn("Failed to close object input stream for " + sav.getAbsolutePath(), e);
-        }
-      }
-      if (fis != null) {
-        try {
-          fis.close();
-        } catch (final IOException e) {
-          LOGGER.warn("Failed to close file input stream for " + sav.getAbsolutePath(), e);
-        }
-      }
     }
   }
   

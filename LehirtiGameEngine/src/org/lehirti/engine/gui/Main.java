@@ -178,15 +178,11 @@ public abstract class Main {
   }
   
   public static void loadGame(final File sav) {
-    FileInputStream fis = null;
-    ObjectInputStream ois = null;
-    try {
+    try (FileInputStream fis = new FileInputStream(sav); ObjectInputStream ois = new ObjectInputStream(fis)) {
       if (currentEvent == null || !currentEvent.isLoadSavePoint()) {
         LOGGER.warn("Another game cannot be loaded right now"); // better notification for user
         return;
       }
-      fis = new FileInputStream(sav);
-      ois = new ObjectInputStream(fis);
       
       // for load screen preview
       ois.readUTF();
@@ -231,36 +227,17 @@ public abstract class Main {
       LOGGER.error("IOException tryting to load from " + sav.getAbsolutePath(), e);
     } catch (final ClassNotFoundException e) {
       LOGGER.error("Savegame " + sav.getAbsolutePath() + " incompatible with current program version.", e);
-    } finally {
-      if (ois != null) {
-        try {
-          ois.close();
-        } catch (final IOException e) {
-          LOGGER.warn("Failed to close object input stream for " + sav.getAbsolutePath(), e);
-        }
-      }
-      if (fis != null) {
-        try {
-          fis.close();
-        } catch (final IOException e) {
-          LOGGER.warn("Failed to close file input stream for " + sav.getAbsolutePath(), e);
-        }
-      }
     }
   }
   
   protected void saveGame() {
     final File sav = PathFinder.getNewSaveFile(this.flavor, this.build);
-    FileOutputStream fos = null;
-    ObjectOutputStream oos = null;
-    try {
+    
+    try (FileOutputStream fos = new FileOutputStream(sav); ObjectOutputStream oos = new ObjectOutputStream(fos)) {
       if (currentEvent == null || !currentEvent.isLoadSavePoint()) {
         LOGGER.warn("The game cannot be saved right now"); // better notification for user
         return;
       }
-      
-      fos = new FileOutputStream(sav);
-      oos = new ObjectOutputStream(fos);
       
       // for load screen preview
       oos.writeUTF(getSavegameName());
@@ -303,21 +280,6 @@ public abstract class Main {
       LOGGER.error("Savegame " + sav.getAbsolutePath() + " not found for saving", e);
     } catch (final IOException e) {
       LOGGER.error("IOException tryting to save to " + sav.getAbsolutePath(), e);
-    } finally {
-      if (oos != null) {
-        try {
-          oos.close();
-        } catch (final IOException e) {
-          LOGGER.warn("Failed to close object output stream for " + sav.getAbsolutePath(), e);
-        }
-      }
-      if (fos != null) {
-        try {
-          fos.close();
-        } catch (final IOException e) {
-          LOGGER.warn("Failed to close file output stream for " + sav.getAbsolutePath(), e);
-        }
-      }
     }
   }
   
