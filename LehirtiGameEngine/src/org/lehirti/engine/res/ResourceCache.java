@@ -1,5 +1,7 @@
 package org.lehirti.engine.res;
 
+import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -76,7 +78,12 @@ public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
         return bufferedImage;
       } else {
         try {
-          bufferedImage = ImageIO.read(imageFile);
+          final BufferedImage tmp = ImageIO.read(imageFile);
+          bufferedImage = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+              .getDefaultConfiguration().createCompatibleImage(tmp.getWidth(), tmp.getHeight(), tmp.getTransparency());
+          final Graphics2D g2d = bufferedImage.createGraphics();
+          g2d.drawImage(tmp, null, 0, 0);
+          g2d.dispose();
           RAW_IMAGE_CACHE.put(imageFile.getName(), bufferedImage);
           return bufferedImage;
         } catch (final IOException e) {

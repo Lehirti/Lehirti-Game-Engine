@@ -143,6 +143,8 @@ public class ImageArea extends JComponent implements Externalizable {
       
       drawImages(g2d);
       
+      g2d.dispose();
+      
       // copy to front buffer
       g.drawImage(this.backBuffer, 0, 0, this);
       
