@@ -84,6 +84,7 @@ public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
           final Graphics2D g2d = bufferedImage.createGraphics();
           g2d.drawImage(tmp, null, 0, 0);
           g2d.dispose();
+          bufferedImage.setAccelerationPriority(0.4f);
           RAW_IMAGE_CACHE.put(imageFile.getName(), bufferedImage);
           return bufferedImage;
         } catch (final IOException e) {
