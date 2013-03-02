@@ -48,8 +48,11 @@ public final class MoveModToCore {
           }
         }
       } else if (oneSrc.isDirectory()) {
+        if (oneSrc.getName().equals("defaults")) {
+          continue;
+        }
         if (!destFile.exists()) {
-          if (destFile.mkdir()) {
+          if (!destFile.mkdir()) {
             System.err.println("Failed to create " + destFile.getAbsolutePath());
             System.exit(-1);
           }

@@ -385,4 +385,15 @@ public class State implements Externalizable {
       }
     }
   }
+  
+  public static String get(final AbstractState state) {
+    if (state instanceof StringState) {
+      return String.valueOf(get((StringState) state));
+    } else if (state instanceof IntState) {
+      return String.valueOf(get((IntState) state));
+    } else if (state instanceof BoolState) {
+      return String.valueOf(is((BoolState) state));
+    }
+    return "null"; // TODO
+  }
 }

@@ -1,8 +1,10 @@
 package org.lehirti.luckysurvivor.npc.susan;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.TextAndImageKey;
@@ -11,6 +13,7 @@ import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.sex.Sex;
+import org.lehirti.engine.state.AbstractState;
 import org.lehirti.engine.state.BoolState;
 import org.lehirti.engine.state.IntState;
 import org.lehirti.engine.state.State;
@@ -25,13 +28,13 @@ public final class Susan extends AbstractNPC {
   private static final long serialVersionUID = 1L;
   
   // BEGIN GENERATED BLOCK NPCCommon
-  public static enum String implements StringState {
+  public static enum Str implements StringState {
     NAME,
     HAIR_COLOR,
     SKINTONE,
     BREAST_SHAPE,
-    // BEGIN MANUAL BLOCK String
-    // END MANUAL BLOCK String
+    // BEGIN MANUAL BLOCK Str
+    // END MANUAL BLOCK Str
   }
   
   public static enum Int implements IntState {
@@ -56,6 +59,37 @@ public final class Susan extends AbstractNPC {
   public static enum Bool implements BoolState {
     // BEGIN MANUAL BLOCK Bool
     // END MANUAL BLOCK Bool
+  }
+  
+  private final static Map<String, AbstractState> STATE_BY_NAME_MAP = new LinkedHashMap<>();
+  static {
+    for (final AbstractState state : Str.values()) {
+      if (STATE_BY_NAME_MAP.containsKey(state.name())) {
+        throw new ThreadDeath();
+      }
+      STATE_BY_NAME_MAP.put(state.name(), state);
+    }
+    for (final AbstractState state : Int.values()) {
+      if (STATE_BY_NAME_MAP.containsKey(state.name())) {
+        throw new ThreadDeath();
+      }
+      STATE_BY_NAME_MAP.put(state.name(), state);
+    }
+    for (final AbstractState state : Bool.values()) {
+      if (STATE_BY_NAME_MAP.containsKey(state.name())) {
+        throw new ThreadDeath();
+      }
+      STATE_BY_NAME_MAP.put(state.name(), state);
+    }
+  }
+  
+  @Override
+  public String resolveParameter(final String parameterSuffix) {
+    final AbstractState abstractState = STATE_BY_NAME_MAP.get(parameterSuffix);
+    if (abstractState == null) {
+      return "[Susan.resolveParameter(" + parameterSuffix + "): UNKNOWN]";
+    }
+    return State.get(abstractState);
   }
   
   // END GENERATED BLOCK NPCCommon
@@ -145,13 +179,13 @@ public final class Susan extends AbstractNPC {
   
   @Override
   public StringState getName() {
-    return String.NAME;
+    return Str.NAME;
   }
   
   @Override
   public TextWrapper getNameTextWrapper() {
     final TextWrapper textWrapper = ResourceCache.get(CommonText.PARAMETER);
-    textWrapper.addParameter(State.get(String.NAME));
+    textWrapper.addParameter(State.get(Str.NAME));
     return textWrapper;
   }
   

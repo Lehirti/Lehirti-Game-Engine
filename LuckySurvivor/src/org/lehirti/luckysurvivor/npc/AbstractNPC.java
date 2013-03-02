@@ -27,7 +27,7 @@ import org.lehirti.luckysurvivor.sss.SexToy;
 import org.lehirti.luckysurvivor.sss.SexToyCategory;
 
 public abstract class AbstractNPC implements NPC {
-  private static final long serialVersionUID = 1L;
+  public static final long serialVersionUID = 1L; // yes, public!
   
   public enum Text implements TextKey {
     OPTION_EXAMINE,
@@ -254,5 +254,10 @@ public abstract class AbstractNPC implements NPC {
   @Override
   public List<TextWrapper> getOrgasmingText(final SexAct act, final SexToy toy) {
     return Collections.emptyList(); // TODO
+  }
+  
+  @Override
+  public String getParameterPrefix() {
+    return getClass().getSimpleName() + "#";
   }
 }

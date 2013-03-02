@@ -234,7 +234,7 @@ public class TextEditor extends JFrame implements ActionListener {
         textWrapper = this.allOptions.get(this.selectedOptionNr);
       }
       if (textWrapper != null) {
-        textWrapper.setValue(getTexts(), contentDirectory);
+        textWrapper.setRawValue(getTexts(), contentDirectory);
       }
     }
     this.gameTextArea.refresh();

@@ -5,8 +5,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.ResourceState;
@@ -15,6 +20,7 @@ import org.lehirti.engine.state.IntState;
 import org.lehirti.engine.state.ObjState;
 import org.lehirti.engine.state.State;
 import org.lehirti.engine.state.StringState;
+import org.lehirti.engine.util.ClassFinder;
 import org.lehirti.engine.util.FileUtils;
 import org.lehirti.engine.util.PathFinder;
 import org.slf4j.Logger;
@@ -27,12 +33,30 @@ public class TextWrapper implements Externalizable {
   
   private static final String TEXT_DELIMITER = "\n\\$\n";
   
+  private static final Collection<TextParameterResolver> TEXT_PARAMETER_RESOLVER;
+  static {
+    final List<TextParameterResolver> c = new LinkedList<>();
+    final Vector<Class<?>> npcs = new ClassFinder().findSubclasses(TextParameterResolver.class.getName());
+    for (final Class<?> npc : npcs) {
+      if (!Modifier.isAbstract(npc.getModifiers())) {
+        try {
+          c.add((TextParameterResolver) npc.getConstructor().newInstance());
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+            | NoSuchMethodException | SecurityException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    }
+    TEXT_PARAMETER_RESOLVER = Collections.unmodifiableCollection(c);
+  }
+  
   private TextKey key;
   
   /** as stored on disc; may contain alternative texts and be different from what's on screen */
   private String[] rawValues = new String[1];
   /** selected text alternative; possibly with place holders */
-  private String rawValu;
+  private String rawValue;
   private int selectedRawValue = 0;
   
   private final List<Object> parameters = new LinkedList<>();
@@ -128,7 +152,7 @@ public class TextWrapper implements Externalizable {
         }
       }
     }
-    this.rawValu = this.rawValues[this.selectedRawValue];
+    this.rawValue = this.rawValues[this.selectedRawValue];
   }
   
   private static String[] splitTextAlternatives(final String rawTextsFromFile) {
@@ -152,7 +176,7 @@ public class TextWrapper implements Externalizable {
   }
   
   public String getRawValue() {
-    return this.rawValu;
+    return this.rawValue;
   }
   
   public String[] getRawValues() {
@@ -164,7 +188,7 @@ public class TextWrapper implements Externalizable {
   }
   
   public String getValue() {
-    String val = this.rawValu;
+    String val = this.rawValue;
     int fromIndex = 0;
     while ((fromIndex = val.indexOf("{", fromIndex)) != -1) {
       final int toIndex = val.indexOf("}", fromIndex + 1);
@@ -195,6 +219,26 @@ public class TextWrapper implements Externalizable {
       // is not an explicitly set parameter; go on trying other possibilities
     }
     
+    // try text parameter resolvers
+    final int indexOfHash = parameter.indexOf("#");
+    if (indexOfHash != -1) {
+      final String prefix = parameter.substring(0, indexOfHash + 1);
+      TextParameterResolver textParameterResolver = null;
+      if (prefix.equals("Current#")) { // TODO
+        textParameterResolver = TextParameterResolver.Current.get();
+      } else {
+        for (final TextParameterResolver resolver : TEXT_PARAMETER_RESOLVER) {
+          if (resolver.getParameterPrefix().equals(prefix)) {
+            textParameterResolver = resolver;
+            break;
+          }
+        }
+      }
+      if (textParameterResolver != null) {
+        return textParameterResolver.resolveParameter(parameter.substring(indexOfHash + 1));
+      }
+    }
+    
     // try expanded FQCN
     final int endOfClassname = parameter.lastIndexOf(".");
     if (endOfClassname != -1) {
@@ -223,10 +267,10 @@ public class TextWrapper implements Externalizable {
     return "[CANNOT RESOLVE PARAMETER \"" + parameter + "\"]";
   }
   
-  public void setValue(final String[] rawValues, final String contentDir) {
+  public void setRawValue(final String[] rawValues, final String contentDir) {
     this.rawValues = rawValues;
     this.selectedRawValue = State.DIE.nextInt(this.rawValues.length);
-    this.rawValu = this.rawValues[this.selectedRawValue];
+    this.rawValue = this.rawValues[this.selectedRawValue];
     FileUtils.writeContentToFile(PathFinder.getModFile(this.key, contentDir), joinTextAlternatives(this.rawValues));
   }
   
@@ -272,7 +316,7 @@ public class TextWrapper implements Externalizable {
   
   @Override
   public String toString() {
-    return this.key.getClass().getSimpleName() + "." + this.key.name() + "[" + this.rawValu + "]";
+    return this.key.getClass().getSimpleName() + "." + this.key.name() + "[" + this.rawValue + "]";
   }
   
   @Override
@@ -283,7 +327,7 @@ public class TextWrapper implements Externalizable {
     this.key = (TextKey) Enum.valueOf((Class<? extends Enum>) Class.forName(className), name);
     this.rawValues = (String[]) in.readObject();
     this.selectedRawValue = in.readInt();
-    this.rawValu = (String) in.readObject();
+    this.rawValue = (String) in.readObject();
     final int nrOfParams = in.readInt();
     this.parameters.clear();
     for (int i = 0; i < nrOfParams; i++) {
@@ -297,7 +341,7 @@ public class TextWrapper implements Externalizable {
     out.writeObject(this.key.name());
     out.writeObject(this.rawValues);
     out.writeInt(this.selectedRawValue);
-    out.writeObject(this.rawValu);
+    out.writeObject(this.rawValue);
     out.writeInt(this.parameters.size());
     for (final Object param : this.parameters) {
       out.writeObject(param);

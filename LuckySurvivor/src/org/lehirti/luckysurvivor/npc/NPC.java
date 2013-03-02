@@ -7,6 +7,7 @@ import java.util.Set;
 import org.lehirti.engine.events.Event;
 import org.lehirti.engine.events.Option;
 import org.lehirti.engine.res.images.ImageKey;
+import org.lehirti.engine.res.text.TextParameterResolver;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.state.StringState;
 import org.lehirti.luckysurvivor.sss.ReactionToSexAct;
@@ -14,7 +15,7 @@ import org.lehirti.luckysurvivor.sss.SexAct;
 import org.lehirti.luckysurvivor.sss.SexParticipant;
 import org.lehirti.luckysurvivor.sss.SexToy;
 
-public interface NPC extends SexParticipant, Serializable {
+public interface NPC extends TextParameterResolver, SexParticipant, Serializable {
   public StringState getName();
   
   public TextWrapper getNameTextWrapper();
