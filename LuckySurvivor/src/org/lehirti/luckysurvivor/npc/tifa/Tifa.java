@@ -11,6 +11,7 @@ import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.sex.Sex;
+import org.lehirti.engine.state.BoolState;
 import org.lehirti.engine.state.IntState;
 import org.lehirti.engine.state.State;
 import org.lehirti.engine.state.StringState;
@@ -20,8 +21,44 @@ import org.lehirti.luckysurvivor.sss.SexAct;
 import org.lehirti.luckysurvivor.sss.SexSession;
 import org.lehirti.luckysurvivor.sss.SexToy;
 
-public class Tifa extends AbstractNPC {
+public final class Tifa extends AbstractNPC {
   private static final long serialVersionUID = 1L;
+  
+  // BEGIN GENERATED BLOCK NPCCommon
+  public static enum String implements StringState {
+    NAME,
+    HAIR_COLOR,
+    SKINTONE,
+    BREAST_SHAPE,
+    // BEGIN MANUAL BLOCK String
+    // END MANUAL BLOCK String
+  }
+  
+  public static enum Int implements IntState {
+    HEIGHT,
+    BREAST_SIZE,
+    // BEGIN MANUAL BLOCK Int
+    ABSOLUTE_UPPER_PAIN_THRESHOLD,
+    UPPER_PAIN_COMFORT_THRESHOLD,
+    LOWER_PAIN_COMFORT_THRESHOLD,
+    ORGASM_THRESHOLD,
+    
+    PAIN,
+    LUST,
+    AROUSAL,
+    VIGOR,
+    STAMINA,
+    
+    DISPOSITION_TOWARDS_PC,
+    // END MANUAL BLOCK Int
+  }
+  
+  public static enum Bool implements BoolState {
+    // BEGIN MANUAL BLOCK Bool
+    // END MANUAL BLOCK Bool
+  }
+  
+  // END GENERATED BLOCK NPCCommon
   
   public static enum Image implements ImageKey {
     MAIN,
@@ -29,10 +66,6 @@ public class Tifa extends AbstractNPC {
   
   public static enum Text implements TextKey {
     GENERAL_DESCRIPTION;
-  }
-  
-  public static enum String implements StringState {
-    NAME,
   }
   
   public static enum ReactionToSexActImage implements TextAndImageKey {
@@ -103,21 +136,6 @@ public class Tifa extends AbstractNPC {
     GET_BLOWJOB,
     GIVE_BLOWJOB,
     // END GENERATED BLOCK SexAct
-  }
-  
-  private static enum Int implements IntState {
-    ABSOLUTE_UPPER_PAIN_THRESHOLD,
-    UPPER_PAIN_COMFORT_THRESHOLD,
-    LOWER_PAIN_COMFORT_THRESHOLD,
-    ORGASM_THRESHOLD,
-    
-    PAIN,
-    LUST,
-    AROUSAL,
-    VIGOR,
-    STAMINA,
-    
-    DISPOSITION_TOWARDS_PC;
   }
   
   @Override
