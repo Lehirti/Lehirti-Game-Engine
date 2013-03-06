@@ -224,7 +224,7 @@ public class TextWrapper implements Externalizable {
     if (indexOfHash != -1) {
       final String prefix = parameter.substring(0, indexOfHash + 1);
       TextParameterResolver textParameterResolver = null;
-      if (prefix.equals("Current#")) { // TODO
+      if (prefix.equals("#")) {
         textParameterResolver = TextParameterResolver.Current.get();
       } else {
         for (final TextParameterResolver resolver : TEXT_PARAMETER_RESOLVER) {
