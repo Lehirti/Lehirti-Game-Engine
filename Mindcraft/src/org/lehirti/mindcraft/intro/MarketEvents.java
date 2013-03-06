@@ -14,7 +14,7 @@ public class MarketEvents implements EventHook {
   }
   
   @Override
-  public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent) {
+  public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent, Event<?> hookedEvent) {
     final Map<Event<?>, Double> events = new HashMap<>();
     if (State.is(Bool.YOU_ARE_HORNY)) {
       if (!State.is(Bool.MARKET_SELLER_FUCKED)) {

@@ -25,7 +25,7 @@ public final class MapToCliffWestHook implements EventHook {
    * called; it must return all available events, together with the probability of the event happening
    */
   @Override
-  public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent) {
+  public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent, Event<?> hookedEvent) {
     // we start out with an empty map, meaning no events from this hook
     final Map<Event<?>, Double> events = new HashMap<>();
     

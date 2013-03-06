@@ -20,6 +20,7 @@ public interface EventHook extends StaticInitializer {
   /**
    * @param previousEvent
    *          the event from which the player is coming to the hooked event
+   * @param hookedEvent TODO
    * @return all events that may happen right now at this location with the probability (in percent) of them happening.<br/>
    *         events with probability PROBABILITY_ALWAYS and PROBABILITY_DEFAULT are special.<br/>
    *         if events with probability PROBABILITY_ALWAYS are present, one of them is chosen randomly and regular
@@ -30,5 +31,5 @@ public interface EventHook extends StaticInitializer {
    *         if the sum of the probabilities of all non-special events is greater than 100, all probabilities are scaled
    *         back proportionately.
    */
-  public abstract Map<Event<?>, Double> getCurrentEvents(Event<?> previousEvent);
+  public abstract Map<Event<?>, Double> getCurrentEvents(Event<?> previousEvent, Event<?> hookedEvent);
 }

@@ -17,7 +17,7 @@ public class BathhouseEvents implements EventHook {
   }
   
   @Override
-  public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent) {
+  public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent, Event<?> hookedEvent) {
     final Map<Event<?>, Double> events = new HashMap<>();
     if (State.is(Bool.GOT_BLOWJOB_IN_BATHHOUSE)) {
       events.put(new StandardEvent(Key.OPTION_ENTER, Intro.THREE_GIRLS_IN_BATHHOUSE, Intro.THREE_GIRLS_IN_BATHHOUSE,

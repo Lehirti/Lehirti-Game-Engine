@@ -18,7 +18,7 @@ public final class MapToCrashSiteHook implements EventHook {
   }
   
   @Override
-  public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent) {
+  public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent, Event<?> hookedEvent) {
     final Map<Event<?>, Double> events = new HashMap<>();
     
     if (previousEvent.getClass().equals(org.lehirti.luckysurvivor.map.Map.class)) { // is coming from the map

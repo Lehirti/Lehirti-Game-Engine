@@ -14,7 +14,7 @@ public final class ArriveFirstTimeHook implements EventHook {
   }
   
   @Override
-  public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent) {
+  public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent, Event<?> hookedEvent) {
     final Map<Event<?>, Double> events = new HashMap<>();
     
     // first time you come to MapToPeninsulaIsthmus, the ArriveFirstTime one-time event will show instead

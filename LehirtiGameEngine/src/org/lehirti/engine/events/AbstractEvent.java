@@ -118,7 +118,7 @@ public abstract class AbstractEvent<STATE extends Enum<?> & EventState> implemen
     final Map<Event<?>, Double> probablityPerEventMap = new HashMap<>();
     if (dispatchersForThisLocation != null) {
       for (final EventHook dispatcher : dispatchersForThisLocation) {
-        probablityPerEventMap.putAll(dispatcher.getCurrentEvents(previousEvent));
+        probablityPerEventMap.putAll(dispatcher.getCurrentEvents(previousEvent, this));
       }
     }
     if (probablityPerEventMap.isEmpty()) {

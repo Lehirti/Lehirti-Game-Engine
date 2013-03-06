@@ -14,7 +14,7 @@ public final class SusanVineRapeHook implements EventHook {
   }
   
   @Override
-  public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent) {
+  public Map<Event<?>, Double> getCurrentEvents(final Event<?> previousEvent, Event<?> hookedEvent) {
     final Map<Event<?>, Double> events = new HashMap<>();
     
     // this is how you inject a one-time event (in this case into MapToPeninsulaBasinJungle)
