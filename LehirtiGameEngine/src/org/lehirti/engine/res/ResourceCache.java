@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 
 import org.lehirti.engine.res.images.ImageKey;
@@ -58,7 +60,8 @@ public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
     return IMAGE_CACHE._get(key);
   }
   
-  public static final synchronized TextWrapper get(final TextKey key) {
+  @CheckForNull
+  public static final synchronized TextWrapper get(final @Nullable TextKey key) {
     if (key == null) {
       return null;
     }
