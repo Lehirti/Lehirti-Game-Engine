@@ -155,6 +155,10 @@ public enum DateTime implements IntState {
     return hhmmss;
   }
   
+  public static int getDay() {
+    return (int) State.get(DAY);
+  }
+  
   public static int getDDhhmmss() {
     int DDhhmmss = 0;
     DDhhmmss += State.get(DAY);

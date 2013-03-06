@@ -1,11 +1,12 @@
 package org.lehirti.luckysurvivor.crashsite;
 
+import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.events.EventNode;
 import org.lehirti.engine.events.TextOnlyEvent;
-import org.lehirti.engine.events.Event.NullState;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.TextKey;
+import org.lehirti.luckysurvivor.common.Rest;
 
 public class Shelter extends EventNode<NullState> {
   public static enum Text implements TextKey {
@@ -32,7 +33,7 @@ public class Shelter extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.DESCRIPTION);
     
-    addOption(Key.OPTION_NORTH, Text.OPTION_REST, new TextOnlyEvent(Key.OPTION_NORTH, Text.REST, new Shelter()));
+    addOption(Key.OPTION_NORTH, Text.OPTION_REST, new Rest(Key.OPTION_NORTH, Text.REST, null, new Shelter()));
     addOption(Key.OPTION_SOUTH, Text.OPTION_TRY_TO_PEEK_ON_GIRLS, new TextOnlyEvent(Key.OPTION_SOUTH,
         Text.TRY_TO_PEEK_ON_GIRLS, new Shelter()));
     addOption(Key.OPTION_EAST, Text.OPTION_EXAMINE_OTHER_SURVIVORS, new TextOnlyEvent(Key.OPTION_EAST,
