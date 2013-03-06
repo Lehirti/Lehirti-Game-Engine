@@ -91,7 +91,7 @@ public enum DateTime implements IntState {
    */
   public static void advanceTo(final int hhmmss) {
     final long currenthhmmss = (State.get(HOUR) * 10000) + (State.get(MINUTE) * 100) + State.get(SECOND);
-    if (hhmmss < currenthhmmss) {
+    if (hhmmss <= currenthhmmss) {
       State.set(DAY, State.get(DAY) + 1);
     }
     
