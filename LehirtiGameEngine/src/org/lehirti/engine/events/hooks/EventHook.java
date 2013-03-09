@@ -20,7 +20,8 @@ public interface EventHook extends StaticInitializer {
   /**
    * @param previousEvent
    *          the event from which the player is coming to the hooked event
-   * @param hookedEvent TODO
+   * @param hookedEvent
+   *          the hooked event itself
    * @return all events that may happen right now at this location with the probability (in percent) of them happening.<br/>
    *         events with probability PROBABILITY_ALWAYS and PROBABILITY_DEFAULT are special.<br/>
    *         if events with probability PROBABILITY_ALWAYS are present, one of them is chosen randomly and regular

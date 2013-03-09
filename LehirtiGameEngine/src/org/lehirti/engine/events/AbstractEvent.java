@@ -24,15 +24,15 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractEvent<STATE extends Enum<?> & EventState> implements Event<STATE> {
   private static final Logger LOGGER = LoggerFactory.getLogger(AbstractEvent.class);
   
-  private static final Map<Class<? extends Event<?>>, Set<EventHook>> EVENT_DISPATCHERS = new HashMap<>();
+  private static final Map<Class<? extends Event<?>>, Set<EventHook>> EVENT_HOOKS = new HashMap<>();
   
   public static synchronized void registerHook(final Class<? extends Event<?>> event, final EventHook eventHook) {
-    Set<EventHook> dispatchers = EVENT_DISPATCHERS.get(event);
-    if (dispatchers == null) {
-      dispatchers = new HashSet<>();
-      EVENT_DISPATCHERS.put(event, dispatchers);
+    Set<EventHook> hooksPerEvent = EVENT_HOOKS.get(event);
+    if (hooksPerEvent == null) {
+      hooksPerEvent = new HashSet<>();
+      EVENT_HOOKS.put(event, hooksPerEvent);
     }
-    dispatchers.add(eventHook);
+    hooksPerEvent.add(eventHook);
   }
   
   private boolean repaintNeeded = false;
@@ -113,12 +113,15 @@ public abstract class AbstractEvent<STATE extends Enum<?> & EventState> implemen
   
   @Override
   public Event<?> getActualEvent(final Event<?> previousEvent) {
-    final Set<EventHook> dispatchersForThisLocation = EVENT_DISPATCHERS.get(this.getClass());
+    final Set<EventHook> eventHooksForThisEvent;
+    synchronized (AbstractEvent.class) {
+      eventHooksForThisEvent = EVENT_HOOKS.get(this.getClass());
+    }
     
     final Map<Event<?>, Double> probablityPerEventMap = new HashMap<>();
-    if (dispatchersForThisLocation != null) {
-      for (final EventHook dispatcher : dispatchersForThisLocation) {
-        probablityPerEventMap.putAll(dispatcher.getCurrentEvents(previousEvent, this));
+    if (eventHooksForThisEvent != null) {
+      for (final EventHook eventHook : eventHooksForThisEvent) {
+        probablityPerEventMap.putAll(eventHook.getCurrentEvents(previousEvent, this));
       }
     }
     if (probablityPerEventMap.isEmpty()) {

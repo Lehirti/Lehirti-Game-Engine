@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.lehirti.engine.events.extension.EventExtension;
 import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.gui.Main;
 import org.lehirti.engine.res.ResourceCache;
@@ -37,6 +39,18 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
   
   private static final Logger LOGGER = LoggerFactory.getLogger(EventNode.class);
   
+  private static final Map<Class<? extends EventNode<?>>, Set<EventExtension>> EVENT_EXTENSIONS = new HashMap<>();
+  
+  public static synchronized void registerExtension(final Class<? extends EventNode<?>> event,
+      final EventExtension eventExtension) {
+    Set<EventExtension> extensionsPerEvent = EVENT_EXTENSIONS.get(event);
+    if (extensionsPerEvent == null) {
+      extensionsPerEvent = new HashSet<>();
+      EVENT_EXTENSIONS.put(event, extensionsPerEvent);
+    }
+    extensionsPerEvent.add(eventExtension);
+  }
+  
   private final ConcurrentMap<Key, Event<?>> registeredEvents = new ConcurrentHashMap<>();
   private transient final List<Key> availableOptionKeys = Key.getOptionKeys();
   private transient final Map<Event<?>, TextWrapper> optionsWithArbitraryKey = new LinkedHashMap<>();
@@ -50,11 +64,11 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
    * 
    * @param text
    */
-  protected void setText(final TextWrapper text) {
+  public void setText(final TextWrapper text) {
     Main.getCurrentTextArea().setText(text);
   }
   
-  protected void setText(final TextKey key) {
+  public void setText(final TextKey key) {
     setText(ResourceCache.get(key));
   }
   
@@ -63,15 +77,15 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
    * 
    * @param text
    */
-  protected void addText(final TextWrapper text) {
+  public void addText(final TextWrapper text) {
     Main.getCurrentTextArea().addText(text);
   }
   
-  protected void addText(final TextKey key) {
+  public void addText(final TextKey key) {
     addText(ResourceCache.get(key));
   }
   
-  protected void addOption(final Key key, final TextKey text, final Event<?> event) {
+  public void addOption(final Key key, final TextKey text, final Event<?> event) {
     final boolean keyIsAvailable = this.availableOptionKeys.remove(key);
     if (!keyIsAvailable) {
       if (key != null) {
@@ -84,7 +98,7 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
     addOption(text, key, event);
   }
   
-  protected void addOption(final Key key, final TextWrapper text, final Event<?> event) {
+  public void addOption(final Key key, final TextWrapper text, final Event<?> event) {
     final boolean keyIsAvailable = this.availableOptionKeys.remove(key);
     if (!keyIsAvailable) {
       if (key != null) {
@@ -97,11 +111,11 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
     addOption(text, key, event);
   }
   
-  protected void addOption(final TextKey text, final Event<?> event) {
+  public void addOption(final TextKey text, final Event<?> event) {
     addOption(ResourceCache.get(text), event);
   }
   
-  protected void addOption(final TextWrapper text, final Event<?> event) {
+  public void addOption(final TextWrapper text, final Event<?> event) {
     this.optionsWithArbitraryKey.put(event, text);
   }
   
@@ -157,6 +171,8 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
       
       doEvent();
       
+      doEventExtensions();
+      
       addOptionsWithArbitraryKeys();
       
       getRequiredTimeInterval().advance();
@@ -168,6 +184,18 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
     backgroundLoadNextImages();
     
     resumeFromSavePoint();
+  }
+  
+  private void doEventExtensions() {
+    final Set<EventExtension> eventExtensions;
+    synchronized (EventNode.class) {
+      eventExtensions = EVENT_EXTENSIONS.get(this.getClass());
+    }
+    if (eventExtensions != null) {
+      for (final EventExtension eventExtension : eventExtensions) {
+        eventExtension.doEventExtension(this);
+      }
+    }
   }
   
   private void performImageAreaUpdates() {
@@ -268,8 +296,8 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
       final Key key = Key.valueOf(name);
       final Event<?> event = (Event<?>) in.readObject();
       this.registeredEvents.put(key, event);
+      this.availableOptionKeys.remove(key);
     }
-    
   }
   
   @Override
