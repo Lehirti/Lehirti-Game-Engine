@@ -13,6 +13,17 @@ import org.lehirti.engine.res.text.TextWrapper;
 public class Notification extends JDialog implements ActionListener {
   private static final long serialVersionUID = 1L;
   
+  public Notification(final Window owner, final String text) {
+    super(owner, ModalityType.APPLICATION_MODAL);
+    
+    final JLabel textLabel = new JLabel(text);
+    
+    setContentPane(textLabel);
+    pack();
+    setLocationRelativeTo(null);
+    setVisible(true);
+  }
+  
   public Notification(final Window owner, final TextWrapper textWrapper, final int displayTimeinMillis) {
     super(owner, ModalityType.APPLICATION_MODAL);
     

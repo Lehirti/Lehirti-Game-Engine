@@ -2,6 +2,7 @@ package org.lehirti.luckysurvivor;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.lehirti.engine.gui.Notification;
 import org.lehirti.engine.state.State;
 import org.lehirti.engine.util.ContentUtils;
 import org.lehirti.engine.util.ContentUtils.CheckResult;
@@ -55,8 +56,10 @@ public class Main extends org.lehirti.engine.gui.Main {
         PathFinder.registerContentDir(content.name());
         break;
       case MISSING:
-        LOGGER.info("Content " + content.name() + "-" + content.requiredVersion
-            + " is not present. You need to download the content pack, if you want this particular content.");
+        final String msg = "Content " + content.name() + "-" + content.requiredVersion
+            + " is not present. You need to download the content pack, if you want this particular content.";
+        new Notification(MAIN_WINDOW, msg);
+        LOGGER.info(msg);
       }
     }
   }
