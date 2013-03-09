@@ -193,27 +193,33 @@ public class TextWrapper implements Externalizable {
     while ((fromIndex = val.indexOf("{", fromIndex)) != -1) {
       final int toIndex = val.indexOf("}", fromIndex + 1);
       final String parameter = val.substring(fromIndex + 1, toIndex);
-      final String replacement = getParameterReplacement(parameter);
-      LOGGER.debug("Parameter \"{}\" found in \"{}\"", parameter, val);
-      val = val.replace("{" + parameter + "}", replacement);
+      String replacement;
+      try {
+        replacement = getParameterReplacement(parameter, this.parameters, toString());
+        LOGGER.debug("Parameter \"{}\" found in \"{}\"", parameter, val);
+        val = val.replace("{" + parameter + "}", replacement);
+      } catch (final TextParameterResolutionException e) {
+        val = val.replace("{" + parameter + "}", e.getMessage());
+      }
     }
     return val;
   }
   
-  private String getParameterReplacement(final String parameter) {
+  public static String getParameterReplacement(final String parameter, final List<Object> parameters,
+      final String idForLogging) throws TextParameterResolutionException {
     // try explicitly set parameters
     try {
       final int parsedInt = Integer.parseInt(parameter);
-      if (parsedInt >= 0 && parsedInt < this.parameters.size()) {
-        final Object param = this.parameters.get(parsedInt);
+      if (parsedInt >= 0 && parsedInt < parameters.size()) {
+        final Object param = parameters.get(parsedInt);
         if (param instanceof String) {
           return (String) param;
         } else {
           return ((TextWrapper) param).getValue();
         }
       } else {
-        LOGGER.error("{} is missing explicitly set parameter #{}", toString(), Integer.valueOf(parsedInt));
-        return "[MISSING PARAMETER #" + parameter + "]";
+        LOGGER.error("{} is missing explicitly set parameter #{}", idForLogging, Integer.valueOf(parsedInt));
+        return "[MISSING PARAMETER #" + parameter + "]"; // we can't check this statically, so no exception here
       }
     } catch (final NumberFormatException ignore) {
       // is not an explicitly set parameter; go on trying other possibilities
@@ -236,6 +242,16 @@ public class TextWrapper implements Externalizable {
       }
       if (textParameterResolver != null) {
         return textParameterResolver.resolveParameter(parameter.substring(indexOfHash + 1));
+      } else {
+        if (prefix.equals("#")) {
+          // "Current" NPC is not statically checkable
+          LOGGER.error("{} is refering to Current NPC, which is currently not set", idForLogging);
+          return "[Current NPC not set; cannot resolve " + parameter + "]";
+        } else {
+          // Specific NPC is missing
+          LOGGER.error("{} is refering to non-existent NPC {}", idForLogging, prefix);
+          throw new TextParameterResolutionException("[Text Parameter Resolver " + prefix + " is missing]");
+        }
       }
     }
     
@@ -263,11 +279,23 @@ public class TextWrapper implements Externalizable {
       }
     }
     
-    LOGGER.error("Unable to resolve parameter \"{}\" for {}", parameter, toString());
-    return "[CANNOT RESOLVE PARAMETER \"" + parameter + "\"]";
+    LOGGER.error("Unable to resolve parameter \"{}\" for {}", parameter, idForLogging);
+    throw new TextParameterResolutionException("[CANNOT RESOLVE PARAMETER \"" + parameter + "\"]");
   }
   
-  public void setRawValue(final String[] rawValues, final String contentDir) {
+  public void setRawValues(final String[] rawValues, final String contentDir) throws TextParameterResolutionException {
+    
+    // check for static errors in texts
+    for (final String val : rawValues) {
+      int fromIndex = 0;
+      while ((fromIndex = val.indexOf("{", fromIndex)) != -1) {
+        final int toIndex = val.indexOf("}", fromIndex + 1);
+        final String parameter = val.substring(fromIndex + 1, toIndex);
+        getParameterReplacement(parameter, this.parameters, toString());
+        fromIndex++;
+      }
+    }
+    
     this.rawValues = rawValues;
     this.selectedRawValue = State.DIE.nextInt(this.rawValues.length);
     this.rawValue = this.rawValues[this.selectedRawValue];

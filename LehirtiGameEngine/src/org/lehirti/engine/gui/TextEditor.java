@@ -21,6 +21,7 @@ import javax.swing.border.LineBorder;
 
 import org.lehirti.engine.gui.WindowLocation.WinLoc;
 import org.lehirti.engine.res.text.TextKey;
+import org.lehirti.engine.res.text.TextParameterResolutionException;
 import org.lehirti.engine.res.text.TextWrapper;
 import org.lehirti.engine.util.PathFinder;
 
@@ -234,7 +235,11 @@ public class TextEditor extends JFrame implements ActionListener {
         textWrapper = this.allOptions.get(this.selectedOptionNr);
       }
       if (textWrapper != null) {
-        textWrapper.setRawValue(getTexts(), contentDirectory);
+        try {
+          textWrapper.setRawValues(getTexts(), contentDirectory);
+        } catch (final TextParameterResolutionException e1) {
+          new Notification(this, "Cannot save texts due to error in parameter: " + e1.getMessage());
+        }
       }
     }
     this.gameTextArea.refresh();

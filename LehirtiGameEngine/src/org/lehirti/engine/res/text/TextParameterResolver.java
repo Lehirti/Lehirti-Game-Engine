@@ -19,5 +19,5 @@ public interface TextParameterResolver {
   
   public String getParameterPrefix();
   
-  public String resolveParameter(String parameterSuffix);
+  public String resolveParameter(String parameterSuffix) throws TextParameterResolutionException;
 }
