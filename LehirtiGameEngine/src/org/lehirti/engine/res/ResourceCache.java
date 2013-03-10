@@ -12,6 +12,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 
@@ -61,10 +62,15 @@ public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
   }
   
   @CheckForNull
-  public static final synchronized TextWrapper get(final @Nullable TextKey key) {
+  public static final synchronized TextWrapper getNullable(final @Nullable TextKey key) {
     if (key == null) {
       return null;
     }
+    return new TextWrapper(key, false);
+  }
+  
+  @Nonnull
+  public static final synchronized TextWrapper get(final @Nonnull TextKey key) {
     return new TextWrapper(key, false);
   }
   

@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -15,7 +14,7 @@ import org.lehirti.engine.state.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StatsArea extends JPanel implements Externalizable {
+public class StatsArea extends JPanel {
   private static final long serialVersionUID = 1L;
   
   private static final Logger LOGGER = LoggerFactory.getLogger(StatsArea.class);
@@ -27,13 +26,11 @@ public class StatsArea extends JPanel implements Externalizable {
   
   // Load/Save nothing to do
   
-  @Override
-  public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+  public void load(final ObjectInput in) throws IOException, ClassNotFoundException {
     repaint();
   }
   
-  @Override
-  public void writeExternal(final ObjectOutput out) throws IOException {
+  public void save(final ObjectOutput out) throws IOException {
   }
   
   public StatsArea(final double screenX, final double screenY, final double sizeX, final double sizeY) {
@@ -94,7 +91,7 @@ public class StatsArea extends JPanel implements Externalizable {
   private static void dateTime(final Graphics g) {
     g.setColor(Color.BLACK);
     final String dateTimeString = DateTime.getDateFormatedForStatsArea();
-    final Font font = Main.getCurrentTextArea().getScaledFont();
+    final Font font = EngineMain.getCurrentTextArea().getScaledFont();
     g.setFont(font);
     g.drawString(dateTimeString, 0, font.getSize());
   }

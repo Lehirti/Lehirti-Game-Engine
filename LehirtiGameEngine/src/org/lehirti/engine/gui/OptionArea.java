@@ -7,7 +7,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -29,7 +28,7 @@ import org.lehirti.engine.res.text.TextWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OptionArea extends JComponent implements Externalizable {
+public class OptionArea extends JComponent {
   private static final long serialVersionUID = 1L;
   
   private static final Logger LOGGER = LoggerFactory.getLogger(OptionArea.class);
@@ -71,19 +70,19 @@ public class OptionArea extends JComponent implements Externalizable {
     g.setColor(Color.BLACK);
     final Dimension size = getSize();
     final Dimension sizeOfOneOptionField = new Dimension(size.width / this.cols, size.height / this.rows);
-    final Font font = Main.getCurrentTextArea().getScaledFont();
+    final Font font = EngineMain.getCurrentTextArea().getScaledFont();
     g.setFont(font);
     final FontMetrics fontMetrics = g.getFontMetrics(font);
     final int fontHeight = fontMetrics.getHeight();
     if (this.isTextInput) {
-      final TextWrapper wrapper = ResourceCache.get(this.textInputLabel);
+      final TextWrapper wrapper = ResourceCache.getNullable(this.textInputLabel);
       final String labelString = wrapper.getValue();
       final Rectangle2D labelBounds = fontMetrics.getStringBounds(labelString, g);
       g.drawString(labelString, (int) ((size.width - labelBounds.getWidth()) / 2), (int) labelBounds.getHeight());
       
       final Rectangle2D inputBounds = fontMetrics.getStringBounds(this.currentTextInput, g);
       g.drawString(this.currentTextInput, (int) ((size.width - inputBounds.getWidth()) / 2),
-          (int) (labelBounds.getHeight() + inputBounds.getHeight() + (size.height / 10)));
+          (int) (labelBounds.getHeight() + inputBounds.getHeight() + (size.height / 10.0)));
     } else {
       final int yOffset = fontHeight + (sizeOfOneOptionField.height - fontHeight) / 4;
       for (final Map.Entry<Key, TextWrapper> option : this.options.entrySet()) {
@@ -190,8 +189,7 @@ public class OptionArea extends JComponent implements Externalizable {
     return new ArrayList<>(this.options.values());
   }
   
-  @Override
-  public synchronized void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+  public synchronized void load(final ObjectInput in) throws IOException, ClassNotFoundException {
     this.options.clear();
     final int nrOfTexts = in.readInt();
     for (int i = 0; i < nrOfTexts; i++) {
@@ -200,8 +198,7 @@ public class OptionArea extends JComponent implements Externalizable {
     repaint();
   }
   
-  @Override
-  public synchronized void writeExternal(final ObjectOutput out) throws IOException {
+  public synchronized void save(final ObjectOutput out) throws IOException {
     out.writeInt(this.options.size());
     for (final Entry<Key, TextWrapper> entry : this.options.entrySet()) {
       out.writeObject(entry.getKey());
@@ -219,7 +216,7 @@ public class OptionArea extends JComponent implements Externalizable {
   
   // TODO: error on non-option keys
   public synchronized void setOption(final TextKey text, final Key key) {
-    this.options.put(key, ResourceCache.get(text));
+    this.options.put(key, ResourceCache.getNullable(text));
     this.repaintNeeded = true;
   }
   

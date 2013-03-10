@@ -6,11 +6,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.VolatileImage;
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicReference;
@@ -24,8 +24,8 @@ import org.lehirti.engine.res.images.ImageWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageArea extends JComponent implements Externalizable {
-  private static final long serialVersionUID = 1L;
+public class ImageArea extends JComponent {
+  public static final long serialVersionUID = 1L;
   
   private static final Logger LOGGER = LoggerFactory.getLogger(ImageArea.class);
   
@@ -78,17 +78,16 @@ public class ImageArea extends JComponent implements Externalizable {
     }
   }
   
-  @Override
-  public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+  public void load(final ObjectInput in) throws IOException, ClassNotFoundException {
     final long serialVersionUniqueID = in.readLong();
     if (serialVersionUniqueID == 1L) {
-      readExternal1(in);
+      load1(in);
     } else {
       throw new RuntimeException("Unknown StateObject serialVersionUID: " + serialVersionUniqueID);
     }
   }
   
-  private void readExternal1(final ObjectInput in) throws ClassNotFoundException, IOException {
+  private void load1(final ObjectInput in) throws ClassNotFoundException, IOException {
     this.backgroundImage.set(null);
     this.foregroundImages.clear();
     
@@ -109,8 +108,7 @@ public class ImageArea extends JComponent implements Externalizable {
     repaint();
   }
   
-  @Override
-  public void writeExternal(final ObjectOutput out) throws IOException {
+  public void save(final ObjectOutput out) throws IOException {
     out.writeLong(serialVersionUID);
     if (this.backgroundImage.get() != null) {
       out.writeBoolean(true);
@@ -234,7 +232,13 @@ public class ImageArea extends JComponent implements Externalizable {
   }
   
   public void removeImage(final ImageKey imageKey) {
-    this.foregroundImages.remove(imageKey);
+    final Iterator<ImageWrapper> it = this.foregroundImages.iterator();
+    while (it.hasNext()) {
+      final ImageWrapper fgImage = it.next();
+      if (fgImage.getKey() == imageKey) {
+        it.remove();
+      }
+    }
   }
   
   void setImage(final ImageWrapper images) {

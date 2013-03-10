@@ -16,7 +16,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import org.lehirti.engine.gui.Main;
+import org.lehirti.engine.gui.EngineMain;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.ResourceState;
 import org.lehirti.engine.res.images.ImageKey;
@@ -37,7 +37,7 @@ public class ContentUtils {
   }
   
   public static CheckResult check(final String contentKey, final int requiredVersion) {
-    if (Main.IS_DEVELOPMENT_VERSION) {
+    if (EngineMain.IS_DEVELOPMENT_VERSION) {
       return CheckResult.DEV_ENVIRONMENT;
     }
     

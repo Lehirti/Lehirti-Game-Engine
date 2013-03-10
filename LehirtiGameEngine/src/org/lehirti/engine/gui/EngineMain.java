@@ -47,7 +47,7 @@ import org.lehirti.engine.util.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class Main {
+public abstract class EngineMain {
   static {
     final File logsDir = new File("logs");
     if (!logsDir.exists() && !logsDir.mkdirs()) {
@@ -57,7 +57,7 @@ public abstract class Main {
     System.setProperty("java.util.logging.config.file", "config/logging.properties");
   }
   
-  private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(EngineMain.class);
   
   public static JFrame MAIN_WINDOW;
   
@@ -87,7 +87,7 @@ public abstract class Main {
   
   private void createAndShowGUI() {
     
-    Main.MAIN_WINDOW = new JFrame(getGameName());
+    EngineMain.MAIN_WINDOW = new JFrame(getGameName());
     MAIN_WINDOW.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     MAIN_WINDOW.getContentPane().setLayout(new GridBagLayout());
     MAIN_WINDOW.addKeyListener(new GameKeyListener(this));
@@ -192,21 +192,21 @@ public abstract class Main {
       }
       
       State.load(ois);
-      STATS_AREA.readExternal(ois);
+      STATS_AREA.load(ois);
       int size = ois.readInt();
       for (int i = 0; i < size; i++) {
         final Key key = (Key) ois.readObject();
-        IMAGE_AREAS.get(key).readExternal(ois);
+        IMAGE_AREAS.get(key).load(ois);
       }
       size = ois.readInt();
       for (int i = 0; i < size; i++) {
         final Key key = (Key) ois.readObject();
-        TEXT_AREAS.get(key).readExternal(ois);
+        TEXT_AREAS.get(key).load(ois);
       }
       size = ois.readInt();
       for (int i = 0; i < size; i++) {
         final Key key = (Key) ois.readObject();
-        OPTION_AREAS.get(key).readExternal(ois);
+        OPTION_AREAS.get(key).load(ois);
       }
       final Event<?> oldEvent = currentEvent;
       currentEvent = (Event<?>) ois.readObject();
@@ -252,21 +252,21 @@ public abstract class Main {
       }
       
       State.save(oos);
-      STATS_AREA.writeExternal(oos);
+      STATS_AREA.save(oos);
       oos.writeInt(IMAGE_AREAS.size());
       for (final Map.Entry<Key, ImageArea> entry : IMAGE_AREAS.entrySet()) {
         oos.writeObject(entry.getKey());
-        entry.getValue().writeExternal(oos);
+        entry.getValue().save(oos);
       }
       oos.writeInt(TEXT_AREAS.size());
       for (final Map.Entry<Key, TextArea> entry : TEXT_AREAS.entrySet()) {
         oos.writeObject(entry.getKey());
-        entry.getValue().writeExternal(oos);
+        entry.getValue().save(oos);
       }
       oos.writeInt(OPTION_AREAS.size());
       for (final Map.Entry<Key, OptionArea> entry : OPTION_AREAS.entrySet()) {
         oos.writeObject(entry.getKey());
-        entry.getValue().writeExternal(oos);
+        entry.getValue().save(oos);
       }
       oos.writeObject(currentEvent);
       oos.writeObject(currentInventoryEvent);

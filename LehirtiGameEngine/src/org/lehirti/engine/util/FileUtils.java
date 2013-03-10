@@ -104,8 +104,7 @@ public class FileUtils {
   public static String readContentAsString(final File file) {
     char[] buffer = null;
     
-    try {
-      final BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+    try (final BufferedReader bufferedReader = new BufferedReader(new FileReader(file));) {
       
       buffer = new char[(int) file.length()];
       
@@ -117,10 +116,8 @@ public class FileUtils {
         c = bufferedReader.read();
       }
       return new String(buffer);
-    } catch (final FileNotFoundException e) {
-      LOGGER.error("Cannot read file content of file: " + file.getAbsolutePath() + ": File not found.", e);
     } catch (final IOException e) {
-      LOGGER.error("Cannot read file content of file: " + file.getAbsolutePath() + ": IOException.", e);
+      LOGGER.error("Cannot read file content of file: " + file.getAbsolutePath(), e);
     }
     return "Failed to read file content of file " + file.getAbsolutePath() + " see log file.";
   }

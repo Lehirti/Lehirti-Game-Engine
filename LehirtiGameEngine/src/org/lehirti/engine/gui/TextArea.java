@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.TexturePaint;
 import java.awt.image.BufferedImage;
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -26,7 +25,7 @@ import org.lehirti.engine.res.text.TextWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TextArea extends JTextPane implements Externalizable {
+public class TextArea extends JTextPane {
   private static final long serialVersionUID = 1L;
   
   private static final Logger LOGGER = LoggerFactory.getLogger(TextArea.class);
@@ -251,8 +250,7 @@ public class TextArea extends JTextPane implements Externalizable {
     return allTextsIncludeCascaded;
   }
   
-  @Override
-  public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+  public void load(final ObjectInput in) throws IOException, ClassNotFoundException {
     this.allTexts.clear();
     final int nrOfTexts = in.readInt();
     for (int i = 0; i < nrOfTexts; i++) {
@@ -261,8 +259,7 @@ public class TextArea extends JTextPane implements Externalizable {
     refresh();
   }
   
-  @Override
-  public void writeExternal(final ObjectOutput out) throws IOException {
+  public void save(final ObjectOutput out) throws IOException {
     out.writeInt(this.allTexts.size());
     for (final TextWrapper text : this.allTexts) {
       out.writeObject(text);

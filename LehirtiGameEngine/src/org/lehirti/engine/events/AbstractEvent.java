@@ -14,7 +14,7 @@ import java.util.Set;
 
 import org.lehirti.engine.events.hooks.EventHook;
 import org.lehirti.engine.gui.Key;
-import org.lehirti.engine.gui.Main;
+import org.lehirti.engine.gui.EngineMain;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.state.EventState;
 import org.lehirti.engine.state.State;
@@ -38,22 +38,22 @@ public abstract class AbstractEvent<STATE extends Enum<?> & EventState> implemen
   private boolean repaintNeeded = false;
   
   protected void setImage(final ImageKey key) {
-    Main.getCurrentImageArea().setImage(key);
+    EngineMain.getCurrentImageArea().setImage(key);
     this.repaintNeeded = true;
   }
   
   protected void addImage(final ImageKey key) {
-    Main.getCurrentImageArea().addImage(key);
+    EngineMain.getCurrentImageArea().addImage(key);
     this.repaintNeeded = true;
   }
   
   protected void setBackgroundImage(final ImageKey key) {
-    Main.getCurrentImageArea().setBackgroundImage(key);
+    EngineMain.getCurrentImageArea().setBackgroundImage(key);
     this.repaintNeeded = true;
   }
   
   protected void removeImage(final ImageKey imageKey) {
-    Main.getCurrentImageArea().removeImage(imageKey);
+    EngineMain.getCurrentImageArea().removeImage(imageKey);
     this.repaintNeeded = true;
   }
   
@@ -62,7 +62,7 @@ public abstract class AbstractEvent<STATE extends Enum<?> & EventState> implemen
       try {
         javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
           public void run() {
-            Main.getCurrentImageArea().repaint();
+            EngineMain.getCurrentImageArea().repaint();
           }
         });
       } catch (final InterruptedException e) {

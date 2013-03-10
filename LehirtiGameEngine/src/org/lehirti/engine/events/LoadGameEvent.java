@@ -3,7 +3,7 @@ package org.lehirti.engine.events;
 import java.io.File;
 
 import org.lehirti.engine.events.Event.NullState;
-import org.lehirti.engine.gui.Main;
+import org.lehirti.engine.gui.EngineMain;
 import org.lehirti.engine.res.images.ImgChange;
 
 public final class LoadGameEvent extends EventNode<NullState> {
@@ -23,7 +23,7 @@ public final class LoadGameEvent extends EventNode<NullState> {
   
   @Override
   protected void doEvent() {
-    Main.loadGame(this.sav);
-    Main.setCurrentAreas(null);
+    EngineMain.loadGame(this.sav);
+    EngineMain.setCurrentAreas(null);
   }
 }

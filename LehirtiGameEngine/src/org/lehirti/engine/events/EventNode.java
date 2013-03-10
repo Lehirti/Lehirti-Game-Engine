@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.lehirti.engine.events.extension.EventExtension;
 import org.lehirti.engine.gui.Key;
-import org.lehirti.engine.gui.Main;
+import org.lehirti.engine.gui.EngineMain;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.images.ImageKey;
 import org.lehirti.engine.res.images.ImgChange;
@@ -65,11 +65,11 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
    * @param text
    */
   public void setText(final TextWrapper text) {
-    Main.getCurrentTextArea().setText(text);
+    EngineMain.getCurrentTextArea().setText(text);
   }
   
   public void setText(final TextKey key) {
-    setText(ResourceCache.get(key));
+    setText(ResourceCache.getNullable(key));
   }
   
   /**
@@ -78,11 +78,11 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
    * @param text
    */
   public void addText(final TextWrapper text) {
-    Main.getCurrentTextArea().addText(text);
+    EngineMain.getCurrentTextArea().addText(text);
   }
   
   public void addText(final TextKey key) {
-    addText(ResourceCache.get(key));
+    addText(ResourceCache.getNullable(key));
   }
   
   public void addOption(final Key key, final TextKey text, final Event<?> event) {
@@ -91,7 +91,7 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
       if (key != null) {
         LOGGER.warn("Requested option key {} not available; using arbitrary option key instead.", key.name());
       }
-      addOption(ResourceCache.get(text), event);
+      addOption(ResourceCache.getNullable(text), event);
       return;
     }
     
@@ -112,7 +112,7 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
   }
   
   public void addOption(final TextKey text, final Event<?> event) {
-    addOption(ResourceCache.get(text), event);
+    addOption(ResourceCache.getNullable(text), event);
   }
   
   public void addOption(final TextWrapper text, final Event<?> event) {
@@ -128,7 +128,7 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
   protected void setTextInputOption(final TextKey text, final String initialText, final Event<?> event) {
     this.registeredEvents.put(Key.TEXT_INPUT_OPTION_ENTER, event.getActualEvent(this));
     this.isTextInput = true;
-    Main.getCurrentOptionArea().setTextInputOption(text, initialText);
+    EngineMain.getCurrentOptionArea().setTextInputOption(text, initialText);
   }
   
   private void addOptionsWithArbitraryKeys() {
@@ -147,12 +147,12 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
   
   private void addOption(final TextKey text, final Key key, final Event<?> event) {
     this.registeredEvents.put(key, event.getActualEvent(this));
-    Main.getCurrentOptionArea().setOption(text, key);
+    EngineMain.getCurrentOptionArea().setOption(text, key);
   }
   
   private void addOption(final TextWrapper text, final Key key, final Event<?> event) {
     this.registeredEvents.put(key, event.getActualEvent(this));
-    Main.getCurrentOptionArea().setOption(text, key);
+    EngineMain.getCurrentOptionArea().setOption(text, key);
   }
   
   public void execute() {
@@ -163,7 +163,7 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
     if (!this.savePointReached) {
       performImageAreaUpdates();
       
-      Main.getCurrentOptionArea().clearOptions();
+      EngineMain.getCurrentOptionArea().clearOptions();
       
       // must be called before doEvent(); otherwise event hooks don't work properly
       // must be called after performImageAreaUpdates(); otherwise the count would be inconsistent in updateImageArea()
@@ -178,8 +178,8 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
       getRequiredTimeInterval().advance();
     }
     repaintImagesIfNeeded();
-    Main.getCurrentOptionArea().repaintIfNeeded();
-    Main.getCurrentTextArea().repaintIfNeeded();
+    EngineMain.getCurrentOptionArea().repaintIfNeeded();
+    EngineMain.getCurrentTextArea().repaintIfNeeded();
     
     backgroundLoadNextImages();
     
@@ -266,11 +266,11 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
     this.savePointReached = true;
     LOGGER.debug("Savepoint reached.");
     synchronized (this) {
-      while (Main.getCurrentEvent() == this) {
+      while (EngineMain.getCurrentEvent() == this) {
         try {
           wait();
           if (this.newEventHasBeenLoaded) {
-            Main.getCurrentEvent().resumeFromSavePoint();
+            EngineMain.getCurrentEvent().resumeFromSavePoint();
           }
         } catch (final InterruptedException e) {
           LOGGER.error("Thread " + Thread.currentThread().toString() + " has been interrupted; terminating thread", e);
@@ -342,7 +342,7 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
     final Event<?> event = this.registeredEvents.get(key);
     if (event != null) {
       keyPressed(key);
-      Main.setCurrentEvent(event);
+      EngineMain.setCurrentEvent(event);
       synchronized (this) {
         notifyAll();
       }
@@ -355,14 +355,14 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
   public boolean handleKeyEvent(final KeyEvent e, final Key key) {
     if (this.isTextInput) {
       if (key == Key.TEXT_INPUT_OPTION_ENTER) {
-        final String finalTextInput = Main.getCurrentOptionArea().getCurrentTextInput();
+        final String finalTextInput = EngineMain.getCurrentOptionArea().getCurrentTextInput();
         if (handleTextInput(finalTextInput)) {
           return handleKeyEvent(Key.TEXT_INPUT_OPTION_ENTER);
         } else {
           return false;
         }
       } else {
-        return Main.getCurrentOptionArea().handleKeyEvent(e);
+        return EngineMain.getCurrentOptionArea().handleKeyEvent(e);
       }
     } else {
       // event has no text input option

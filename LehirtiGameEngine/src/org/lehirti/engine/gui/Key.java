@@ -62,7 +62,7 @@ public enum Key {
   public final int col;
   public final int row;
   public final ImageKey buttonImageKey;
-  private Image buttonImage;
+  private transient Image buttonImage;
   
   private Key(final int defaultCode, final int defaultModifiers, final TextKey textFunction, final int col,
       final int row, final ImageKey buttonImageKey) {

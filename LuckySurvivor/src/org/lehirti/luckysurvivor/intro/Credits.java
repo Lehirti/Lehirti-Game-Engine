@@ -6,6 +6,7 @@ import org.lehirti.engine.gui.Key;
 import org.lehirti.engine.res.TextAndImageKey;
 import org.lehirti.engine.res.images.ImgChange;
 import org.lehirti.engine.res.text.CommonText;
+import org.lehirti.engine.state.State;
 
 public class Credits extends EventNode<NullState> {
   public static enum Contributor implements TextAndImageKey {
@@ -15,6 +16,11 @@ public class Credits extends EventNode<NullState> {
   }
   
   private final Contributor contributor;
+  
+  // for load/save
+  public Credits() {
+    this.contributor = Contributor.values()[State.DIE.nextInt(Contributor.values().length)];
+  }
   
   public Credits(final Contributor contributor) {
     this.contributor = contributor;

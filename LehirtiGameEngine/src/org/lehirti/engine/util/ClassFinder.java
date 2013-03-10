@@ -43,47 +43,41 @@ public class ClassFinder {
   /**
    * Rescan the classpath, cacheing all possible file locations.
    */
-  public final void refreshLocations() {
-    synchronized (this.classpathLocations) {
-      this.classpathLocations = getClasspathLocations();
-    }
+  public synchronized final void refreshLocations() {
+    this.classpathLocations = getClasspathLocations();
   }
   
   /**
    * @param fqcn
    *          Name of superclass/interface on which to search
    */
-  public final Vector<Class<?>> findSubclasses(final String fqcn) {
-    synchronized (this.classpathLocations) {
-      synchronized (this.results) {
-        this.searchClass = null;
-        this.errors = new ArrayList<>();
-        this.results = new TreeMap<>(CLASS_COMPARATOR);
-        
-        //
-        // filter malformed FQCN
-        //
-        if (fqcn.startsWith(".") || fqcn.endsWith(".")) {
-          return new Vector<>();
-        }
-        
-        //
-        // Determine search class from fqcn
-        //
-        try {
-          this.searchClass = Class.forName(fqcn);
-        } catch (final ClassNotFoundException ex) {
-          // if class not found, let empty vector return...
-          this.errors.add(ex);
-          return new Vector<>();
-        }
-        
-        return findSubclasses(this.searchClass, this.classpathLocations);
-      }
+  public synchronized final Vector<Class<?>> findSubclasses(final String fqcn) {
+    this.searchClass = null;
+    this.errors = new ArrayList<>();
+    this.results = new TreeMap<>(CLASS_COMPARATOR);
+    
+    //
+    // filter malformed FQCN
+    //
+    if (fqcn.startsWith(".") || fqcn.endsWith(".")) {
+      return new Vector<>();
     }
+    
+    //
+    // Determine search class from fqcn
+    //
+    try {
+      this.searchClass = Class.forName(fqcn);
+    } catch (final ClassNotFoundException ex) {
+      // if class not found, let empty vector return...
+      this.errors.add(ex);
+      return new Vector<>();
+    }
+    
+    return findSubclasses(this.searchClass, this.classpathLocations);
   }
   
-  public final List<Throwable> getErrors() {
+  public synchronized final List<Throwable> getErrors() {
     return new ArrayList<>(this.errors);
   }
   
@@ -92,7 +86,7 @@ public class ClassFinder {
    * This method may be called to query the cache for the location at which the given class was found. <code>null</code>
    * will be returned if the given class was not found during the last search, or if the result cache has been cleared.
    */
-  public final URL getLocationOf(final Class<?> cls) {
+  public synchronized final URL getLocationOf(final Class<?> cls) {
     if (this.results != null) {
       return this.results.get(cls);
     } else {
@@ -103,7 +97,7 @@ public class ClassFinder {
   /**
    * Determine every URL location defined by the current classpath, and it's associated package name.
    */
-  public final Map<URL, String> getClasspathLocations() {
+  public synchronized final Map<URL, String> getClasspathLocations() {
     final Map<URL, String> map = new TreeMap<>(URL_COMPARATOR);
     File file = null;
     
@@ -273,12 +267,11 @@ public class ClassFinder {
     // System.out.println ("package: " + packages[i]);
     // }
     
-    final Iterator<URL> it = locations.keySet().iterator();
-    while (it.hasNext()) {
-      final URL url = it.next();
+    for (final Map.Entry<URL, String> entry : locations.entrySet()) {
+      final URL url = entry.getKey();
       // System.out.println (url + "-->" + locations.get (url));
       
-      w = findSubclasses(url, locations.get(url), superClass);
+      w = findSubclasses(url, entry.getValue(), superClass);
       if (w != null && (w.size() > 0)) {
         v.addAll(w);
       }
@@ -420,7 +413,7 @@ public class ClassFinder {
   
   private final static String getPackagePath(final String packageName) {
     // Translate the package name into an "absolute" path
-    String path = new String(packageName);
+    String path = packageName;
     if (!path.startsWith("/")) {
       path = "/" + path;
     }

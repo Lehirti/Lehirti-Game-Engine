@@ -1,6 +1,8 @@
 package org.lehirti.engine.state;
 
-import org.lehirti.engine.gui.Main;
+import javax.annotation.Nonnull;
+
+import org.lehirti.engine.gui.EngineMain;
 import org.lehirti.engine.res.ResourceCache;
 import org.lehirti.engine.res.text.CommonText;
 import org.lehirti.engine.res.text.TextKey;
@@ -33,6 +35,7 @@ public enum DateTime implements IntState {
     return DayOfWeek.values()[(int) State.get(FIRST_DAY)];
   }
   
+  @Nonnull
   public static DayOfWeek getCurrentDayOfWeek() {
     int currentDayOfWeek = (int) State.get(FIRST_DAY);
     currentDayOfWeek += (int) State.get(DAY);
@@ -120,7 +123,7 @@ public enum DateTime implements IntState {
   }
   
   private static void updateScreen() {
-    Main.STATS_AREA.repaint();
+    EngineMain.STATS_AREA.repaint();
   }
   
   public static String getDateFormatedForStatsArea() {

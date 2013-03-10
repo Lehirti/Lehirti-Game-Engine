@@ -20,9 +20,9 @@ import org.slf4j.LoggerFactory;
 public class GameKeyListener implements KeyListener {
   private static final Logger LOGGER = LoggerFactory.getLogger(GameKeyListener.class);
   
-  private final Main main;
+  private final EngineMain main;
   
-  public GameKeyListener(final Main main) {
+  public GameKeyListener(final EngineMain main) {
     this.main = main;
   }
   
@@ -40,15 +40,15 @@ public class GameKeyListener implements KeyListener {
         // key unrelated to core game
         
         // handle key text input events of non-core-game keys
-        if (Main.getCurrentEvent() != null) {
-          Main.getCurrentEvent().handleKeyEvent(e, key);
+        if (EngineMain.getCurrentEvent() != null) {
+          EngineMain.getCurrentEvent().handleKeyEvent(e, key);
         }
         return;
       }
       
       // let current event handle key event first
-      if (Main.getCurrentEvent() != null) {
-        if (Main.getCurrentEvent().handleKeyEvent(key)) {
+      if (EngineMain.getCurrentEvent() != null) {
+        if (EngineMain.getCurrentEvent().handleKeyEvent(key)) {
           // current event did use the key, so this key is "used up"
           return;
         }
@@ -62,13 +62,13 @@ public class GameKeyListener implements KeyListener {
         editTexts();
         return;
       } else if (key == Key.CYCLE_TEXT_PAGES) {
-        Main.getCurrentTextArea().cycleToNextPage();
+        EngineMain.getCurrentTextArea().cycleToNextPage();
         return;
       }
       
       // handle key text input events of core-game keys
-      if (Main.getCurrentEvent() != null) {
-        if (Main.getCurrentEvent().handleKeyEvent(e, key)) {
+      if (EngineMain.getCurrentEvent() != null) {
+        if (EngineMain.getCurrentEvent().handleKeyEvent(e, key)) {
           return;
         }
       }
@@ -78,27 +78,27 @@ public class GameKeyListener implements KeyListener {
       } else if (key == Key.LOAD) {
         final List<File> allSavegames = PathFinder.getAllSavegames();
         if (allSavegames.isEmpty()) {
-          // no savegames found
-          new Notification(Main.MAIN_WINDOW, ResourceCache.get(CommonText.NO_SAVEGAME_FOUND), 1500);
+          // no save games found
+          new Notification(EngineMain.MAIN_WINDOW, ResourceCache.get(CommonText.NO_SAVEGAME_FOUND), 1500);
         } else {
-          final Event<?> oldEvent = Main.getCurrentEvent();
-          Main.setCurrentAreas(key);
-          Main.setCurrentEvent(new LoadGameScreenEvent(0, allSavegames));
+          final Event<?> oldEvent = EngineMain.getCurrentEvent();
+          EngineMain.setCurrentAreas(key);
+          EngineMain.setCurrentEvent(new LoadGameScreenEvent(0, allSavegames));
           synchronized (oldEvent) {
             oldEvent.notifyAll();
           }
         }
       } else if (key == Key.SHOW_INVENTORY) {
-        final Event<?> oldEvent = Main.getCurrentEvent();
-        Main.setCurrentAreas(key);
-        Main.setCurrentEvent(new InventoryEvent(InventoryMap.getSelectedItem()));
+        final Event<?> oldEvent = EngineMain.getCurrentEvent();
+        EngineMain.setCurrentAreas(key);
+        EngineMain.setCurrentEvent(new InventoryEvent(InventoryMap.getSelectedItem()));
         synchronized (oldEvent) {
           oldEvent.notifyAll();
         }
       } else if (key == Key.SHOW_PROGRESS) {
-        final Event<?> oldEvent = Main.getCurrentEvent();
-        Main.setCurrentAreas(key);
-        Main.setCurrentEvent(new ProgressEvent(AllPGs.getCurrent()));
+        final Event<?> oldEvent = EngineMain.getCurrentEvent();
+        EngineMain.setCurrentAreas(key);
+        EngineMain.setCurrentEvent(new ProgressEvent(AllPGs.getCurrent()));
         synchronized (oldEvent) {
           oldEvent.notifyAll();
         }
@@ -119,10 +119,10 @@ public class GameKeyListener implements KeyListener {
   }
   
   private static void editImages() {
-    new ImageEditor(Main.getCurrentImageArea().getAllImages(), Main.getCurrentImageArea());
+    new ImageEditor(EngineMain.getCurrentImageArea().getAllImages(), EngineMain.getCurrentImageArea());
   }
   
   private static void editTexts() {
-    new TextEditor(Main.getCurrentTextArea(), Main.getCurrentOptionArea(), Main.getCurrentTextArea().getAllTexts());
+    new TextEditor(EngineMain.getCurrentTextArea(), EngineMain.getCurrentOptionArea(), EngineMain.getCurrentTextArea().getAllTexts());
   }
 }

@@ -38,7 +38,7 @@ public class ImageEditor extends JFrame implements ActionListener {
   
   private static File CURRENT_DIRECTORY = new File(".");
   
-  private final class NumericalInputVerifier extends InputVerifier {
+  private static final class NumericalInputVerifier extends InputVerifier {
     private final ImageEditor imgEditor;
     
     public NumericalInputVerifier(final ImageEditor imgEditor) {

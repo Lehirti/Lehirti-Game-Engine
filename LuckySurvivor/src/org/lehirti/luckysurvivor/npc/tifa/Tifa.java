@@ -244,7 +244,7 @@ public final class Tifa extends AbstractNPC {
   @Override
   protected List<TextWrapper> getReactionText(final ReactionToSexAct reaction) {
     final TextKey text = getReactionImage(reaction);
-    final TextWrapper textWrapper = ResourceCache.get(text);
+    final TextWrapper textWrapper = ResourceCache.getNullable(text);
     final List<TextWrapper> texts = new LinkedList<>();
     texts.add(textWrapper);
     return texts;

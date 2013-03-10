@@ -83,7 +83,7 @@ public final class InventoryEvent extends EventNode<NullState> {
         if (entry.getKey().equals(this.selectedItem)) {
           addText(ResourceCache.get(CommonText.MARKER));
         }
-        final TextWrapper tw = ResourceCache.get((TextKey) entry.getKey());
+        final TextWrapper tw = ResourceCache.getNullable((TextKey) entry.getKey());
         tw.addParameter(entry.getValue().toString());
         addText(tw);
         addText(CommonText.NEWLINE);

@@ -76,7 +76,7 @@ public class InventoryMap<K extends AbstractState, V> extends LinkedHashMap<K, V
   public static SortedMap<String, LinkedHashMap<Inventory, Object>> getSortedInventory() {
     final SortedMap<String, LinkedHashMap<Inventory, Object>> sortedInventory = new TreeMap<>();
     for (final Map.Entry<Inventory, Object> invEntry : INVENTORY.entrySet()) {
-      final String rawValue = ResourceCache.get((TextKey) invEntry.getKey()).getRawValue();
+      final String rawValue = ResourceCache.getNullable((TextKey) invEntry.getKey()).getRawValue();
       LinkedHashMap<Inventory, Object> inventoryPerName = sortedInventory.get(rawValue);
       if (inventoryPerName == null) {
         inventoryPerName = new LinkedHashMap<>();

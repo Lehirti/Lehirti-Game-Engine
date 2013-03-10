@@ -2,6 +2,7 @@ package org.lehirti.luckysurvivor;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.lehirti.engine.gui.EngineMain;
 import org.lehirti.engine.gui.Notification;
 import org.lehirti.engine.state.State;
 import org.lehirti.engine.util.ContentUtils;
@@ -12,7 +13,7 @@ import org.lehirti.luckysurvivor.pc.PC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Main extends org.lehirti.engine.gui.Main {
+public class Main extends EngineMain {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
   
@@ -44,7 +45,7 @@ public class Main extends org.lehirti.engine.gui.Main {
       switch (result) {
       case DEV_ENVIRONMENT:
         LOGGER.info("Development Version");
-        // fall through
+        //$FALL-THROUGH$
       case OK:
         LOGGER.info("Content " + content.name() + "-" + content.requiredVersion + " is present.");
         content.available = true;

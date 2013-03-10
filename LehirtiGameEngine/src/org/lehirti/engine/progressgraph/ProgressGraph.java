@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.lehirti.engine.gui.Main;
+import org.lehirti.engine.gui.EngineMain;
 import org.lehirti.engine.res.text.TextKey;
 import org.lehirti.engine.state.StringState;
 import org.lehirti.engine.util.MiscUtils;
@@ -93,7 +93,7 @@ public final class ProgressGraph {
     final Graphics2D g2d = bimg.createGraphics();
     final int nodeSize = determineNodeSize(width, height, MiscUtils.max(this.widthsPerLevels), getDepth());
     g2d.setStroke(new BasicStroke(nodeSize / 4.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
-    g2d.setFont(Main.getScaledFont());
+    g2d.setFont(EngineMain.getScaledFont());
     this.rootNode.draw(g2d, width, height, this.widthsPerLevels, getDepth(), nodeSize);
     return bimg;
   }
