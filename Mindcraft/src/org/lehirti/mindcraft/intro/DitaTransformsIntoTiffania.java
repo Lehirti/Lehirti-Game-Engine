@@ -1,10 +1,11 @@
 package org.lehirti.mindcraft.intro;
 
-import org.lehirti.engine.events.EventNode;
-import org.lehirti.engine.events.Event.NullState;
-import org.lehirti.engine.res.images.ImgChange;
-import org.lehirti.engine.res.text.CommonText;
-import org.lehirti.engine.res.text.TextKey;
+import lge.events.EventNode;
+import lge.events.Event.NullState;
+import lge.res.images.ImgChange;
+import lge.res.text.CommonText;
+import lge.res.text.TextKey;
+
 import org.lehirti.mindcraft.images.TiffaniaWestwood;
 
 public class DitaTransformsIntoTiffania extends EventNode<NullState> {

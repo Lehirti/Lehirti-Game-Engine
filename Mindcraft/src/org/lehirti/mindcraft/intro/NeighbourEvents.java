@@ -3,10 +3,11 @@ package org.lehirti.mindcraft.intro;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.lehirti.engine.events.AbstractEvent;
-import org.lehirti.engine.events.Event;
-import org.lehirti.engine.events.hooks.EventHook;
-import org.lehirti.engine.state.State;
+import lge.events.AbstractEvent;
+import lge.events.Event;
+import lge.events.hooks.EventHook;
+import lge.state.State;
+
 
 public class NeighbourEvents implements EventHook {
   static {

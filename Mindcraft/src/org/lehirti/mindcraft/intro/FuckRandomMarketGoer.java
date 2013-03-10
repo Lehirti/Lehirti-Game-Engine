@@ -1,12 +1,12 @@
 package org.lehirti.mindcraft.intro;
 
-import org.lehirti.engine.events.EventNode;
-import org.lehirti.engine.events.Event.NullState;
-import org.lehirti.engine.res.images.ImageKey;
-import org.lehirti.engine.res.images.ImgChange;
-import org.lehirti.engine.res.text.CommonText;
-import org.lehirti.engine.res.text.TextKey;
-import org.lehirti.engine.state.State;
+import lge.events.EventNode;
+import lge.events.Event.NullState;
+import lge.res.images.ImageKey;
+import lge.res.images.ImgChange;
+import lge.res.text.CommonText;
+import lge.res.text.TextKey;
+import lge.state.State;
 
 public class FuckRandomMarketGoer extends EventNode<NullState> {
   public static enum MarketGoer implements ImageKey, TextKey {

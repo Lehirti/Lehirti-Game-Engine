@@ -15,10 +15,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import org.lehirti.engine.res.images.ImageProxy;
-import org.lehirti.engine.util.ContentUtils;
-import org.lehirti.engine.util.PathFinder;
-import org.lehirti.luckysurvivor.C;
+import lge.res.images.ImageProxy;
+import lge.util.ContentUtils;
+import lge.util.PathFinder;
+import main.C;
+
 
 public final class ExportCoreContent {
   private static final File ROOT_DIR = new File("..");

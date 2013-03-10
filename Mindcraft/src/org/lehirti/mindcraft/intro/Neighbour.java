@@ -1,8 +1,9 @@
 package org.lehirti.mindcraft.intro;
 
-import org.lehirti.engine.events.StandardEvent;
-import org.lehirti.engine.gui.Key;
-import org.lehirti.engine.res.text.CommonText;
+import lge.events.StandardEvent;
+import lge.gui.Key;
+import lge.res.text.CommonText;
+
 import org.lehirti.mindcraft.images.Background;
 
 public class Neighbour extends StandardEvent {

@@ -2,14 +2,15 @@ package org.lehirti.mindcraft;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.lehirti.engine.util.ContentUtils;
-import org.lehirti.engine.util.ContentUtils.CheckResult;
-import org.lehirti.engine.util.PathFinder;
+import lge.util.ContentUtils;
+import lge.util.PathFinder;
+import lge.util.ContentUtils.CheckResult;
+
 import org.lehirti.mindcraft.intro.Night1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Main extends org.lehirti.engine.gui.EngineMain {
+public class Main extends lge.gui.EngineMain {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
   

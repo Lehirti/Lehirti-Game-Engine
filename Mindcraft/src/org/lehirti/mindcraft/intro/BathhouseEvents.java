@@ -3,12 +3,13 @@ package org.lehirti.mindcraft.intro;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.lehirti.engine.events.AbstractEvent;
-import org.lehirti.engine.events.Event;
-import org.lehirti.engine.events.StandardEvent;
-import org.lehirti.engine.events.hooks.EventHook;
-import org.lehirti.engine.gui.Key;
-import org.lehirti.engine.state.State;
+import lge.events.AbstractEvent;
+import lge.events.Event;
+import lge.events.StandardEvent;
+import lge.events.hooks.EventHook;
+import lge.gui.Key;
+import lge.state.State;
+
 import org.lehirti.mindcraft.C;
 
 public class BathhouseEvents implements EventHook {

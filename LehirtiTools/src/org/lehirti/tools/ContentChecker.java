@@ -3,16 +3,17 @@ package org.lehirti.tools;
 import java.io.File;
 import java.util.Vector;
 
-import org.lehirti.engine.res.ResourceCache;
-import org.lehirti.engine.res.ResourceState;
-import org.lehirti.engine.res.images.ImageKey;
-import org.lehirti.engine.res.images.ImageWrapper;
-import org.lehirti.engine.res.text.TextKey;
-import org.lehirti.engine.res.text.TextWrapper;
-import org.lehirti.engine.util.ClassFinder;
-import org.lehirti.engine.util.ContentUtils;
-import org.lehirti.engine.util.PathFinder;
-import org.lehirti.luckysurvivor.C;
+import lge.res.ResourceCache;
+import lge.res.ResourceState;
+import lge.res.images.ImageKey;
+import lge.res.images.ImageWrapper;
+import lge.res.text.TextKey;
+import lge.res.text.TextWrapper;
+import lge.util.ClassFinder;
+import lge.util.ContentUtils;
+import lge.util.PathFinder;
+import main.C;
+
 
 public final class ContentChecker {
   public static void main(final String[] args) {

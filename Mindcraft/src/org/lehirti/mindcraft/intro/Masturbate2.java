@@ -1,9 +1,9 @@
 package org.lehirti.mindcraft.intro;
 
-import org.lehirti.engine.events.EventNode;
-import org.lehirti.engine.events.Event.NullState;
-import org.lehirti.engine.res.images.ImgChange;
-import org.lehirti.engine.res.text.CommonText;
+import lge.events.EventNode;
+import lge.events.Event.NullState;
+import lge.res.images.ImgChange;
+import lge.res.text.CommonText;
 
 public class Masturbate2 extends EventNode<NullState> {
   @Override

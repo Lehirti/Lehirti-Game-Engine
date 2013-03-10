@@ -6,14 +6,15 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.lehirti.engine.state.AbstractState;
-import org.lehirti.engine.state.BoolState;
-import org.lehirti.engine.state.IntState;
-import org.lehirti.engine.state.StringState;
-import org.lehirti.engine.util.ClassFinder;
-import org.lehirti.engine.util.FileUtils;
-import org.lehirti.luckysurvivor.npc.NPC;
-import org.lehirti.luckysurvivor.npc.NPCCommonStats;
+import lge.state.AbstractState;
+import lge.state.BoolState;
+import lge.state.IntState;
+import lge.state.StringState;
+import lge.util.ClassFinder;
+import lge.util.FileUtils;
+
+import npc.NPC;
+import npc.NPCCommonStats;
 
 public final class GenerateNPCCommon {
   private static final String PREFIX_NPCCommon = "  // BEGIN GENERATED BLOCK NPCCommon";

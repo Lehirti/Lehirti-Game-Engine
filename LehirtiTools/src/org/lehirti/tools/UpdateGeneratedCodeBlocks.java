@@ -3,9 +3,10 @@ package org.lehirti.tools;
 import java.io.File;
 import java.util.regex.Pattern;
 
-import org.lehirti.engine.util.FileUtils;
-import org.lehirti.luckysurvivor.sss.ReactionToSexAct;
-import org.lehirti.luckysurvivor.sss.SexAct;
+import lge.util.FileUtils;
+
+import sss.ReactionToSexAct;
+import sss.SexAct;
 
 public final class UpdateGeneratedCodeBlocks {
   private static final String PREFIX_SexAct = "// BEGIN GENERATED BLOCK SexAct";

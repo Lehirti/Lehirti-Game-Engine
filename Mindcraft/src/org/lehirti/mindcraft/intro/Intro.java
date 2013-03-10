@@ -1,7 +1,7 @@
 package org.lehirti.mindcraft.intro;
 
-import org.lehirti.engine.res.images.ImageKey;
-import org.lehirti.engine.res.text.TextKey;
+import lge.res.images.ImageKey;
+import lge.res.text.TextKey;
 
 public enum Intro implements ImageKey, TextKey {
   MASTURBATE,

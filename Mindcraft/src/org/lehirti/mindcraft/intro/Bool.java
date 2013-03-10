@@ -1,6 +1,6 @@
 package org.lehirti.mindcraft.intro;
 
-import org.lehirti.engine.state.BoolState;
+import lge.state.BoolState;
 
 public enum Bool implements BoolState {
   YOU_ARE_HORNY,

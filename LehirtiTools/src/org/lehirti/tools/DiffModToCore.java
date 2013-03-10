@@ -2,10 +2,11 @@ package org.lehirti.tools;
 
 import java.util.Vector;
 
-import org.lehirti.engine.res.text.TextKey;
-import org.lehirti.engine.res.text.TextWrapper;
-import org.lehirti.engine.util.ClassFinder;
-import org.lehirti.engine.util.PathFinder;
+import lge.res.text.TextKey;
+import lge.res.text.TextWrapper;
+import lge.util.ClassFinder;
+import lge.util.PathFinder;
+
 
 public final class DiffModToCore {
   public static void main(final String[] args) {

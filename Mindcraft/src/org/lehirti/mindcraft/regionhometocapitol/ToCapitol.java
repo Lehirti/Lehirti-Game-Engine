@@ -3,11 +3,12 @@ package org.lehirti.mindcraft.regionhometocapitol;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.lehirti.engine.events.AbstractEvent;
-import org.lehirti.engine.events.Event;
-import org.lehirti.engine.events.StandardEvent;
-import org.lehirti.engine.events.hooks.EventHook;
-import org.lehirti.engine.gui.Key;
+import lge.events.AbstractEvent;
+import lge.events.Event;
+import lge.events.StandardEvent;
+import lge.events.hooks.EventHook;
+import lge.gui.Key;
+
 import org.lehirti.mindcraft.intro.HomeVillage;
 
 public class ToCapitol implements EventHook {

@@ -2,7 +2,8 @@ package org.lehirti.tools;
 
 import java.io.File;
 
-import org.lehirti.engine.util.FileUtils;
+import lge.util.FileUtils;
+
 
 public final class MoveModToCore {
   
