@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+ <xs:simpleType name="image_or_text_reference">
+   <xs:restriction base="xs:string">
+     <xs:pattern value="[A-Z_]{1,}|ext:[a-z.A-Z_]{1,}"/>
+   </xs:restriction>
+ </xs:simpleType>
+ 
+ <xs:simpleType name="event_reference">
+   <xs:restriction base="xs:string">
+     <xs:pattern value="[a-z.A-Za-z0-9]{1,}"/>
+   </xs:restriction>
+ </xs:simpleType>
+ 
+ <xs:simpleType name="package_type">
+   <xs:restriction base="xs:string">
+     <xs:pattern value="[a-z.]{1,}"/>
+   </xs:restriction>
+ </xs:simpleType>
+ 
+ <xs:simpleType name="event_name_type">
+   <xs:restriction base="xs:string">
+     <xs:pattern value="[A-Z][A-Za-z0-9]{1,}"/>
+   </xs:restriction>
+ </xs:simpleType>
+ 
+ <xs:simpleType name="key_type">
+   <xs:restriction base="xs:string">
+     <xs:enumeration value="Q"></xs:enumeration>
+     <xs:enumeration value="LEAVE"></xs:enumeration>
+     <xs:enumeration value="NORTH"></xs:enumeration>
+     <xs:enumeration value="ENTER"></xs:enumeration>
+     <xs:enumeration value="A"></xs:enumeration>
+     <xs:enumeration value="WEST"></xs:enumeration>
+     <xs:enumeration value="SOUTH"></xs:enumeration>
+     <xs:enumeration value="EAST"></xs:enumeration>
+     <xs:enumeration value="Z"></xs:enumeration>
+     <xs:enumeration value="X"></xs:enumeration>
+     <xs:enumeration value="C"></xs:enumeration>
+     <xs:enumeration value="V"></xs:enumeration>
+   </xs:restriction>
+ </xs:simpleType>
+
+ <xs:element name="event">
+   <xs:complexType>
+     <xs:sequence>
+       <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+       <xs:element name="todo" type="xs:string" minOccurs="0" maxOccurs="1"/>
+       <xs:element name="extensions" minOccurs="0" maxOccurs="1">
+         <xs:complexType>
+           <xs:sequence>
+             <xs:element name="extension" minOccurs="1" maxOccurs="unbounded">
+               <xs:complexType>
+                 <xs:attribute name="event" type="event_reference" use="required"/>
+                 <xs:attribute name="key" type="key_type" use="optional"/>
+                 <xs:attribute name="text" type="image_or_text_reference" use="required"/>
+               </xs:complexType>
+             </xs:element>
+           </xs:sequence>
+         </xs:complexType>
+       </xs:element>
+       <xs:element name="images" minOccurs="0" maxOccurs="1">
+         <xs:complexType>
+           <xs:sequence>
+             <xs:element name="bg" type="image_or_text_reference" minOccurs="0" maxOccurs="1"/>
+             <xs:element name="fg" type="image_or_text_reference" minOccurs="0" maxOccurs="unbounded"/>
+           </xs:sequence>
+           <xs:attribute name="clearBackground" default="false" type="xs:boolean" use="optional"/>
+           <xs:attribute name="clearForeground" default="true" type="xs:boolean" use="optional"/>
+         </xs:complexType>
+       </xs:element>
+       <xs:element name="texts">
+         <xs:complexType>
+           <xs:sequence>
+             <xs:element name="text" type="image_or_text_reference" minOccurs="1" maxOccurs="unbounded"/>
+           </xs:sequence>
+         </xs:complexType>
+       </xs:element>
+       <xs:element name="options">
+         <xs:complexType>
+           <xs:sequence>
+             <xs:element name="option" minOccurs="1" maxOccurs="12">
+               <xs:complexType>
+                 <xs:attribute name="key" type="key_type" use="optional"/>
+                 <xs:attribute name="text" type="image_or_text_reference" use="required"/>
+                 <xs:attribute name="event" type="event_reference" use="required"/>
+               </xs:complexType>
+             </xs:element>
+           </xs:sequence>
+         </xs:complexType>
+       </xs:element>
+     </xs:sequence>
+   </xs:complexType>
+ </xs:element>
+</xs:schema>
