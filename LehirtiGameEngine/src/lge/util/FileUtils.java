@@ -101,6 +101,11 @@ public class FileUtils {
     return true;
   }
   
+  public static String readContentAsString(final InputStream is) {
+    final java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+    return s.hasNext() ? s.next() : "";
+  }
+  
   public static String readContentAsString(final File file) {
     char[] buffer = null;
     

@@ -35,6 +35,11 @@ public class PathFinder {
   private static final int CORE_BASE_DIR_LENGTH = CORE_BASE_DIR_ABSOLUTE_PATH.length();
   private static final File MOD_BASE_DIR = new File("mod");
   
+  private static final File MOD_EVENTS_DIR = new File(MOD_BASE_DIR, "events");
+  public static final File MOD_EVENTS_CLASS_DIR = new File(MOD_EVENTS_DIR, "bin");
+  public static final File MOD_EVENTS_GENSRC_DIR = new File(MOD_EVENTS_DIR, "gen-src");
+  public static final File MOD_EVENTS_XML_DIR = new File(MOD_EVENTS_DIR, "xml");
+  
   private static final File MANIFEST_DIR = new File(CORE_BASE_DIR, "manifest");
   
   private static final List<File> CORE_CONTENT_DIRS = new ArrayList<>(25);

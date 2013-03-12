@@ -1,0 +1,32 @@
+package %packageName%;
+
+import lge.events.EventNode;
+import lge.events.Event.NullState;
+import lge.gui.Key;
+import lge.res.images.ImageKey;
+import lge.res.images.ImgChange;
+import lge.res.text.TextKey;
+
+// imported events
+%importEvents%
+
+/**
+ * Generated source file; DO NOT EDIT MANUALLY; MANUAL CHANGES WILL BE OVERWRITTEN
+ */
+public class %eventName% extends EventNode<NullState> {
+  public static enum Text implements TextKey {
+%texts%  }
+  
+  public static enum Image implements ImageKey {
+%images%  }
+  
+  @Override
+  protected ImgChange updateImageArea() {
+%updateImageArea%
+  }
+  
+  @Override
+  protected void doEvent() {
+%doEventsText%    
+%doEventsOptions%  }
+}

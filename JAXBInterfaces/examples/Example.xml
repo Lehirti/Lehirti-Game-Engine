@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schema/event.xsd">
+  <description></description> <!-- optional: Can be used to describe what this event is all about -->
+  <todo></todo> <!-- optional: Can be used to describe things that need to be coded manually -->
+  <extensions> <!-- extensions allow you to add a "to-this-event" option to others events -->
+     <!-- in this example: during the FindWatch event there will be an option on the "Z" button, to go to this event -->
+     <extension event="crashsite.FindWatch" key="Z" text="OPTION_BACK_TO_AIRPORT"/>
+  </extensions>
+  <images clearBackground="true" clearForeground="true"> <!-- optionally clear background/foreground images from previous events -->
+    <bg>EXAMPLE_BACKGROUND</bg> <!-- set a new background image; in this example a new image key will be created inside the generated event class -->
+    <fg>EXAMPLE_FOREGROUND</fg> <!-- add a new foreground image; in this example a new image key will be created inside the generated event class -->
+    <fg>intro.IntroImage.AIRPORT</fg> <!-- add a new foreground image; in this example a previously existing image key will be used -->
+  </images>
+  <texts> <!-- text to display in the text area; text from previous events will always be cleared -->
+    <text>EXAMPLE_DESCRIPTION</text> <!-- the naming is the same as image keys; here the "create new text key in generated event class" example -->
+    <text>intro.Bus.Text.BUS_DESCRIPTION</text>
+  </texts>
+  <options>
+    <!-- key: the name of one of the 12 option keys; optional; if not specified, the game will pick a free key -->
+    <!-- text: a text key for the text in the option area -->
+    <!-- event: fully-qualified name of the target event; this event must have a default constructor; description on how to reference other "xml" events will come later -->
+    <option key="ENTER" text="OPTION_EXAMPLE" event="intro.Airport"/>
+  </options>
+</event>

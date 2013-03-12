@@ -1,0 +1,18 @@
+package %packageName%;
+
+import lge.events.EventNode;
+import lge.events.extension.EventExtension;
+import lge.gui.Key;
+
+/**
+ * Generated source file; DO NOT EDIT MANUALLY; MANUAL CHANGES WILL BE OVERWRITTEN
+ */
+public class %eventName% implements EventExtension {
+  static {
+    EventNode.registerExtension(%extendedEvent%.class, new %eventName%());
+  }
+
+  @Override
+  public void doEventExtension(EventNode<?> e) {
+%doEventExtension%  }
+}

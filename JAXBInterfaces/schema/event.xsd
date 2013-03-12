@@ -2,25 +2,13 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
  <xs:simpleType name="image_or_text_reference">
    <xs:restriction base="xs:string">
-     <xs:pattern value="[A-Z_]{1,}|ext:[a-z.A-Z_]{1,}"/>
+     <xs:pattern value="([a-z\.]+\.[A-Za-z0-9\.$]+\.)?[A-Z][A-Z_]*"/>
    </xs:restriction>
  </xs:simpleType>
  
  <xs:simpleType name="event_reference">
    <xs:restriction base="xs:string">
-     <xs:pattern value="[a-z.A-Za-z0-9]{1,}"/>
-   </xs:restriction>
- </xs:simpleType>
- 
- <xs:simpleType name="package_type">
-   <xs:restriction base="xs:string">
-     <xs:pattern value="[a-z.]{1,}"/>
-   </xs:restriction>
- </xs:simpleType>
- 
- <xs:simpleType name="event_name_type">
-   <xs:restriction base="xs:string">
-     <xs:pattern value="[A-Z][A-Za-z0-9]{1,}"/>
+     <xs:pattern value="[a-z\.A-Z0-9]{1,}"/>
    </xs:restriction>
  </xs:simpleType>
  
@@ -90,6 +78,7 @@
          </xs:complexType>
        </xs:element>
      </xs:sequence>
+     <xs:attribute name="version" type="xs:positiveInteger" use="optional"/>
    </xs:complexType>
  </xs:element>
 </xs:schema>
