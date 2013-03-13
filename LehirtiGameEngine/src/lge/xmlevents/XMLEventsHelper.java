@@ -365,16 +365,18 @@ public final class XMLEventsHelper {
     for (final File xmlFile : FileUtils.getAllFilesRecursive(PathFinder.MOD_EVENTS_XML_DIR)) {
       sourceFiles.addAll(generateSource(xmlFile));
     }
-    final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-    final List<String> arguments = new LinkedList<>();
-    arguments.add("-d");
-    arguments.add("mod/events/bin");
-    for (final File srcFile : sourceFiles) {
-      arguments.add(srcFile.getAbsolutePath());
-    }
-    final int result = compiler.run(null, null, null, arguments.toArray(new String[arguments.size()]));
-    if (result != 0) {
-      // TODO
+    if (!sourceFiles.isEmpty()) {
+      final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+      final List<String> arguments = new LinkedList<>();
+      arguments.add("-d");
+      arguments.add("mod/events/bin");
+      for (final File srcFile : sourceFiles) {
+        arguments.add(srcFile.getAbsolutePath());
+      }
+      final int result = compiler.run(null, null, null, arguments.toArray(new String[arguments.size()]));
+      if (result != 0) {
+        // TODO
+      }
     }
   }
 }
