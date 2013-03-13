@@ -366,10 +366,11 @@ public final class XMLEventsHelper {
       sourceFiles.addAll(generateSource(xmlFile));
     }
     if (!sourceFiles.isEmpty()) {
+      PathFinder.MOD_EVENTS_CLASS_DIR.mkdirs();
       final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
       final List<String> arguments = new LinkedList<>();
       arguments.add("-d");
-      arguments.add("mod/events/bin");
+      arguments.add(PathFinder.MOD_EVENTS_CLASS_DIR.getAbsolutePath());
       for (final File srcFile : sourceFiles) {
         arguments.add(srcFile.getAbsolutePath());
       }
