@@ -66,6 +66,8 @@ public class PathFinder {
   
   private static final String SAVEGAME_PREFIX = "savegame-";
   
+  public static final File EVENT_XSD = new File("config/event.xsd");
+  
   public static File getCoreFile(final TextKey key) {
     return get(key, CORE_TEXT_CACHE, CORE_CONTENT_DIRS);
   }

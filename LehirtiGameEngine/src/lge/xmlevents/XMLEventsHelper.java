@@ -1,9 +1,13 @@
 package lge.xmlevents;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -34,7 +38,8 @@ public final class XMLEventsHelper {
     try {
       context = JAXBContext.newInstance(ObjectFactory.class);
       final SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-      final Schema schema = sf.newSchema(new File("../JAXBInterfaces/schema/event.xsd")); // TODO
+      
+      final Schema schema = sf.newSchema(XMLEventsHelper.class.getResource("/lge/xmlevents/schema/event.xsd"));
       try {
         unmarshaller = context.createUnmarshaller();
         unmarshaller.setSchema(schema);
@@ -57,7 +62,7 @@ public final class XMLEventsHelper {
     MARSHALLER = marshaller;
   }
   
-  public static void generateSource(final File xmlFile) {
+  public static Collection<File> generateSource(final File xmlFile) {
     if (!xmlFile.isFile()) {
       // TODO error
     }
@@ -87,11 +92,12 @@ public final class XMLEventsHelper {
     }
     genSrc = new File(genSrc, eventName + ".java");
     
-    generateSource(xmlFile, genSrc, packageName, eventName);
+    return generateSource(xmlFile, genSrc, packageName, eventName);
   }
   
-  private static void generateSource(final File xmlFile, final File genSrc, final String packageName,
+  private static Collection<File> generateSource(final File xmlFile, final File genSrc, final String packageName,
       final String eventName) {
+    final List<File> sources = new LinkedList<>();
     try {
       genSrc.getParentFile().mkdirs();
       final Event event = (Event) UNMARSHALLER.unmarshal(xmlFile);
@@ -110,10 +116,12 @@ public final class XMLEventsHelper {
       
       FileUtils.writeContentToFile(genSrc, source);
       
+      sources.add(genSrc);
+      
       final Extensions extensions = event.getExtensions();
       if (extensions != null) {
         for (final Extension ext : extensions.getExtension()) {
-          generateExtensionSource(genSrc.getParentFile(), eventName, packageName, ext);
+          sources.add(generateExtensionSource(genSrc.getParentFile(), eventName, packageName, ext));
         }
       }
       
@@ -121,10 +129,10 @@ public final class XMLEventsHelper {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    
+    return sources;
   }
   
-  private static void generateExtensionSource(final File dir, final String eventName, final String packageName,
+  private static File generateExtensionSource(final File dir, final String eventName, final String packageName,
       final Extension ext) {
     final String event = ext.getEvent();
     
@@ -140,6 +148,7 @@ public final class XMLEventsHelper {
     source = doExtOption(source, ext, eventName);
     
     FileUtils.writeContentToFile(genSrcExt, source);
+    return genSrcExt;
   }
   
   private static String doExtOption(final String source, final Extension ext, final String eventName) {
@@ -351,8 +360,21 @@ public final class XMLEventsHelper {
     sb.append(",\n");
   }
   
-  public static void main(final String[] args) {
-    final File xmlFile = new File(new File(new File(PathFinder.MOD_EVENTS_XML_DIR, "blip"), "blop"), "Example.xml");
-    generateSource(xmlFile);
+  public static void buildAll() {
+    final List<File> sourceFiles = new LinkedList<>();
+    for (final File xmlFile : FileUtils.getAllFilesRecursive(PathFinder.MOD_EVENTS_XML_DIR)) {
+      sourceFiles.addAll(generateSource(xmlFile));
+    }
+    final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+    final List<String> arguments = new LinkedList<>();
+    arguments.add("-d");
+    arguments.add("mod/events/bin");
+    for (final File srcFile : sourceFiles) {
+      arguments.add(srcFile.getAbsolutePath());
+    }
+    final int result = compiler.run(null, null, null, arguments.toArray(new String[arguments.size()]));
+    if (result != 0) {
+      // TODO
+    }
   }
 }

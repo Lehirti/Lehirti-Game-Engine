@@ -13,6 +13,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -60,7 +63,7 @@ public class FileUtils {
     }
   }
   
-  private static boolean copyFile(final InputStream srcInputStream, final File destFile) {
+  public static boolean copyFile(final InputStream srcInputStream, final File destFile) {
     if (!destFile.getParentFile().exists()) {
       if (!destFile.getParentFile().mkdirs()) {
         LOGGER.error("Unable to create directory " + destFile.getParentFile().getAbsolutePath());
@@ -214,6 +217,18 @@ public class FileUtils {
       return false;
     }
     return true;
+  }
+  
+  public static Collection<File> getAllFilesRecursive(final File rootDir) {
+    final List<File> files = new LinkedList<>();
+    for (final File file : rootDir.listFiles()) {
+      if (file.isFile()) {
+        files.add(file);
+      } else if (file.isDirectory()) {
+        files.addAll(getAllFilesRecursive(file));
+      }
+    }
+    return files;
   }
   
   public static boolean unpack(final ZipEntry elementToUnpack, final ZipFile zipFile) {
