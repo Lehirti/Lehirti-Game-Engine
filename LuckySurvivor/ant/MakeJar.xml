@@ -45,7 +45,10 @@
         <apply executable="tag_git_repo_with_build_id.sh" osfamily="unix" failonerror="true">
             <fileset dir="." includes="version"/>
         </apply>
-        <apply executable="add_version_number_to_jar.sh" osfamily="unix" failonerror="false">
+        <apply executable="rename_and_move_jars.sh" osfamily="unix" failonerror="false">
+            <fileset dir="." includes="version"/>
+        </apply>
+        <apply executable="update_website.sh" osfamily="unix" failonerror="false">
             <fileset dir="." includes="version"/>
         </apply>
     </target>
