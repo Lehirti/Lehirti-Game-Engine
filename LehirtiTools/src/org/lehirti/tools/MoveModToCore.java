@@ -4,7 +4,6 @@ import java.io.File;
 
 import lge.util.FileUtils;
 
-
 public final class MoveModToCore {
   
   /**
@@ -30,7 +29,8 @@ public final class MoveModToCore {
       System.err.println(coreDir.getAbsolutePath() + " is not a directory");
       return;
     }
-    System.out.println("Moving all files from " + modDir.getAbsolutePath() + " to " + coreDir.getAbsolutePath());
+    System.out.println("Moving all non-event files from " + modDir.getAbsolutePath() + " to "
+        + coreDir.getAbsolutePath());
     moveContentsRec(modDir, coreDir);
     System.out.println("Done");
   }
@@ -49,7 +49,10 @@ public final class MoveModToCore {
           }
         }
       } else if (oneSrc.isDirectory()) {
-        if (oneSrc.getName().equals("defaults")) {
+        if (oneSrc.getName().equals("defaults") && oneSrc.getParentFile().getName().equals("mod")) {
+          continue;
+        }
+        if (oneSrc.getName().equals("events") && oneSrc.getParentFile().getName().equals("mod")) {
           continue;
         }
         if (!destFile.exists()) {
