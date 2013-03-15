@@ -36,9 +36,9 @@ public class PathFinder {
   private static final File MOD_BASE_DIR = new File("mod");
   
   private static final File MOD_EVENTS_DIR = new File(MOD_BASE_DIR, "events");
-  public static final File MOD_EVENTS_CLASS_DIR = new File(MOD_EVENTS_DIR, "bin");
-  public static final File MOD_EVENTS_GENSRC_DIR = new File(MOD_EVENTS_DIR, "gen-src");
-  public static final File MOD_EVENTS_XML_DIR = new File(MOD_EVENTS_DIR, "xml");
+  private static final File MOD_EVENTS_CLASS_DIR = new File(MOD_EVENTS_DIR, "bin");
+  private static final File MOD_EVENTS_GENSRC_DIR = new File(MOD_EVENTS_DIR, "gen-src");
+  private static final File MOD_EVENTS_XML_DIR = new File(MOD_EVENTS_DIR, "xml");
   
   private static final File MANIFEST_DIR = new File(CORE_BASE_DIR, "manifest");
   
@@ -267,5 +267,32 @@ public class PathFinder {
       }
     });
     return savegames;
+  }
+  
+  public static File getModEventsClassDir() {
+    if (!MOD_EVENTS_CLASS_DIR.exists()) {
+      if (!MOD_EVENTS_CLASS_DIR.mkdirs()) {
+        LOGGER.error("Unable to create directory " + MOD_EVENTS_CLASS_DIR.getAbsolutePath());
+      }
+    }
+    return MOD_EVENTS_CLASS_DIR;
+  }
+  
+  public static File getModEventsGensrcDir() {
+    if (!MOD_EVENTS_GENSRC_DIR.exists()) {
+      if (!MOD_EVENTS_GENSRC_DIR.mkdirs()) {
+        LOGGER.error("Unable to create directory " + MOD_EVENTS_GENSRC_DIR.getAbsolutePath());
+      }
+    }
+    return MOD_EVENTS_GENSRC_DIR;
+  }
+  
+  public static File getModEventsXmlDir() {
+    if (!MOD_EVENTS_XML_DIR.exists()) {
+      if (!MOD_EVENTS_XML_DIR.mkdirs()) {
+        LOGGER.error("Unable to create directory " + MOD_EVENTS_XML_DIR.getAbsolutePath());
+      }
+    }
+    return MOD_EVENTS_XML_DIR;
   }
 }

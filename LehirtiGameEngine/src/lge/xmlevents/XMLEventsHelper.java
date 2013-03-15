@@ -66,7 +66,7 @@ public final class XMLEventsHelper {
     if (!xmlFile.isFile()) {
       // TODO error
     }
-    final File baseXML = PathFinder.MOD_EVENTS_XML_DIR;
+    final File baseXML = PathFinder.getModEventsXmlDir();
     final Stack<String> names = new Stack<>();
     File tmp = xmlFile;
     while (!baseXML.equals(tmp) && tmp.getParentFile() != null) {
@@ -74,7 +74,7 @@ public final class XMLEventsHelper {
       tmp = tmp.getParentFile();
     }
     
-    File genSrc = PathFinder.MOD_EVENTS_GENSRC_DIR;
+    File genSrc = PathFinder.getModEventsGensrcDir();
     String packageName = "";
     while (names.size() > 1) {
       final String packageNamePart = names.pop();
@@ -362,15 +362,15 @@ public final class XMLEventsHelper {
   
   public static void buildAll() {
     final List<File> sourceFiles = new LinkedList<>();
-    for (final File xmlFile : FileUtils.getAllFilesRecursive(PathFinder.MOD_EVENTS_XML_DIR)) {
+    for (final File xmlFile : FileUtils.getAllFilesRecursive(PathFinder.getModEventsXmlDir())) {
       sourceFiles.addAll(generateSource(xmlFile));
     }
     if (!sourceFiles.isEmpty()) {
-      PathFinder.MOD_EVENTS_CLASS_DIR.mkdirs();
+      PathFinder.getModEventsClassDir().mkdirs();
       final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
       final List<String> arguments = new LinkedList<>();
       arguments.add("-d");
-      arguments.add(PathFinder.MOD_EVENTS_CLASS_DIR.getAbsolutePath());
+      arguments.add(PathFinder.getModEventsClassDir().getAbsolutePath());
       for (final File srcFile : sourceFiles) {
         arguments.add(srcFile.getAbsolutePath());
       }
