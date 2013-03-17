@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Lucky Survivor - Modders Guide</title>
+</head>
+<body>
+<h1>Lucky Survivor - Modders Guide</h1>
+<a href="index.html">Main</a>
+<h2>Changing/Adding text/images</h2>
+<i>This does not require any programming knowledge.</i>
+<p>This is the easiest way to make changes to the game. At any point while playing the game you can open a text/image
+editor (by default with Ctrl-t/Ctrl-i respectively) and change the texts/images currently shown in the game. You can add/change/delete
+alternatives. If there is more than one alternative the game will randomly pick one of them.</p>
+<p>When you make text changes, don't forget to push the "Save" button. Changes you make in the image editor are saved automatically.</p>
+<p>The changes you make are immediately visible in the game and they are stored in the "mod" directory.</p>
+<p>If you would like to share your changes with others and get them integrated in the main game, just zip up your "mod" folder and post
+it <a href="http://futanaripalace.com/showthread.php?43385-WIP-Lucky-Survivor">on the Futanaripalace message board</a>. Once all your changes
+are integrated in main game, you can delete your "mod" folder.</p>
+<h2>Adding simple events</h2>
+<i>Still no programming knowledge required.</i>
+<p>An event editor is being worked on that will let you create new events from within the game.</p>
+<h2>From advanced events to changes in the game engine</h2>
+<i>Program it yourself or convince a game developer to do it for you, which is not that difficult, if what you want done is good.</i>
+<h2>Setting up development environment</h2>
+<i>-- Fuck it! We'll do it live!</i>
+<p>All the required software is freely available for all common computer platforms (Windows/Mac/Linux).</p>
+<p>The game is written in <b>Java</b> using <b>Eclipse</b> as IDE, <b>git</b> for SCM and <b>github</b> to exchange sources between game developers.</p>
+<dl>
+<dt><b>Java</b></dt>
+<dd>The requirements are the same as for running the game (Java 7 SE), except you must install the <b>JDK</b></dd>
+<dt><b>Eclipse</b></dt>
+<dd>I recommend you get "Eclipse IDE for Java Developers" from <a href="http://www.eclipse.org/downloads/">http://www.eclipse.org/downloads/</a>.</dd>
+<dt><b>git</b></dt>
+<dd>"Eclipse IDE for Java Developers" already comes with EGit which IMHO is the best choice anyways, as it integrates directly in the IDE:</dd>
+<dt><b>github</b></dt>
+<dd>You need to create a free github.com account.</dd>
+</dl>
+The following steps are:
+<ol>
+<li>Create a ssh key pair and upload the public key to github. The github website should guide you how to do this.</li>
+<li>When logged in to github, goto <a href="https://github.com/Lehirti/Lehirti-Game-Engine">https://github.com/Lehirti/Lehirti-Game-Engine</a> and create a fork (There is a "Fork" Button). At /Lehirti/Lehirti-Game-Engine everyone has read access, but only i have write access. Everyone will have read access to the fork you create, but only you will have write access.</li>
+<li>Once the clone is created (at something like https://github.com/[Your Username]/Lehirti-Game-Engine) start Eclipse.</li>
+<li>You now need to create a local clone of your own github project. See <a href="http://www.vogella.com/articles/EGit/article.html#github">http://www.vogella.com/articles/EGit/article.html#github</a> on how to do this</li>
+<li>At one point you will be able to select the existing projects to import. You can choose all of them, but LehirtiEclipsePlugin is not required (it's a started project, but it does nothing, yet and development is on hold).</li>
+<li>Copy the "core", "config" (& "mod") dirs from a regular game installation into the "LuckySurvivor" project root dir (same level as "src") and create the folder "mod/events/bin".</li>
+<li>Right-click LuckySurvivor->run->LuckySurvivor.launch Run As->LuckySurvivor to start the game and verify that everything is working.</li>
+</ol>
+Congratulations. You have successfully set up the build environment. Now you can start hacking.
+<h2>HOW-TO add a new event</h2>
+<i>This taken from a forum post explaining to hasori - the story guy - how he can add "Startscreen" event before the then first event of the game.</i>
+<ol>
+<li>In project "LuckySurvivor" open package intro</li>
+<li>Copy Airport.java into the same package. New name: Startscreen.java</li>
+<li>Open Startscreen.java<br/>
+change this
+<code>
+public class Startscreen extends EventNode<NullState> {
+  public static enum Text implements TextKey {
+    AIRPORT_DESCRIPTION,
+    OPTION_ENTER_BUS,
+    OPTION_SKIP_INTRO;
+  }
+  
+  @Override
+  protected ImgChange updateImageArea() {
+    return ImgChange.setBG(IntroImage.AIRPORT);
+  }
+  
+  @Override
+  protected void doEvent() {
+    setText(Text.AIRPORT_DESCRIPTION);
+    
+    addOption(Key.OPTION_ENTER, Text.OPTION_ENTER_BUS, new Bus());
+    addOption(Key.OPTION_LEAVE, Text.OPTION_SKIP_INTRO, new Plane1_YourSeat());
+  }
+}
+</code>
+to
+<code>
+public class Startscreen extends EventNode<NullState> {
+  public static enum Text implements TextKey {
+    STARTSCREEN_DESCRIPTION,
+    OPTION_START;
+  }
+  
+  @Override
+  protected ImgChange updateImageArea() {
+    return ImgChange.setBG(IntroImage.STARTSCREEN);
+  }
+  
+  @Override
+  protected void doEvent() {
+    setText(Text.STARTSCREEN_DESCRIPTION);
+    
+    addOption(Key.OPTION_ENTER, Text.OPTION_START, new Airport());
+  }
+}
+</code>
+and save Startscreen.java</li>
+<li>Set the cursor in the word IntroImage and press F3. IntroImage.java will be opened. add a new constant with the name "STARTSCREEN" and save IntroImage.java</li>
+<li>Open Main.java. In line 22 change the ending: "new Airport()" to "new Startscreen()". Press Ctrl-Shift-o (or right click on the underlined Startscreen and select "import ..."). Save Main.java</li>
+<li>Now there should be no compile errors (red decorators on the left). Start Main.java and you should be greeted with an empty screen where you can add the Stony-faced intro image and some text before the game starts with Airport event.</li>
+<li>Once everything works as intended, right-click on the LuckySurvivor Project on the left. Select Team->Commit ...<br/>
+A commit dialogue should pop up where you have to enter a commit message (e.g. "Startscreen added") and select which files to add to the commit (think of a commit as a snapshot of the game sources in its current state).<b>They should not be offered anyways, but DO NOT add texts or images (anything from within "core" or "mod" folders) to commits. the git repository is for sources only.</b><br/>
+Your commit should consist of:
+<ol>
+<li>New: Startscreen.java</li>
+<li>Changed: Main.java</li>
+<li>Changed: IntroImage.java</li>
+</ol>
+Select those and hit "commit" (with this you save the snapshot locally)</li>
+<li>Right-click LuckySurvivor Project: Team->Push to Upstream (with this you make your local changes available for others (me))</li>
+</ol>
+</body>
+</html>
