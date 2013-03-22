@@ -26,9 +26,13 @@ import lge.jaxb.ObjectFactory;
 import lge.util.FileUtils;
 import lge.util.PathFinder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 public final class XMLEventsHelper {
+  private static Logger LOGGER = LoggerFactory.getLogger(XMLEventsHelper.class);
+  
   private static final Unmarshaller UNMARSHALLER;
   private static final Marshaller MARSHALLER;
   static {
@@ -368,6 +372,11 @@ public final class XMLEventsHelper {
     if (!sourceFiles.isEmpty()) {
       PathFinder.getModEventsClassDir().mkdirs();
       final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+      if (compiler == null) {
+        LOGGER
+            .warn("Java compiler not available. You are probably using a JRE, not a JDK. As a result, xml events are not available.");
+        return;
+      }
       final List<String> arguments = new LinkedList<>();
       arguments.add("-d");
       arguments.add(PathFinder.getModEventsClassDir().getAbsolutePath());

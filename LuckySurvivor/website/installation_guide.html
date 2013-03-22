@@ -8,7 +8,11 @@
 <h1>Lucky Survivor - Installation Guide</h1>
 <a href="index.html">Main</a>
 <h2>Install Java 7</h2>
-More precisely the Java 7 SE Development Kit. The game will run with the Java Runtime Environment (JRE), but some modding features will only work with the JDK. Since both are free and the JDK includes the JRE it is recommended to only install the JDK
+More precisely the Java 7 SE Development Kit. The game will run with the Java Runtime Environment (JRE), but some modding features will only work with the JDK. Since both are free and the JDK includes the JRE it is recommended to only install the JDK.
+<dl>
+<dt><b>The JDK installation routine is asking me, if i want to install a "Public JRE". Do i want that?</b></dt>
+<dd>If you use Java only for LuckySurvivor, the answer is: No! The JDK comes with a "private" JRE and that's the one you want to use for LuckySuvivor. The public JRE is easier to use, it will "hook" into windows, so a simple double-click on a .jar file will start it, but some modding features of the game will not available with this JRE. You can still install the public JRE, if you want to, but make sure to start the game with private JRE.</dd>
+</dl>
 <h2>Get the game executable</h2>
 This is <b>one</b> .jar file named <b>LuckySurvivor-XY.jar</b>. New versions of the game are released quite frequently, but the file size is less than 1 MB.
 <h2>Get the game content.</h2>
@@ -16,8 +20,10 @@ The game content (texts and images) is release incrementally so you will need <b
 <h2>Put .jar file and .zip files in one directory.</h2>
 <b>Don't</b> unzip the .zip files manually. The game will do it for you and if you don't do it right, the game might not work correctly.
 <h2>Start the game</h2>
-Open a shell/command prompt, change to the directory where you put the game and type <b><code>java -classpath mod/events/bin;LuckySurvivor-XY.jar main.Main</code></b> (replace the LuckySurvivor-XY.jar part with the actual name of your .jar file, of course). On unix-like systems, use a colon, instead of the semicolon.
+Open a shell/command prompt, change to the directory where you put the game and type <b><code>&lt;path_to_your_jdk_java_executable&gt; -jar LuckySurvivor-XY.jar</code></b> (replace the LuckySurvivor-XY.jar part with the actual name of your .jar file, of course).
 <dl>
+<dt><b>What's the path to my "jdk_java_executable"?</b></dt>
+<dd>Probably something like "C:\Program Files\Java\jdk1.7.0_17\jre\bin\java.exe". You also might have a public JRE installed in a path like "C:\Program Files\Java\jre\bin\java.exe". If you want ALL the features, DON'T use the public JRE!</dd>
 <dt><b>Where can i find the command prompt?</b></dt>
 <dd>That depends on your operating system. On Windows XP: 1.open your start menu 2. click the run option 3. enter "cmd" in the dialog box that opens and click "OK". On newer Windows versions legend has it that you can type "cmd" in the search window.</dd>
 <dt><b>When i try to start the game, i get the error "Error: Could not find or load main class main.Main"</b></dt>
