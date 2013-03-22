@@ -54,8 +54,8 @@ Congratulations. You have successfully set up the build environment. Now you can
 <li>Copy Airport.java into the same package. New name: Startscreen.java</li>
 <li>Open Startscreen.java<br/>
 change this
-<code>
-public class Startscreen extends EventNode<NullState> {
+<pre>
+public class Startscreen extends EventNode&lt;NullState&gt; {
   public static enum Text implements TextKey {
     AIRPORT_DESCRIPTION,
     OPTION_ENTER_BUS,
@@ -75,10 +75,10 @@ public class Startscreen extends EventNode<NullState> {
     addOption(Key.OPTION_LEAVE, Text.OPTION_SKIP_INTRO, new Plane1_YourSeat());
   }
 }
-</code>
+</pre>
 to
-<code>
-public class Startscreen extends EventNode<NullState> {
+<pre>
+public class Startscreen extends EventNode&lt;NullState&gt; {
   public static enum Text implements TextKey {
     STARTSCREEN_DESCRIPTION,
     OPTION_START;
@@ -96,7 +96,7 @@ public class Startscreen extends EventNode<NullState> {
     addOption(Key.OPTION_ENTER, Text.OPTION_START, new Airport());
   }
 }
-</code>
+</pre>
 and save Startscreen.java</li>
 <li>Set the cursor in the word IntroImage and press F3. IntroImage.java will be opened. add a new constant with the name "STARTSCREEN" and save IntroImage.java</li>
 <li>Open Main.java. In line 22 change the ending: "new Airport()" to "new Startscreen()". Press Ctrl-Shift-o (or right click on the underlined Startscreen and select "import ..."). Save Main.java</li>

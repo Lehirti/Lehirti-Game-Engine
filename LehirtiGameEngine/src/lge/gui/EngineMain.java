@@ -41,11 +41,9 @@ import lge.state.StaticInitializer;
 import lge.state.StringState;
 import lge.util.ClassFinder;
 import lge.util.ContentUtils;
-import lge.util.FileUtils;
 import lge.util.LogUtils;
 import lge.util.PathFinder;
 import lge.util.PropertyUtils;
-import lge.xmlevents.XMLEventsHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,9 +56,6 @@ public abstract class EngineMain {
     }
     LogUtils.createDefaultLogConfigFileIfMissing();
     System.setProperty("java.util.logging.config.file", "config/logging.properties");
-    
-    FileUtils.copyFile(EngineMain.class.getResourceAsStream("/lge/xmlevents/schema/event.xsd"), PathFinder.EVENT_XSD);
-    XMLEventsHelper.buildAll();
   }
   
   private static final Logger LOGGER = LoggerFactory.getLogger(EngineMain.class);

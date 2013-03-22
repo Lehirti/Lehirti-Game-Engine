@@ -23,7 +23,7 @@
         </propertyfile>
         <jar destfile="../../../luckysurvivor/LuckySurvivor.jar" filesetmanifest="mergewithoutmain">
             <manifest>
-                <attribute name="Main-Class" value="main.Main"/>
+                <attribute name="Main-Class" value="main.PreMain"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset dir="../bin"/>

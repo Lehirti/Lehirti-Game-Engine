@@ -6,3 +6,4 @@
 /logs
 save
 /savegames
+hs_err_pid*.log
