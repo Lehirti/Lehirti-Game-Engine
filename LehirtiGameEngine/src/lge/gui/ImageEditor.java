@@ -25,8 +25,8 @@ import javax.swing.event.DocumentListener;
 
 import lge.gui.WindowLocation.WinLoc;
 import lge.res.images.ImageKey;
-import lge.res.images.ImageWrapper;
 import lge.res.images.ImageProxy.ProxyProps;
+import lge.res.images.ImageWrapper;
 import lge.util.PathFinder;
 
 import org.slf4j.Logger;
@@ -125,8 +125,11 @@ public class ImageEditor extends JFrame implements ActionListener {
   JButton selectedAlternative = new JButton();
   
   JLabel newAlternativeLabel = new JLabel("Alternative");
-  final JComboBox contentDir;
+  final JComboBox<String> contentDir;
   JButton newAlternative = new JButton("Add");
+  
+  JLabel attributeLabel = new JLabel("Attribute");
+  JComboBox<String> attribute = new JComboBox<>(new String[] { "", "Day", "Dusk/Dawn", "Night" });
   
   JLabel deleteLabel = new JLabel("Mark as");
   JButton delete = new JButton("Deleted");
@@ -146,9 +149,9 @@ public class ImageEditor extends JFrame implements ActionListener {
       setImage();
     }
     
-    this.contentDir = new JComboBox(PathFinder.getContentDirs());
+    this.contentDir = new JComboBox<>(PathFinder.getContentDirs());
     
-    this.controls.setLayout(new GridLayout(11, 2));
+    this.controls.setLayout(new GridLayout(12, 2));
     this.controls.setPreferredSize(new Dimension(300, 800));
     this.controls.add(this.alignXlabel);
     this.controls.add(this.alignX);
@@ -178,6 +181,8 @@ public class ImageEditor extends JFrame implements ActionListener {
     this.controls.add(this.contentDir);
     this.controls.add(this.newAlternativeLabel);
     this.controls.add(this.newAlternative);
+    this.controls.add(this.attributeLabel);
+    this.controls.add(this.attribute);
     this.controls.add(this.deleteLabel);
     this.controls.add(this.delete);
     
@@ -192,6 +197,7 @@ public class ImageEditor extends JFrame implements ActionListener {
     this.selectedImage.addActionListener(this);
     this.selectedAlternative.addActionListener(this);
     this.newAlternative.addActionListener(this);
+    this.attribute.addActionListener(this);
     this.delete.addActionListener(this);
     
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -267,8 +273,17 @@ public class ImageEditor extends JFrame implements ActionListener {
       case SCALE_Y:
         this.scaleY.setText(value);
         break;
+      case ATTRIBUTE:
+        this.attribute.setSelectedItem(value);
       }
     }
+    if (this.selectedAlternativeNr == 0) {
+      this.attribute.setEnabled(false);
+      this.attribute.setSelectedIndex(0);
+    } else {
+      this.attribute.setEnabled(true);
+    }
+    
     repaint();
     this.gameImageArea.repaint();
   }
@@ -382,6 +397,10 @@ public class ImageEditor extends JFrame implements ActionListener {
     final String scaleYstring = this.scaleY.getText();
     if (!scaleYstring.equals("")) {
       placement.put(ProxyProps.SCALE_Y.name(), scaleYstring);
+    }
+    final String attributeString = (String) this.attribute.getSelectedItem();
+    if (!attributeString.equals("")) {
+      placement.put(ProxyProps.ATTRIBUTE.name(), attributeString);
     }
     this.allImages.get(this.selectedImageNr).setPlacement(placement);
     repaint();

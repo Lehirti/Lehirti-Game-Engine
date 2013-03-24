@@ -25,7 +25,8 @@ public class ImageProxy {
     POS_X, // double; in percent; left to right
     POS_Y, // double; in percent; top to bottom
     SCALE_X, // double; in percent of available x resolution
-    SCALE_Y; // double; in percent of available y resolution
+    SCALE_Y, // double; in percent of available y resolution
+    ATTRIBUTE; // String; additional attribute
   }
   
   private final ImageKey key;
