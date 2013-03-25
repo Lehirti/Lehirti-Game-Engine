@@ -27,6 +27,7 @@ import lge.gui.WindowLocation.WinLoc;
 import lge.res.images.ImageKey;
 import lge.res.images.ImageProxy.ProxyProps;
 import lge.res.images.ImageWrapper;
+import lge.state.DateTime.DayPhase;
 import lge.util.PathFinder;
 
 import org.slf4j.Logger;
@@ -129,7 +130,17 @@ public class ImageEditor extends JFrame implements ActionListener {
   JButton newAlternative = new JButton("Add");
   
   JLabel attributeLabel = new JLabel("Attribute");
-  JComboBox<String> attribute = new JComboBox<>(new String[] { "", "Day", "Dusk/Dawn", "Night" });
+  
+  private final String[] dayPhases = new String[DayPhase.values().length + 1];
+  {
+    this.dayPhases[0] = "";
+    int i = 1;
+    for (final DayPhase phase : DayPhase.values()) {
+      this.dayPhases[i++] = phase.name();
+    }
+  }
+  
+  JComboBox<String> attribute = new JComboBox<>(this.dayPhases);
   
   JLabel deleteLabel = new JLabel("Mark as");
   JButton delete = new JButton("Deleted");

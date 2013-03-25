@@ -46,6 +46,8 @@ public class ImageProxy {
   private Double scaleX = null;
   private Double scaleY = null;
   
+  private String attribute = null;
+  
   private ImageProxy(final File imageProxyFile, final File imageFile, final BufferedImage image) {
     this.key = null;
     setPlacement(imageProxyFile);
@@ -123,6 +125,8 @@ public class ImageProxy {
     if (sizeYString != null) {
       this.scaleY = Double.valueOf(sizeYString);
     }
+    
+    this.attribute = placementProps.getProperty(ProxyProps.ATTRIBUTE.name());
   }
   
   public void setPlacement(final Properties placement) {
@@ -495,5 +499,9 @@ public class ImageProxy {
     deletedPlacement.put("Deleted", "true");
     setPlacement(deletedPlacement);
     writeProxyFile();
+  }
+  
+  public String getAttribute() {
+    return this.attribute;
   }
 }

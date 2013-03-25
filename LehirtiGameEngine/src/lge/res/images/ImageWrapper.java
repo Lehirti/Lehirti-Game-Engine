@@ -3,10 +3,13 @@ package lge.res.images;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
 import lge.res.ResourceState;
+import lge.state.DateTime;
+import lge.state.DateTime.DayPhase;
 import lge.state.State;
 import lge.util.PathFinder;
 
@@ -112,6 +115,39 @@ public final class ImageWrapper {
       this.currentlyDisplayedImageNr %= this.proxies.size();
       this.image = this.proxies.get(this.currentlyDisplayedImageNr);
     }
+  }
+  
+  public boolean pinRandomTimeOfDayImage() {
+    final DayPhase dayPhase = DateTime.getDayPhase();
+    final List<ImageProxy> allImagesForTimeOfDay = getAllImagesForTimeOfDay(dayPhase);
+    if (allImagesForTimeOfDay.contains(this.image)) {
+      return false; // we can keep displaying the current image; nothing to do
+    }
+    // time-of-day has changed; we must display another image
+    this.image = allImagesForTimeOfDay.get(State.DIE.nextInt(allImagesForTimeOfDay.size()));
+    this.currentlyDisplayedImageNr = this.proxies.indexOf(this.image);
+    
+    return true;
+  }
+  
+  private List<ImageProxy> getAllImagesForTimeOfDay(final DayPhase dayPhase) {
+    final List<ImageProxy> imagesForTimeOfDay = new LinkedList<>();
+    for (final ImageProxy proxy : this.proxies) {
+      if (dayPhase.name().equals(proxy.getAttribute())) {
+        imagesForTimeOfDay.add(proxy);
+      }
+    }
+    if (!imagesForTimeOfDay.isEmpty()) {
+      return imagesForTimeOfDay;
+    }
+    
+    // no exact match images found; using defaults
+    for (final ImageProxy proxy : this.proxies) {
+      if (proxy.getAttribute() == null) {
+        imagesForTimeOfDay.add(proxy);
+      }
+    }
+    return imagesForTimeOfDay;
   }
   
   public void setPlacement(final Properties placement) {

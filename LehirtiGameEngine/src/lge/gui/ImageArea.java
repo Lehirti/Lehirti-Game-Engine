@@ -19,8 +19,8 @@ import javax.swing.JComponent;
 
 import lge.res.ResourceCache;
 import lge.res.images.ImageKey;
-import lge.res.images.ImageWrapper;
 import lge.res.images.ImageKey.IO;
+import lge.res.images.ImageWrapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -211,11 +211,24 @@ public class ImageArea extends JComponent {
     final ImageWrapper bgImage;
     if (imageKey != null) {
       bgImage = ResourceCache.get(imageKey);
-      bgImage.pinRandomImage();
+      bgImage.pinRandomTimeOfDayImage();
     } else {
       bgImage = null;
     }
     this.backgroundImage.set(bgImage);
+  }
+  
+  /**
+   * @return true, if image has changed due to a change in time-of-day
+   */
+  public boolean updateBackgroundImageForTimeOfDay() {
+    LOGGER.debug("Updating background imag for time-of-day");
+    final ImageWrapper imageWrapper = this.backgroundImage.get();
+    if (imageWrapper != null) {
+      return imageWrapper.pinRandomTimeOfDayImage();
+    } else {
+      return false;
+    }
   }
   
   public void setImage(final ImageKey imageKey) {
