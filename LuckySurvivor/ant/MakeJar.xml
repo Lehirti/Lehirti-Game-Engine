@@ -35,6 +35,7 @@
         </jar>
         <java classname="org.lehirti.tools.ExportCoreContent">
             <classpath>
+                <pathelement path="../../JAXBInterfaces/bin"/>
                 <pathelement path="../../LehirtiTools/bin"/>
                 <pathelement path="../../LehirtiGameEngine/bin"/>
                 <pathelement path="../bin"/>
@@ -51,5 +52,15 @@
         <apply executable="update_website.sh" osfamily="unix" failonerror="false">
             <fileset dir="." includes="version"/>
         </apply>
+        <java classname="org.lehirti.tools.ContentChecker">
+            <classpath>
+                <pathelement path="../../JAXBInterfaces/bin"/>
+                <pathelement path="../../LehirtiTools/bin"/>
+                <pathelement path="../../LehirtiGameEngine/bin"/>
+                <pathelement path="../bin"/>
+                <pathelement location="../../LehirtiGameEngine/lib/slf4j-api-1.6.4.jar"/>
+                <pathelement location="../../LehirtiGameEngine/lib/slf4j-jdk14-1.6.4.jar"/>
+            </classpath>
+        </java>
     </target>
 </project>

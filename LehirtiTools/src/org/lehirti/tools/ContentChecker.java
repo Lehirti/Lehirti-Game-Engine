@@ -11,12 +11,14 @@ import lge.res.text.TextKey;
 import lge.res.text.TextWrapper;
 import lge.util.ClassFinder;
 import lge.util.ContentUtils;
+import lge.util.FileUtils;
 import lge.util.PathFinder;
 import main.C;
 
-
 public final class ContentChecker {
   public static void main(final String[] args) {
+    final StringBuilder websiteMissingeImageList = new StringBuilder();
+    
     for (final C content : C.values()) {
       PathFinder.registerContentDir(content.name());
     }
@@ -25,11 +27,29 @@ public final class ContentChecker {
     int iMod = 0;
     for (final ImageWrapper imageWrapper : ContentUtils.getImageWrappers(false)) {
       if (imageWrapper.getResourceState() == ResourceState.MISSING) {
+        websiteMissingeImageList.append("<li>");
+        websiteMissingeImageList.append(imageWrapper.toString());
+        websiteMissingeImageList.append("</li>\n");
         System.out.println(ResourceState.MISSING + " image: " + imageWrapper.toString());
       } else {
         iCore += imageWrapper.getNrOfCoreImages();
         iMod += imageWrapper.getNrOfModImages();
       }
+    }
+    
+    File missing_images = new File(".").getAbsoluteFile();
+    while (!containsLuckySurvivorDir(missing_images.listFiles())) {
+      missing_images = missing_images.getParentFile();
+    }
+    missing_images = missing_images.getParentFile();
+    missing_images = new File(missing_images, "luckysurvivor");
+    missing_images = new File(missing_images, "missing_images.html");
+    if (missing_images.exists()) {
+      final String missingImagesTemplate = FileUtils.readContentAsString(missing_images);
+      final int indexOf = missingImagesTemplate.indexOf("MIL");
+      final String missingImagesContent = missingImagesTemplate.substring(0, indexOf)
+          + websiteMissingeImageList.toString() + missingImagesTemplate.substring(indexOf + 3);
+      FileUtils.writeContentToFile(missing_images, missingImagesContent);
     }
     
     System.out.println();
@@ -75,6 +95,15 @@ public final class ContentChecker {
     System.out.println(tCore + " core texts.");
     System.out.println(tMod + " mod texts.");
     System.out.println("DONE.");
+  }
+  
+  private static boolean containsLuckySurvivorDir(final File[] files) {
+    for (final File file : files) {
+      if (file.isDirectory() && file.getName().equals("LuckySurvivor")) {
+        return true;
+      }
+    }
+    return false;
   }
   
   private static void checkForOrphans(final File baseDir) {
