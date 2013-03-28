@@ -37,6 +37,14 @@ public class GameKeyListener implements KeyListener {
     try {
       final Key key = Key.getByCodeAndModifiers(e.getKeyCode(), e.getModifiers());
       
+      // the DONT_PANIC key takes precedence over all other actions, so it's really a don't panic button
+      if (key == Key.DONT_PANIC) {
+        // try to save, but don't block, if it's not possible ...
+        this.main.saveGame(false);
+        // ... and exit
+        System.exit(0);
+      }
+      
       if (key == null || key == Key.TEXT_INPUT_OPTION_ENTER) {
         // key unrelated to core game
         
@@ -75,7 +83,7 @@ public class GameKeyListener implements KeyListener {
       }
       
       if (key == Key.SAVE) {
-        this.main.saveGame();
+        this.main.saveGame(true);
       } else if (key == Key.LOAD) {
         final List<File> allSavegames = PathFinder.getAllSavegames();
         if (allSavegames.isEmpty()) {
@@ -124,6 +132,7 @@ public class GameKeyListener implements KeyListener {
   }
   
   private static void editTexts() {
-    new TextEditor(EngineMain.getCurrentTextArea(), EngineMain.getCurrentOptionArea(), EngineMain.getCurrentTextArea().getAllTexts());
+    new TextEditor(EngineMain.getCurrentTextArea(), EngineMain.getCurrentOptionArea(), EngineMain.getCurrentTextArea()
+        .getAllTexts());
   }
 }

@@ -10,5 +10,6 @@ public enum TextFunction implements TextKey {
   TEXT_EDITOR,
   SAVE,
   LOAD,
+  SAVE_AND_EXIT_WITHOUT_ASKING,
   
 }

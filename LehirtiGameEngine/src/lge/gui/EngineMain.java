@@ -231,12 +231,15 @@ public abstract class EngineMain {
     }
   }
   
-  protected void saveGame() {
+  protected void saveGame(final boolean notify) {
     final File sav = PathFinder.getNewSaveFile(this.flavor, this.build);
     
     try (FileOutputStream fos = new FileOutputStream(sav); ObjectOutputStream oos = new ObjectOutputStream(fos)) {
       if (currentEvent == null || !currentEvent.isLoadSavePoint()) {
         LOGGER.warn("The game cannot be saved right now"); // better notification for user
+        if (notify) {
+          new Notification(MAIN_WINDOW, ResourceCache.get(CommonText.GAME_NOT_SAVED), 1500);
+        }
         return;
       }
       
@@ -274,8 +277,9 @@ public abstract class EngineMain {
       oos.writeObject(currentProgressEvent);
       
       LOGGER.info("Game saved");
-      
-      new Notification(MAIN_WINDOW, ResourceCache.get(CommonText.GAME_SAVED), 1500);
+      if (notify) {
+        new Notification(MAIN_WINDOW, ResourceCache.get(CommonText.GAME_SAVED), 1500);
+      }
       
     } catch (final FileNotFoundException e) {
       LOGGER.error("Savegame " + sav.getAbsolutePath() + " not found for saving", e);
