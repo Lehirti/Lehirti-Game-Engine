@@ -34,6 +34,7 @@ import lge.res.images.CommonImage;
 import lge.res.images.ImageKey;
 import lge.res.images.ImageWrapper;
 import lge.res.text.CommonText;
+import lge.state.AbstractState;
 import lge.state.BoolState;
 import lge.state.IntState;
 import lge.state.State;
@@ -168,14 +169,14 @@ public abstract class EngineMain {
     }
     MAIN_WINDOW.setVisible(true);
     
-    final WinLoc winLoc = WindowLocation.getLocationFor("Main");
+    final WinLoc winLoc = WindowLocation.getLocationFor(EngineMain.class.getSimpleName());
     if (!winLoc.isMax) {
       MAIN_WINDOW.setLocation(winLoc.x, winLoc.y);
       MAIN_WINDOW.setSize(winLoc.width, winLoc.height);
     } else {
       MAIN_WINDOW.setExtendedState(Frame.MAXIMIZED_BOTH);
     }
-    MAIN_WINDOW.addWindowListener(new WindowCloseListener(MAIN_WINDOW, "Main"));
+    MAIN_WINDOW.addWindowListener(new WindowCloseListener(MAIN_WINDOW, EngineMain.class.getSimpleName()));
   }
   
   public static void loadGame(final File sav) {
@@ -305,6 +306,10 @@ public abstract class EngineMain {
     return currentEvent;
   }
   
+  public static synchronized Event<?> getCurrentMainEvent() {
+    return currentEvent;
+  }
+  
   public static synchronized void setCurrentEvent(final Event<?> event) {
     for (final Map.Entry<Key, ImageArea> entry : IMAGE_AREAS.entrySet()) {
       if (entry.getValue() == currentImageArea) {
@@ -420,7 +425,7 @@ public abstract class EngineMain {
         try {
           while (true) {
             final ImageKey nextImageToPreload = imagesToPreload.take();
-            LOGGER.info("Caching image " + nextImageToPreload.getClass().getName() + "." + nextImageToPreload.name());
+            LOGGER.debug("Caching image " + nextImageToPreload.getClass().getName() + "." + nextImageToPreload.name());
             ResourceCache.cache(nextImageToPreload);
           }
         } catch (final InterruptedException e) {
@@ -440,35 +445,23 @@ public abstract class EngineMain {
       LOGGER.debug("Loaded module: {}", module.getName());
     }
     
-    Vector<Class<?>> states = new ClassFinder().findSubclasses(IntState.class.getName());
-    for (final Class<?> intState : states) {
-      if (intState.isEnum()) {
-        State.initIntDefaults((Class<IntState>) intState);
-        if (exportDefaults) {
-          PropertyUtils.setDefaultProperties((Class<IntState>) intState,
-              PropertyUtils.getDefaultProperties((Class<IntState>) intState));
-        }
-      }
-    }
-    
-    states = new ClassFinder().findSubclasses(StringState.class.getName());
-    for (final Class<?> stringState : states) {
-      if (stringState.isEnum()) {
-        State.initStringDefaults((Class<StringState>) stringState);
-        if (exportDefaults) {
-          PropertyUtils.setDefaultProperties((Class<StringState>) stringState,
-              PropertyUtils.getDefaultProperties((Class<StringState>) stringState));
-        }
-      }
-    }
-    
-    states = new ClassFinder().findSubclasses(BoolState.class.getName());
-    for (final Class<?> boolState : states) {
-      if (boolState.isEnum()) {
-        State.initBoolDefaults((Class<BoolState>) boolState);
-        if (exportDefaults) {
-          PropertyUtils.setDefaultProperties((Class<BoolState>) boolState,
-              PropertyUtils.getDefaultProperties((Class<BoolState>) boolState));
+    if (exportDefaults) {
+      final Vector<Class<?>> states = new ClassFinder().findSubclasses(AbstractState.class.getName());
+      for (final Class<?> state : states) {
+        if (state.isEnum()) {
+          if (IntState.class.isAssignableFrom(state)) {
+            State.initIntDefaults((Class<IntState>) state);
+            PropertyUtils.setDefaultProperties((Class<IntState>) state,
+                PropertyUtils.getDefaultProperties((Class<IntState>) state));
+          } else if (StringState.class.isAssignableFrom(state)) {
+            State.initStringDefaults((Class<StringState>) state);
+            PropertyUtils.setDefaultProperties((Class<StringState>) state,
+                PropertyUtils.getDefaultProperties((Class<StringState>) state));
+          } else if (BoolState.class.isAssignableFrom(state)) {
+            State.initBoolDefaults((Class<BoolState>) state);
+            PropertyUtils.setDefaultProperties((Class<BoolState>) state,
+                PropertyUtils.getDefaultProperties((Class<BoolState>) state));
+          }
         }
       }
     }
