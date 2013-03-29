@@ -8,8 +8,8 @@ import lge.gui.EngineMain;
 import lge.gui.Notification;
 import lge.state.State;
 import lge.util.ContentUtils;
-import lge.util.PathFinder;
 import lge.util.ContentUtils.CheckResult;
+import lge.util.PathFinder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

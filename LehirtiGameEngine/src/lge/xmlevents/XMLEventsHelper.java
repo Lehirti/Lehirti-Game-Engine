@@ -2,8 +2,10 @@ package lge.xmlevents;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import javax.tools.JavaCompiler;
@@ -53,6 +55,7 @@ public final class XMLEventsHelper {
       }
       try {
         marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         marshaller.setSchema(schema);
       } catch (final JAXBException e) {
         // TODO Auto-generated catch block
@@ -366,9 +369,21 @@ public final class XMLEventsHelper {
   
   public static void buildAll() {
     final List<File> sourceFiles = new LinkedList<>();
+    
+    // clear classes dir
+    FileUtils.deleteRecursive(PathFinder.getModEventsClassDir());
+    PathFinder.getModEventsClassDir().mkdir();
+    
+    // clear gen-src dir
+    FileUtils.deleteRecursive(PathFinder.getModEventsGensrcDir());
+    PathFinder.getModEventsGensrcDir().mkdir();
+    
+    // re-generate sources from xml
     for (final File xmlFile : FileUtils.getAllFilesRecursive(PathFinder.getModEventsXmlDir())) {
       sourceFiles.addAll(generateSource(xmlFile));
     }
+    
+    // compile sources
     if (!sourceFiles.isEmpty()) {
       PathFinder.getModEventsClassDir().mkdirs();
       final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -388,5 +403,68 @@ public final class XMLEventsHelper {
         // TODO
       }
     }
+  }
+  
+  /**
+   * @return key == FQCN of event; value == JAXB Event class
+   */
+  public static Map<String, Event> readExistingXMLEvents() {
+    return readExistingXMLEvents(PathFinder.getModEventsXmlDir(), "");
+  }
+  
+  public static void writeXMLEvents(final Map<String, Event> xmlEvents, final boolean deleteOld) {
+    final File rootDir = PathFinder.getModEventsXmlDir();
+    if (deleteOld) {
+      FileUtils.deleteRecursive(rootDir);
+      rootDir.mkdir();
+    }
+    for (final Map.Entry<String, Event> xmlEventEntry : xmlEvents.entrySet()) {
+      final File xmlFile = toFile(rootDir, xmlEventEntry.getKey());
+      try {
+        xmlFile.getParentFile().mkdirs();
+        MARSHALLER.setProperty(Marshaller.JAXB_NO_NAMESPACE_SCHEMA_LOCATION, mkDirUps(xmlEventEntry.getKey())
+            + "../../../../config/event.xsd");
+        MARSHALLER.marshal(xmlEventEntry.getValue(), xmlFile);
+      } catch (final JAXBException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+  }
+  
+  private static String mkDirUps(final String path) {
+    String retVal = "";
+    final int nrDirs = path.split("\\.").length - 2;
+    for (int i = 0; i < nrDirs; i++) {
+      retVal += "../";
+    }
+    return retVal;
+  }
+  
+  private static File toFile(final File rootDir, final String path) {
+    File file = rootDir;
+    for (final String pathComponent : path.split("\\.")) {
+      file = new File(file, pathComponent);
+    }
+    file = new File(file.getParentFile(), file.getName() + ".xml");
+    return file;
+  }
+  
+  private static Map<String, Event> readExistingXMLEvents(final File baseDir, final String prefix) {
+    final Map<String, Event> eventMap = new LinkedHashMap<>();
+    for (final File child : baseDir.listFiles()) {
+      if (child.isFile()) {
+        try {
+          final Event event = (Event) UNMARSHALLER.unmarshal(child);
+          eventMap.put(prefix + child.getName().substring(0, child.getName().length() - 4), event);
+        } catch (final JAXBException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      } else if (child.isDirectory()) {
+        eventMap.putAll(readExistingXMLEvents(child, prefix + child.getName() + "."));
+      }
+    }
+    return eventMap;
   }
 }

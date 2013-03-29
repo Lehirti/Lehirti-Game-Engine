@@ -124,8 +124,12 @@ public final class ImageWrapper {
       return false; // we can keep displaying the current image; nothing to do
     }
     // time-of-day has changed; we must display another image
-    this.image = allImagesForTimeOfDay.get(State.DIE.nextInt(allImagesForTimeOfDay.size()));
-    this.currentlyDisplayedImageNr = this.proxies.indexOf(this.image);
+    if (allImagesForTimeOfDay.isEmpty()) {
+      this.image = new ImageProxy(this.key);
+    } else {
+      this.image = allImagesForTimeOfDay.get(State.DIE.nextInt(allImagesForTimeOfDay.size()));
+      this.currentlyDisplayedImageNr = this.proxies.indexOf(this.image);
+    }
     
     return true;
   }

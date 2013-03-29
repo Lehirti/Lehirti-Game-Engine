@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 public final class LoadGameScreenEvent extends EventNode<NullState> {
   private int selectedItem;
   private final List<File> allSavegames;
-  private String nameOfSavegame;
   private final List<ImageKey> allImages = new LinkedList<>();
   
   private static final Logger LOGGER = LoggerFactory.getLogger(LoadGameScreenEvent.class);
@@ -74,7 +73,7 @@ public final class LoadGameScreenEvent extends EventNode<NullState> {
     } catch (final FileNotFoundException e) {
       LOGGER.error("Savegame " + sav.getAbsolutePath() + " not found for loading", e);
     } catch (final IOException e) {
-      LOGGER.error("IOException tryting to load from " + sav.getAbsolutePath(), e);
+      LOGGER.error("IOException trying to load from " + sav.getAbsolutePath(), e);
     } catch (final ClassNotFoundException e) {
       LOGGER.error("Savegame " + sav.getAbsolutePath() + " incompatible with current program version.", e);
     }
@@ -86,7 +85,7 @@ public final class LoadGameScreenEvent extends EventNode<NullState> {
     } catch (final FileNotFoundException e) {
       LOGGER.error("Savegame " + savegame.getAbsolutePath() + " not found for loading", e);
     } catch (final IOException e) {
-      LOGGER.error("IOException tryting to load from " + savegame.getAbsolutePath(), e);
+      LOGGER.error("IOException trying to load from " + savegame.getAbsolutePath(), e);
     }
     return "[Savegame corrupt]";
   }

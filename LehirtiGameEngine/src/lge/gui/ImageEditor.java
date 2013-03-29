@@ -219,14 +219,14 @@ public class ImageEditor extends JFrame implements ActionListener {
     
     setVisible(true);
     
-    final WinLoc winLoc = WindowLocation.getLocationFor("ImageEditor");
+    final WinLoc winLoc = WindowLocation.getLocationFor(ImageEditor.class.getSimpleName());
     if (!winLoc.isMax) {
       setLocation(winLoc.x, winLoc.y);
       setSize(winLoc.width, winLoc.height);
     } else {
       setExtendedState(Frame.MAXIMIZED_BOTH);
     }
-    addWindowListener(new WindowCloseListener(this, "ImageEditor"));
+    addWindowListener(new WindowCloseListener(this, ImageEditor.class.getSimpleName()));
   }
   
   private void setTitle() {

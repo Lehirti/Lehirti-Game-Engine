@@ -38,6 +38,7 @@ public enum Key {
   // image and text editors
   IMAGE_EDITOR(73, InputEvent.CTRL_MASK, TextFunction.IMAGE_EDITOR),
   TEXT_EDITOR(84, InputEvent.CTRL_MASK, TextFunction.TEXT_EDITOR),
+  EVENT_EDITOR(69, InputEvent.CTRL_MASK, TextFunction.EVENT_EDITOR),
   
   // save and load
   SAVE(83, InputEvent.CTRL_MASK, TextFunction.SAVE),

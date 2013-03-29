@@ -14,6 +14,7 @@ import lge.res.ResourceCache;
 import lge.res.text.CommonText;
 import lge.state.InventoryMap;
 import lge.util.PathFinder;
+import lge.xmlevents.EventEditor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,9 @@ public class GameKeyListener implements KeyListener {
       } else if (key == Key.TEXT_EDITOR) {
         editTexts();
         return;
+      } else if (key == Key.EVENT_EDITOR) {
+        editEvents();
+        return;
       } else if (key == Key.CYCLE_TEXT_PAGES) {
         EngineMain.getCurrentTextArea().cycleToNextPage();
         return;
@@ -125,6 +129,11 @@ public class GameKeyListener implements KeyListener {
   
   @Override
   public synchronized void keyTyped(final KeyEvent e) {
+  }
+  
+  private static void editEvents() {
+    new EventEditor(EngineMain.getCurrentMainEvent().getClass().getPackage().getName(), EngineMain
+        .getCurrentMainEvent().getClass().getSimpleName());
   }
   
   private static void editImages() {

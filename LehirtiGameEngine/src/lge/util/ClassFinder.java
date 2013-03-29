@@ -11,6 +11,8 @@ import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -40,11 +42,15 @@ public class ClassFinder {
     refreshLocations();
   }
   
+  public ClassFinder(final String... excludeClasspathsPatterns) {
+    refreshLocations(excludeClasspathsPatterns);
+  }
+  
   /**
    * Rescan the classpath, cacheing all possible file locations.
    */
-  public synchronized final void refreshLocations() {
-    this.classpathLocations = getClasspathLocations();
+  public synchronized final void refreshLocations(final String... excludeClasspathsPatterns) {
+    this.classpathLocations = getClasspathLocations(Arrays.asList(excludeClasspathsPatterns));
   }
   
   /**
@@ -97,7 +103,7 @@ public class ClassFinder {
   /**
    * Determine every URL location defined by the current classpath, and it's associated package name.
    */
-  public synchronized final Map<URL, String> getClasspathLocations() {
+  public synchronized final Map<URL, String> getClasspathLocations(final Collection<String> excludeClasspathsPatterns) {
     final Map<URL, String> map = new TreeMap<>(URL_COMPARATOR);
     File file = null;
     
@@ -106,8 +112,13 @@ public class ClassFinder {
     // System.out.println("classpath=" + classpath);
     
     final StringTokenizer st = new StringTokenizer(classpath, pathSep);
-    while (st.hasMoreTokens()) {
+    NEXT_TOKEN: while (st.hasMoreTokens()) {
       final String path = st.nextToken();
+      for (final String pattern : excludeClasspathsPatterns) {
+        if (path.matches(pattern)) {
+          continue NEXT_TOKEN;
+        }
+      }
       file = new File(path);
       include(null, file, map);
     }
