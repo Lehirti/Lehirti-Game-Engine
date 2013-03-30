@@ -1,6 +1,8 @@
 package lge.xmlevents;
 
 import java.awt.Dimension;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -12,24 +14,25 @@ import lge.jaxb.KeyType;
 public class ExtensionPanel extends JPanel {
   private static final long serialVersionUID = 1L;
   
-  private final JTextField event = new JTextField();
-  private final JTextField key = new JTextField();
+  private final JEvent event;
+  private final JKey key = new JKey();
   private final JTextField text = new JTextField();
   
-  public ExtensionPanel(final Extension ext) {
+  public ExtensionPanel(final Extension ext, final List<String> allClassEvents) {
     add(new JLabel("Extension"));
+    final String[] possibleEvents = allClassEvents.toArray(new String[allClassEvents.size()]);
+    Arrays.sort(possibleEvents);
+    this.event = new JEvent(possibleEvents, false);
     final String eventText = ext.getEvent();
     if (eventText != null) {
-      this.event.setText(eventText);
+      this.event.setSelectedItem(eventText);
     }
-    this.event.setPreferredSize(new Dimension(400, 16));
     add(this.event);
     
     final KeyType keyText = ext.getKey();
     if (keyText != null) {
-      this.key.setText(keyText.name());
+      this.key.setSelectedItem(keyText);
     }
-    this.key.setPreferredSize(new Dimension(32, 16));
     add(this.key);
     
     final String textText = ext.getText();
@@ -42,9 +45,9 @@ public class ExtensionPanel extends JPanel {
   
   public Extension getExtension() {
     final Extension ext = new Extension();
-    ext.setEvent(this.event.getText());
+    ext.setEvent((String) this.event.getSelectedItem());
     try {
-      final KeyType kt = KeyType.valueOf(this.key.getText());
+      final KeyType kt = (KeyType) this.key.getSelectedItem();
       ext.setKey(kt);
     } catch (final Exception ignore) {
       

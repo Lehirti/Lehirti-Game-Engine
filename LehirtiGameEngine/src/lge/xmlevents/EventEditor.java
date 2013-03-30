@@ -87,9 +87,14 @@ public class EventEditor extends JFrame implements ActionListener {
       public void valueChanged(final ListSelectionEvent e) {
         final String fqcn = EventEditor.this.xmlElements.getSelectedValue();
         if (fqcn != null) {
-          final Event event = EventEditor.this.allXMLEvents.get(fqcn);
-          EventEditor.this.setCurrentEvent(event, fqcn);
-          setCurrentEventToScreen();
+          if (EventEditor.this.eventComponent.containsValidEvent()) {
+            final Event event = EventEditor.this.allXMLEvents.get(fqcn);
+            EventEditor.this.setCurrentEvent(event, fqcn);
+            setCurrentEventToScreen();
+          } else {
+            EventEditor.this.xmlElements.setSelectedValue(EventEditor.this.currentEventPackage + "."
+                + EventEditor.this.currentEventName, true);
+          }
         }
       }
     };
@@ -185,7 +190,8 @@ public class EventEditor extends JFrame implements ActionListener {
     if (this.eventComponent != null) {
       this.all.remove(this.eventComponent);
     }
-    this.eventComponent = new EventPanel(this.currentEventPackage, this.currentEventName, this.currentEvent);
+    this.eventComponent = new EventPanel(this.currentEventPackage, this.currentEventName, this.currentEvent,
+        this.allClassEvents, this.allCreatableClassEvents, this.allXMLEvents.keySet());
     this.all.add(this.eventComponent, BorderLayout.CENTER);
     validate();
     repaint();

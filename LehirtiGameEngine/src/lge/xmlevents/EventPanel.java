@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -15,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.xml.bind.JAXBException;
 
 import lge.jaxb.Event;
 import lge.jaxb.Event.Extensions;
@@ -49,7 +51,8 @@ public class EventPanel extends JPanel {
   private final JPanel options = new JPanel();
   private final JButton addOptionButton = new JButton("Add option");
   
-  public EventPanel(final String packageName, final String eventName, final Event event) {
+  public EventPanel(final String packageName, final String eventName, final Event event,
+      final List<String> allClassEvents, final List<String> allCreatableClassEvents, final Set<String> allXMLEvents) {
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     
     addTextFieldWithLabel("Package name", this.packageName, packageName);
@@ -62,15 +65,15 @@ public class EventPanel extends JPanel {
     final Extensions exts = event.getExtensions();
     if (exts != null) {
       for (final Extension ext : exts.getExtension()) {
-        this.extensions.add(new ExtensionPanel(ext));
+        this.extensions.add(new ExtensionPanel(ext, allClassEvents));
       }
     }
     this.addExtentionsButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
-        EventPanel.this.extensions.add(new ExtensionPanel(new Extension()));
+        EventPanel.this.extensions.add(new ExtensionPanel(new Extension(), allClassEvents));
+        EventPanel.this.extensions.validate();
         EventPanel.this.validate();
-        EventPanel.this.doLayout();
         EventPanel.this.repaint();
       }
     });
@@ -103,8 +106,8 @@ public class EventPanel extends JPanel {
       @Override
       public void actionPerformed(final ActionEvent e) {
         EventPanel.this.fgImages.add(new FGImagePanel(""));
+        EventPanel.this.fgImages.validate();
         EventPanel.this.validate();
-        EventPanel.this.doLayout();
         EventPanel.this.repaint();
       }
     });
@@ -122,8 +125,8 @@ public class EventPanel extends JPanel {
       @Override
       public void actionPerformed(final ActionEvent e) {
         EventPanel.this.texts.add(new TextPanel(""));
+        EventPanel.this.texts.validate();
         EventPanel.this.validate();
-        EventPanel.this.doLayout();
         EventPanel.this.repaint();
       }
     });
@@ -134,15 +137,15 @@ public class EventPanel extends JPanel {
     final Options opts = event.getOptions();
     if (opts != null) {
       for (final Option opt : opts.getOption()) {
-        this.options.add(new OptionPanel(opt));
+        this.options.add(new OptionPanel(opt, allCreatableClassEvents, allXMLEvents));
       }
     }
     this.addOptionButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
-        EventPanel.this.options.add(new OptionPanel(new Option()));
+        EventPanel.this.options.add(new OptionPanel(new Option(), allCreatableClassEvents, allXMLEvents));
+        EventPanel.this.options.validate();
         EventPanel.this.validate();
-        EventPanel.this.doLayout();
         EventPanel.this.repaint();
       }
     });
@@ -229,6 +232,18 @@ public class EventPanel extends JPanel {
     event.setOptions(evOptions);
     
     return event;
+  }
+  
+  public boolean containsValidEvent() {
+    final Event event = getEvent();
+    try {
+      XMLEventsHelper.validate(event);
+      return true;
+    } catch (final JAXBException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+      return false;
+    }
   }
   
   @Override

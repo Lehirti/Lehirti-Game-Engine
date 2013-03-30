@@ -1,6 +1,8 @@
 package lge.xmlevents;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -162,7 +164,7 @@ public final class XMLEventsHelper {
     final StringBuilder sb = new StringBuilder();
     sb.append("    e.addOption(");
     final KeyType key = ext.getKey();
-    if (key != null) {
+    if (key != null && key != KeyType.ANY) {
       sb.append("Key.OPTION_" + key.name() + ", ");
     }
     sb.append(getShortRef(eventName + ".Text", ext.getText()) + ", new ");
@@ -176,7 +178,7 @@ public final class XMLEventsHelper {
     for (final Option option : options) {
       sb.append("    addOption(");
       final KeyType key = option.getKey();
-      if (key != null) {
+      if (key != null && key != KeyType.ANY) {
         sb.append("Key.OPTION_" + key.name() + ", ");
       }
       sb.append(getShortRef("Text", option.getText()) + ", new ");
@@ -364,6 +366,9 @@ public final class XMLEventsHelper {
   }
   
   private static boolean isInternalRef(final String reference) {
+    if (reference == null) {
+      return false;
+    }
     return reference.matches("[A-Z_]+");
   }
   
@@ -442,6 +447,15 @@ public final class XMLEventsHelper {
         e.printStackTrace();
       }
     }
+  }
+  
+  public static void validate(final Event eventToValidate) throws JAXBException {
+    MARSHALLER.marshal(eventToValidate, new OutputStream() {
+      @Override
+      public void write(final int b) throws IOException {
+        // do nothing, since we only want to validate eventToValidate
+      }
+    });
   }
   
   private static String mkDirUps(final String path) {
