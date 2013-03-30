@@ -229,8 +229,14 @@ public final class XMLEventsHelper {
         } else {
           if (!fg.isEmpty()) {
             sb.append("    return ImgChange.setBG(null).addForeground(");
+            boolean first = true;
             for (final String fgImage : fg) {
-              sb.append(", " + getShortRef("Image", fgImage));
+              if (first) {
+                first = false;
+              } else {
+                sb.append(", ");
+              }
+              sb.append(getShortRef("Image", fgImage));
             }
             sb.append(");");
           } else {
@@ -249,8 +255,14 @@ public final class XMLEventsHelper {
           sb.append("    return ImgChange.setBG(");
           sb.append(getShortRef("Image", bg));
           sb.append(").addForeground(");
+          boolean first = true;
           for (final String fgImage : fg) {
-            sb.append(", " + getShortRef("Image", fgImage));
+            if (first) {
+              first = false;
+            } else {
+              sb.append(", ");
+            }
+            sb.append(getShortRef("Image", fgImage));
           }
           sb.append(");");
         }
