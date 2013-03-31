@@ -39,7 +39,7 @@ public class EventPanel extends JPanel {
   
   private final JCheckBox clearBG = new JCheckBox();
   private final JCheckBox clearFG = new JCheckBox();
-  private final JTextField bgImage = new JTextField();
+  private final JImageOrTextRef bgImage;
   private final JPanel bgImageContainer = new JPanel();
   
   private final JPanel fgImages = new JPanel();
@@ -52,7 +52,8 @@ public class EventPanel extends JPanel {
   private final JButton addOptionButton = new JButton("Add option");
   
   public EventPanel(final String packageName, final String eventName, final Event event,
-      final List<String> allClassEvents, final List<String> allCreatableClassEvents, final Set<String> allXMLEvents) {
+      final List<String> allClassEvents, final List<String> allCreatableClassEvents, final Set<String> allXMLEvents,
+      final String[] allExternalTextRefs, final String[] allExternalImageRefs) {
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     
     addTextFieldWithLabel("Package name", this.packageName, packageName);
@@ -65,13 +66,13 @@ public class EventPanel extends JPanel {
     final Extensions exts = event.getExtensions();
     if (exts != null) {
       for (final Extension ext : exts.getExtension()) {
-        this.extensions.add(new ExtensionPanel(ext, allClassEvents));
+        this.extensions.add(new ExtensionPanel(ext, allClassEvents, allExternalTextRefs));
       }
     }
     this.addExtentionsButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
-        EventPanel.this.extensions.add(new ExtensionPanel(new Extension(), allClassEvents));
+        EventPanel.this.extensions.add(new ExtensionPanel(new Extension(), allClassEvents, allExternalTextRefs));
         EventPanel.this.extensions.validate();
         EventPanel.this.validate();
         EventPanel.this.repaint();
@@ -90,22 +91,22 @@ public class EventPanel extends JPanel {
     this.bgImageContainer.add(new JLabel("Clear Foreground"));
     this.bgImageContainer.add(this.clearFG);
     this.bgImageContainer.add(new JLabel("Background image"));
+    this.bgImage = new JImageOrTextRef(allExternalImageRefs);
     this.bgImageContainer.add(this.bgImage);
     final String bg = imgs.getBg();
     if (bg != null) {
-      this.bgImage.setText(bg);
+      this.bgImage.setSelectedItem(bg);
     }
-    this.bgImage.setPreferredSize(new Dimension(500, 16));
     
     this.fgImages.setLayout(new FlowLayout());
     add(this.fgImages);
     for (final String fg : imgs.getFg()) {
-      this.fgImages.add(new FGImagePanel(fg));
+      this.fgImages.add(new FGImagePanel(fg, allExternalImageRefs));
     }
     this.addFGImageButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
-        EventPanel.this.fgImages.add(new FGImagePanel(""));
+        EventPanel.this.fgImages.add(new FGImagePanel("", allExternalImageRefs));
         EventPanel.this.fgImages.validate();
         EventPanel.this.validate();
         EventPanel.this.repaint();
@@ -118,13 +119,13 @@ public class EventPanel extends JPanel {
     final Event.Texts evTexts = event.getTexts();
     if (evTexts != null) {
       for (final String text : evTexts.getText()) {
-        this.texts.add(new TextPanel(text));
+        this.texts.add(new TextPanel(text, allExternalTextRefs));
       }
     }
     this.addtextButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
-        EventPanel.this.texts.add(new TextPanel(""));
+        EventPanel.this.texts.add(new TextPanel("", allExternalTextRefs));
         EventPanel.this.texts.validate();
         EventPanel.this.validate();
         EventPanel.this.repaint();
@@ -137,13 +138,15 @@ public class EventPanel extends JPanel {
     final Options opts = event.getOptions();
     if (opts != null) {
       for (final Option opt : opts.getOption()) {
-        this.options.add(new OptionPanel(opt, allCreatableClassEvents, allXMLEvents));
+        this.options.add(new OptionPanel(opt, allCreatableClassEvents, allXMLEvents, allClassEvents,
+            allExternalTextRefs));
       }
     }
     this.addOptionButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
-        EventPanel.this.options.add(new OptionPanel(new Option(), allCreatableClassEvents, allXMLEvents));
+        EventPanel.this.options.add(new OptionPanel(new Option(), allCreatableClassEvents, allXMLEvents,
+            allClassEvents, allExternalTextRefs));
         EventPanel.this.options.validate();
         EventPanel.this.validate();
         EventPanel.this.repaint();
@@ -200,7 +203,7 @@ public class EventPanel extends JPanel {
     final Images imgs = new Images();
     imgs.setClearBackground(Boolean.valueOf(this.clearBG.isSelected()));
     imgs.setClearForeground(Boolean.valueOf(this.clearFG.isSelected()));
-    final String bgImg = this.bgImage.getText();
+    final String bgImg = (String) this.bgImage.getSelectedItem();
     if (bgImg.trim().length() > 0) {
       imgs.setBg(bgImg);
     }

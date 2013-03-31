@@ -4,6 +4,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import lge.res.images.ImageKey;
+import lge.res.text.TextKey;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,5 +46,22 @@ public final class EventClassHelper {
       fqcnOfAllEvents.add(eventClass.getName());
     }
     return fqcnOfAllEvents;
+  }
+  
+  public static void fill(final List<String> allExternalTextRefs, final List<String> allExternalImageRefs) {
+    final Map<Class<?>, List<Class<?>>> eventClassesPerSuperClass = new ClassFinder(".*mod.events.bin").findSubclasses(
+        TextKey.class, ImageKey.class);
+    _fill(allExternalImageRefs, eventClassesPerSuperClass.get(ImageKey.class));
+    _fill(allExternalTextRefs, eventClassesPerSuperClass.get(TextKey.class));
+  }
+  
+  private static void _fill(final List<String> allExternalRefs, final List<Class<?>> refEnumClasses) {
+    for (final Class<?> refEnumClass : refEnumClasses) {
+      if (refEnumClass.isEnum()) {
+        for (final Enum<?> enumConstant : (Enum<?>[]) refEnumClass.getEnumConstants()) {
+          allExternalRefs.add(refEnumClass.getName().replaceAll("\\$", ".") + "." + enumConstant.name());
+        }
+      }
+    }
   }
 }

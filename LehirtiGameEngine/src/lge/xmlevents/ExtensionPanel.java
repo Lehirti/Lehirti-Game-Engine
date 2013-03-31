@@ -2,11 +2,11 @@ package lge.xmlevents;
 
 import java.awt.Dimension;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import lge.jaxb.Event.Extensions.Extension;
 import lge.jaxb.KeyType;
@@ -16,13 +16,13 @@ public class ExtensionPanel extends JPanel {
   
   private final JEvent event;
   private final JKey key = new JKey();
-  private final JTextField text = new JTextField();
+  private final JImageOrTextRef text;
   
-  public ExtensionPanel(final Extension ext, final List<String> allClassEvents) {
+  public ExtensionPanel(final Extension ext, final List<String> allClassEvents, final String[] allExternalTextRefs) {
     add(new JLabel("Extension"));
     final String[] possibleEvents = allClassEvents.toArray(new String[allClassEvents.size()]);
     Arrays.sort(possibleEvents);
-    this.event = new JEvent(possibleEvents, false);
+    this.event = new JEvent(possibleEvents, Collections.<String> emptyList(), false);
     final String eventText = ext.getEvent();
     if (eventText != null) {
       this.event.setSelectedItem(eventText);
@@ -35,9 +35,10 @@ public class ExtensionPanel extends JPanel {
     }
     add(this.key);
     
+    this.text = new JImageOrTextRef(allExternalTextRefs);
     final String textText = ext.getText();
     if (textText != null) {
-      this.text.setText(textText);
+      this.text.setSelectedItem(textText);
     }
     this.text.setPreferredSize(new Dimension(400, 16));
     add(this.text);
@@ -52,7 +53,7 @@ public class ExtensionPanel extends JPanel {
     } catch (final Exception ignore) {
       
     }
-    ext.setText(this.text.getText());
+    ext.setText((String) this.text.getSelectedItem());
     return ext;
   }
   

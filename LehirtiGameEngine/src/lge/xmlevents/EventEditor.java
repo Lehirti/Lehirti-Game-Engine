@@ -5,6 +5,8 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +59,9 @@ public class EventEditor extends JFrame implements ActionListener {
    */
   private final List<String> allCreatableClassEvents;
   
+  private final String[] allExternalTextRefs;
+  private final String[] allExternalImageRefs;
+  
   JPanel all = new JPanel();
   
   DefaultListModel<String> xmlElementsModel = new DefaultListModel<>();
@@ -79,8 +84,15 @@ public class EventEditor extends JFrame implements ActionListener {
     }
     
     this.allClassEvents = EventClassHelper.getEventClassFQCNs(false);
-    
     this.allCreatableClassEvents = EventClassHelper.getEventClassFQCNs(true);
+    
+    final List<String> textRefs = new LinkedList<>();
+    final List<String> imageRefs = new LinkedList<>();
+    EventClassHelper.fill(textRefs, imageRefs);
+    this.allExternalImageRefs = imageRefs.toArray(new String[imageRefs.size()]);
+    this.allExternalTextRefs = textRefs.toArray(new String[textRefs.size()]);
+    Arrays.sort(this.allExternalImageRefs);
+    Arrays.sort(this.allExternalTextRefs);
     
     this.xmlElementsListener = new ListSelectionListener() {
       @Override
@@ -191,7 +203,8 @@ public class EventEditor extends JFrame implements ActionListener {
       this.all.remove(this.eventComponent);
     }
     this.eventComponent = new EventPanel(this.currentEventPackage, this.currentEventName, this.currentEvent,
-        this.allClassEvents, this.allCreatableClassEvents, this.allXMLEvents.keySet());
+        this.allClassEvents, this.allCreatableClassEvents, this.allXMLEvents.keySet(), this.allExternalTextRefs,
+        this.allExternalImageRefs);
     this.all.add(this.eventComponent, BorderLayout.CENTER);
     validate();
     repaint();

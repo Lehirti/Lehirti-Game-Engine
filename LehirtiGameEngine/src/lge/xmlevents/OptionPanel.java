@@ -2,12 +2,12 @@ package lge.xmlevents;
 
 import java.awt.Dimension;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import lge.jaxb.Event.Options.Option;
 import lge.jaxb.KeyType;
@@ -16,10 +16,11 @@ public class OptionPanel extends JPanel {
   private static final long serialVersionUID = 1L;
   
   private final JKey key = new JKey();
-  private final JTextField text = new JTextField();
+  private final JImageOrTextRef text;
   private final JEvent event;
   
-  public OptionPanel(final Option opt, final List<String> allCreatableClassEvents, final Set<String> allXMLEvents) {
+  public OptionPanel(final Option opt, final List<String> allCreatableClassEvents, final Set<String> allXMLEvents,
+      final List<String> allClassEvents, final String[] allExternalTextRefs) {
     add(new JLabel("Option"));
     
     final KeyType keyText = opt.getKey();
@@ -28,9 +29,10 @@ public class OptionPanel extends JPanel {
     }
     add(this.key);
     
+    this.text = new JImageOrTextRef(allExternalTextRefs);
     final String textText = opt.getText();
     if (textText != null) {
-      this.text.setText(textText);
+      this.text.setSelectedItem(textText);
     }
     this.text.setPreferredSize(new Dimension(400, 16));
     add(this.text);
@@ -44,8 +46,11 @@ public class OptionPanel extends JPanel {
       allPossibleEvents[allCreatableClassEvents.size() + i] = xmlEvent;
       i++;
     }
+    final List<String> impossibleEvents = new LinkedList<>(allClassEvents);
+    impossibleEvents.removeAll(allCreatableClassEvents);
+    
     Arrays.sort(allPossibleEvents);
-    this.event = new JEvent(allPossibleEvents, true);
+    this.event = new JEvent(allPossibleEvents, impossibleEvents, true);
     final String eventText = opt.getEvent();
     if (eventText != null) {
       this.event.setSelectedItem(eventText);
@@ -62,7 +67,7 @@ public class OptionPanel extends JPanel {
     } catch (final Exception ignore) {
       
     }
-    opt.setText(this.text.getText());
+    opt.setText((String) this.text.getSelectedItem());
     return opt;
   }
 }

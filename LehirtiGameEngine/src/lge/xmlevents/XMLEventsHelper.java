@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.regex.Matcher;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -114,8 +115,8 @@ public final class XMLEventsHelper {
       String source = FileUtils.readContentAsString(XMLEventsHelper.class
           .getResourceAsStream("/lge/xmlevents/Event.java.template"));
       
-      source = source.replaceAll("%packageName%", packageName);
-      source = source.replaceAll("%eventName%", eventName);
+      source = source.replaceAll("%packageName%", Matcher.quoteReplacement(packageName));
+      source = source.replaceAll("%eventName%", Matcher.quoteReplacement(eventName));
       source = replaceImportEvents(source, event);
       source = replaceTexts(source, event);
       source = replaceImages(source, event);
@@ -151,9 +152,9 @@ public final class XMLEventsHelper {
     String source = FileUtils.readContentAsString(XMLEventsHelper.class
         .getResourceAsStream("/lge/xmlevents/EventExtension.java.template"));
     
-    source = source.replaceAll("%packageName%", packageName);
-    source = source.replaceAll("%eventName%", extSimpleName);
-    source = source.replaceAll("%extendedEvent%", ext.getEvent());
+    source = source.replaceAll("%packageName%", Matcher.quoteReplacement(packageName));
+    source = source.replaceAll("%eventName%", Matcher.quoteReplacement(extSimpleName));
+    source = source.replaceAll("%extendedEvent%", Matcher.quoteReplacement(ext.getEvent()));
     source = doExtOption(source, ext, eventName);
     
     FileUtils.writeContentToFile(genSrcExt, source);
@@ -170,7 +171,7 @@ public final class XMLEventsHelper {
     sb.append(getShortRef(eventName + ".Text", ext.getText()) + ", new ");
     sb.append(eventName);
     sb.append("());\n");
-    return source.replaceAll("%doEventExtension%", sb.toString());
+    return source.replaceAll("%doEventExtension%", Matcher.quoteReplacement(sb.toString()));
   }
   
   private static String doEventsOptions(final String source, final List<Option> options) {
@@ -185,7 +186,7 @@ public final class XMLEventsHelper {
       sb.append(getSimpleName(option.getEvent()));
       sb.append("());\n");
     }
-    return source.replaceAll("%doEventsOptions%", sb.toString());
+    return source.replaceAll("%doEventsOptions%", Matcher.quoteReplacement(sb.toString()));
   }
   
   private static String getSimpleName(final String event) {
@@ -205,7 +206,7 @@ public final class XMLEventsHelper {
       sb.append(");\n");
     }
     
-    return source.replaceAll("%doEventsText%", sb.toString());
+    return source.replaceAll("%doEventsText%", Matcher.quoteReplacement(sb.toString()));
   }
   
   private static String updateImageArea(final String source, final Images images) {
@@ -270,7 +271,7 @@ public final class XMLEventsHelper {
         }
       }
     }
-    return source.replaceAll("%updateImageArea%", sb.toString());
+    return source.replaceAll("%updateImageArea%", Matcher.quoteReplacement(sb.toString()));
   }
   
   private static String getShortRef(final String prefix, final String reference) {
@@ -296,7 +297,7 @@ public final class XMLEventsHelper {
       addImport(sb, optEvent);
     }
     
-    return source.replaceAll("%importEvents%", sb.toString());
+    return source.replaceAll("%importEvents%", Matcher.quoteReplacement(sb.toString()));
   }
   
   private static String replaceTexts(final String source, final Event event) {
@@ -332,7 +333,8 @@ public final class XMLEventsHelper {
       }
     }
     
-    return source.replaceAll("%texts%", internal.toString()).replaceAll("%importTexts%", external.toString());
+    return source.replaceAll("%texts%", Matcher.quoteReplacement(internal.toString())).replaceAll("%importTexts%",
+        Matcher.quoteReplacement(external.toString()));
   }
   
   private static String replaceImages(final String source, final Event event) {
@@ -358,7 +360,8 @@ public final class XMLEventsHelper {
       }
     }
     
-    return source.replaceAll("%images%", internal.toString()).replaceAll("%importImages%", external.toString());
+    return source.replaceAll("%images%", Matcher.quoteReplacement(internal.toString())).replaceAll("%importImages%",
+        Matcher.quoteReplacement(external.toString()));
   }
   
   private static String removeLastSegment(final String fqcn) {
