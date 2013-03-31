@@ -4,7 +4,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +20,12 @@ public final class EventClassHelper {
    */
   public static List<String> getEventClassFQCNs(final boolean withOnlyDefaultConstructorOnly) {
     // TODO hard-coded pattern
-    final Vector<Class<?>> eventClasses = new ClassFinder(".*mod.events.bin").findSubclasses(lge.events.Event.class
-        .getName());
+    final List<Class<?>> eventClasses = new ClassFinder(".*mod.events.bin").findSubclasses(lge.events.Event.class).get(
+        lge.events.Event.class);
     final List<String> fqcnOfAllEvents = new LinkedList<>();
+    if (eventClasses == null) {
+      return fqcnOfAllEvents;
+    }
     for (final Class<?> eventClass : eventClasses) {
       if (Modifier.isAbstract(eventClass.getModifiers())) {
         continue; // skip abstract Events (base classes)

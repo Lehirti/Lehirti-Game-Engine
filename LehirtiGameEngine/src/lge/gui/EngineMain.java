@@ -22,7 +22,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 
 import javax.swing.JFrame;
@@ -34,13 +33,13 @@ import lge.res.images.CommonImage;
 import lge.res.images.ImageKey;
 import lge.res.images.ImageWrapper;
 import lge.res.text.CommonText;
-import lge.state.AbstractState;
 import lge.state.BoolState;
 import lge.state.IntState;
 import lge.state.State;
-import lge.state.StaticInitializer;
 import lge.state.StringState;
 import lge.util.ClassFinder;
+import lge.util.ClassFinder.ClassWorker;
+import lge.util.ClassFinder.SuperClass;
 import lge.util.ContentUtils;
 import lge.util.LogUtils;
 import lge.util.PathFinder;
@@ -440,30 +439,60 @@ public abstract class EngineMain {
     /*
      * load all modules
      */
-    final Vector<Class<?>> modules = new ClassFinder().findSubclasses(StaticInitializer.class.getName());
-    for (final Class<?> module : modules) {
-      LOGGER.debug("Loaded module: {}", module.getName());
-    }
-    
-    if (exportDefaults) {
-      final Vector<Class<?>> states = new ClassFinder().findSubclasses(AbstractState.class.getName());
-      for (final Class<?> state : states) {
-        if (state.isEnum()) {
-          if (IntState.class.isAssignableFrom(state)) {
-            State.initIntDefaults((Class<IntState>) state);
-            PropertyUtils.setDefaultProperties((Class<IntState>) state,
-                PropertyUtils.getDefaultProperties((Class<IntState>) state));
-          } else if (StringState.class.isAssignableFrom(state)) {
-            State.initStringDefaults((Class<StringState>) state);
-            PropertyUtils.setDefaultProperties((Class<StringState>) state,
-                PropertyUtils.getDefaultProperties((Class<StringState>) state));
-          } else if (BoolState.class.isAssignableFrom(state)) {
-            State.initBoolDefaults((Class<BoolState>) state);
-            PropertyUtils.setDefaultProperties((Class<BoolState>) state,
-                PropertyUtils.getDefaultProperties((Class<BoolState>) state));
-          }
+    ClassFinder.workWithClasses(new ClassWorker() {
+      
+      @Override
+      public void doWork(final List<Class<?>> classes) {
+        for (final Class<?> module : classes) {
+          LOGGER.debug("Loaded module: {}", module.getName());
         }
       }
+      
+      @Override
+      public SuperClass getSuperClass() {
+        return SuperClass.STATIC_INITIALIZER;
+      }
+      
+      @Override
+      public String getDescription() {
+        return "[Module Loader]";
+      }
+    });
+    
+    if (exportDefaults) {
+      ClassFinder.workWithClasses(new ClassWorker() {
+        
+        @Override
+        public void doWork(final List<Class<?>> classes) {
+          for (final Class<?> state : classes) {
+            if (state.isEnum()) {
+              if (IntState.class.isAssignableFrom(state)) {
+                State.initIntDefaults((Class<IntState>) state);
+                PropertyUtils.setDefaultProperties((Class<IntState>) state,
+                    PropertyUtils.getDefaultProperties((Class<IntState>) state));
+              } else if (StringState.class.isAssignableFrom(state)) {
+                State.initStringDefaults((Class<StringState>) state);
+                PropertyUtils.setDefaultProperties((Class<StringState>) state,
+                    PropertyUtils.getDefaultProperties((Class<StringState>) state));
+              } else if (BoolState.class.isAssignableFrom(state)) {
+                State.initBoolDefaults((Class<BoolState>) state);
+                PropertyUtils.setDefaultProperties((Class<BoolState>) state,
+                    PropertyUtils.getDefaultProperties((Class<BoolState>) state));
+              }
+            }
+          }
+        }
+        
+        @Override
+        public SuperClass getSuperClass() {
+          return SuperClass.ABSTRACT_STATE;
+        }
+        
+        @Override
+        public String getDescription() {
+          return "[State Initializer]";
+        }
+      });
     }
     
     javax.swing.SwingUtilities.invokeAndWait(new Runnable() {

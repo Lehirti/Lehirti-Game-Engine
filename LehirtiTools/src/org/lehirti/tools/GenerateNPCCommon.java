@@ -2,7 +2,7 @@ package org.lehirti.tools;
 
 import java.io.File;
 import java.lang.reflect.Modifier;
-import java.util.Vector;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,7 +12,6 @@ import lge.state.IntState;
 import lge.state.StringState;
 import lge.util.ClassFinder;
 import lge.util.FileUtils;
-
 import npc.NPC;
 import npc.NPCCommonStats;
 
@@ -30,7 +29,7 @@ public final class GenerateNPCCommon {
     }
     
     // only update final classes that implement the NPC interface
-    final Vector<Class<?>> npcs = new ClassFinder().findSubclasses(NPC.class.getName());
+    final List<Class<?>> npcs = new ClassFinder().findSubclasses(NPC.class).get(NPC.class);
     for (final Class<?> npc : npcs) {
       if (Modifier.isFinal(npc.getModifiers())) {
         updateSource(npc.getName(), root, npc.getSimpleName());

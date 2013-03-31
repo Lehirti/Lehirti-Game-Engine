@@ -1,7 +1,7 @@
 package org.lehirti.tools;
 
 import java.io.File;
-import java.util.Vector;
+import java.util.List;
 
 import lge.res.ResourceCache;
 import lge.res.ResourceState;
@@ -66,7 +66,7 @@ public final class ContentChecker {
       }
     }
     
-    final Vector<Class<?>> textEnums = new ClassFinder().findSubclasses(TextKey.class.getName());
+    final List<Class<?>> textEnums = new ClassFinder().findSubclasses(TextKey.class).get(TextKey.class);
     for (final Class<?> textEnum : textEnums) {
       final TextKey[] textKeys = (TextKey[]) textEnum.getEnumConstants();
       if (textKeys != null) {

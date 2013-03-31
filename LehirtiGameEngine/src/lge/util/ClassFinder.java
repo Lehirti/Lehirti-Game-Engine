@@ -17,13 +17,24 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
-import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+import lge.progressgraph.PG;
+import lge.res.images.ImageKey;
+import lge.res.text.TextKey;
+import lge.res.text.TextParameterResolver;
+import lge.state.AbstractState;
+import lge.state.StaticInitializer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This utility class was based originally on <a href="private.php?do=newpm&u=47838">Daniel Le Berre</a>'s
@@ -33,10 +44,107 @@ import java.util.jar.JarFile;
  * @author Daniel Le Berre, Elliott Wade
  */
 public class ClassFinder {
-  private Class<?> searchClass = null;
+  public static final Logger LOGGER = LoggerFactory.getLogger(ClassFinder.class);
+  
+  public static interface ClassWorker {
+    public void doWork(List<Class<?>> classes);
+    
+    public SuperClass getSuperClass();
+    
+    public String getDescription();
+  }
+  
+  private final static FileFilter DIRECTORIES_ONLY = new FileFilter() {
+    public boolean accept(final File f) {
+      if (f.exists() && f.isDirectory()) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  };
+  
+  private final static Comparator<URL> URL_COMPARATOR = new Comparator<URL>() {
+    public int compare(final URL u1, final URL u2) {
+      return String.valueOf(u1).compareTo(String.valueOf(u2));
+    }
+  };
+  
+  private final static Comparator<Class<?>> CLASS_COMPARATOR = new Comparator<Class<?>>() {
+    public int compare(final Class<?> c1, final Class<?> c2) {
+      return String.valueOf(c1).compareTo(String.valueOf(c2));
+    }
+  };
+  
+  public static enum SuperClass {
+    STATIC_INITIALIZER(StaticInitializer.class),
+    ABSTRACT_STATE(AbstractState.class),
+    PG_SUPERCLASS(PG.class),
+    TEXT_PARAMETER_RESOLVER(TextParameterResolver.class),
+    IMAGE_KEY(ImageKey.class),
+    TEXT_KEY(TextKey.class);
+    
+    final Class<?> superClass;
+    
+    private SuperClass(final Class<?> superClass) {
+      this.superClass = superClass;
+    }
+  }
+  
+  private final List<Class<?>> searchClasses = new LinkedList<>();
   private Map<URL, String> classpathLocations = new HashMap<>();
   private Map<Class<?>, URL> results = new HashMap<>();
   private List<Throwable> errors = new ArrayList<>();
+  private Map<Class<?>, List<Class<?>>> resultsPerSuperClass = null;
+  
+  private static final ClassFinder INSTANCE_FOR_STATIC_ACCESS = new ClassFinder();
+  private static boolean isInitializingForStaticAccess = false;
+  private static final List<ClassWorker> CLASS_WORKERS = new LinkedList<>();
+  
+  public static void workWithClasses(final ClassWorker cw) {
+    synchronized (INSTANCE_FOR_STATIC_ACCESS) {
+      CLASS_WORKERS.add(cw);
+      if (isInitializingForStaticAccess) {
+        LOGGER.debug("Deferring execution for ClassWorker {}", cw.getDescription());
+        return; // TODO log
+      } else {
+        if (INSTANCE_FOR_STATIC_ACCESS.resultsPerSuperClass == null) {
+          isInitializingForStaticAccess = true;
+          final Class<?>[] superClasses = new Class<?>[SuperClass.values().length];
+          for (int i = 0; i < SuperClass.values().length; i++) {
+            superClasses[i] = SuperClass.values()[i].superClass;
+          }
+          INSTANCE_FOR_STATIC_ACCESS.findSubclasses(superClasses);
+          isInitializingForStaticAccess = false;
+        }
+      }
+      for (final ClassWorker clWrk : CLASS_WORKERS) {
+        final List<Class<?>> classes = new ArrayList<>(INSTANCE_FOR_STATIC_ACCESS.resultsPerSuperClass.get(clWrk
+            .getSuperClass().superClass));
+        cw.doWork(classes);
+      }
+    }
+  }
+  
+  public static List<Class<?>> getSubclassesInFullClasspathStatic(final SuperClass superClass) {
+    synchronized (INSTANCE_FOR_STATIC_ACCESS) {
+      if (isInitializingForStaticAccess) {
+        throw new RuntimeException(
+            "ClassFinder.getSubclassesInFullClasspathStatic() method called during initialisation");
+      } else {
+        if (INSTANCE_FOR_STATIC_ACCESS.resultsPerSuperClass == null) {
+          isInitializingForStaticAccess = true;
+          final Class<?>[] superClasses = new Class<?>[SuperClass.values().length];
+          for (int i = 0; i < SuperClass.values().length; i++) {
+            superClasses[0] = SuperClass.values()[i].superClass;
+          }
+          INSTANCE_FOR_STATIC_ACCESS.findSubclasses(superClasses);
+          isInitializingForStaticAccess = false;
+        }
+      }
+      return new ArrayList<>(INSTANCE_FOR_STATIC_ACCESS.resultsPerSuperClass.get(superClass.superClass));
+    }
+  }
   
   public ClassFinder() {
     refreshLocations();
@@ -54,33 +162,18 @@ public class ClassFinder {
   }
   
   /**
-   * @param fqcn
-   *          Name of superclass/interface on which to search
+   * @param superClasses
+   *          superclasses/interfaces on which to search
    */
-  public synchronized final Vector<Class<?>> findSubclasses(final String fqcn) {
-    this.searchClass = null;
+  public synchronized final Map<Class<?>, List<Class<?>>> findSubclasses(final Class<?>... superClasses) {
+    for (final Class<?> clazz : superClasses) {
+      this.searchClasses.add(clazz);
+    }
     this.errors = new ArrayList<>();
     this.results = new TreeMap<>(CLASS_COMPARATOR);
     
-    //
-    // filter malformed FQCN
-    //
-    if (fqcn.startsWith(".") || fqcn.endsWith(".")) {
-      return new Vector<>();
-    }
-    
-    //
-    // Determine search class from fqcn
-    //
-    try {
-      this.searchClass = Class.forName(fqcn);
-    } catch (final ClassNotFoundException ex) {
-      // if class not found, let empty vector return...
-      this.errors.add(ex);
-      return new Vector<>();
-    }
-    
-    return findSubclasses(this.searchClass, this.classpathLocations);
+    this.resultsPerSuperClass = findSubclasses(this.searchClasses, this.classpathLocations);
+    return this.resultsPerSuperClass;
   }
   
   public synchronized final List<Throwable> getErrors() {
@@ -131,28 +224,6 @@ public class ClassFinder {
     
     return map;
   }
-  
-  private final static FileFilter DIRECTORIES_ONLY = new FileFilter() {
-    public boolean accept(final File f) {
-      if (f.exists() && f.isDirectory()) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-  };
-  
-  private final static Comparator<URL> URL_COMPARATOR = new Comparator<URL>() {
-    public int compare(final URL u1, final URL u2) {
-      return String.valueOf(u1).compareTo(String.valueOf(u2));
-    }
-  };
-  
-  private final static Comparator<Class<?>> CLASS_COMPARATOR = new Comparator<Class<?>>() {
-    public int compare(final Class<?> c1, final Class<?> c2) {
-      return String.valueOf(c1).compareTo(String.valueOf(c2));
-    }
-  };
   
   private final void include(String name, final File file, final Map<URL, String> map) {
     if (!file.exists()) {
@@ -267,10 +338,11 @@ public class ClassFinder {
     }
   }
   
-  private final Vector<Class<?>> findSubclasses(final Class<?> superClass, final Map<URL, String> locations) {
-    final Vector<Class<?>> v = new Vector<>();
+  private final Map<Class<?>, List<Class<?>>> findSubclasses(final List<Class<?>> superClasses,
+      final Map<URL, String> locations) {
+    final Map<Class<?>, List<Class<?>>> v = new LinkedHashMap<>();
     
-    Vector<Class<?>> w = null; // new Vector<Class<?>> ();
+    Map<Class<?>, List<Class<?>>> w = null; // new Vector<Class<?>> ();
     
     // Package [] packages = Package.getPackages ();
     // for (int i=0;i<packages.length;i++)
@@ -282,16 +354,24 @@ public class ClassFinder {
       final URL url = entry.getKey();
       // System.out.println (url + "-->" + locations.get (url));
       
-      w = findSubclasses(url, entry.getValue(), superClass);
-      if (w != null && (w.size() > 0)) {
-        v.addAll(w);
+      w = findSubclasses(url, entry.getValue(), superClasses);
+      if (w != null) {
+        for (final Map.Entry<Class<?>, List<Class<?>>> subEntry : w.entrySet()) {
+          final List<Class<?>> list = v.get(subEntry.getKey());
+          if (list == null) {
+            v.put(subEntry.getKey(), subEntry.getValue());
+          } else {
+            list.addAll(subEntry.getValue());
+          }
+        }
       }
     }
     
     return v;
   }
   
-  private final Vector<Class<?>> findSubclasses(final URL location, final String packageName, final Class<?> superClass) {
+  private final Map<Class<?>, List<Class<?>>> findSubclasses(final URL location, final String packageName,
+      final List<Class<?>> superClasses) {
     // System.out.println ("looking in package:" + packageName);
     // System.out.println ("looking for  class:" + superClass);
     
@@ -299,11 +379,12 @@ public class ClassFinder {
       
       // hash guarantees unique names...
       final Map<Class<?>, URL> thisResult = new TreeMap<>(CLASS_COMPARATOR);
-      final Vector<Class<?>> v = new Vector<>(); // ...but return a
-      // vector
+      final Map<Class<?>, List<Class<?>>> v = new LinkedHashMap<>(); // ...but return a map of lists
       
       // TODO: double-check for null search class
-      final String fqcn = this.searchClass.getName();
+      for (final Class<?> superClass : superClasses) {
+        v.put(superClass, new LinkedList<Class<?>>());
+      }
       
       final List<URL> knownLocations = new ArrayList<>();
       knownLocations.add(location);
@@ -331,8 +412,20 @@ public class ClassFinder {
               
               try {
                 final Class<?> c = Class.forName(packageName + "." + classname);
-                if (superClass.isAssignableFrom(c) && !fqcn.equals(packageName + "." + classname)) {
-                  thisResult.put(c, url);
+                for (final Class<?> superClass : superClasses) {
+                  if (superClass.isAssignableFrom(c) && !superClass.getName().equals(c.getName())) {
+                    final URL prevURL = thisResult.put(c, url);
+                    if (prevURL != null && prevURL != url) {
+                      final Iterator<Class<?>> it = v.get(superClass).iterator();
+                      while (it.hasNext()) {
+                        final Class<?> next = it.next();
+                        if (next.getName().equals(c.getName())) {
+                          it.remove();
+                        }
+                      }
+                    }
+                    v.get(superClass).add(c);
+                  }
                 }
               } catch (final ClassNotFoundException cnfex) {
                 this.errors.add(cnfex);
@@ -372,10 +465,22 @@ public class ClassFinder {
                 
                 try {
                   // TODO: verify this block
-                  final Class c = Class.forName(classname);
+                  final Class<?> c = Class.forName(classname);
                   
-                  if (superClass.isAssignableFrom(c) && !fqcn.equals(classname)) {
-                    thisResult.put(c, url);
+                  for (final Class<?> superClass : superClasses) {
+                    if (superClass.isAssignableFrom(c) && !superClass.getName().equals(c.getName())) {
+                      final URL prevURL = thisResult.put(c, url);
+                      if (prevURL != null && prevURL != url) {
+                        final Iterator<Class<?>> it = v.get(superClass).iterator();
+                        while (it.hasNext()) {
+                          final Class<?> next = it.next();
+                          if (next.getName().equals(c.getName())) {
+                            it.remove();
+                          }
+                        }
+                      }
+                      v.get(superClass).add(c);
+                    }
                   }
                 } catch (final ClassNotFoundException cnfex) {
                   // that's strange since we're scanning
@@ -413,12 +518,7 @@ public class ClassFinder {
       
       this.results.putAll(thisResult);
       
-      final Iterator<Class<?>> it = thisResult.keySet().iterator();
-      while (it.hasNext()) {
-        v.add(it.next());
-      }
       return v;
-      
     } // synch results
   }
   
