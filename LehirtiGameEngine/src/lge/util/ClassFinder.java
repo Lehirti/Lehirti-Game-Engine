@@ -136,7 +136,7 @@ public class ClassFinder {
           isInitializingForStaticAccess = true;
           final Class<?>[] superClasses = new Class<?>[SuperClass.values().length];
           for (int i = 0; i < SuperClass.values().length; i++) {
-            superClasses[0] = SuperClass.values()[i].superClass;
+            superClasses[i] = SuperClass.values()[i].superClass;
           }
           INSTANCE_FOR_STATIC_ACCESS.findSubclasses(superClasses);
           isInitializingForStaticAccess = false;
