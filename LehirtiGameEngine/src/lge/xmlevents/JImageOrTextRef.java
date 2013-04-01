@@ -1,6 +1,7 @@
 package lge.xmlevents;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,16 +13,23 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 
-public final class JImageOrTextRef extends JComboBox<String> {
+public final class JImageOrTextRef extends JComboBox<String> implements EventValidateable {
   private static final long serialVersionUID = 1L;
   private static final Pattern IMAGE_AND_TEXT_REF_RESTRICTION_PATTERN = Pattern
       .compile("(([a-z][a-z_0-9]*\\.)+([A-Z][A-Za-z_0-9]+\\.){1,2})?[A-Z][A-Z_0-9]*");
   private static final Pattern IMAGE_AND_TEXT_INTERNAL_REF_RESTRICTION_PATTERN = Pattern.compile("[A-Z][A-Z_0-9]*");
   
-  public JImageOrTextRef(final String[] possibleRefs) {
+  private boolean containsError = false;
+  
+  private final boolean mayBeEmpty;
+  
+  public JImageOrTextRef(final String[] possibleRefs, final boolean mayBeEmpty) {
     super(possibleRefs);
+    
+    this.mayBeEmpty = mayBeEmpty;
+    
     setEditable(true);
-    setPreferredSize(new Dimension(600, 16));
+    setPreferredSize(new Dimension(600, 20));
     
     final JTextComponent tc = (JTextComponent) getEditor().getEditorComponent();
     tc.getDocument().addDocumentListener(new DocumentListener() {
@@ -79,20 +87,40 @@ public final class JImageOrTextRef extends JComboBox<String> {
       }
     }
     if (!found) {
-      if (!IMAGE_AND_TEXT_REF_RESTRICTION_PATTERN.matcher(value).matches()) {
+      if (this.mayBeEmpty && value.equals("")) {
+        getEditor().getEditorComponent().setBackground(Color.WHITE);
+        this.containsError = false;
+        setToolTipText("This field is optional and my be left empty.");
+      } else if (!IMAGE_AND_TEXT_REF_RESTRICTION_PATTERN.matcher(value).matches()) {
         getEditor().getEditorComponent().setBackground(Color.RED);
+        this.containsError = true;
         setToolTipText("Field value \"" + value + "\" does not match required pattern \""
             + IMAGE_AND_TEXT_REF_RESTRICTION_PATTERN.pattern() + "\".");
       } else if (!IMAGE_AND_TEXT_INTERNAL_REF_RESTRICTION_PATTERN.matcher(value).matches()) {
         getEditor().getEditorComponent().setBackground(Color.RED);
-        setToolTipText("This field make an external references that does not exist.");
+        this.containsError = true;
+        setToolTipText("This field makes an external references that does not exist.");
       } else {
         getEditor().getEditorComponent().setBackground(Color.WHITE);
+        this.containsError = false;
         setToolTipText("A new reference with this name will be created inside the XML event.");
       }
     } else {
       getEditor().getEditorComponent().setBackground(Color.WHITE);
+      this.containsError = false;
       setToolTipText("External reference exists, and can be used.");
     }
+    Container ancestor = getParent();
+    while (ancestor != null && !(ancestor instanceof EventPanel)) {
+      ancestor = ancestor.getParent();
+    }
+    if (ancestor != null) {
+      ((EventPanel) ancestor).updateStatus();
+    }
+  }
+  
+  @Override
+  public boolean containsError() {
+    return this.containsError;
   }
 }

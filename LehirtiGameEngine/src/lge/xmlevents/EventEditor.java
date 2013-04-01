@@ -97,6 +97,9 @@ public class EventEditor extends JFrame implements ActionListener {
     this.xmlElementsListener = new ListSelectionListener() {
       @Override
       public void valueChanged(final ListSelectionEvent e) {
+        if (e.getValueIsAdjusting()) {
+          return; // wait, until the change is complete
+        }
         final String fqcn = EventEditor.this.xmlElements.getSelectedValue();
         if (fqcn != null) {
           if (EventEditor.this.eventComponent.containsValidEvent()) {
@@ -159,7 +162,7 @@ public class EventEditor extends JFrame implements ActionListener {
     this.xmlElements.addListSelectionListener(this.xmlElementsListener);
   }
   
-  private void setCurrentEvent(final Event event, final String fqcnOfEvent) {
+  public void setCurrentEvent(final Event event, final String fqcnOfEvent) {
     final int i = fqcnOfEvent.lastIndexOf(".");
     setCurrentEvent(event, fqcnOfEvent.substring(0, i), fqcnOfEvent.substring(i + 1));
   }
@@ -171,34 +174,34 @@ public class EventEditor extends JFrame implements ActionListener {
     // set current event
     this.currentEventPackage = fqpnEvent;
     this.currentEventName = simpleNameOfEvent;
+    final String eventName = fqpnEvent + "." + simpleNameOfEvent;
     this.currentEvent = event;
-    this.allXMLEvents.put(fqpnEvent + "." + simpleNameOfEvent, this.currentEvent);
-    if (updateXMLElementsModel) {
-      initXMLElementsModel(fqpnEvent + "." + simpleNameOfEvent);
+    this.allXMLEvents.put(eventName, this.currentEvent);
+    if (updateXMLElementsModel || !this.xmlElementsModel.contains(eventName)) {
+      initXMLElementsModel(eventName);
     }
   }
   
   private boolean updateEventFromScreen() {
     boolean updateXMLElementsModel = true;
     if (this.eventComponent != null) {
-      final String packageName = this.eventComponent.getPackageName();
       final String eventName = this.eventComponent.getEventName();
       if (this.currentEventPackage != null && this.currentEventName != null) {
         this.allXMLEvents.remove(this.currentEventPackage + "." + this.currentEventName);
-        if (this.currentEventPackage.equals(packageName) && this.currentEventName.equals(eventName)) {
+        if ((this.currentEventPackage + "." + this.currentEventName).equals(eventName)) {
           updateXMLElementsModel = false;
         }
       }
       
       final Event oldEvent = this.eventComponent.getEvent();
       if (oldEvent != null) {
-        this.allXMLEvents.put(packageName + "." + eventName, oldEvent);
+        this.allXMLEvents.put(eventName, oldEvent);
       }
     }
     return updateXMLElementsModel;
   }
   
-  private void setCurrentEventToScreen() {
+  void setCurrentEventToScreen() {
     if (this.eventComponent != null) {
       this.all.remove(this.eventComponent);
     }

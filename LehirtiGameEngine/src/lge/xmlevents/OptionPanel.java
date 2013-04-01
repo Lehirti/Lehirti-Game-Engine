@@ -19,6 +19,10 @@ public class OptionPanel extends JPanel {
   private final JImageOrTextRef text;
   private final JEvent event;
   
+  private final JCreateButton createButton;
+  
+  private final JDeleteButton deleteButton = new JDeleteButton();
+  
   public OptionPanel(final Option opt, final List<String> allCreatableClassEvents, final Set<String> allXMLEvents,
       final List<String> allClassEvents, final String[] allExternalTextRefs) {
     add(new JLabel("Option"));
@@ -29,7 +33,7 @@ public class OptionPanel extends JPanel {
     }
     add(this.key);
     
-    this.text = new JImageOrTextRef(allExternalTextRefs);
+    this.text = new JImageOrTextRef(allExternalTextRefs, false);
     final String textText = opt.getText();
     if (textText != null) {
       this.text.setSelectedItem(textText);
@@ -56,6 +60,11 @@ public class OptionPanel extends JPanel {
       this.event.setSelectedItem(eventText);
     }
     add(this.event);
+    
+    this.createButton = new JCreateButton(this.event);
+    add(this.createButton);
+    
+    add(this.deleteButton);
   }
   
   public Option getOption() {

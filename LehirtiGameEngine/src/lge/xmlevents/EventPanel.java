@@ -1,6 +1,7 @@
 package lge.xmlevents;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -15,7 +16,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.xml.bind.JAXBException;
 
 import lge.jaxb.Event;
@@ -28,8 +28,7 @@ import lge.jaxb.Event.Options.Option;
 public class EventPanel extends JPanel {
   private static final long serialVersionUID = 1L;
   
-  private final JTextField packageName = new JTextField();
-  private final JTextField eventName = new JTextField();
+  private final JNewEvent eventName;
   
   private final JTextArea description = new JTextArea();
   private final JTextArea todo = new JTextArea();
@@ -51,13 +50,17 @@ public class EventPanel extends JPanel {
   private final JPanel options = new JPanel();
   private final JButton addOptionButton = new JButton("Add option");
   
+  private final JPanel buttonRow = new JPanel();
+  
   public EventPanel(final String packageName, final String eventName, final Event event,
       final List<String> allClassEvents, final List<String> allCreatableClassEvents, final Set<String> allXMLEvents,
       final String[] allExternalTextRefs, final String[] allExternalImageRefs) {
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     
-    addTextFieldWithLabel("Package name", this.packageName, packageName);
-    addTextFieldWithLabel("Event name", this.eventName, eventName);
+    final List<String> allEvents = new LinkedList<>(allClassEvents);
+    allEvents.addAll(allXMLEvents);
+    this.eventName = new JNewEvent(allEvents);
+    addTextFieldWithLabel("Event name", this.eventName, packageName + "." + eventName);
     addTextFieldWithLabel("Description", this.description, event.getDescription());
     addTextFieldWithLabel("TODO", this.todo, event.getTodo());
     
@@ -78,20 +81,22 @@ public class EventPanel extends JPanel {
         EventPanel.this.repaint();
       }
     });
-    add(this.addExtentionsButton);
+    this.buttonRow.add(this.addExtentionsButton);
     
     Images imgs = event.getImages();
     if (imgs == null) {
       imgs = new Images();
     }
     this.bgImageContainer.setLayout(new FlowLayout());
+    this.bgImageContainer.setPreferredSize(new Dimension(2000, 20));
+    this.bgImageContainer.setMaximumSize(new Dimension(2000, 20));
     add(this.bgImageContainer);
     this.bgImageContainer.add(new JLabel("Clear Background"));
     this.bgImageContainer.add(this.clearBG);
     this.bgImageContainer.add(new JLabel("Clear Foreground"));
     this.bgImageContainer.add(this.clearFG);
     this.bgImageContainer.add(new JLabel("Background image"));
-    this.bgImage = new JImageOrTextRef(allExternalImageRefs);
+    this.bgImage = new JImageOrTextRef(allExternalImageRefs, true);
     this.bgImageContainer.add(this.bgImage);
     final String bg = imgs.getBg();
     if (bg != null) {
@@ -112,7 +117,7 @@ public class EventPanel extends JPanel {
         EventPanel.this.repaint();
       }
     });
-    add(this.addFGImageButton);
+    this.buttonRow.add(this.addFGImageButton);
     
     this.texts.setLayout(new FlowLayout());
     add(this.texts);
@@ -131,7 +136,7 @@ public class EventPanel extends JPanel {
         EventPanel.this.repaint();
       }
     });
-    add(this.addtextButton);
+    this.buttonRow.add(this.addtextButton);
     
     this.options.setLayout(new FlowLayout());
     add(this.options);
@@ -152,31 +157,35 @@ public class EventPanel extends JPanel {
         EventPanel.this.repaint();
       }
     });
-    add(this.addOptionButton);
+    this.buttonRow.add(this.addOptionButton);
+    
+    this.buttonRow.setMaximumSize(new Dimension(2000, 30));
+    add(this.buttonRow);
+    
+    updateStatus();
   }
   
   private void addTextFieldWithLabel(final String labelText, final JTextArea field, final String fieldValue) {
     final JPanel panel = new JPanel();
     panel.setLayout(new FlowLayout());
     panel.add(new JLabel(labelText));
-    field.setPreferredSize(new Dimension(1000, 160));
+    field.setPreferredSize(new Dimension(1000, 120));
     field.setText(fieldValue);
     panel.add(field);
+    panel.setPreferredSize(new Dimension(2000, 120));
+    panel.setMaximumSize(new Dimension(2000, 125));
     add(panel);
   }
   
-  private void addTextFieldWithLabel(final String labelText, final JTextField field, final String fieldValue) {
+  private void addTextFieldWithLabel(final String labelText, final JNewEvent field, final String fieldValue) {
     final JPanel panel = new JPanel();
     panel.setLayout(new FlowLayout());
     panel.add(new JLabel(labelText));
-    field.setPreferredSize(new Dimension(1000, 16));
-    field.setText(fieldValue);
+    field.setInitialValue(fieldValue);
     panel.add(field);
+    panel.setPreferredSize(new Dimension(2000, 20));
+    panel.setMaximumSize(new Dimension(2000, 20));
     add(panel);
-  }
-  
-  public String getPackageName() {
-    return this.packageName.getText();
   }
   
   public String getEventName() {
@@ -204,7 +213,7 @@ public class EventPanel extends JPanel {
     imgs.setClearBackground(Boolean.valueOf(this.clearBG.isSelected()));
     imgs.setClearForeground(Boolean.valueOf(this.clearFG.isSelected()));
     final String bgImg = (String) this.bgImage.getSelectedItem();
-    if (bgImg.trim().length() > 0) {
+    if (!bgImg.equals("")) {
       imgs.setBg(bgImg);
     }
     for (final Component component : this.fgImages.getComponents()) {
@@ -241,12 +250,24 @@ public class EventPanel extends JPanel {
     final Event event = getEvent();
     try {
       XMLEventsHelper.validate(event);
-      return true;
     } catch (final JAXBException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
       return false;
     }
+    return !containsErrors(this);
+  }
+  
+  private boolean containsErrors(final Container container) {
+    for (final Component component : container.getComponents()) {
+      if (component instanceof EventValidateable) {
+        if (((EventValidateable) component).containsError()) {
+          return true;
+        }
+      }
+      if (component instanceof Container) {
+        return containsErrors((Container) component);
+      }
+    }
+    return false;
   }
   
   @Override
@@ -262,5 +283,20 @@ public class EventPanel extends JPanel {
   @Override
   public Dimension getPreferredSize() {
     return getParent().getSize();
+  }
+  
+  public void updateStatus() {
+    updateStatus(this, !containsValidEvent());
+  }
+  
+  private void updateStatus(final Container container, final boolean eventContainsErrors) {
+    for (final Component component : container.getComponents()) {
+      if (component instanceof StatusUpdateable) {
+        ((StatusUpdateable) component).updateStatus(eventContainsErrors);
+      }
+      if (component instanceof Container) {
+        updateStatus((Container) component, eventContainsErrors);
+      }
+    }
   }
 }

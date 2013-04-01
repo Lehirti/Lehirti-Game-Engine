@@ -17,6 +17,7 @@ public class ExtensionPanel extends JPanel {
   private final JEvent event;
   private final JKey key = new JKey();
   private final JImageOrTextRef text;
+  private final JDeleteButton deleteButton = new JDeleteButton();
   
   public ExtensionPanel(final Extension ext, final List<String> allClassEvents, final String[] allExternalTextRefs) {
     add(new JLabel("Extension"));
@@ -35,13 +36,15 @@ public class ExtensionPanel extends JPanel {
     }
     add(this.key);
     
-    this.text = new JImageOrTextRef(allExternalTextRefs);
+    this.text = new JImageOrTextRef(allExternalTextRefs, false);
     final String textText = ext.getText();
     if (textText != null) {
       this.text.setSelectedItem(textText);
     }
     this.text.setPreferredSize(new Dimension(400, 16));
     add(this.text);
+    
+    add(this.deleteButton);
   }
   
   public Extension getExtension() {
@@ -56,5 +59,4 @@ public class ExtensionPanel extends JPanel {
     ext.setText((String) this.text.getSelectedItem());
     return ext;
   }
-  
 }
