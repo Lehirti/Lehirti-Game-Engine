@@ -58,6 +58,7 @@
                 <pathelement path="../../LehirtiTools/bin"/>
                 <pathelement path="../../LehirtiGameEngine/bin"/>
                 <pathelement path="../bin"/>
+            	<pathelement path="../mod/events/bin"/>
                 <pathelement location="../../LehirtiGameEngine/lib/slf4j-api-1.6.4.jar"/>
                 <pathelement location="../../LehirtiGameEngine/lib/slf4j-jdk14-1.6.4.jar"/>
             </classpath>
