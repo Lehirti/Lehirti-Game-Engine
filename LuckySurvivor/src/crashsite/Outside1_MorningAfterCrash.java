@@ -1,7 +1,7 @@
 package crashsite;
 
-import lge.events.EventNode;
 import lge.events.Event.NullState;
+import lge.events.EventNode;
 import lge.gui.Key;
 import lge.res.images.ImgChange;
 import lge.res.text.TextKey;
@@ -21,7 +21,7 @@ public class Outside1_MorningAfterCrash extends EventNode<NullState> {
   @Override
   protected void doEvent() {
     setText(Text.DESCRIPTION);
-    addOption(Key.OPTION_ENTER, Text.OPTION_GET_UP, new FirstDiscussion());
+    addOption(Key.OPTION_ENTER, Text.OPTION_GET_UP, new MapToCrashSite());
   }
   
   @Override
