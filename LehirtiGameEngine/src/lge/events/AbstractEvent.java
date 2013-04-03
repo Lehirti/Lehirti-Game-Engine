@@ -59,7 +59,7 @@ public abstract class AbstractEvent<STATE extends Enum<?> & EventState> implemen
   }
   
   protected void repaintImagesIfNeeded() {
-    if (this.repaintNeeded) {
+    if (this.repaintNeeded || EngineMain.getCurrentImageArea().updateBackgroundImageForTimeOfDay()) {
       try {
         javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
           public void run() {

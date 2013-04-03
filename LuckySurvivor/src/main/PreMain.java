@@ -23,7 +23,6 @@ public final class PreMain {
     System.setProperty("java.util.logging.config.file", "config/logging.properties");
     
     FileUtils.copyFile(PreMain.class.getResourceAsStream("/lge/xmlevents/schema/event.xsd"), PathFinder.EVENT_XSD);
-    XMLEventsHelper.buildAll();
   }
   
   private static final Logger LOGGER = LoggerFactory.getLogger(PreMain.class);
@@ -32,6 +31,8 @@ public final class PreMain {
    * @param args
    */
   public static void main(final String[] args) {
+    XMLEventsHelper.buildAll();
+    
     final List<String> newArgs = new LinkedList<>();
     newArgs.add(determineJavaExecutable());
     newArgs.add("-cp");

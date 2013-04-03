@@ -25,7 +25,6 @@ import lge.res.text.TextParameterResolutionException;
 import lge.res.text.TextWrapper;
 import lge.util.PathFinder;
 
-
 public class TextEditor extends JFrame implements ActionListener {
   private static final long serialVersionUID = 1L;
   
@@ -89,14 +88,14 @@ public class TextEditor extends JFrame implements ActionListener {
     
     setVisible(true);
     
-    final WinLoc winLoc = WindowLocation.getLocationFor("TextEditor");
+    final WinLoc winLoc = WindowLocation.getLocationFor(TextEditor.class.getSimpleName());
     if (!winLoc.isMax) {
       setLocation(winLoc.x, winLoc.y);
       setSize(winLoc.width, winLoc.height);
     } else {
       setExtendedState(Frame.MAXIMIZED_BOTH);
     }
-    addWindowListener(new WindowCloseListener(this, "TextEditor"));
+    addWindowListener(new WindowCloseListener(this, TextEditor.class.getSimpleName()));
   }
   
   private void setTitle() {

@@ -13,7 +13,6 @@ import lge.res.images.ImageKey;
 import lge.res.text.TextFunction;
 import lge.res.text.TextKey;
 
-
 public enum Key {
   OPTION_Q(81, 0, TextFunction.OPTION, 0, 0, CommonImage.OPTION_KEY_0_0),
   OPTION_LEAVE(87, 0, TextFunction.OPTION, 1, 0, CommonImage.OPTION_KEY_1_0),
@@ -39,10 +38,13 @@ public enum Key {
   // image and text editors
   IMAGE_EDITOR(73, InputEvent.CTRL_MASK, TextFunction.IMAGE_EDITOR),
   TEXT_EDITOR(84, InputEvent.CTRL_MASK, TextFunction.TEXT_EDITOR),
+  EVENT_EDITOR(69, InputEvent.CTRL_MASK, TextFunction.EVENT_EDITOR),
   
   // save and load
   SAVE(83, InputEvent.CTRL_MASK, TextFunction.SAVE),
-  LOAD(76, InputEvent.CTRL_MASK, TextFunction.LOAD, true);
+  LOAD(76, InputEvent.CTRL_MASK, TextFunction.LOAD, true),
+  
+  DONT_PANIC(27, 0, TextFunction.SAVE_AND_EXIT_WITHOUT_ASKING);
   
   private static final List<Key> OPTION_KEYS = new ArrayList<>(values().length);
   

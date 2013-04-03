@@ -22,7 +22,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 
 import javax.swing.JFrame;
@@ -37,9 +36,10 @@ import lge.res.text.CommonText;
 import lge.state.BoolState;
 import lge.state.IntState;
 import lge.state.State;
-import lge.state.StaticInitializer;
 import lge.state.StringState;
 import lge.util.ClassFinder;
+import lge.util.ClassFinder.ClassWorker;
+import lge.util.ClassFinder.SuperClass;
 import lge.util.ContentUtils;
 import lge.util.LogUtils;
 import lge.util.PathFinder;
@@ -168,14 +168,14 @@ public abstract class EngineMain {
     }
     MAIN_WINDOW.setVisible(true);
     
-    final WinLoc winLoc = WindowLocation.getLocationFor("Main");
+    final WinLoc winLoc = WindowLocation.getLocationFor(EngineMain.class.getSimpleName());
     if (!winLoc.isMax) {
       MAIN_WINDOW.setLocation(winLoc.x, winLoc.y);
       MAIN_WINDOW.setSize(winLoc.width, winLoc.height);
     } else {
       MAIN_WINDOW.setExtendedState(Frame.MAXIMIZED_BOTH);
     }
-    MAIN_WINDOW.addWindowListener(new WindowCloseListener(MAIN_WINDOW, "Main"));
+    MAIN_WINDOW.addWindowListener(new WindowCloseListener(MAIN_WINDOW, EngineMain.class.getSimpleName()));
   }
   
   public static void loadGame(final File sav) {
@@ -231,12 +231,15 @@ public abstract class EngineMain {
     }
   }
   
-  protected void saveGame() {
+  protected void saveGame(final boolean notify) {
     final File sav = PathFinder.getNewSaveFile(this.flavor, this.build);
     
     try (FileOutputStream fos = new FileOutputStream(sav); ObjectOutputStream oos = new ObjectOutputStream(fos)) {
       if (currentEvent == null || !currentEvent.isLoadSavePoint()) {
         LOGGER.warn("The game cannot be saved right now"); // better notification for user
+        if (notify) {
+          new Notification(MAIN_WINDOW, ResourceCache.get(CommonText.GAME_NOT_SAVED), 1500);
+        }
         return;
       }
       
@@ -274,8 +277,9 @@ public abstract class EngineMain {
       oos.writeObject(currentProgressEvent);
       
       LOGGER.info("Game saved");
-      
-      new Notification(MAIN_WINDOW, ResourceCache.get(CommonText.GAME_SAVED), 1500);
+      if (notify) {
+        new Notification(MAIN_WINDOW, ResourceCache.get(CommonText.GAME_SAVED), 1500);
+      }
       
     } catch (final FileNotFoundException e) {
       LOGGER.error("Savegame " + sav.getAbsolutePath() + " not found for saving", e);
@@ -298,6 +302,10 @@ public abstract class EngineMain {
         return currentProgressEvent;
       }
     }
+    return currentEvent;
+  }
+  
+  public static synchronized Event<?> getCurrentMainEvent() {
     return currentEvent;
   }
   
@@ -416,7 +424,7 @@ public abstract class EngineMain {
         try {
           while (true) {
             final ImageKey nextImageToPreload = imagesToPreload.take();
-            LOGGER.info("Caching image " + nextImageToPreload.getClass().getName() + "." + nextImageToPreload.name());
+            LOGGER.debug("Caching image " + nextImageToPreload.getClass().getName() + "." + nextImageToPreload.name());
             ResourceCache.cache(nextImageToPreload);
           }
         } catch (final InterruptedException e) {
@@ -431,42 +439,60 @@ public abstract class EngineMain {
     /*
      * load all modules
      */
-    final Vector<Class<?>> modules = new ClassFinder().findSubclasses(StaticInitializer.class.getName());
-    for (final Class<?> module : modules) {
-      LOGGER.debug("Loaded module: {}", module.getName());
-    }
-    
-    Vector<Class<?>> states = new ClassFinder().findSubclasses(IntState.class.getName());
-    for (final Class<?> intState : states) {
-      if (intState.isEnum()) {
-        State.initIntDefaults((Class<IntState>) intState);
-        if (exportDefaults) {
-          PropertyUtils.setDefaultProperties((Class<IntState>) intState,
-              PropertyUtils.getDefaultProperties((Class<IntState>) intState));
+    ClassFinder.workWithClasses(new ClassWorker() {
+      
+      @Override
+      public void doWork(final List<Class<?>> classes) {
+        for (final Class<?> module : classes) {
+          LOGGER.debug("Loaded module: {}", module.getName());
         }
       }
-    }
-    
-    states = new ClassFinder().findSubclasses(StringState.class.getName());
-    for (final Class<?> stringState : states) {
-      if (stringState.isEnum()) {
-        State.initStringDefaults((Class<StringState>) stringState);
-        if (exportDefaults) {
-          PropertyUtils.setDefaultProperties((Class<StringState>) stringState,
-              PropertyUtils.getDefaultProperties((Class<StringState>) stringState));
-        }
+      
+      @Override
+      public SuperClass getSuperClass() {
+        return SuperClass.STATIC_INITIALIZER;
       }
-    }
-    
-    states = new ClassFinder().findSubclasses(BoolState.class.getName());
-    for (final Class<?> boolState : states) {
-      if (boolState.isEnum()) {
-        State.initBoolDefaults((Class<BoolState>) boolState);
-        if (exportDefaults) {
-          PropertyUtils.setDefaultProperties((Class<BoolState>) boolState,
-              PropertyUtils.getDefaultProperties((Class<BoolState>) boolState));
-        }
+      
+      @Override
+      public String getDescription() {
+        return "[Module Loader]";
       }
+    });
+    
+    if (exportDefaults) {
+      ClassFinder.workWithClasses(new ClassWorker() {
+        
+        @Override
+        public void doWork(final List<Class<?>> classes) {
+          for (final Class<?> state : classes) {
+            if (state.isEnum()) {
+              if (IntState.class.isAssignableFrom(state)) {
+                State.initIntDefaults((Class<IntState>) state);
+                PropertyUtils.setDefaultProperties((Class<IntState>) state,
+                    PropertyUtils.getDefaultProperties((Class<IntState>) state));
+              } else if (StringState.class.isAssignableFrom(state)) {
+                State.initStringDefaults((Class<StringState>) state);
+                PropertyUtils.setDefaultProperties((Class<StringState>) state,
+                    PropertyUtils.getDefaultProperties((Class<StringState>) state));
+              } else if (BoolState.class.isAssignableFrom(state)) {
+                State.initBoolDefaults((Class<BoolState>) state);
+                PropertyUtils.setDefaultProperties((Class<BoolState>) state,
+                    PropertyUtils.getDefaultProperties((Class<BoolState>) state));
+              }
+            }
+          }
+        }
+        
+        @Override
+        public SuperClass getSuperClass() {
+          return SuperClass.ABSTRACT_STATE;
+        }
+        
+        @Override
+        public String getDescription() {
+          return "[State Initializer]";
+        }
+      });
     }
     
     javax.swing.SwingUtilities.invokeAndWait(new Runnable() {

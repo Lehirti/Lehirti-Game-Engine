@@ -2,18 +2,25 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
  <xs:simpleType name="image_or_text_reference">
    <xs:restriction base="xs:string">
-     <xs:pattern value="([a-z\.]+\.[A-Za-z0-9\.$]+\.)?[A-Z][A-Z_]*"/>
+     
+     <!-- when this pattern is changed, don't forget to update Patterns in lge.xmlevents.JImageOrTextRef -->
+     <xs:pattern value="(([a-z][a-z_0-9]*\.)+([A-Z][A-Za-z_0-9]+\.){1,2})?[A-Z][A-Z_0-9]*"/>
+     
    </xs:restriction>
  </xs:simpleType>
  
  <xs:simpleType name="event_reference">
    <xs:restriction base="xs:string">
-     <xs:pattern value="[a-z\.A-Z0-9]{1,}"/>
+     
+     <!-- when this pattern is changed, don't forget to update Patterns in lge.xmlevents.JEvent -->
+     <xs:pattern value="([a-z][a-z_0-9]*\.)+[A-Z][a-zA-Z_0-9]*"/>
+     
    </xs:restriction>
  </xs:simpleType>
  
  <xs:simpleType name="key_type">
    <xs:restriction base="xs:string">
+     <xs:enumeration value="ANY"></xs:enumeration>
      <xs:enumeration value="Q"></xs:enumeration>
      <xs:enumeration value="LEAVE"></xs:enumeration>
      <xs:enumeration value="NORTH"></xs:enumeration>

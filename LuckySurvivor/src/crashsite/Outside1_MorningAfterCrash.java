@@ -1,7 +1,7 @@
 package crashsite;
 
-import lge.events.EventNode;
 import lge.events.Event.NullState;
+import lge.events.EventNode;
 import lge.gui.Key;
 import lge.res.images.ImgChange;
 import lge.res.text.TextKey;

@@ -4,11 +4,10 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.List;
-import java.util.Vector;
 
 import lge.events.AltScreenToGameEvent;
-import lge.events.EventNode;
 import lge.events.Event.NullState;
+import lge.events.EventNode;
 import lge.gui.Key;
 import lge.progressgraph.ProgressGraph.ProgressCommon;
 import lge.res.ResourceCache;
@@ -17,6 +16,8 @@ import lge.res.text.CommonText;
 import lge.res.text.TextWrapper;
 import lge.state.State;
 import lge.util.ClassFinder;
+import lge.util.ClassFinder.ClassWorker;
+import lge.util.ClassFinder.SuperClass;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,11 +29,26 @@ public final class ProgressEvent extends EventNode<NullState> {
      * make sure, all classes that provide progress graphs are loaded and registered with AllPGs, before instances of
      * this class are created
      */
-    final Vector<Class<?>> progressGraph = new ClassFinder().findSubclasses(PG.class.getName());
-    for (final Class<?> pg : progressGraph) {
-      AllPGs.add((Class<PG>) pg);
-      LOGGER.debug("Loaded progressGraph: {}", pg.getName());
-    }
+    ClassFinder.workWithClasses(new ClassWorker() {
+      
+      @Override
+      public void doWork(final List<Class<?>> progressGraph) {
+        for (final Class<?> pg : progressGraph) {
+          AllPGs.add((Class<PG>) pg);
+          LOGGER.debug("Loaded progressGraph: {}", pg.getName());
+        }
+      }
+      
+      @Override
+      public SuperClass getSuperClass() {
+        return SuperClass.PG_SUPERCLASS;
+      }
+      
+      @Override
+      public String getDescription() {
+        return "[Progress Graph Loader]";
+      }
+    });
   }
   
   private ProgressGraph pg;

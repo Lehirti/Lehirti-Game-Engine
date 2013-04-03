@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 public final class LoadGameScreenEvent extends EventNode<NullState> {
   private int selectedItem;
   private final List<File> allSavegames;
-  private String nameOfSavegame;
   private final List<ImageKey> allImages = new LinkedList<>();
   
   private static final Logger LOGGER = LoggerFactory.getLogger(LoadGameScreenEvent.class);
@@ -60,7 +59,7 @@ public final class LoadGameScreenEvent extends EventNode<NullState> {
     
     try (FileInputStream fis = new FileInputStream(sav); ObjectInputStream ois = new ObjectInputStream(fis)) {
       // for load screen preview
-      this.nameOfSavegame = ois.readUTF();
+      ois.readUTF();
       final int nrImages = ois.readInt();
       for (int i = 0; i < nrImages; i++) {
         final ImageKey key = ImageKey.IO.read(ois);
@@ -74,10 +73,21 @@ public final class LoadGameScreenEvent extends EventNode<NullState> {
     } catch (final FileNotFoundException e) {
       LOGGER.error("Savegame " + sav.getAbsolutePath() + " not found for loading", e);
     } catch (final IOException e) {
-      LOGGER.error("IOException tryting to load from " + sav.getAbsolutePath(), e);
+      LOGGER.error("IOException trying to load from " + sav.getAbsolutePath(), e);
     } catch (final ClassNotFoundException e) {
       LOGGER.error("Savegame " + sav.getAbsolutePath() + " incompatible with current program version.", e);
     }
+  }
+  
+  private static String readNameFromSavegame(final File savegame) {
+    try (FileInputStream fis = new FileInputStream(savegame); ObjectInputStream ois = new ObjectInputStream(fis)) {
+      return ois.readUTF();
+    } catch (final FileNotFoundException e) {
+      LOGGER.error("Savegame " + savegame.getAbsolutePath() + " not found for loading", e);
+    } catch (final IOException e) {
+      LOGGER.error("IOException trying to load from " + savegame.getAbsolutePath(), e);
+    }
+    return "[Savegame corrupt]";
   }
   
   @Override
@@ -89,14 +99,14 @@ public final class LoadGameScreenEvent extends EventNode<NullState> {
   protected void doEvent() {
     setText(CommonText.SAVEGAMES);
     for (int i = 0; i < this.allSavegames.size(); i++) {
+      final File save = this.allSavegames.get(i);
       addText(CommonText.NEWLINE);
       if (i == this.selectedItem) {
         addText(CommonText.MARKER);
-        addOption(Key.OPTION_ENTER, CommonText.LOAD_SAVEGAME,
-            new LoadGameEvent(this.allSavegames.get(this.selectedItem)));
+        addOption(Key.OPTION_ENTER, CommonText.LOAD_SAVEGAME, new LoadGameEvent(save));
       }
       final TextWrapper tw = ResourceCache.get(CommonText.PARAMETER);
-      tw.addParameter(this.nameOfSavegame);
+      tw.addParameter(readNameFromSavegame(save));
       addText(tw);
     }
     if (this.selectedItem != 0) {

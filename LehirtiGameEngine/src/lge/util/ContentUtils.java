@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -23,6 +22,7 @@ import lge.res.images.ImageKey;
 import lge.res.images.ImageWrapper;
 import lge.res.text.TextKey;
 import lge.res.text.TextWrapper;
+import lge.util.ClassFinder.SuperClass;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -175,7 +175,7 @@ public class ContentUtils {
   
   public static List<ImageWrapper> getImageWrappers(final boolean withoutImagesOnly) {
     final List<ImageWrapper> imageWrapperList = new ArrayList<>(10000);
-    final Vector<Class<?>> imageEnums = new ClassFinder().findSubclasses(ImageKey.class.getName());
+    final List<Class<?>> imageEnums = ClassFinder.getSubclassesInFullClasspathStatic(SuperClass.IMAGE_KEY);
     for (final Class<?> imageEnum : imageEnums) {
       final ImageKey[] imageKeys = (ImageKey[]) imageEnum.getEnumConstants();
       if (imageKeys != null) {
@@ -193,7 +193,7 @@ public class ContentUtils {
   
   public static List<TextWrapper> getTextWrappers(final boolean withoutImagesOnly) {
     final List<TextWrapper> textWrapperList = new ArrayList<>(10000);
-    final Vector<Class<?>> textEnums = new ClassFinder().findSubclasses(TextKey.class.getName());
+    final List<Class<?>> textEnums = ClassFinder.getSubclassesInFullClasspathStatic(SuperClass.TEXT_KEY);
     for (final Class<?> textEnum : textEnums) {
       final TextKey[] textKeys = (TextKey[]) textEnum.getEnumConstants();
       if (textKeys != null) {

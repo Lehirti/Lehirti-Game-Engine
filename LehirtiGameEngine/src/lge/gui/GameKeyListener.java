@@ -14,6 +14,7 @@ import lge.res.ResourceCache;
 import lge.res.text.CommonText;
 import lge.state.InventoryMap;
 import lge.util.PathFinder;
+import lge.xmlevents.EventEditor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,14 @@ public class GameKeyListener implements KeyListener {
     // note the synchronized: making sure to only process one key event at a time
     try {
       final Key key = Key.getByCodeAndModifiers(e.getKeyCode(), e.getModifiers());
+      
+      // the DONT_PANIC key takes precedence over all other actions, so it's really a don't panic button
+      if (key == Key.DONT_PANIC) {
+        // try to save, but don't block, if it's not possible ...
+        this.main.saveGame(false);
+        // ... and exit
+        System.exit(0);
+      }
       
       if (key == null || key == Key.TEXT_INPUT_OPTION_ENTER) {
         // key unrelated to core game
@@ -62,6 +71,9 @@ public class GameKeyListener implements KeyListener {
       } else if (key == Key.TEXT_EDITOR) {
         editTexts();
         return;
+      } else if (key == Key.EVENT_EDITOR) {
+        editEvents();
+        return;
       } else if (key == Key.CYCLE_TEXT_PAGES) {
         EngineMain.getCurrentTextArea().cycleToNextPage();
         return;
@@ -75,7 +87,7 @@ public class GameKeyListener implements KeyListener {
       }
       
       if (key == Key.SAVE) {
-        this.main.saveGame();
+        this.main.saveGame(true);
       } else if (key == Key.LOAD) {
         final List<File> allSavegames = PathFinder.getAllSavegames();
         if (allSavegames.isEmpty()) {
@@ -119,11 +131,17 @@ public class GameKeyListener implements KeyListener {
   public synchronized void keyTyped(final KeyEvent e) {
   }
   
+  private static void editEvents() {
+    new EventEditor(EngineMain.getCurrentMainEvent().getClass().getPackage().getName(), EngineMain
+        .getCurrentMainEvent().getClass().getSimpleName());
+  }
+  
   private static void editImages() {
     new ImageEditor(EngineMain.getCurrentImageArea().getAllImages(), EngineMain.getCurrentImageArea());
   }
   
   private static void editTexts() {
-    new TextEditor(EngineMain.getCurrentTextArea(), EngineMain.getCurrentOptionArea(), EngineMain.getCurrentTextArea().getAllTexts());
+    new TextEditor(EngineMain.getCurrentTextArea(), EngineMain.getCurrentOptionArea(), EngineMain.getCurrentTextArea()
+        .getAllTexts());
   }
 }

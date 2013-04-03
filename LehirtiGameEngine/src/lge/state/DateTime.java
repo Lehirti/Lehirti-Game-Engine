@@ -8,7 +8,6 @@ import lge.res.text.CommonText;
 import lge.res.text.TextKey;
 import lge.res.text.TextWrapper;
 
-
 public enum DateTime implements IntState {
   FIRST_DAY,
   
@@ -26,6 +25,12 @@ public enum DateTime implements IntState {
     FRIDAY,
     SATURDAY,
     SUNDAY;
+  }
+  
+  public enum DayPhase {
+    DAYLIGHT,
+    DUSK_DAWN,
+    NIGHT;
   }
   
   public static void setFirstDayOfWeek(final DayOfWeek firstDay) {
@@ -169,5 +174,20 @@ public enum DateTime implements IntState {
     DDhhmmss *= 1000000;
     DDhhmmss += gethhmmss();
     return DDhhmmss;
+  }
+  
+  public static DayPhase getDayPhase() {
+    final int hhmmss = gethhmmss();
+    if (hhmmss < 60000) {
+      return DayPhase.NIGHT;
+    } else if (hhmmss < 80000) {
+      return DayPhase.DUSK_DAWN;
+    } else if (hhmmss < 180000) {
+      return DayPhase.DAYLIGHT;
+    } else if (hhmmss < 200000) {
+      return DayPhase.DUSK_DAWN;
+    } else {
+      return DayPhase.NIGHT;
+    }
   }
 }

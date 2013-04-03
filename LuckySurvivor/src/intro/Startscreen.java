@@ -1,7 +1,7 @@
 package intro;
 
-import lge.events.EventNode;
 import lge.events.Event.NullState;
+import lge.events.EventNode;
 import lge.gui.Key;
 import lge.res.images.ImgChange;
 import lge.res.text.TextKey;
@@ -17,7 +17,7 @@ public class Startscreen extends EventNode<NullState> {
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setBG(IntroImage.STARTSCREEN);
+    return ImgChange.setBGAndFG(IntroImage.STARTSCREEN);
   }
   
   @Override

@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 import lge.res.ResourceCache;
 import lge.res.ResourceState;
@@ -21,6 +20,8 @@ import lge.state.ObjState;
 import lge.state.State;
 import lge.state.StringState;
 import lge.util.ClassFinder;
+import lge.util.ClassFinder.ClassWorker;
+import lge.util.ClassFinder.SuperClass;
 import lge.util.FileUtils;
 import lge.util.PathFinder;
 
@@ -37,18 +38,34 @@ public class TextWrapper implements Externalizable {
   private static final Collection<TextParameterResolver> TEXT_PARAMETER_RESOLVER;
   static {
     final List<TextParameterResolver> c = new LinkedList<>();
-    final Vector<Class<?>> npcs = new ClassFinder().findSubclasses(TextParameterResolver.class.getName());
-    for (final Class<?> npc : npcs) {
-      if (!Modifier.isAbstract(npc.getModifiers())) {
-        try {
-          c.add((TextParameterResolver) npc.getConstructor().newInstance());
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-            | NoSuchMethodException | SecurityException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+    ClassFinder.workWithClasses(new ClassWorker() {
+      
+      @Override
+      public void doWork(final List<Class<?>> npcs) {
+        for (final Class<?> npc : npcs) {
+          if (!Modifier.isAbstract(npc.getModifiers())) {
+            try {
+              c.add((TextParameterResolver) npc.getConstructor().newInstance());
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
+          }
         }
       }
-    }
+      
+      @Override
+      public SuperClass getSuperClass() {
+        return SuperClass.TEXT_PARAMETER_RESOLVER;
+      }
+      
+      @Override
+      public String getDescription() {
+        return "[Text Parameter Resolver Loader]";
+      }
+    });
+    
     TEXT_PARAMETER_RESOLVER = Collections.unmodifiableCollection(c);
   }
   

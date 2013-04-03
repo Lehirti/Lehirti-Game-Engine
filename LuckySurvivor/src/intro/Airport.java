@@ -1,11 +1,10 @@
 package intro;
 
-import lge.events.EventNode;
 import lge.events.Event.NullState;
+import lge.events.EventNode;
 import lge.gui.Key;
 import lge.res.images.ImgChange;
 import lge.res.text.TextKey;
-
 import crashsite.Plane1_YourSeat;
 
 public class Airport extends EventNode<NullState> {
@@ -24,7 +23,7 @@ public class Airport extends EventNode<NullState> {
   protected void doEvent() {
     setText(Text.AIRPORT_DESCRIPTION);
     
-    addOption(Key.OPTION_ENTER, Text.OPTION_ENTER_BUS, new FirstDiscussion());
+    addOption(Key.OPTION_ENTER, Text.OPTION_ENTER_BUS, new Bus());
     addOption(Key.OPTION_LEAVE, Text.OPTION_SKIP_INTRO, new Plane1_YourSeat());
   }
 }

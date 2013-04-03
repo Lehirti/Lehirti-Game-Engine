@@ -32,5 +32,6 @@ public enum CommonText implements TextKey {
   GAME_SAVED,
   NO_SAVEGAME_FOUND,
   SAVEGAMES,
-  LOAD_SAVEGAME;
+  LOAD_SAVEGAME,
+  GAME_NOT_SAVED;
 }
