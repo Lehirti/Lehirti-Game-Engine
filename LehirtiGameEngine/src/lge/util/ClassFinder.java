@@ -29,7 +29,7 @@ import java.util.jar.JarFile;
 import lge.progressgraph.PG;
 import lge.res.images.ImageKey;
 import lge.res.text.TextKey;
-import lge.res.text.TextParameterResolver;
+import lge.res.text.TextParameterNPCResolver;
 import lge.state.AbstractState;
 import lge.state.StaticInitializer;
 
@@ -80,7 +80,7 @@ public class ClassFinder {
     STATIC_INITIALIZER(StaticInitializer.class),
     ABSTRACT_STATE(AbstractState.class),
     PG_SUPERCLASS(PG.class),
-    TEXT_PARAMETER_RESOLVER(TextParameterResolver.class),
+    TEXT_PARAMETER_RESOLVER(TextParameterNPCResolver.class),
     IMAGE_KEY(ImageKey.class),
     TEXT_KEY(TextKey.class);
     

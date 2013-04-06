@@ -392,13 +392,14 @@ public abstract class EngineMain {
   }
   
   protected void engineMain(final String[] args) throws InterruptedException, InvocationTargetException {
-    boolean exportDefaults = false;
+    final boolean exportDefaults;
+    boolean tmpExportDefaults = false;
     boolean editImages = false;
     boolean editTexts = false;
     boolean all = false;
     for (final String arg : args) {
       if (arg.equals("--exportDefaults")) {
-        exportDefaults = true;
+        tmpExportDefaults = true;
       }
       if (arg.equals("--editImages")) {
         editImages = true;
@@ -410,6 +411,7 @@ public abstract class EngineMain {
         all = true;
       }
     }
+    exportDefaults = tmpExportDefaults;
     
     readVersion();
     
@@ -459,41 +461,45 @@ public abstract class EngineMain {
       }
     });
     
-    if (exportDefaults) {
-      ClassFinder.workWithClasses(new ClassWorker() {
-        
-        @Override
-        public void doWork(final List<Class<?>> classes) {
-          for (final Class<?> state : classes) {
-            if (state.isEnum()) {
-              if (IntState.class.isAssignableFrom(state)) {
-                State.initIntDefaults((Class<IntState>) state);
+    ClassFinder.workWithClasses(new ClassWorker() {
+      
+      @Override
+      public void doWork(final List<Class<?>> classes) {
+        for (final Class<?> state : classes) {
+          if (state.isEnum()) {
+            if (IntState.class.isAssignableFrom(state)) {
+              State.initIntDefaults((Class<IntState>) state);
+              if (exportDefaults) {
                 PropertyUtils.setDefaultProperties((Class<IntState>) state,
                     PropertyUtils.getDefaultProperties((Class<IntState>) state));
-              } else if (StringState.class.isAssignableFrom(state)) {
-                State.initStringDefaults((Class<StringState>) state);
+              }
+            } else if (StringState.class.isAssignableFrom(state)) {
+              State.initStringDefaults((Class<StringState>) state);
+              if (exportDefaults) {
                 PropertyUtils.setDefaultProperties((Class<StringState>) state,
                     PropertyUtils.getDefaultProperties((Class<StringState>) state));
-              } else if (BoolState.class.isAssignableFrom(state)) {
-                State.initBoolDefaults((Class<BoolState>) state);
+              }
+            } else if (BoolState.class.isAssignableFrom(state)) {
+              State.initBoolDefaults((Class<BoolState>) state);
+              if (exportDefaults) {
                 PropertyUtils.setDefaultProperties((Class<BoolState>) state,
                     PropertyUtils.getDefaultProperties((Class<BoolState>) state));
               }
             }
           }
         }
-        
-        @Override
-        public SuperClass getSuperClass() {
-          return SuperClass.ABSTRACT_STATE;
-        }
-        
-        @Override
-        public String getDescription() {
-          return "[State Initializer]";
-        }
-      });
-    }
+      }
+      
+      @Override
+      public SuperClass getSuperClass() {
+        return SuperClass.ABSTRACT_STATE;
+      }
+      
+      @Override
+      public String getDescription() {
+        return "[State Initializer]";
+      }
+    });
     
     javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
       public void run() {

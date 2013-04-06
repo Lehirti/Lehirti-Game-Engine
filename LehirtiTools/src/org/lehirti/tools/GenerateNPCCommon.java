@@ -32,26 +32,26 @@ public final class GenerateNPCCommon {
     final List<Class<?>> npcs = new ClassFinder().findSubclasses(NPC.class).get(NPC.class);
     for (final Class<?> npc : npcs) {
       if (Modifier.isFinal(npc.getModifiers())) {
-        updateSource(npc.getName(), root, npc.getSimpleName());
+        updateSource(npc.getName(), root);
       }
     }
   }
   
-  private static void updateSource(final String fqcn, final File root, final String simpleClassName) {
+  private static void updateSource(final String fqcn, final File root) {
     final File sourceFile = new File(root, fqcn.replaceAll("\\.", File.separator) + ".java");
     if (!sourceFile.isFile()) {
       System.err.println(sourceFile.getAbsolutePath() + " is not a file");
     }
     String value = FileUtils.readContentAsString(sourceFile);
-    value = transform(value, simpleClassName);
+    value = transform(value);
     FileUtils.writeContentToFile(sourceFile, value);
   }
   
-  private static String transform(final String npcSourceFileContent, final String simpleClassName) {
+  private static String transform(final String npcSourceFileContent) {
     final Matcher matcher = NPCCommon_TO_BE_REPLACED.matcher(npcSourceFileContent);
     if (matcher.find()) {
       final String matchingBlock = matcher.group();
-      final String newGeneratedBlock = buildGeneratedPart(matchingBlock, simpleClassName);
+      final String newGeneratedBlock = buildGeneratedPart(matchingBlock);
       return matcher.replaceAll(newGeneratedBlock);
     } else {
       System.err.println("No markers " + NPCCommon_TO_BE_REPLACED.toString() + " found in\n" + npcSourceFileContent);
@@ -59,25 +59,21 @@ public final class GenerateNPCCommon {
     }
   }
   
-  private static String buildGeneratedPart(final String matchingBlock, final String simpleClassName) {
+  private static String buildGeneratedPart(final String matchingBlock) {
     final StringBuilder sb = new StringBuilder(PREFIX_NPCCommon + "\n");
     create(sb, matchingBlock, "Str", StringState.class);
     create(sb, matchingBlock, "Int", IntState.class);
     create(sb, matchingBlock, "Bool", BoolState.class);
     createStatLookupTable(sb);
-    createTextResolveMethod(sb, simpleClassName);
+    createTextResolveMethod(sb);
     sb.append(POSTFIX_NPCCommon);
     return sb.toString();
   }
   
-  private static void createTextResolveMethod(final StringBuilder sb, final String simpleClassName) {
+  private static void createTextResolveMethod(final StringBuilder sb) {
     sb.append("  @Override\n");
-    sb.append("  public String resolveParameter(final String parameterSuffix) {\n");
-    sb.append("    final AbstractState abstractState = STATE_BY_NAME_MAP.get(parameterSuffix);\n");
-    sb.append("    if (abstractState == null) {\n");
-    sb.append("      return \"[" + simpleClassName + ".resolveParameter(\" + parameterSuffix + \"): UNKNOWN]\";\n");
-    sb.append("    }\n");
-    sb.append("    return State.get(abstractState);\n");
+    sb.append("  public String resolveParameter(final String parameter) throws TextParameterResolutionException {\n");
+    sb.append("    return resolveParameter(parameter, STATE_BY_NAME_MAP);\n");
     sb.append("  }\n");
     sb.append("  \n");
   }

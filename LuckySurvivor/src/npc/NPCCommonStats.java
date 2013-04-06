@@ -12,6 +12,9 @@ public enum NPCCommonStats {
   HAIR_COLOR(StringState.class),
   HEIGHT(IntState.class),
   SKINTONE(StringState.class),
+  
+  // breast-related
+  UNDERBUST_SIZE(IntState.class),
   BREAST_SIZE(IntState.class),
   BREAST_SHAPE(StringState.class), ;
   

@@ -35,9 +35,9 @@ public class TextWrapper implements Externalizable {
   
   private static final String TEXT_DELIMITER = "\n\\$\n";
   
-  private static final Collection<TextParameterResolver> TEXT_PARAMETER_RESOLVER;
+  private static final Collection<TextParameterNPCResolver> TEXT_PARAMETER_RESOLVER;
   static {
-    final List<TextParameterResolver> c = new LinkedList<>();
+    final List<TextParameterNPCResolver> c = new LinkedList<>();
     ClassFinder.workWithClasses(new ClassWorker() {
       
       @Override
@@ -45,7 +45,7 @@ public class TextWrapper implements Externalizable {
         for (final Class<?> npc : npcs) {
           if (!Modifier.isAbstract(npc.getModifiers())) {
             try {
-              c.add((TextParameterResolver) npc.getConstructor().newInstance());
+              c.add((TextParameterNPCResolver) npc.getConstructor().newInstance());
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException | NoSuchMethodException | SecurityException e) {
               // TODO Auto-generated catch block
@@ -247,11 +247,11 @@ public class TextWrapper implements Externalizable {
     final int indexOfHash = parameter.indexOf("#");
     if (indexOfHash != -1) {
       final String prefix = parameter.substring(0, indexOfHash + 1);
-      TextParameterResolver textParameterResolver = null;
+      TextParameterNPCResolver textParameterResolver = null;
       if (prefix.equals("#")) {
-        textParameterResolver = TextParameterResolver.Current.get();
+        textParameterResolver = TextParameterNPCResolver.Current.get();
       } else {
-        for (final TextParameterResolver resolver : TEXT_PARAMETER_RESOLVER) {
+        for (final TextParameterNPCResolver resolver : TEXT_PARAMETER_RESOLVER) {
           if (resolver.getParameterPrefix().equals(prefix)) {
             textParameterResolver = resolver;
             break;

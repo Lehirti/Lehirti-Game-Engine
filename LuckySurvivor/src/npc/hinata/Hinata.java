@@ -11,6 +11,7 @@ import lge.res.TextAndImageKey;
 import lge.res.images.ImageKey;
 import lge.res.text.CommonText;
 import lge.res.text.TextKey;
+import lge.res.text.TextParameterResolutionException;
 import lge.res.text.TextWrapper;
 import lge.sex.Sex;
 import lge.state.AbstractState;
@@ -18,9 +19,7 @@ import lge.state.BoolState;
 import lge.state.IntState;
 import lge.state.State;
 import lge.state.StringState;
-
 import npc.AbstractNPC;
-
 import sss.ReactionToSexAct;
 import sss.SexAct;
 import sss.SexToy;
@@ -39,6 +38,7 @@ public final class Hinata extends AbstractNPC {
   
   public static enum Int implements IntState {
     HEIGHT,
+    UNDERBUST_SIZE,
     BREAST_SIZE,
     // BEGIN MANUAL BLOCK Int
     ABSOLUTE_UPPER_PAIN_THRESHOLD,
@@ -81,12 +81,8 @@ public final class Hinata extends AbstractNPC {
   }
   
   @Override
-  public String resolveParameter(final String parameterSuffix) {
-    final AbstractState abstractState = STATE_BY_NAME_MAP.get(parameterSuffix);
-    if (abstractState == null) {
-      return "[Hinata.resolveParameter(" + parameterSuffix + "): UNKNOWN]";
-    }
-    return State.get(abstractState);
+  public String resolveParameter(final String parameter) throws TextParameterResolutionException {
+    return resolveParameter(parameter, STATE_BY_NAME_MAP);
   }
   
   // END GENERATED BLOCK NPCCommon

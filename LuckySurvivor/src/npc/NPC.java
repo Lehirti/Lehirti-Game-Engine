@@ -7,7 +7,7 @@ import java.util.Set;
 import lge.events.Event;
 import lge.events.Option;
 import lge.res.images.ImageKey;
-import lge.res.text.TextParameterResolver;
+import lge.res.text.TextParameterNPCResolver;
 import lge.res.text.TextWrapper;
 import lge.state.StringState;
 
@@ -16,7 +16,7 @@ import sss.SexAct;
 import sss.SexParticipant;
 import sss.SexToy;
 
-public interface NPC extends TextParameterResolver, SexParticipant, Serializable {
+public interface NPC extends TextParameterNPCResolver, SexParticipant, Serializable {
   public StringState getName();
   
   public TextWrapper getNameTextWrapper();

@@ -109,13 +109,17 @@ public class State implements Externalizable {
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
   public static boolean is(final BoolState key) {
-    Boolean value = INSTANCE.BOOL_MAP.get(key);
+    final Boolean value = INSTANCE.BOOL_MAP.get(key);
     if (value == null) {
-      final Properties defaultProperties = PropertyUtils.getDefaultProperties(key.getClass());
-      final String defaultValue = defaultProperties.getProperty(key.name());
-      value = Boolean.valueOf(defaultValue);
+      return isInitial(key);
     }
     return value.booleanValue();
+  }
+  
+  public static boolean isInitial(final BoolState key) {
+    final Properties defaultProperties = PropertyUtils.getDefaultProperties(key.getClass());
+    final String defaultValue = defaultProperties.getProperty(key.name());
+    return Boolean.parseBoolean(defaultValue);
   }
   
   public static void set(final BoolState key, final boolean value) {
@@ -123,13 +127,17 @@ public class State implements Externalizable {
   }
   
   public static long get(final IntState key) {
-    Long value = INSTANCE.INT_MAP.get(key);
+    final Long value = INSTANCE.INT_MAP.get(key);
     if (value == null) {
-      final Properties defaultProperties = PropertyUtils.getDefaultProperties(key.getClass());
-      final String defaultValue = defaultProperties.getProperty(key.name());
-      value = Long.valueOf(defaultValue);
+      return getInitial(key);
     }
     return value.intValue();
+  }
+  
+  public static long getInitial(final IntState key) {
+    final Properties defaultProperties = PropertyUtils.getDefaultProperties(key.getClass());
+    final String defaultValue = defaultProperties.getProperty(key.name());
+    return Long.parseLong(defaultValue);
   }
   
   public static void set(final IntState key, final long value) {
@@ -141,11 +149,15 @@ public class State implements Externalizable {
   }
   
   public static Serializable get(final ObjState key) {
-    Serializable value = INSTANCE.OBJ_MAP.get(key);
+    final Serializable value = INSTANCE.OBJ_MAP.get(key);
     if (value == null) {
-      value = key.defaultValue();
+      return getInitial(key);
     }
     return value;
+  }
+  
+  public static Serializable getInitial(final ObjState key) {
+    return key.defaultValue();
   }
   
   public static void set(final ObjState key, final Serializable value) {
@@ -153,12 +165,16 @@ public class State implements Externalizable {
   }
   
   public static String get(final StringState key) {
-    String value = INSTANCE.STRING_MAP.get(key);
+    final String value = INSTANCE.STRING_MAP.get(key);
     if (value == null) {
-      final Properties defaultProperties = PropertyUtils.getDefaultProperties(key.getClass());
-      value = defaultProperties.getProperty(key.name());
+      return getInitial(key);
     }
     return value;
+  }
+  
+  public static String getInitial(final StringState key) {
+    final Properties defaultProperties = PropertyUtils.getDefaultProperties(key.getClass());
+    return defaultProperties.getProperty(key.name());
   }
   
   public static void set(final StringState key, final String value) {

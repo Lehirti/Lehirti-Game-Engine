@@ -5,17 +5,25 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import lge.events.Event;
 import lge.events.Option;
 import lge.gui.Key;
+import lge.res.ResourceCache;
 import lge.res.images.ImageKey;
 import lge.res.text.CommonText;
 import lge.res.text.TextKey;
+import lge.res.text.TextParameterResolutionException;
 import lge.res.text.TextWrapper;
-
-
+import lge.state.AbstractState;
+import lge.state.IntState;
+import lge.state.OrderedTextKeyResolver;
+import lge.state.State;
+import npc.adjectives.BreastCupSize;
+import npc.adjectives.BreastSize;
+import npc.adjectives.UnderbustSize;
 import pc.PC;
 import sss.EndSexSession;
 import sss.Orgasm;
@@ -261,5 +269,35 @@ public abstract class AbstractNPC implements NPC {
   @Override
   public String getParameterPrefix() {
     return getClass().getSimpleName() + "#";
+  }
+  
+  public String resolveParameter(final String parameter, final Map<String, AbstractState> stateMap)
+      throws TextParameterResolutionException {
+    final AbstractState abstractState = stateMap.get(parameter);
+    
+    // TODO temporary changes
+    switch (parameter) {
+    case "UNDERBUST_SIZE":
+      final long underbustSizeInMM = State.get((IntState) abstractState);
+      return ResourceCache.get(OrderedTextKeyResolver.resolve(underbustSizeInMM, UnderbustSize.values())).getValue();
+    case "BREAST_SIZE":
+      long breastSizeInMM = State.get((IntState) abstractState);
+      return ResourceCache.get(OrderedTextKeyResolver.resolve(breastSizeInMM, BreastSize.values())).getValue();
+    case "CUP":
+      breastSizeInMM = State.get((IntState) abstractState);
+      return ResourceCache.get(OrderedTextKeyResolver.resolve(breastSizeInMM, BreastCupSize.values())).getValue();
+    case "BUST_MEASUREMENT":
+      final IntState underbustSize = (IntState) stateMap.get(NPCCommonStats.UNDERBUST_SIZE.name());
+      final IntState breastSize = (IntState) stateMap.get(NPCCommonStats.BREAST_SIZE.name());
+      return String.valueOf(State.get(underbustSize) + State.get(breastSize)); // TODO change mm value
+    }
+    
+    // if there are no special rules for this parameter, interpret it as a variable
+    if (abstractState == null) {
+      // parameter unknown; this is probably an error in the text
+      throw new TextParameterResolutionException("[" + getClass().getSimpleName() + ".resolveParameter(" + parameter
+          + "): UNKNOWN]");
+    }
+    return State.get(abstractState);
   }
 }
