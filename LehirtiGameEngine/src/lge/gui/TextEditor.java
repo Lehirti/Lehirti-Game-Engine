@@ -1,7 +1,6 @@
 package lge.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -17,7 +16,6 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.border.LineBorder;
 
 import lge.gui.WindowLocation.WinLoc;
 import lge.res.text.TextKey;
@@ -36,6 +34,8 @@ public class TextEditor extends JFrame implements ActionListener {
   JButton next = new JButton("Next");
   
   JButton save = new JButton("Save");
+  
+  JButton addAlternative = new JButton("Add Alternative");
   
   JPanel textAreas = new JPanel();
   
@@ -63,12 +63,13 @@ public class TextEditor extends JFrame implements ActionListener {
     
     this.contentDir = new JComboBox<>(PathFinder.getContentDirs());
     
-    this.controls.setLayout(new GridLayout(4, 1));
+    this.controls.setLayout(new GridLayout(5, 1));
     this.controls.setPreferredSize(new Dimension(300, 800));
     this.controls.add(this.prev);
     this.controls.add(this.next);
     this.controls.add(this.contentDir);
     this.controls.add(this.save);
+    this.controls.add(this.addAlternative);
     
     this.all.setLayout(new BorderLayout());
     this.all.add(this.controls, BorderLayout.EAST);
@@ -81,6 +82,7 @@ public class TextEditor extends JFrame implements ActionListener {
     this.prev.addActionListener(this);
     this.next.addActionListener(this);
     this.save.addActionListener(this);
+    this.addAlternative.addActionListener(this);
     
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     
@@ -241,7 +243,10 @@ public class TextEditor extends JFrame implements ActionListener {
           new Notification(this, "Cannot save texts due to error in parameter: " + e1.getMessage());
         }
       }
+    } else if (e.getSource() == this.addAlternative) {
+      this.textAreas.add(new TextEditorTextArea());
     }
+    pack();
     this.gameTextArea.refresh();
     this.gameOptionArea.repaint();
   }
@@ -267,18 +272,10 @@ public class TextEditor extends JFrame implements ActionListener {
     this.textAreas.removeAll();
     for (final String text : texts) {
       if (text != null) {
-        final JTextArea textArea = new JTextArea();
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
-        textArea.setBorder(new LineBorder(Color.BLACK));
+        final TextEditorTextArea textArea = new TextEditorTextArea();
         this.textAreas.add(textArea);
         textArea.setText(text);
       }
     }
-    final JTextArea textArea = new JTextArea();
-    textArea.setLineWrap(true);
-    textArea.setWrapStyleWord(true);
-    textArea.setBorder(new LineBorder(Color.BLACK));
-    this.textAreas.add(textArea);
   }
 }
