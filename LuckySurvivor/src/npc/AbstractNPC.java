@@ -21,9 +21,6 @@ import lge.state.AbstractState;
 import lge.state.IntState;
 import lge.state.OrderedTextKeyResolver;
 import lge.state.State;
-import npc.adjectives.BreastCupSize;
-import npc.adjectives.BreastSize;
-import npc.adjectives.UnderbustSize;
 import pc.PC;
 import sss.EndSexSession;
 import sss.Orgasm;
@@ -35,6 +32,9 @@ import sss.SelectSexToyEvent;
 import sss.SexAct;
 import sss.SexToy;
 import sss.SexToyCategory;
+import text.BreastCupSize;
+import text.BreastSize;
+import text.UnderbustSize;
 
 public abstract class AbstractNPC implements NPC {
   public static final long serialVersionUID = 1L; // yes, public!

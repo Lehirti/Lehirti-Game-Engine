@@ -1,4 +1,4 @@
-package npc.adjectives;
+package text;
 
 import lge.res.text.OrderedTextKey;
 
