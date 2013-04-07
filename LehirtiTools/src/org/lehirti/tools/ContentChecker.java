@@ -47,9 +47,13 @@ public final class ContentChecker {
     if (missing_images.exists()) {
       final String missingImagesTemplate = FileUtils.readContentAsString(missing_images);
       final int indexOf = missingImagesTemplate.indexOf("MIL");
-      final String missingImagesContent = missingImagesTemplate.substring(0, indexOf)
-          + websiteMissingeImageList.toString() + missingImagesTemplate.substring(indexOf + 3);
-      FileUtils.writeContentToFile(missing_images, missingImagesContent);
+      if (indexOf != -1) {
+        final String missingImagesContent = missingImagesTemplate.substring(0, indexOf)
+            + websiteMissingeImageList.toString() + missingImagesTemplate.substring(indexOf + 3);
+        FileUtils.writeContentToFile(missing_images, missingImagesContent);
+      } else {
+        // "MIL" not found
+      }
     }
     
     System.out.println();
