@@ -31,11 +31,17 @@ public final class TextAreaParameterPopup extends JPopupMenu {
   
   private TextAreaParameterPopup() {
     final List<Class<?>> textKeys = ClassFinder.getSubclassesInFullClasspathStatic(SuperClass.TEXT_KEY);
-    final Map<String, ?> menuStructure = createMenuStructure(textKeys);
-    addStructureToMenu(this, "", menuStructure);
+    Map<String, Object> menuStructure = createMenuStructure(textKeys, new TreeMap<String, Object>());
+    JMenu subMenu = new JMenu("Add text");
+    add(subMenu);
+    addStructureToMenu(subMenu, "", menuStructure);
     
-    // final String text = "{test}";
-    // TextEditorTextArea.this.insert(text, TextEditorTextArea.this.getCaretPosition());
+    final List<Class<?>> state = ClassFinder.getSubclassesInFullClasspathStatic(SuperClass.ABSTRACT_STATE);
+    menuStructure = createMenuStructure(state, new TreeMap<String, Object>());
+    subMenu = new JMenu("Add variable");
+    add(subMenu);
+    addStructureToMenu(subMenu, "", menuStructure);
+    
   }
   
   private void addStructureToMenu(final JComponent parent, final String prefix, final Map<String, ?> menuStructure) {
@@ -63,22 +69,21 @@ public final class TextAreaParameterPopup extends JPopupMenu {
     }
   }
   
-  private static Map<String, ?> createMenuStructure(final List<Class<?>> textKeys) {
-    final Map<String, Object> menuStructure = new TreeMap<>();
-    for (final Class<?> clazz : textKeys) {
+  private static Map<String, Object> createMenuStructure(final List<Class<?>> classes,
+      final Map<String, Object> menuStructure) {
+    for (final Class<?> clazz : classes) {
       if (Modifier.isAbstract(clazz.getModifiers())) {
         continue;
       }
       Map<String, Object> subStructure = menuStructure;
       
       for (final String nameFragment : clazz.getName().split("\\.")) {
-        final String replacedName = nameFragment.replaceAll("\\$", ".");
-        final Object subSubStructure = subStructure.get(replacedName);
+        final Object subSubStructure = subStructure.get(nameFragment);
         if (subSubStructure instanceof Map) {
           subStructure = (Map<String, Object>) subSubStructure;
         } else if (subSubStructure == null) {
           final Map<String, Object> newSubStructure = new TreeMap<>();
-          subStructure.put(replacedName, newSubStructure);
+          subStructure.put(nameFragment, newSubStructure);
           subStructure = newSubStructure;
         } else {
           // TODO error or end
