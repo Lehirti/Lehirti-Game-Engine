@@ -9,8 +9,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import lge.res.ResourceCache;
 import lge.res.ResourceState;
@@ -36,6 +38,22 @@ public class TextWrapper implements Externalizable {
   private static final String TEXT_DELIMITER = "\n\\$\n";
   
   private static final Collection<TextParameterNPCResolver> TEXT_PARAMETER_RESOLVER;
+  
+  /**
+   * When replacing parameters with their respective values, the first character will be capitalized, if the previous
+   * non-whitespace character in the string is one in this Collection.
+   */
+  private static final Collection<Character> SENTENCE_END_CHARACTERS;
+  static {
+    final Set<Character> s = new HashSet<>();
+    s.add(null); // special case for "first sentence in text"
+    s.add(Character.valueOf('.'));
+    s.add(Character.valueOf(':'));
+    s.add(Character.valueOf('!'));
+    s.add(Character.valueOf('?'));
+    SENTENCE_END_CHARACTERS = Collections.unmodifiableCollection(s);
+  }
+  
   static {
     final List<TextParameterNPCResolver> c = new LinkedList<>();
     ClassFinder.workWithClasses(new ClassWorker() {
@@ -214,6 +232,7 @@ public class TextWrapper implements Externalizable {
       String replacement;
       try {
         replacement = getParameterReplacement(parameter, this.parameters, toString());
+        replacement = toUppercaseFirstCharacterIfNeccessary(replacement, val, fromIndex);
         LOGGER.debug("Parameter \"{}\" found in \"{}\"", parameter, val);
         val = val.replace("{" + parameter + "}", replacement);
       } catch (final TextParameterResolutionException e) {
@@ -221,6 +240,37 @@ public class TextWrapper implements Externalizable {
       }
     }
     return val;
+  }
+  
+  private static String toUppercaseFirstCharacterIfNeccessary(final String replacement, final String val,
+      final int fromIndex) {
+    final Character prevNonWhitespaceChar = getPreviousNonWhitespaceCharacter(val, fromIndex - 1);
+    if (SENTENCE_END_CHARACTERS.contains(prevNonWhitespaceChar)) {
+      return toUppercaseFirstCharacter(replacement);
+    } else {
+      return replacement;
+    }
+  }
+  
+  private static Character getPreviousNonWhitespaceCharacter(final String string, final int index) {
+    if (index < 0) {
+      return null;
+    }
+    final char charAt = string.charAt(index);
+    if (Character.isWhitespace(charAt)) {
+      return getPreviousNonWhitespaceCharacter(string, index - 1);
+    }
+    return Character.valueOf(charAt);
+  }
+  
+  private static String toUppercaseFirstCharacter(final String string) {
+    if (string.length() == 0) {
+      return string; // nothing to do
+    } else if (string.length() == 1) {
+      return string.toUpperCase(); // only one character, so just toUpper the whole string
+    } else {
+      return string.substring(0, 1).toUpperCase() + string.substring(1);
+    }
   }
   
   public static String getParameterReplacement(final String parameter, final List<Object> parameters,
