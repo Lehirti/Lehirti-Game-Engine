@@ -284,7 +284,7 @@ public abstract class AbstractNPC implements NPC {
       long breastSizeInMM = State.get((IntState) abstractState);
       return ResourceCache.get(OrderedTextKeyResolver.resolve(breastSizeInMM, BreastSize.values())).getValue();
     case "CUP":
-      breastSizeInMM = State.get((IntState) abstractState);
+      breastSizeInMM = State.get((IntState) stateMap.get(NPCCommonStats.BREAST_SIZE.name()));
       return ResourceCache.get(OrderedTextKeyResolver.resolve(breastSizeInMM, BreastCupSize.values())).getValue();
     case "BUST_MEASUREMENT":
       final IntState underbustSize = (IntState) stateMap.get(NPCCommonStats.UNDERBUST_SIZE.name());

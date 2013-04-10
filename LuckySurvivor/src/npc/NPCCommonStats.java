@@ -16,7 +16,9 @@ public enum NPCCommonStats {
   // breast-related
   UNDERBUST_SIZE(IntState.class),
   BREAST_SIZE(IntState.class),
-  BREAST_SHAPE(StringState.class), ;
+  BREAST_SHAPE(StringState.class),
+  CUP(null),
+  BUST_MEASUREMENT(null), ;
   
   // currently possible values are StringState, IntState, BoolState, can be easily extended to other types, if needed
   public final Class<? extends AbstractState> type;

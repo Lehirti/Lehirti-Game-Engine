@@ -75,7 +75,7 @@ public class TextWrapper implements Externalizable {
       
       @Override
       public SuperClass getSuperClass() {
-        return SuperClass.TEXT_PARAMETER_RESOLVER;
+        return SuperClass.TEXT_PARAMETER_NPC_RESOLVER;
       }
       
       @Override
@@ -323,14 +323,24 @@ public class TextWrapper implements Externalizable {
       }
     }
     
+    String parameterWOPrefix;
+    boolean mustBeVariable;
+    if (parameter.startsWith("V:")) {
+      parameterWOPrefix = parameter.substring(2);
+      mustBeVariable = true;
+    } else {
+      parameterWOPrefix = parameter;
+      mustBeVariable = false;
+    }
+    
     // try expanded FQCN
-    final int endOfClassname = parameter.lastIndexOf(".");
+    final int endOfClassname = parameterWOPrefix.lastIndexOf(".");
     if (endOfClassname != -1) {
-      final String className = parameter.substring(0, endOfClassname);
-      final String name = parameter.substring(endOfClassname + 1);
+      final String className = parameterWOPrefix.substring(0, endOfClassname);
+      final String name = parameterWOPrefix.substring(endOfClassname + 1);
       try {
         final Enum parameterValue = Enum.valueOf((Class<? extends Enum>) Class.forName(className), name);
-        if (parameterValue instanceof TextKey) {
+        if (parameterValue instanceof TextKey && !mustBeVariable) {
           return ResourceCache.get((TextKey) parameterValue).getValue();
         } else if (parameterValue instanceof StringState) {
           return State.get((StringState) parameterValue);

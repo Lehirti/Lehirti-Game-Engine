@@ -63,6 +63,13 @@ public final class MaryAnn extends AbstractNPC {
     // END MANUAL BLOCK Bool
   }
   
+  public static enum Virtual {
+    CUP,
+    BUST_MEASUREMENT,
+    // BEGIN MANUAL BLOCK Virtual
+    // END MANUAL BLOCK Virtual
+  }
+  
   private final static Map<String, AbstractState> STATE_BY_NAME_MAP = new LinkedHashMap<>();
   static {
     for (final AbstractState state : Str.values()) {
@@ -82,6 +89,12 @@ public final class MaryAnn extends AbstractNPC {
         throw new ThreadDeath();
       }
       STATE_BY_NAME_MAP.put(state.name(), state);
+    }
+    for (final Enum<?> state : Virtual.values()) {
+      if (STATE_BY_NAME_MAP.containsKey(state.name())) {
+        throw new ThreadDeath();
+      }
+      STATE_BY_NAME_MAP.put(state.name(), null);
     }
   }
   

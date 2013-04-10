@@ -80,7 +80,7 @@ public class ClassFinder {
     STATIC_INITIALIZER(StaticInitializer.class),
     ABSTRACT_STATE(AbstractState.class),
     PG_SUPERCLASS(PG.class),
-    TEXT_PARAMETER_RESOLVER(TextParameterNPCResolver.class),
+    TEXT_PARAMETER_NPC_RESOLVER(TextParameterNPCResolver.class),
     IMAGE_KEY(ImageKey.class),
     TEXT_KEY(TextKey.class);
     
@@ -121,7 +121,7 @@ public class ClassFinder {
       for (final ClassWorker clWrk : CLASS_WORKERS) {
         final List<Class<?>> classes = new ArrayList<>(INSTANCE_FOR_STATIC_ACCESS.resultsPerSuperClass.get(clWrk
             .getSuperClass().superClass));
-        cw.doWork(classes);
+        clWrk.doWork(classes);
       }
     }
   }

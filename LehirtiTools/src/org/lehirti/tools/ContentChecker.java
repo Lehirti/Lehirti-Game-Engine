@@ -17,6 +17,8 @@ import main.C;
 
 public final class ContentChecker {
   public static void main(final String[] args) {
+    System.out.println("START " + ContentChecker.class.getName());
+    
     final StringBuilder websiteMissingeImageList = new StringBuilder();
     
     for (final C content : C.values()) {
@@ -37,6 +39,8 @@ public final class ContentChecker {
       }
     }
     
+    System.out.println("Searching for missing_images.html template");
+    
     File missing_images = new File(".").getAbsoluteFile();
     while (!containsLuckySurvivorDir(missing_images.listFiles())) {
       missing_images = missing_images.getParentFile();
@@ -53,10 +57,11 @@ public final class ContentChecker {
         FileUtils.writeContentToFile(missing_images, missingImagesContent);
       } else {
         // "MIL" not found
+        System.out.println("MIL not found.");
       }
     }
     
-    System.out.println();
+    System.out.println("Enumerating missing resources");
     
     int tCore = 0;
     int tMod = 0;

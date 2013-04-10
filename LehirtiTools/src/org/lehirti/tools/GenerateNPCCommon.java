@@ -64,6 +64,7 @@ public final class GenerateNPCCommon {
     create(sb, matchingBlock, "Str", StringState.class);
     create(sb, matchingBlock, "Int", IntState.class);
     create(sb, matchingBlock, "Bool", BoolState.class);
+    create(sb, matchingBlock, "Virtual", null);
     createStatLookupTable(sb);
     createTextResolveMethod(sb);
     sb.append(POSTFIX_NPCCommon);
@@ -84,6 +85,7 @@ public final class GenerateNPCCommon {
     createStatLookupTableForOneType(sb, "Str");
     createStatLookupTableForOneType(sb, "Int");
     createStatLookupTableForOneType(sb, "Bool");
+    createStatLookupTableForVirtual(sb);
     sb.append("  }\n");
     sb.append("  \n");
   }
@@ -97,11 +99,21 @@ public final class GenerateNPCCommon {
     sb.append("    }\n");
   }
   
+  private static void createStatLookupTableForVirtual(final StringBuilder sb) {
+    sb.append("    for (final Enum<?> state : Virtual.values()) {\n");
+    sb.append("      if (STATE_BY_NAME_MAP.containsKey(state.name())) {\n");
+    sb.append("        throw new ThreadDeath();\n");
+    sb.append("      }\n");
+    sb.append("      STATE_BY_NAME_MAP.put(state.name(), null);\n");
+    sb.append("    }\n");
+  }
+  
   private static void create(final StringBuilder sb, final String matchingBlock, final String key,
       final Class<? extends AbstractState> stateClass) {
-    sb.append("  public static enum " + key + " implements " + stateClass.getSimpleName() + " {\n");
+    sb.append("  public static enum " + key + (stateClass != null ? " implements " + stateClass.getSimpleName() : "")
+        + " {\n");
     for (final NPCCommonStats stat : NPCCommonStats.values()) {
-      if (stateClass.equals(stat.type)) {
+      if ((stateClass == null && stat.type == null) || (stateClass != null && stateClass.equals(stat.type))) {
         sb.append("    " + stat.name() + ",\n");
       }
     }

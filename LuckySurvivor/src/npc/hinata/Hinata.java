@@ -25,6 +25,7 @@ import sss.SexAct;
 import sss.SexToy;
 
 public final class Hinata extends AbstractNPC {
+  private static final long serialVersionUID = 1L;
   
   // BEGIN GENERATED BLOCK NPCCommon
   public static enum Str implements StringState {
@@ -58,6 +59,13 @@ public final class Hinata extends AbstractNPC {
     // END MANUAL BLOCK Bool
   }
   
+  public static enum Virtual {
+    CUP,
+    BUST_MEASUREMENT,
+    // BEGIN MANUAL BLOCK Virtual
+    // END MANUAL BLOCK Virtual
+  }
+  
   private final static Map<String, AbstractState> STATE_BY_NAME_MAP = new LinkedHashMap<>();
   static {
     for (final AbstractState state : Str.values()) {
@@ -77,6 +85,12 @@ public final class Hinata extends AbstractNPC {
         throw new ThreadDeath();
       }
       STATE_BY_NAME_MAP.put(state.name(), state);
+    }
+    for (final Enum<?> state : Virtual.values()) {
+      if (STATE_BY_NAME_MAP.containsKey(state.name())) {
+        throw new ThreadDeath();
+      }
+      STATE_BY_NAME_MAP.put(state.name(), null);
     }
   }
   
