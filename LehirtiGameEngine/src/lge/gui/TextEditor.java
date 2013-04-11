@@ -60,6 +60,7 @@ public class TextEditor extends JFrame implements ActionListener {
     }
     
     this.textAreas.setLayout(new BoxLayout(this.textAreas, BoxLayout.Y_AXIS));
+    this.textAreas.setPreferredSize(new Dimension(980, 800));
     
     this.contentDir = new JComboBox<>(PathFinder.getContentDirs());
     
