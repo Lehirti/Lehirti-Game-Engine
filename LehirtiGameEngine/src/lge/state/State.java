@@ -116,6 +116,15 @@ public class State implements Externalizable {
     return value.booleanValue();
   }
   
+  public static boolean isAll(final BoolState... keys) {
+    for (final BoolState key : keys) {
+      if (!is(key)) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
   public static boolean isInitial(final BoolState key) {
     final Properties defaultProperties = PropertyUtils.getDefaultProperties(key.getClass());
     final String defaultValue = defaultProperties.getProperty(key.name());

@@ -12,23 +12,24 @@ import lge.res.text.CommonText;
 import lge.res.text.TextKey;
 import lge.state.BoolState;
 
-
 public class SetFlagEvent extends EventNode<NullState> {
   
   private BoolState flag;
+  private Key key;
   private ImageKey image;
   private TextKey text;
   private Event<?> nextEvent;
   
   // for saving/loading
   public SetFlagEvent() {
-    this(null, null, null, null);
+    this(null, null, null, null, null);
   }
   
   @Override
   public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
     super.readExternal(in);
     this.flag = (BoolState) in.readObject();
+    this.key = (Key) in.readObject();
     this.image = (ImageKey) in.readObject();
     this.text = (TextKey) in.readObject();
     this.nextEvent = (Event<?>) in.readObject();
@@ -38,13 +39,20 @@ public class SetFlagEvent extends EventNode<NullState> {
   public void writeExternal(final ObjectOutput out) throws IOException {
     super.writeExternal(out);
     out.writeObject(this.flag);
+    out.writeObject(this.key);
     out.writeObject(this.image);
     out.writeObject(this.text);
     out.writeObject(this.nextEvent);
   }
   
   public SetFlagEvent(final BoolState flag, final ImageKey image, final TextKey text, final Event<?> nextEvent) {
+    this(flag, Key.OPTION_ENTER, image, text, nextEvent);
+  }
+  
+  public SetFlagEvent(final BoolState flag, final Key key, final ImageKey image, final TextKey text,
+      final Event<?> nextEvent) {
     this.flag = flag;
+    this.key = key;
     this.image = image;
     this.text = text;
     this.nextEvent = nextEvent;
@@ -60,6 +68,6 @@ public class SetFlagEvent extends EventNode<NullState> {
     set(this.flag, true);
     setText(this.text);
     
-    addOption(Key.OPTION_ENTER, CommonText.OPTION_NEXT, this.nextEvent);
+    addOption(this.key, CommonText.OPTION_NEXT, this.nextEvent);
   }
 }
