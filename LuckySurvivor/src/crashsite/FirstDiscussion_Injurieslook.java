@@ -7,21 +7,21 @@ import lge.res.images.ImgChange;
 import lge.res.text.TextKey;
 import lge.state.TimeInterval;
 
-public class Outside1_MorningAfterCrash extends EventNode<NullState> {
+public class FirstDiscussion_Injurieslook extends EventNode<NullState> {
   public static enum Text implements TextKey {
     DESCRIPTION,
-    OPTION_GET_UP;
+    OPTION_GO_ON;
   }
   
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setBG(CrashSite.OUTSIDE_PLANE_MORNING);
+    return ImgChange.setBG(CrashSite.CLEAVAGE_LOOK);
   }
   
   @Override
   protected void doEvent() {
     setText(Text.DESCRIPTION);
-    addOption(Key.OPTION_ENTER, Text.OPTION_GET_UP, new Outside1_MorningAfterCrashGetUp());
+    addOption(Key.OPTION_ENTER, Text.OPTION_GO_ON, new FirstDiscussion());
   }
   
   @Override
