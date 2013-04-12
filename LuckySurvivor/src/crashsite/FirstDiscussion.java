@@ -57,7 +57,7 @@ public class FirstDiscussion extends EventNode<NullState> {
     setText(Text.FIRST_DISCUSSION_DESCRIPTION);
     // while discussing the respective option, the flag is set to "true"
     addOption(Key.OPTION_NORTH, Text.OPTION_INJURIES, new SetFlagEvent(Bool.HAS_DISCUSSED_INJURIES, Key.OPTION_NORTH,
-        CrashSite.FIRST_DISCUSSION_TOPIC_1, Text.INJURIES, new FirstDiscussion()));
+        CrashSite.FIRST_DISCUSSION_TOPIC_1, Text.INJURIES, new FirstDiscussion_Injurieslook()));
     addOption(Key.OPTION_A, Text.OPTION_OTHER_SURVIVORS, new SetFlagEvent(Bool.HAS_DISCUSSED_OTHER_SURVIVORS,
         Key.OPTION_A, CrashSite.FIRST_DISCUSSION_TOPIC_2, Text.OTHER_SURVIVORS, new FirstDiscussion()));
     addOption(Key.OPTION_WEST, Text.OPTION_OTHER_SURVIVORS_AGAIN, new SetFlagEvent(Bool.HAS_DISCUSSED_OTHER_SURVIVORS_AGAIN,
