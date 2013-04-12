@@ -7,10 +7,10 @@ import lge.res.images.ImgChange;
 import lge.res.text.TextKey;
 import lge.state.TimeInterval;
 
-public class Outside1_MorningAfterCrash extends EventNode<NullState> {
+public class Outside1_MorningAfterCrashGetUp extends EventNode<NullState> {
   public static enum Text implements TextKey {
     DESCRIPTION,
-    OPTION_GET_UP;
+    OPTION_LOOK_AROUND;
   }
   
   @Override
@@ -21,7 +21,7 @@ public class Outside1_MorningAfterCrash extends EventNode<NullState> {
   @Override
   protected void doEvent() {
     setText(Text.DESCRIPTION);
-    addOption(Key.OPTION_ENTER, Text.OPTION_GET_UP, new Outside1_MorningAfterCrashGetUp());
+    addOption(Key.OPTION_ENTER, Text.OPTION_LOOK_AROUND, new Outside1_MorningAfterCrashJoinOthers ());
   }
   
   @Override

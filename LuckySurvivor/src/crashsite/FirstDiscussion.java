@@ -16,6 +16,8 @@ public class FirstDiscussion extends EventNode<NullState> {
     INJURIES,
     OPTION_OTHER_SURVIVORS,
     OTHER_SURVIVORS,
+    OPTION_OTHER_SURVIVORS_AGAIN,
+    OTHER_SURVIVORS_AGAIN,
     OPTION_THE_GIRLS,
     THE_GIRLS,
     OPTION_ONLY_MALE,
@@ -44,10 +46,10 @@ public class FirstDiscussion extends EventNode<NullState> {
     HAS_DISCUSSED_FIND_FOOD_AND_WATER,
     HAS_DISCUSSED_EXPLORE_ISLAND,
   }
-  
+ 
   @Override
   protected ImgChange updateImageArea() {
-    return ImgChange.setBG(CrashSite.FIRST_DISCUSSION_GROUP);
+    return ImgChange.setBGAndFG(CrashSite.FIRST_DISCUSSION_BACKGROUND, CrashSite.IMAGE_GIRL_1, CrashSite.IMAGE_GIRL_2, CrashSite.IMAGE_GIRL_3, CrashSite.IMAGE_GIRL_4, CrashSite.IMAGE_GIRL_5, CrashSite.IMAGE_GIRL_6, CrashSite.IMAGE_GIRL_7, CrashSite.IMAGE_GIRL_8, CrashSite.IMAGE_GIRL_9, CrashSite.IMAGE_GIRL_10, CrashSite.IMAGE_GIRL_11, CrashSite.IMAGE_GIRL_12, CrashSite.IMAGE_GIRL_13, CrashSite.IMAGE_GIRL_14, CrashSite.IMAGE_GIRL_15, CrashSite.IMAGE_GIRL_16, CrashSite.IMAGE_GIRL_17, CrashSite.IMAGE_GIRL_18);
   }
   
   @Override
@@ -58,7 +60,7 @@ public class FirstDiscussion extends EventNode<NullState> {
         CrashSite.FIRST_DISCUSSION_TOPIC_1, Text.INJURIES, new FirstDiscussion()));
     addOption(Key.OPTION_A, Text.OPTION_OTHER_SURVIVORS, new SetFlagEvent(Bool.HAS_DISCUSSED_OTHER_SURVIVORS,
         Key.OPTION_A, CrashSite.FIRST_DISCUSSION_TOPIC_2, Text.OTHER_SURVIVORS, new FirstDiscussion()));
-    addOption(Key.OPTION_WEST, Text.OPTION_OTHER_SURVIVORS, new SetFlagEvent(Bool.HAS_DISCUSSED_OTHER_SURVIVORS_AGAIN,
+    addOption(Key.OPTION_WEST, Text.OPTION_OTHER_SURVIVORS_AGAIN, new SetFlagEvent(Bool.HAS_DISCUSSED_OTHER_SURVIVORS_AGAIN,
         Key.OPTION_WEST, CrashSite.FIRST_DISCUSSION_TOPIC_3, Text.OTHER_SURVIVORS, new FirstDiscussion()));
     addOption(Key.OPTION_SOUTH, Text.OPTION_THE_GIRLS, new SetFlagEvent(Bool.HAS_DISCUSSED_THE_GIRLS, Key.OPTION_SOUTH,
         CrashSite.FIRST_DISCUSSION_TOPIC_4, Text.THE_GIRLS, new FirstDiscussion()));
