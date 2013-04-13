@@ -1,5 +1,6 @@
 package lge.res.images;
 
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -167,8 +168,8 @@ public final class ImageWrapper {
     return this.image.getImage();
   }
   
-  public int[] calculateCoordinates(final int width, final int height) {
-    return this.image.calculateCoordinates(width, height);
+  public AffineTransform getTransformation(final int width, final int height) {
+    return this.image.getTransformation(width, height);
   }
   
   /**

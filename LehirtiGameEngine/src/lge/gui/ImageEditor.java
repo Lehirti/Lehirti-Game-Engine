@@ -95,10 +95,10 @@ public class ImageEditor extends JFrame implements ActionListener {
           this.textField.setText("");
         }
         Double.valueOf(this.textField.getText()).doubleValue();
-        ImageEditor.this.updateCanvasAndImageWrapper();
       } catch (final RuntimeException e) {
         // user typed non-numerical values in text field
       }
+      ImageEditor.this.updateCanvasAndImageWrapper();
     }
   }
   
@@ -112,6 +112,7 @@ public class ImageEditor extends JFrame implements ActionListener {
   JLabel posYlabel = new JLabel("Pos Y");
   JLabel scaleXlabel = new JLabel("Scale X");
   JLabel scaleYlabel = new JLabel("Scale Y");
+  JLabel rotationlabel = new JLabel("Degrees Rotation");
   
   JButton alignX = new JButton();
   JButton alignY = new JButton();
@@ -119,6 +120,7 @@ public class ImageEditor extends JFrame implements ActionListener {
   JTextField posY = new JTextField();
   JTextField scaleX = new JTextField();
   JTextField scaleY = new JTextField();
+  JTextField rotation = new JTextField();
   
   JLabel selectedImageLabel = new JLabel("Image #");
   JButton selectedImage = new JButton();
@@ -162,7 +164,7 @@ public class ImageEditor extends JFrame implements ActionListener {
     
     this.contentDir = new JComboBox<>(PathFinder.getContentDirs());
     
-    this.controls.setLayout(new GridLayout(12, 2));
+    this.controls.setLayout(new GridLayout(13, 2));
     this.controls.setPreferredSize(new Dimension(300, 800));
     this.controls.add(this.alignXlabel);
     this.controls.add(this.alignX);
@@ -184,6 +186,10 @@ public class ImageEditor extends JFrame implements ActionListener {
     this.controls.add(this.scaleY);
     this.scaleY.setInputVerifier(new NumericalInputVerifier(this));
     this.scaleY.getDocument().addDocumentListener(new NumericalInputChangeListener(this.scaleY));
+    this.controls.add(this.rotationlabel);
+    this.controls.add(this.rotation);
+    this.rotation.setInputVerifier(new NumericalInputVerifier(this));
+    this.rotation.getDocument().addDocumentListener(new NumericalInputChangeListener(this.rotation));
     this.controls.add(this.selectedImageLabel);
     this.controls.add(this.selectedImage);
     this.controls.add(this.selectedAlternativeLabel);
@@ -205,6 +211,7 @@ public class ImageEditor extends JFrame implements ActionListener {
     
     this.alignX.addActionListener(this);
     this.alignY.addActionListener(this);
+    this.rotation.addActionListener(this);
     this.selectedImage.addActionListener(this);
     this.selectedAlternative.addActionListener(this);
     this.newAlternative.addActionListener(this);
@@ -251,6 +258,7 @@ public class ImageEditor extends JFrame implements ActionListener {
     this.posY.setEnabled(true);
     this.scaleX.setText("");
     this.scaleY.setText("");
+    this.rotation.setText("");
     
     final ImageWrapper imageWrapper = this.allImages.get(this.selectedImageNr);
     this.imageArea.setImage(imageWrapper);
@@ -346,6 +354,8 @@ public class ImageEditor extends JFrame implements ActionListener {
         this.alignY.setText("TOP");
         updateCanvasAndImageWrapper();
       }
+    } else if (e.getSource() == this.rotation) {
+      updateCanvasAndImageWrapper();
     } else if (e.getSource() == this.selectedImage) {
       LOGGER.debug("selectNextImage()");
       selectNextImage();
@@ -408,6 +418,10 @@ public class ImageEditor extends JFrame implements ActionListener {
     final String scaleYstring = this.scaleY.getText();
     if (!scaleYstring.equals("")) {
       placement.put(ProxyProps.SCALE_Y.name(), scaleYstring);
+    }
+    final String rotationString = this.rotation.getText();
+    if (!rotationString.equals("")) {
+      placement.put(ProxyProps.ROTATION.name(), rotationString);
     }
     final String attributeString = (String) this.attribute.getSelectedItem();
     if (!attributeString.equals("")) {

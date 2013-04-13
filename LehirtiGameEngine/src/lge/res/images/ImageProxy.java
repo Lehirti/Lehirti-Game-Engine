@@ -2,6 +2,7 @@ package lge.res.images;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class ImageProxy {
     POS_Y, // double; in percent; top to bottom
     SCALE_X, // double; in percent of available x resolution
     SCALE_Y, // double; in percent of available y resolution
+    ROTATION, // double; 0 - 360 degrees of clockwise rotation
     ATTRIBUTE; // String; additional attribute
   }
   
@@ -45,6 +47,7 @@ public class ImageProxy {
   private Double posY = null;
   private Double scaleX = null;
   private Double scaleY = null;
+  private Double rotation = null;
   
   private String attribute = null;
   
@@ -96,6 +99,7 @@ public class ImageProxy {
     this.posY = null;
     this.scaleX = null;
     this.scaleY = null;
+    this.rotation = null;
     
     this.alignX = placementProps.getProperty(ProxyProps.ALIGN_X.name(), "CENTER");
     this.alignY = placementProps.getProperty(ProxyProps.ALIGN_Y.name(), "CENTER");
@@ -103,6 +107,7 @@ public class ImageProxy {
     final String posYString = placementProps.getProperty(ProxyProps.POS_Y.name());
     final String sizeXString = placementProps.getProperty(ProxyProps.SCALE_X.name());
     final String sizeYString = placementProps.getProperty(ProxyProps.SCALE_Y.name());
+    final String rotationString = placementProps.getProperty(ProxyProps.ROTATION.name());
     
     if (posXString != null) {
       this.posX = Double.valueOf(posXString);
@@ -126,6 +131,10 @@ public class ImageProxy {
       this.scaleY = Double.valueOf(sizeYString);
     }
     
+    if (rotationString != null) {
+      this.rotation = Double.valueOf(rotationString);
+    }
+    
     this.attribute = placementProps.getProperty(ProxyProps.ATTRIBUTE.name());
   }
   
@@ -135,7 +144,9 @@ public class ImageProxy {
   }
   
   public void writeProxyFile() {
-    FileUtils.writePropsToFile(this.placement, this.modProxyFile, null);
+    if (this.modProxyFile != null) {
+      FileUtils.writePropsToFile(this.placement, this.modProxyFile, null);
+    }
   }
   
   public Properties getPlacement() {
@@ -257,7 +268,82 @@ public class ImageProxy {
     
   }
   
-  int[] calculateCoordinates(final int screenWidth, final int screenHeight) {
+  AffineTransform getTransformation(final int canvasWidth, final int canvasHeight) {
+    final AffineTransform at = new AffineTransform(); // start off with an identity transformation
+    
+    if (this.imageFile == null) {
+      at.translate(canvasWidth / 4.0d, canvasHeight / 4.0d);
+      at.scale(canvasWidth / (200 * 2.0d), canvasHeight / (50 * 8.0d));
+      return at;
+    }
+    
+    // determine scaling
+    final double sx = determineScaling(canvasWidth, canvasHeight, this.imageSizeX, this.imageSizeY, this.scaleX,
+        this.scaleY);
+    final double sy = determineScaling(canvasHeight, canvasWidth, this.imageSizeY, this.imageSizeX, this.scaleY,
+        this.scaleX);
+    
+    // determine translation
+    final double tx = determineTranslation(canvasWidth, sx * this.imageSizeX, this.alignX, this.posX);
+    final double ty = determineTranslation(canvasHeight, sy * this.imageSizeY, this.alignY, this.posY);
+    
+    // rotate
+    
+    // apply in reverse order
+    if (this.rotation != null) {
+      at.rotate((this.rotation.doubleValue() * 2.0d * Math.PI) / 360.0d, tx + (sx * this.imageSizeX) / 2.0, ty
+          + (sy * this.imageSizeY) / 2.0);
+    }
+    at.translate(tx, ty);
+    at.scale(sx, sy);
+    
+    return at;
+  }
+  
+  private static double determineScaling(final int thisDimCanvas, final int otherDimCanvas, final int thisDimImage,
+      final int otherDimImage, final Double thisScale, final Double otherScale) {
+    if (thisScale != null) {
+      // use explicit scaling given for this dimension
+      return determineScaling(thisDimCanvas, thisDimImage, thisScale);
+    } else {
+      if (otherScale != null) {
+        // use explicit scaling given for other dimension for this dimension as well
+        return determineScaling(thisDimCanvas, thisDimImage, otherScale);
+      } else {
+        // no explicit scaling given in either dimension; scale uniformly for best fit
+        final double s1 = (double) thisDimCanvas / (double) thisDimImage;
+        final double s2 = (double) otherDimCanvas / (double) otherDimImage;
+        
+        return s1 < s2 ? s1 : s2;
+      }
+    }
+  }
+  
+  private static double determineScaling(final int dimCanvas, final int dimImage, final Double scale) {
+    return ((double) dimCanvas / (double) dimImage) * scale.doubleValue() / 100.0d;
+  }
+  
+  private static double determineTranslation(final int dimCanvas, final double dimImage, final String align,
+      final Double pos) {
+    if (align.equals("TOP") || align.equals("LEFT")) {
+      if (pos == null) {
+        return 0.0d;
+      } else {
+        return (dimCanvas * pos.doubleValue()) / 100.0d;
+      }
+    } else if (align.equals("CENTER")) {
+      // if pos != null => align != CENTER, so pos must be null here
+      return (dimCanvas - dimImage) / 2;
+    } else /* align == BOTTOM or RIGHT */{
+      double posVal = 0.0D;
+      if (pos != null) {
+        posVal = pos.doubleValue();
+      }
+      return dimCanvas - dimImage - ((dimCanvas * posVal) / 100.0d);
+    }
+  }
+  
+  private int[] calculateCoordinates(final int screenWidth, final int screenHeight) {
     final int[] coords;
     
     if (this.imageFile == null) {

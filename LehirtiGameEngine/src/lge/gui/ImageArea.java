@@ -153,16 +153,14 @@ public class ImageArea extends JComponent {
   void drawImages(final Graphics2D g2d) {
     final ImageWrapper bgImage = this.backgroundImage.get();
     if (bgImage != null) {
-      final int[] coords = bgImage.calculateCoordinates(getWidth(), getHeight());
       bgImage.getImage().setAccelerationPriority(1.0f);
-      g2d.drawImage(bgImage.getImage(), coords[0], coords[1], coords[2], coords[3], null);
+      g2d.drawImage(bgImage.getImage(), bgImage.getTransformation(getWidth(), getHeight()), null);
       bgImage.getImage().setAccelerationPriority(0.5f);
     }
     
     for (final ImageWrapper image : this.foregroundImages) {
-      final int[] coords = image.calculateCoordinates(getWidth(), getHeight());
       image.getImage().setAccelerationPriority(1.0f);
-      g2d.drawImage(image.getImage(), coords[0], coords[1], coords[2], coords[3], null);
+      g2d.drawImage(image.getImage(), image.getTransformation(getWidth(), getHeight()), null);
       image.getImage().setAccelerationPriority(0.5f);
     }
   }
