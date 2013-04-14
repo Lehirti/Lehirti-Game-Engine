@@ -176,6 +176,7 @@ public class ContentUtils {
   public static List<ImageWrapper> getImageWrappers(final boolean withoutImagesOnly) {
     final List<ImageWrapper> imageWrapperList = new ArrayList<>(10000);
     final List<Class<?>> imageEnums = ClassFinder.getSubclassesInFullClasspathStatic(SuperClass.IMAGE_KEY);
+    System.out.println("Read all ImageKey classes");
     for (final Class<?> imageEnum : imageEnums) {
       final ImageKey[] imageKeys = (ImageKey[]) imageEnum.getEnumConstants();
       if (imageKeys != null) {

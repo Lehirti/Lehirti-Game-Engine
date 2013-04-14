@@ -1,7 +1,7 @@
 package main;
 
 public enum C {
-  MAIN(32);
+  MAIN(33);
   
   public final int requiredVersion;
   public boolean available = false;

@@ -25,6 +25,8 @@ public final class ContentChecker {
       PathFinder.registerContentDir(content.name());
     }
     
+    System.out.println("Content registered");
+    
     int iCore = 0;
     int iMod = 0;
     for (final ImageWrapper imageWrapper : ContentUtils.getImageWrappers(false)) {
