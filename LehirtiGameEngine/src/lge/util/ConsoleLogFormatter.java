@@ -21,13 +21,13 @@ public class ConsoleLogFormatter extends Formatter {
     if (rec.getThrown() != null) {
       buf.append(rec.getThrown().toString());
     }
-    // buf.append(" ");
-    // buf.append(calcDate(rec.getMillis()));
-    // buf.append(" <");
-    // buf.append(rec.getLoggerName());
-    // buf.append(".");
-    // buf.append(rec.getSourceMethodName());
-    // buf.append(">");
+    buf.append(" ");
+    buf.append(calcDate(rec.getMillis()));
+    buf.append(" <");
+    buf.append(rec.getLoggerName());
+    buf.append(".");
+    buf.append(rec.getSourceMethodName());
+    buf.append(">");
     buf.append("\n");
     return buf.toString();
   }

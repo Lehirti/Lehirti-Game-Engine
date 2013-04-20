@@ -11,7 +11,6 @@ import lge.res.text.CommonText;
 import lge.res.text.TextKey;
 import lge.state.BoolState;
 
-
 public class SetFlagTextOnlyEvent extends EventNode<NullState> {
   
   private BoolState flag;
@@ -30,7 +29,7 @@ public class SetFlagTextOnlyEvent extends EventNode<NullState> {
     super.readExternal(in);
     this.flag = (BoolState) in.readObject();
     this.value = in.readBoolean();
-    this.key = (Key) in.readObject();
+    this.key = Key.read(in);
     this.text = (TextKey) in.readObject();
     this.nextEvent = (Event<?>) in.readObject();
   }
@@ -40,7 +39,7 @@ public class SetFlagTextOnlyEvent extends EventNode<NullState> {
     super.writeExternal(out);
     out.writeObject(this.flag);
     out.writeBoolean(this.value);
-    out.writeObject(this.key);
+    this.key.write(out);
     out.writeObject(this.text);
     out.writeObject(this.nextEvent);
   }

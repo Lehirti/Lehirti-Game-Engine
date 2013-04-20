@@ -5,7 +5,6 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.List;
 
-import lge.events.AltScreenToGameEvent;
 import lge.events.Event.NullState;
 import lge.events.EventNode;
 import lge.gui.Key;
@@ -136,6 +135,5 @@ public final class ProgressEvent extends EventNode<NullState> {
     if (!nexts.isEmpty()) {
       addOption(Key.OPTION_EAST, nextProg, new ProgressEvent(nexts.get(0)));
     }
-    addOption(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new AltScreenToGameEvent());
   }
 }

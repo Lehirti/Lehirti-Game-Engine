@@ -14,11 +14,9 @@ import lge.gui.Key;
 import lge.res.ResourceCache;
 import lge.res.images.ImgChange;
 import lge.res.text.CommonText;
-import lge.res.text.TextKey;
 import lge.res.text.TextWrapper;
 import lge.state.Inventory;
 import lge.state.InventoryMap;
-
 
 public final class InventoryEvent extends EventNode<NullState> {
   private Inventory selectedItem;
@@ -84,7 +82,7 @@ public final class InventoryEvent extends EventNode<NullState> {
         if (entry.getKey().equals(this.selectedItem)) {
           addText(ResourceCache.get(CommonText.MARKER));
         }
-        final TextWrapper tw = ResourceCache.getNullable((TextKey) entry.getKey());
+        final TextWrapper tw = ResourceCache.getNullable(entry.getKey());
         tw.addParameter(entry.getValue().toString());
         addText(tw);
         addText(CommonText.NEWLINE);
@@ -98,6 +96,5 @@ public final class InventoryEvent extends EventNode<NullState> {
             .getKey()));
       }
     }
-    addOption(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new AltScreenToGameEvent());
   }
 }

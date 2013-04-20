@@ -11,7 +11,6 @@ import lge.res.images.ImgChange;
 import lge.res.text.CommonText;
 import lge.state.State;
 
-
 public class RandomStandardEvent extends EventNode<NullState> {
   
   private Key key;
@@ -26,7 +25,7 @@ public class RandomStandardEvent extends EventNode<NullState> {
   @Override
   public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
     super.readExternal(in);
-    this.key = (Key) in.readObject();
+    this.key = Key.read(in);
     this.randomTxtAndImgs = (TextAndImageKey) in.readObject();
     this.nextEvent = (Event<?>) in.readObject();
   }
@@ -34,7 +33,7 @@ public class RandomStandardEvent extends EventNode<NullState> {
   @Override
   public void writeExternal(final ObjectOutput out) throws IOException {
     super.writeExternal(out);
-    out.writeObject(this.key);
+    this.key.write(out);
     out.writeObject(this.randomTxtAndImgs);
     out.writeObject(this.nextEvent);
   }
@@ -46,6 +45,7 @@ public class RandomStandardEvent extends EventNode<NullState> {
     for (int i = 0; i < otherAlternatives.length; i++) {
       txtAndImgs[i + 1] = otherAlternatives[i];
     }
+    this.key = key;
     this.randomTxtAndImgs = txtAndImgs[State.DIE.nextInt(txtAndImgs.length)];
     this.nextEvent = nextEvent;
   }

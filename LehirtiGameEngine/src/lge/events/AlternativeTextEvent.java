@@ -11,7 +11,6 @@ import lge.res.text.CommonText;
 import lge.res.text.TextKey;
 import lge.state.State;
 
-
 public class AlternativeTextEvent extends EventNode<NullState> {
   
   private TextKey[] texts;
@@ -28,7 +27,7 @@ public class AlternativeTextEvent extends EventNode<NullState> {
     final int size = in.readInt();
     this.texts = new TextKey[size];
     for (int i = 0; i < size; i++) {
-      this.texts[i] = (TextKey) in.readObject();
+      this.texts[i] = TextKey.IO.read(in);
     }
     this.nextEvent = (Event<?>) in.readObject();
   }
@@ -38,7 +37,7 @@ public class AlternativeTextEvent extends EventNode<NullState> {
     super.writeExternal(out);
     out.writeInt(this.texts.length);
     for (final TextKey text : this.texts) {
-      out.writeObject(text);
+      TextKey.IO.write(text, out);
     }
     out.writeObject(this.nextEvent);
   }

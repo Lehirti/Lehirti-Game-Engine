@@ -101,6 +101,13 @@ public class GameKeyListener implements KeyListener {
             oldEvent.notifyAll();
           }
         }
+      } else if (key == Key.SHOW_MAIN_SCREEN) {
+        final Event<?> oldEvent = EngineMain.getCurrentEvent();
+        EngineMain.setCurrentAreas(key);
+        EngineMain.setCurrentEvent(new InventoryEvent(InventoryMap.getSelectedItem()));
+        synchronized (oldEvent) {
+          oldEvent.notifyAll();
+        }
       } else if (key == Key.SHOW_INVENTORY) {
         final Event<?> oldEvent = EngineMain.getCurrentEvent();
         EngineMain.setCurrentAreas(key);

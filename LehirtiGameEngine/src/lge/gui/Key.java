@@ -3,6 +3,9 @@ package lge.gui;
 import java.awt.Image;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,8 +33,9 @@ public enum Key {
   TEXT_INPUT_OPTION_ENTER(10, 0, TextFunction.ENTER),
   
   // non main-game screens
-  SHOW_INVENTORY(49, 0, TextFunction.SHOW_INVENTORY, true),
-  SHOW_PROGRESS(50, 0, TextFunction.SHOW_PROGRESS, true),
+  SHOW_MAIN_SCREEN(49, 0, TextFunction.SHOW_MAIN_SCREEN, true),
+  SHOW_INVENTORY(50, 0, TextFunction.SHOW_INVENTORY, true),
+  SHOW_PROGRESS(51, 0, TextFunction.SHOW_PROGRESS, true),
   
   CYCLE_TEXT_PAGES(32, 0, TextFunction.CYCLE_TEXT_PAGES),
   
@@ -165,5 +169,21 @@ public enum Key {
   public static List<Key> getOptionKeys() {
     final List<Key> optionKeys = new LinkedList<>(OPTION_KEYS);
     return optionKeys;
+  }
+  
+  /**
+   * this method will fail, if a Key constant gets deleted or renamed.
+   * 
+   * @param in
+   * @return
+   * @throws IOException
+   */
+  public static Key read(final ObjectInput in) throws IOException {
+    final String name = in.readUTF();
+    return Key.valueOf(name);
+  }
+  
+  public void write(final ObjectOutput out) throws IOException {
+    out.writeUTF(name());
   }
 }

@@ -384,7 +384,6 @@ public class ImageEditor extends JFrame implements ActionListener {
       LOGGER.debug("delete()");
       final ImageWrapper imageWrapper = this.allImages.get(this.selectedImageNr);
       imageWrapper.removeAlternativeImage(this.selectedAlternativeNr);
-      // TODO
       repaint();
       this.gameImageArea.repaint();
     } else {

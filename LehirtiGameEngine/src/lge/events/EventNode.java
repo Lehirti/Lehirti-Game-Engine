@@ -56,7 +56,7 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
   private transient final List<Key> availableOptionKeys = Key.getOptionKeys();
   private transient final Map<Event<?>, TextWrapper> optionsWithArbitraryKey = new LinkedHashMap<>();
   
-  private transient boolean savePointReached = false;
+  private boolean savePointReached = false;
   private transient boolean newEventHasBeenLoaded = false;
   private boolean isTextInput = false;
   
@@ -293,21 +293,22 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
   public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
     final int nrOfEvents = in.readInt();
     for (int i = 0; i < nrOfEvents; i++) {
-      final String name = (String) in.readObject();
-      final Key key = Key.valueOf(name);
+      final Key key = Key.read(in);
       final Event<?> event = (Event<?>) in.readObject();
       this.registeredEvents.put(key, event);
       this.availableOptionKeys.remove(key);
     }
+    this.savePointReached = in.readBoolean();
   }
   
   @Override
   public void writeExternal(final ObjectOutput out) throws IOException {
     out.writeInt(this.registeredEvents.size());
     for (final Map.Entry<Key, Event<?>> entry : this.registeredEvents.entrySet()) {
-      out.writeObject(entry.getKey().name());
+      entry.getKey().write(out);
       out.writeObject(entry.getValue());
     }
+    out.writeBoolean(this.savePointReached);
   }
   
   protected static boolean is(final BoolState key) {

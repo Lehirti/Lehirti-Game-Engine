@@ -3,6 +3,7 @@ package lge.res.text;
 public enum TextFunction implements TextKey {
   OPTION,
   ENTER,
+  SHOW_MAIN_SCREEN,
   SHOW_INVENTORY,
   SHOW_PROGRESS,
   CYCLE_TEXT_PAGES,

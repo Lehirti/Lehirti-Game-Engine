@@ -95,9 +95,9 @@ public abstract class EngineMain {
     
     STATS_AREA = new StatsArea(SCREEN_X, SCREEN_Y, 64.0, 6.0);
     
-    TEXT_AREAS.put(null, new TextArea(SCREEN_X, SCREEN_Y, 16.0, 36.0));
-    IMAGE_AREAS.put(null, new ImageArea(SCREEN_X, SCREEN_Y, 48.0, 36.0));
-    OPTION_AREAS.put(null, new OptionArea(SCREEN_X, SCREEN_Y, 64.0, 6.0, 4, 3));
+    TEXT_AREAS.put(Key.SHOW_MAIN_SCREEN, new TextArea(SCREEN_X, SCREEN_Y, 16.0, 36.0));
+    IMAGE_AREAS.put(Key.SHOW_MAIN_SCREEN, new ImageArea(SCREEN_X, SCREEN_Y, 48.0, 36.0));
+    OPTION_AREAS.put(Key.SHOW_MAIN_SCREEN, new OptionArea(SCREEN_X, SCREEN_Y, 64.0, 6.0, 4, 3));
     
     TEXT_AREAS.put(Key.SHOW_INVENTORY, new TextArea(SCREEN_X, SCREEN_Y, 16.0, 36.0));
     IMAGE_AREAS.put(Key.SHOW_INVENTORY, new ImageArea(SCREEN_X, SCREEN_Y, 48.0, 36.0));
@@ -150,10 +150,10 @@ public abstract class EngineMain {
       MAIN_WINDOW.getContentPane().add(optionArea, c);
     }
     
-    setCurrentImageArea(IMAGE_AREAS.get(null));
-    setCurrentTextArea(TEXT_AREAS.get(null));
+    setCurrentImageArea(IMAGE_AREAS.get(Key.SHOW_MAIN_SCREEN));
+    setCurrentTextArea(TEXT_AREAS.get(Key.SHOW_MAIN_SCREEN));
     setCurrentStatsArea(STATS_AREA);
-    setCurrentOptionArea(OPTION_AREAS.get(null));
+    setCurrentOptionArea(OPTION_AREAS.get(Key.SHOW_MAIN_SCREEN));
     
     MAIN_WINDOW.validate();
     MAIN_WINDOW.repaint();
@@ -163,8 +163,7 @@ public abstract class EngineMain {
       MAIN_WINDOW.createBufferStrategy(2, new BufferCapabilities(new ImageCapabilities(true), new ImageCapabilities(
           true), FlipContents.PRIOR));
     } catch (final AWTException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      LOGGER.debug("Failed to create BufferStrategy", e);
     }
     MAIN_WINDOW.setVisible(true);
     
@@ -196,17 +195,17 @@ public abstract class EngineMain {
       STATS_AREA.load(ois);
       int size = ois.readInt();
       for (int i = 0; i < size; i++) {
-        final Key key = (Key) ois.readObject();
+        final Key key = Key.read(ois);
         IMAGE_AREAS.get(key).load(ois);
       }
       size = ois.readInt();
       for (int i = 0; i < size; i++) {
-        final Key key = (Key) ois.readObject();
+        final Key key = Key.read(ois);
         TEXT_AREAS.get(key).load(ois);
       }
       size = ois.readInt();
       for (int i = 0; i < size; i++) {
-        final Key key = (Key) ois.readObject();
+        final Key key = Key.read(ois);
         OPTION_AREAS.get(key).load(ois);
       }
       final Event<?> oldEvent = currentEvent;
@@ -245,7 +244,7 @@ public abstract class EngineMain {
       
       // for load screen preview
       oos.writeUTF(getSavegameName());
-      final List<ImageWrapper> allImages = IMAGE_AREAS.get(null).getAllImages();
+      final List<ImageWrapper> allImages = IMAGE_AREAS.get(Key.SHOW_MAIN_SCREEN).getAllImages();
       final List<ImageKey> allImageKeys = new LinkedList<>();
       for (final ImageWrapper wrapper : allImages) {
         allImageKeys.add(wrapper.getKey());
@@ -259,17 +258,17 @@ public abstract class EngineMain {
       STATS_AREA.save(oos);
       oos.writeInt(IMAGE_AREAS.size());
       for (final Map.Entry<Key, ImageArea> entry : IMAGE_AREAS.entrySet()) {
-        oos.writeObject(entry.getKey());
+        entry.getKey().write(oos);
         entry.getValue().save(oos);
       }
       oos.writeInt(TEXT_AREAS.size());
       for (final Map.Entry<Key, TextArea> entry : TEXT_AREAS.entrySet()) {
-        oos.writeObject(entry.getKey());
+        entry.getKey().write(oos);
         entry.getValue().save(oos);
       }
       oos.writeInt(OPTION_AREAS.size());
       for (final Map.Entry<Key, OptionArea> entry : OPTION_AREAS.entrySet()) {
-        oos.writeObject(entry.getKey());
+        entry.getKey().write(oos);
         entry.getValue().save(oos);
       }
       oos.writeObject(currentEvent);
@@ -293,7 +292,7 @@ public abstract class EngineMain {
   public static synchronized Event<?> getCurrentEvent() {
     for (final Map.Entry<Key, ImageArea> entry : IMAGE_AREAS.entrySet()) {
       if (entry.getValue() == currentImageArea) {
-        if (entry.getKey() == null) {
+        if (entry.getKey() == Key.SHOW_MAIN_SCREEN) {
           return currentEvent;
         }
         if (entry.getKey() == Key.SHOW_INVENTORY) {
@@ -312,7 +311,7 @@ public abstract class EngineMain {
   public static synchronized void setCurrentEvent(final Event<?> event) {
     for (final Map.Entry<Key, ImageArea> entry : IMAGE_AREAS.entrySet()) {
       if (entry.getValue() == currentImageArea) {
-        if (entry.getKey() == null) {
+        if (entry.getKey() == Key.SHOW_MAIN_SCREEN) {
           currentEvent = event;
           return;
         }
@@ -345,7 +344,7 @@ public abstract class EngineMain {
   }
   
   public static void setCurrentAreas(final Key key) {
-    if (key != null && !key.isAltScreen) {
+    if (!key.isAltScreen) {
       return; // TODO error message
     }
     setCurrentImageArea(IMAGE_AREAS.get(key));

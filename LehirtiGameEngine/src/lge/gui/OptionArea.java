@@ -194,7 +194,7 @@ public class OptionArea extends JComponent {
     this.options.clear();
     final int nrOfTexts = in.readInt();
     for (int i = 0; i < nrOfTexts; i++) {
-      this.options.put((Key) in.readObject(), (TextWrapper) in.readObject());
+      this.options.put(Key.read(in), (TextWrapper) in.readObject());
     }
     repaint();
   }
@@ -202,7 +202,7 @@ public class OptionArea extends JComponent {
   public synchronized void save(final ObjectOutput out) throws IOException {
     out.writeInt(this.options.size());
     for (final Entry<Key, TextWrapper> entry : this.options.entrySet()) {
-      out.writeObject(entry.getKey());
+      entry.getKey().write(out);
       out.writeObject(entry.getValue());
     }
   }

@@ -10,7 +10,6 @@ import lge.res.images.ImgChange;
 import lge.res.text.CommonText;
 import lge.res.text.TextKey;
 
-
 public class TextOnlyEvent extends EventNode<NullState> {
   private static final long serialVersionUID = 1L;
   
@@ -26,7 +25,7 @@ public class TextOnlyEvent extends EventNode<NullState> {
   @Override
   public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
     super.readExternal(in);
-    this.key = (Key) in.readObject();
+    this.key = Key.read(in);
     this.text = (TextKey) in.readObject();
     this.nextEvent = (Event<?>) in.readObject();
   }
@@ -34,7 +33,7 @@ public class TextOnlyEvent extends EventNode<NullState> {
   @Override
   public void writeExternal(final ObjectOutput out) throws IOException {
     super.writeExternal(out);
-    out.writeObject(this.key);
+    this.key.write(out);
     out.writeObject(this.text);
     out.writeObject(this.nextEvent);
   }

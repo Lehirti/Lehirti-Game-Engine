@@ -118,7 +118,7 @@ public final class TextAreaParameterPopup extends JPopupMenu {
       }
       
       topMenu.add(npcMenu);
-      return new HashSet<String>(object.keySet());
+      return new HashSet<>(object.keySet());
     } catch (final InstantiationException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();

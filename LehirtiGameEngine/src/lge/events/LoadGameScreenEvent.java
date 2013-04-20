@@ -117,6 +117,5 @@ public final class LoadGameScreenEvent extends EventNode<NullState> {
       addOption(Key.OPTION_SOUTH, CommonText.OPTION_NEXT, new LoadGameScreenEvent(this.selectedItem + 1,
           this.allSavegames));
     }
-    addOption(Key.OPTION_LEAVE, CommonText.OPTION_BACK, new AltScreenToGameEvent());
   }
 }

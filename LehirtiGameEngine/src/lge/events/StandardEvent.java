@@ -11,7 +11,6 @@ import lge.res.images.ImgChange;
 import lge.res.text.CommonText;
 import lge.res.text.TextKey;
 
-
 public class StandardEvent extends EventNode<NullState> {
   
   private Key key;
@@ -27,7 +26,7 @@ public class StandardEvent extends EventNode<NullState> {
   @Override
   public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
     super.readExternal(in);
-    this.key = (Key) in.readObject();
+    this.key = Key.read(in);
     this.image = (ImageKey) in.readObject();
     this.text = (TextKey) in.readObject();
     this.nextEvent = (Event<?>) in.readObject();
@@ -36,7 +35,7 @@ public class StandardEvent extends EventNode<NullState> {
   @Override
   public void writeExternal(final ObjectOutput out) throws IOException {
     super.writeExternal(out);
-    out.writeObject(this.key);
+    this.key.write(out);
     out.writeObject(this.image);
     out.writeObject(this.text);
     out.writeObject(this.nextEvent);

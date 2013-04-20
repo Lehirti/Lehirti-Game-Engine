@@ -29,7 +29,7 @@ public class SetFlagEvent extends EventNode<NullState> {
   public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
     super.readExternal(in);
     this.flag = (BoolState) in.readObject();
-    this.key = (Key) in.readObject();
+    this.key = Key.read(in);
     this.image = (ImageKey) in.readObject();
     this.text = (TextKey) in.readObject();
     this.nextEvent = (Event<?>) in.readObject();
@@ -39,7 +39,7 @@ public class SetFlagEvent extends EventNode<NullState> {
   public void writeExternal(final ObjectOutput out) throws IOException {
     super.writeExternal(out);
     out.writeObject(this.flag);
-    out.writeObject(this.key);
+    this.key.write(out);
     out.writeObject(this.image);
     out.writeObject(this.text);
     out.writeObject(this.nextEvent);
