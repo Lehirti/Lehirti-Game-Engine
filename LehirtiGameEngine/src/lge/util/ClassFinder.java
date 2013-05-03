@@ -123,6 +123,7 @@ public class ClassFinder {
             .getSuperClass().superClass));
         clWrk.doWork(classes);
       }
+      CLASS_WORKERS.clear();
     }
   }
   
