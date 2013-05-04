@@ -76,20 +76,28 @@ public final class PreMain {
     }
     File executable = new File(f, "javaw.exe");
     if (executable.exists()) {
-      return executable.getAbsolutePath();
+      return quote(executable.getAbsolutePath());
     }
     executable = new File(f, "java.exe");
     if (executable.exists()) {
-      return executable.getAbsolutePath();
+      return quote(executable.getAbsolutePath());
     }
     executable = new File(f, "java");
     if (executable.exists()) {
-      return executable.getAbsolutePath();
+      return quote(executable.getAbsolutePath());
     }
     
     LOGGER.error("Java executable not found in \"{}\".", f.getAbsolutePath());
     printUsageAndExit();
     return null;
+  }
+  
+  private static String quote(final String absolutePathOfExecutable) {
+    if (absolutePathOfExecutable.indexOf(" ") != -1) {
+      return "\"" + absolutePathOfExecutable + "\"";
+    } else {
+      return absolutePathOfExecutable;
+    }
   }
   
   private static void printUsageAndExit() {
