@@ -34,9 +34,13 @@ public class GameKeyListener implements KeyListener {
         "Key {} {} {} pressed",
         new Object[] { Integer.valueOf(e.getKeyCode()), Integer.valueOf(e.getModifiers()),
             Character.valueOf(e.getKeyChar()) });
+    final StringBuilder sb = new StringBuilder();
     // note the synchronized: making sure to only process one key event at a time
     try {
       final Key key = Key.getByCodeAndModifiers(e.getKeyCode(), e.getModifiers());
+      sb.append("Key=");
+      sb.append(String.valueOf(key));
+      sb.append(";");
       
       // the DONT_PANIC key takes precedence over all other actions, so it's really a don't panic button
       if (key == Key.DONT_PANIC) {
@@ -48,19 +52,27 @@ public class GameKeyListener implements KeyListener {
       
       if (key == null || key == Key.TEXT_INPUT_OPTION_ENTER) {
         // key unrelated to core game
+        sb.append("unrelated to core game;CurrentEvent=");
         
         // handle key text input events of non-core-game keys
         if (EngineMain.getCurrentEvent() != null) {
           EngineMain.getCurrentEvent().handleKeyEvent(e, key);
         }
+        sb.append(String.valueOf(EngineMain.getCurrentEvent()));
+        
         return;
       }
       
       // let current event handle key event first
       if (EngineMain.getCurrentEvent() != null) {
+        sb.append("let current event handle key event first;CurrentEvent=");
+        sb.append(String.valueOf(EngineMain.getCurrentEvent()));
         if (EngineMain.getCurrentEvent().handleKeyEvent(key)) {
           // current event did use the key, so this key is "used up"
+          sb.append(";current event did use the key");
           return;
+        } else {
+          sb.append(";current event did NOT use the key");
         }
       }
       
@@ -81,8 +93,12 @@ public class GameKeyListener implements KeyListener {
       
       // handle key text input events of core-game keys
       if (EngineMain.getCurrentEvent() != null) {
+        sb.append(";handle key text input events of core-game keys");
         if (EngineMain.getCurrentEvent().handleKeyEvent(e, key)) {
+          sb.append(";text input event handled");
           return;
+        } else {
+          sb.append(";text input event NOT handled");
         }
       }
       
@@ -104,7 +120,6 @@ public class GameKeyListener implements KeyListener {
       } else if (key == Key.SHOW_MAIN_SCREEN) {
         final Event<?> oldEvent = EngineMain.getCurrentEvent();
         EngineMain.setCurrentAreas(key);
-        EngineMain.setCurrentEvent(new InventoryEvent(InventoryMap.getSelectedItem()));
         synchronized (oldEvent) {
           oldEvent.notifyAll();
         }
@@ -126,6 +141,7 @@ public class GameKeyListener implements KeyListener {
         // key known to the game, but currently not assigned (e.g. one of the option keys)
       }
     } finally {
+      LOGGER.debug("Key processed: {}", sb.toString());
       e.consume();
     }
   }
