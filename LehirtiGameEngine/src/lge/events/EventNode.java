@@ -21,6 +21,7 @@ import lge.gui.EngineMain;
 import lge.gui.Key;
 import lge.res.ResourceCache;
 import lge.res.images.ImageKey;
+import lge.res.images.ImageWrapper;
 import lge.res.images.ImgChange;
 import lge.res.text.TextKey;
 import lge.res.text.TextWrapper;
@@ -209,6 +210,9 @@ public abstract class EventNode<STATE extends Enum<?> & EventState> extends Abst
     }
     for (final ImageKey imageToRemove : change.getRemovedFGImages()) {
       removeImage(imageToRemove);
+    }
+    for (final ImageWrapper image : change.getAddedFGImageWrappers()) {
+      addImage(image);
     }
     for (final ImageKey image : change.getAddedFGImages()) {
       addImage(image);

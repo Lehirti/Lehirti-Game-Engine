@@ -8,15 +8,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import lge.events.Event;
-import lge.events.EventNode;
 import lge.events.Event.NullState;
+import lge.events.EventNode;
 import lge.gui.Key;
 import lge.res.images.ImageKey;
 import lge.res.images.ImgChange;
 import lge.res.text.CommonText;
 import lge.res.text.TextKey;
 import lge.state.TimeInterval;
-
 
 public class Rest extends EventNode<NullState> {
   @Nullable
@@ -37,8 +36,8 @@ public class Rest extends EventNode<NullState> {
   @Override
   public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
     super.readExternal(in);
-    this.key = (Key) in.readObject();
-    this.text = (TextKey) in.readObject();
+    this.key = Key.read(in);
+    this.text = TextKey.IO.read(in);
     this.image = ImageKey.IO.read(in);
     this.nextEvent = (Event<?>) in.readObject();
   }
@@ -46,7 +45,7 @@ public class Rest extends EventNode<NullState> {
   @Override
   public void writeExternal(final ObjectOutput out) throws IOException {
     super.writeExternal(out);
-    out.writeObject(this.key);
+    this.key.write(out);
     TextKey.IO.write(this.text, out);
     ImageKey.IO.write(this.image, out);
     out.writeObject(this.nextEvent);

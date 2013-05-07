@@ -8,6 +8,7 @@ public class ImgChange {
   private final boolean clearForeground;
   private final ImageKey backgroundImage;
   private final List<ImageKey> addedFGImages = new ArrayList<>(25);
+  private final List<ImageWrapper> addedFGImageWrappers = new ArrayList<>(25);
   private final List<ImageKey> removedFGImages = new ArrayList<>(25);
   
   private ImgChange(final boolean updateBackground, final boolean clearForeground, final ImageKey backgroundImage) {
@@ -32,6 +33,10 @@ public class ImgChange {
     return this.addedFGImages;
   }
   
+  public List<ImageWrapper> getAddedFGImageWrappers() {
+    return this.addedFGImageWrappers;
+  }
+  
   public List<ImageKey> getRemovedFGImages() {
     return this.removedFGImages;
   }
@@ -40,6 +45,15 @@ public class ImgChange {
     for (final ImageKey img : foregroundImages) {
       if (img != null) {
         this.addedFGImages.add(img);
+      }
+    }
+    return this;
+  }
+  
+  public ImgChange addForeground(final ImageWrapper... foregroundImages) {
+    for (final ImageWrapper img : foregroundImages) {
+      if (img != null) {
+        this.addedFGImageWrappers.add(img);
       }
     }
     return this;
@@ -68,6 +82,10 @@ public class ImgChange {
     return new ImgChange(true, true, backgroundImage).addForeground(foregroundImages);
   }
   
+  public static ImgChange setBGAndFGW(final ImageKey backgroundImage, final ImageWrapper... foregroundImages) {
+    return new ImgChange(true, true, backgroundImage).addForeground(foregroundImages);
+  }
+  
   /**
    * change background but leave foreground as-is
    * 
@@ -87,12 +105,20 @@ public class ImgChange {
     return new ImgChange(false, true, null).addForeground(foregroundImages);
   }
   
+  public static ImgChange setFG(final ImageWrapper... foregroundImages) {
+    return new ImgChange(false, true, null).addForeground(foregroundImages);
+  }
+  
   /**
    * add additional foreground images on top of existing images
    * 
    * @param foregroundImages
    */
   public static ImgChange addFG(final ImageKey... foregroundImages) {
+    return new ImgChange(false, false, null).addForeground(foregroundImages);
+  }
+  
+  public static ImgChange addFG(final ImageWrapper... foregroundImages) {
     return new ImgChange(false, false, null).addForeground(foregroundImages);
   }
   

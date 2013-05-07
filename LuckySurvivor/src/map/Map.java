@@ -3,25 +3,34 @@ package map;
 import static lge.gui.Key.*;
 import static map.Map.Location.*;
 import static map.Map.PathDescription.*;
-
 import holeintheground.MapToHoleInTheGround;
 import islandentry.MapToIslandEntry;
 
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
+
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import jungle1uphill.MapToJungle1Uphill;
 import jungle2uphill.MapToJungle2Uphill;
-
 import lge.events.Event;
+import lge.events.Event.NullState;
 import lge.events.EventFactory;
 import lge.events.EventNode;
 import lge.events.StaticEventFactory;
-import lge.events.Event.NullState;
 import lge.gui.Key;
+import lge.res.ResourceState;
 import lge.res.TextAndImageKeyWithFlag;
 import lge.res.images.ImageKey;
+import lge.res.images.ImageProxy.ProxyProps;
+import lge.res.images.ImageProxyPath;
+import lge.res.images.ImageWrapper;
 import lge.res.images.ImgChange;
 import lge.res.text.CommonText;
 import lge.res.text.TextKey;
@@ -29,50 +38,81 @@ import lge.state.State;
 import lge.state.TimeInterval;
 import lookouthill.MapToLookoutHill;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import peninsulabasinjungle.MapToPeninsulaBasinJungle;
 import peninsulaisthmus.MapToPeninsulaIsthmus;
 import pondoverhang.MapToPondOverhang;
 import ridge.MapToRidge;
-
-import crashsite.MapToCrashSite;
-import creekundercliff.MapToCreekUnderCliff;
-import crevicewithcreek.MapToCreviceWithCreek;
-
 import cliffmeadowedgewest.MapToCliffMeadowEdgeWest;
 import cliffnorth.MapToCliffNorth;
 import cliffsouth.MapToCliffSouth;
 import cliffwest.MapToCliffWest;
+import crashsite.MapToCrashSite;
+import creekundercliff.MapToCreekUnderCliff;
+import crevicewithcreek.MapToCreviceWithCreek;
 import drycreek.MapToDryCreek;
 
 public class Map extends EventNode<NullState> {
   public static enum Location implements TextKey, ImageKey {
-    CRASH_SITE(new StaticEventFactory(MapToCrashSite.class)),
-    CLIFF_WEST(new StaticEventFactory(MapToCliffWest.class)),
-    JUNGLE_1_UPHILL(new StaticEventFactory(MapToJungle1Uphill.class)),
-    CLIFF_NORTH(new StaticEventFactory(MapToCliffNorth.class)),
-    LOOKOUT_HILL(new StaticEventFactory(MapToLookoutHill.class)),
-    CLIFF_SOUTH(new StaticEventFactory(MapToCliffSouth.class)),
-    JUNGLE_2_UPHILL(new StaticEventFactory(MapToJungle2Uphill.class)),
-    PENINSULA_BASIN_JUNGLE(new StaticEventFactory(MapToPeninsulaBasinJungle.class)),
-    PENINSULA_ISTHMUS(new StaticEventFactory(MapToPeninsulaIsthmus.class)),
-    ISLAND_ENTRY(new StaticEventFactory(MapToIslandEntry.class)),
-    RIDGE(new StaticEventFactory(MapToRidge.class)),
-    CREVICE_WITH_CREEK(new StaticEventFactory(MapToCreviceWithCreek.class)),
-    CREEK_UNDER_CLIFF(new StaticEventFactory(MapToCreekUnderCliff.class)),
-    POND_OVERHANG(new StaticEventFactory(MapToPondOverhang.class)),
-    DRY_CREEK(new StaticEventFactory(MapToDryCreek.class)),
-    CLIFF_MEADOW_EDGE_WEST(new StaticEventFactory(MapToCliffMeadowEdgeWest.class)),
-    HOLE_IN_THE_GROUND(new StaticEventFactory(MapToHoleInTheGround.class));
+    CRASH_SITE(0.55, 3.45, new StaticEventFactory(MapToCrashSite.class)),
+    CLIFF_WEST(0.45, 3.35, new StaticEventFactory(MapToCliffWest.class)),
+    JUNGLE_1_UPHILL(0.65, 3.25, new StaticEventFactory(MapToJungle1Uphill.class)),
+    CLIFF_NORTH(0.67, 3.15, new StaticEventFactory(MapToCliffNorth.class)),
+    LOOKOUT_HILL(0.60, 3.60, new StaticEventFactory(MapToLookoutHill.class)),
+    CLIFF_SOUTH(0.63, 3.65, new StaticEventFactory(MapToCliffSouth.class)),
+    JUNGLE_2_UPHILL(0.72, 3.47, new StaticEventFactory(MapToJungle2Uphill.class)),
+    PENINSULA_BASIN_JUNGLE(0.85, 3.49, new StaticEventFactory(MapToPeninsulaBasinJungle.class)),
+    PENINSULA_ISTHMUS(1, 1, new StaticEventFactory(MapToPeninsulaIsthmus.class)),
+    ISLAND_ENTRY(1, 1, new StaticEventFactory(MapToIslandEntry.class)),
+    RIDGE(1, 1, new StaticEventFactory(MapToRidge.class)),
+    CREVICE_WITH_CREEK(1, 1, new StaticEventFactory(MapToCreviceWithCreek.class)),
+    CREEK_UNDER_CLIFF(1, 1, new StaticEventFactory(MapToCreekUnderCliff.class)),
+    POND_OVERHANG(1, 1, new StaticEventFactory(MapToPondOverhang.class)),
+    DRY_CREEK(1, 1, new StaticEventFactory(MapToDryCreek.class)),
+    CLIFF_MEADOW_EDGE_WEST(1, 1, new StaticEventFactory(MapToCliffMeadowEdgeWest.class)),
+    HOLE_IN_THE_GROUND(1, 1, new StaticEventFactory(MapToHoleInTheGround.class));
     
     private final EventFactory locationEventFactory;
     
-    private Location(final EventFactory locationEventFactory) {
+    public final double x;
+    public final double y;
+    
+    private Location(final double x, final double y, final EventFactory locationEventFactory) {
+      this.x = x;
+      this.y = y;
       this.locationEventFactory = locationEventFactory;
     }
     
     public Event<?> getLocationEvent() {
       return this.locationEventFactory.getInstance();
+    }
+    
+    private static final Logger LOCATION_LOGGER = LoggerFactory.getLogger(Location.class);
+    
+    public static void write(final @Nullable Location location, final @Nonnull ObjectOutput out) throws IOException {
+      if (location == null) {
+        out.writeObject(null); // input is null
+      } else {
+        out.writeObject(location.name());
+      }
+    }
+    
+    @CheckForNull
+    public static Location read(final @Nonnull ObjectInput in) throws ClassNotFoundException, IOException {
+      final String name = (String) in.readObject();
+      if (name == null) {
+        // input was null
+        return null;
+      }
+      
+      try {
+        return valueOf(name);
+      } catch (final RuntimeException e) {
+        LOCATION_LOGGER.error("Failed to reconstruct Location " + name, e);
+      }
+      return null;
     }
   }
   
@@ -132,7 +172,7 @@ public class Map extends EventNode<NullState> {
     HOLE_IN_THE_GROUND_2_CLIFF_MEADOW_EDGE_WEST,
   }
   
-  // TODO travel time/fatigue; traveling each path takes exactly one hour; can be changed for each path indiviually
+  // TODO travel time/fatigue; traveling each path takes exactly one hour; can be changed for each path individually
   /**
    * the flag/BoolState of each path indicates whether to path is available. so the Map$Path.properties file indicates
    * the initial availability of paths
@@ -200,6 +240,32 @@ public class Map extends EventNode<NullState> {
       this.loc2toloc1Description = loc2toloc1Description;
       this.timeInterval = timeInterval;
     }
+    
+    private static final Logger PATH_LOGGER = LoggerFactory.getLogger(Location.class);
+    
+    public static void write(final @Nullable Path path, final @Nonnull ObjectOutput out) throws IOException {
+      if (path == null) {
+        out.writeObject(null); // input is null
+      } else {
+        out.writeObject(path.name());
+      }
+    }
+    
+    @CheckForNull
+    public static Path read(final @Nonnull ObjectInput in) throws ClassNotFoundException, IOException {
+      final String name = (String) in.readObject();
+      if (name == null) {
+        // input was null
+        return null;
+      }
+      
+      try {
+        return valueOf(name);
+      } catch (final RuntimeException e) {
+        PATH_LOGGER.error("Failed to reconstruct Path " + name, e);
+      }
+      return null;
+    }
   }
   
   private Location currentLocation;
@@ -214,17 +280,17 @@ public class Map extends EventNode<NullState> {
   @Override
   public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
     super.readExternal(in);
-    this.currentLocation = (Location) in.readObject();
-    this.currentPath = (Path) in.readObject();
-    this.toLocation = (Location) in.readObject();
+    this.currentLocation = Location.read(in);
+    this.currentPath = Path.read(in);
+    this.toLocation = Location.read(in);
   }
   
   @Override
   public void writeExternal(final ObjectOutput out) throws IOException {
     super.writeExternal(out);
-    out.writeObject(this.currentLocation);
-    out.writeObject(this.currentPath);
-    out.writeObject(this.toLocation);
+    Location.write(this.currentLocation, out);
+    Path.write(this.currentPath, out);
+    Location.write(this.toLocation, out);
   }
   
   public Map(final Location currentLocation) {
@@ -247,10 +313,14 @@ public class Map extends EventNode<NullState> {
       for (final Path path : Path.values()) {
         if (State.is(path)) {
           if (path.loc1 == this.currentLocation) {
-            addOption(path.loc1toloc2, path.loc1toloc2Description, new Map(path, path.loc2));
+            if (path.loc1toloc2 != null && path.loc1toloc2Description != null) {
+              addOption(path.loc1toloc2, path.loc1toloc2Description, new Map(path, path.loc2));
+            }
           }
           if (path.loc2 == this.currentLocation) {
-            addOption(path.loc2toloc1, path.loc2toloc1Description, new Map(path, path.loc1));
+            if (path.loc2toloc1 != null && path.loc2toloc1Description != null) {
+              addOption(path.loc2toloc1, path.loc2toloc1Description, new Map(path, path.loc1));
+            }
           }
         }
       }
@@ -279,10 +349,87 @@ public class Map extends EventNode<NullState> {
   
   @Override
   protected ImgChange updateImageArea() {
+    final List<ImageWrapper> images = new LinkedList<>();
+    double centerX;
+    double centerY;
     if (this.currentLocation != null) {
-      return ImgChange.setBGAndFG(this.currentLocation);
+      centerX = this.currentLocation.x;
+      centerY = this.currentLocation.y;
     } else {
-      return ImgChange.setBGAndFG(this.currentPath);
+      centerX = (this.currentPath.loc1.x + this.currentPath.loc2.x) / 2;
+      centerY = (this.currentPath.loc1.y + this.currentPath.loc2.y) / 2;
+      
     }
+    images.add(getTile(centerX, centerY));
+    addPaths(images, this.currentPath, centerX, centerY);
+    addLocations(images, this.currentLocation, centerX, centerY);
+    return ImgChange.setBGAndFGW(null, images.toArray(new ImageWrapper[images.size()]));
+  }
+  
+  private static void addPaths(final List<ImageWrapper> images, final Path currentPath, final double centerX,
+      final double centerY) {
+    for (final Path path : Path.values()) {
+      final boolean isCurrent = path == currentPath;
+      if (!isCurrent && (Math.abs(path.loc1.x - centerX) >= 0.5 || Math.abs(path.loc1.y - centerY) >= 0.5)
+          && (Math.abs(path.loc2.x - centerX) >= 0.5 || Math.abs(path.loc2.y - centerY) >= 0.5)) {
+        continue; // path not visible on current part of map
+      }
+      final ImageWrapper pathWrapper = new ImageWrapper(new ImageProxyPath(path.loc1.x, path.loc1.y, path.loc2.x,
+          path.loc2.y, centerX, centerY, isCurrent));
+      images.add(pathWrapper);
+    }
+  }
+  
+  private static void addLocations(final List<ImageWrapper> images, final Location currentLocation,
+      final double centerX, final double centerY) {
+    ImageWrapper current = null;
+    for (final Location loc : Location.values()) {
+      final boolean isCurrent = loc == currentLocation;
+      if (Math.abs(loc.x - centerX) >= 0.5 || Math.abs(loc.y - centerY) >= 0.5) {
+        continue; // location not visible on current part of map
+      }
+      ImageWrapper locWrapper = new ImageWrapper(loc);
+      if (locWrapper.getResourceState() == ResourceState.MISSING) {
+        locWrapper = new ImageWrapper(isCurrent ? MapIcons.CURRENT_LOCATION : MapIcons.NON_CURRENT_LOCATION);
+      }
+      final Properties placement = locWrapper.getPlacement();
+      final double scaleX = Double.parseDouble(placement.getProperty(ProxyProps.SCALE_X.name()));
+      final double scaleY = Double.parseDouble(placement.getProperty(ProxyProps.SCALE_Y.name()));
+      final double xOffset = -scaleX / 2 + 50 + (loc.x - centerX) * 100;
+      final double yOffset = -scaleY / 2 + 50 + (loc.y - centerY) * 100;
+      placement.setProperty(ProxyProps.ALIGN_X.name(), "LEFT");
+      placement.setProperty(ProxyProps.ALIGN_Y.name(), "TOP");
+      placement.setProperty(ProxyProps.POS_X.name(), String.valueOf(xOffset));
+      placement.setProperty(ProxyProps.POS_Y.name(), String.valueOf(yOffset));
+      locWrapper.setPlacementWithoutWritingToDisk(placement);
+      if (isCurrent) {
+        current = locWrapper;
+      } else {
+        images.add(locWrapper);
+      }
+    }
+    if (current != null) {
+      images.add(current);
+    }
+  }
+  
+  private static ImageWrapper getTile(final double centerX, final double centerY) {
+    final long tileX = Math.round(Math.floor(centerX));
+    final long tileY = Math.round(Math.floor(centerY));
+    final MapTiles tile = MapTiles.get(tileX, tileY);
+    final ImageWrapper tileWrapper = new ImageWrapper(tile);
+    tileWrapper.pinRandomImage();
+    final Properties placement = new Properties();
+    
+    final double xOffset = -50 + (0.5 - (centerX - tileX)) * 100;
+    final double yOffset = -50 + (0.5 - (centerY - tileY)) * 100;
+    placement.setProperty(ProxyProps.ALIGN_X.name(), "LEFT");
+    placement.setProperty(ProxyProps.ALIGN_Y.name(), "TOP");
+    placement.setProperty(ProxyProps.SCALE_X.name(), "200");
+    placement.setProperty(ProxyProps.SCALE_Y.name(), "200");
+    placement.setProperty(ProxyProps.POS_X.name(), String.valueOf(xOffset));
+    placement.setProperty(ProxyProps.POS_Y.name(), String.valueOf(yOffset));
+    tileWrapper.setPlacementWithoutWritingToDisk(placement);
+    return tileWrapper;
   }
 }

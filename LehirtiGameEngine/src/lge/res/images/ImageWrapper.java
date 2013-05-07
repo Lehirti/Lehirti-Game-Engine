@@ -1,9 +1,13 @@
 package lge.res.images;
 
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.Externalizable;
 import java.io.File;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -20,22 +24,50 @@ import org.slf4j.LoggerFactory;
 /**
  * Collection of all image alternatives representing one ImageKey
  */
-public final class ImageWrapper {
+public final class ImageWrapper implements Externalizable {
+  public static final long serialVersionUID = 1L;
   private static final Logger LOGGER = LoggerFactory.getLogger(ImageWrapper.class);
   
-  private final ImageKey key;
-  private final List<ImageProxy> proxies;
+  private ImageKey key;
+  private final List<ImageProxy> proxies = new LinkedList<>();
   private ImageProxy image;
   private int currentlyDisplayedImageNr = -1;
   
-  private final ResourceState state;
-  private final int nCore;
-  private final int nMod;
+  private ResourceState state;
+  private int nCore;
+  private int nMod;
   
+  /**
+   * for load/save
+   */
+  public ImageWrapper() {
+  }
+  
+  /**
+   * for dynamically generated images (e.g. lines on maps)
+   * 
+   * @param image
+   */
+  public ImageWrapper(final ImageProxy image) {
+    this.key = CommonImage.DUMMY;
+    this.proxies.add(image);
+    LOGGER.debug("Creating new dynamic ImageWrapper");
+    
+    this.state = ResourceState.DYNAMIC;
+    this.nCore = 0;
+    this.nMod = 0;
+    
+    pinRandomImage();
+  }
+  
+  /**
+   * for regular resource-backed images
+   * 
+   * @param key
+   */
   public ImageWrapper(final ImageKey key) {
     this.key = key;
     LOGGER.debug("Creating new ImageWrapper for {}", toString());
-    this.proxies = new ArrayList<>(5);
     final File[] coreImageProxyFiles = PathFinder.getCoreImageProxyFiles(key);
     final File[] modImageProxyFiles = PathFinder.getModImageProxyFiles(key);
     
@@ -160,8 +192,16 @@ public final class ImageWrapper {
     this.image.writeProxyFile();
   }
   
+  public void setPlacementWithoutWritingToDisk(final Properties placement) {
+    this.image.setPlacement(placement);
+  }
+  
   public Properties getPlacement() {
     return this.image.getPlacement();
+  }
+  
+  public void draw(final Graphics2D g2d, final int width, final int height) {
+    this.image.draw(g2d, width, height);
   }
   
   public BufferedImage getImage() {
@@ -232,5 +272,33 @@ public final class ImageWrapper {
     for (final ImageProxy proxy : this.proxies) {
       proxy.cache();
     }
+  }
+  
+  @Override
+  public void writeExternal(final ObjectOutput out) throws IOException {
+    ImageKey.IO.write(this.key, out);
+    out.writeInt(this.proxies.size());
+    for (final ImageProxy proxy : this.proxies) {
+      out.writeObject(proxy);
+    }
+    out.writeObject(this.image);
+    out.writeInt(this.currentlyDisplayedImageNr);
+    this.state.write(out);
+    out.writeInt(this.nCore);
+    out.writeInt(this.nMod);
+  }
+  
+  @Override
+  public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+    this.key = ImageKey.IO.read(in);
+    final int proxiesSize = in.readInt();
+    for (int i = 0; i < proxiesSize; i++) {
+      this.proxies.add((ImageProxy) in.readObject());
+    }
+    this.image = (ImageProxy) in.readObject();
+    this.currentlyDisplayedImageNr = in.readInt();
+    this.state = ResourceState.read(in);
+    this.nCore = in.readInt();
+    this.nMod = in.readInt();
   }
 }

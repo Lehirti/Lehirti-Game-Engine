@@ -19,7 +19,6 @@ import javax.swing.JComponent;
 
 import lge.res.ResourceCache;
 import lge.res.images.ImageKey;
-import lge.res.images.ImageKey.IO;
 import lge.res.images.ImageWrapper;
 
 import org.slf4j.Logger;
@@ -94,17 +93,11 @@ public class ImageArea extends JComponent {
     
     final boolean hasBackgroundImage = in.readBoolean();
     if (hasBackgroundImage) {
-      final ImageKey backgroundImageKey = IO.read(in);
-      if (backgroundImageKey != null) {
-        setBackgroundImage(backgroundImageKey);
-      }
+      this.backgroundImage.set((ImageWrapper) in.readObject());
     }
     final int nrFG = in.readInt();
     for (int i = 0; i < nrFG; i++) {
-      final ImageKey imgKey = IO.read(in);
-      if (imgKey != null) {
-        addImage(imgKey);
-      }
+      this.foregroundImages.add((ImageWrapper) in.readObject());
     }
     repaint();
   }
@@ -113,13 +106,13 @@ public class ImageArea extends JComponent {
     out.writeLong(serialVersionUID);
     if (this.backgroundImage.get() != null) {
       out.writeBoolean(true);
-      ImageKey.IO.write(this.backgroundImage.get().getKey(), out);
+      out.writeObject(this.backgroundImage.get());
     } else {
       out.writeBoolean(false);
     }
     out.writeInt(this.foregroundImages.size());
     for (final ImageWrapper img : this.foregroundImages) {
-      ImageKey.IO.write(img.getKey(), out);
+      out.writeObject(img);
     }
   }
   
@@ -153,15 +146,11 @@ public class ImageArea extends JComponent {
   void drawImages(final Graphics2D g2d) {
     final ImageWrapper bgImage = this.backgroundImage.get();
     if (bgImage != null) {
-      bgImage.getImage().setAccelerationPriority(1.0f);
-      g2d.drawImage(bgImage.getImage(), bgImage.getTransformation(getWidth(), getHeight()), null);
-      bgImage.getImage().setAccelerationPriority(0.5f);
+      bgImage.draw(g2d, getWidth(), getHeight());
     }
     
     for (final ImageWrapper image : this.foregroundImages) {
-      image.getImage().setAccelerationPriority(1.0f);
-      g2d.drawImage(image.getImage(), image.getTransformation(getWidth(), getHeight()), null);
-      image.getImage().setAccelerationPriority(0.5f);
+      image.draw(g2d, getWidth(), getHeight());
     }
   }
   
@@ -253,9 +242,16 @@ public class ImageArea extends JComponent {
     }
   }
   
-  void setImage(final ImageWrapper images) {
+  public void setImage(final ImageWrapper image) {
     this.foregroundImages.clear();
-    this.foregroundImages.add(images);
+    addImage(image);
+  }
+  
+  public void addImage(final ImageWrapper image) {
+    if (image == null) {
+      return;
+    }
+    this.foregroundImages.add(image);
   }
   
   public List<ImageWrapper> getAllImages() {

@@ -2,11 +2,16 @@ package lge.res.images;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.Externalizable;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.lang.ref.SoftReference;
+import java.util.Map;
 import java.util.Properties;
 
 import lge.res.ResourceCache;
@@ -17,7 +22,8 @@ import lge.util.PathFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageProxy {
+public class ImageProxy implements Externalizable {
+  public static final long serialVersionUID = 1L;
   private static final Logger LOGGER = LoggerFactory.getLogger(ImageProxy.class);
   
   public static enum ProxyProps {
@@ -31,13 +37,13 @@ public class ImageProxy {
     ATTRIBUTE; // String; additional attribute
   }
   
-  private final ImageKey key;
-  private final File imageFile;
+  private ImageKey key;
+  private File imageFile;
   private SoftReference<BufferedImage> image;
   private SoftReference<BufferedImage> nullImage;
-  private final int imageSizeX;
-  private final int imageSizeY;
-  private final File modProxyFile;
+  private int imageSizeX;
+  private int imageSizeY;
+  private File modProxyFile;
   
   private Properties placement = new Properties();
   
@@ -50,6 +56,58 @@ public class ImageProxy {
   private Double rotation = null;
   
   private String attribute = null;
+  
+  /**
+   * for load/save
+   */
+  public ImageProxy() {
+  }
+  
+  @Override
+  public void writeExternal(final ObjectOutput out) throws IOException {
+    ImageKey.IO.write(this.key, out);
+    out.writeObject(this.imageFile);
+    // do not save soft references
+    out.writeInt(this.imageSizeX);
+    out.writeInt(this.imageSizeY);
+    out.writeObject(this.modProxyFile);
+    out.writeInt(this.placement.size());
+    for (final Map.Entry<Object, Object> entry : this.placement.entrySet()) {
+      out.writeObject(entry.getKey());
+      out.writeObject(entry.getValue());
+    }
+    out.writeObject(this.alignX);
+    out.writeObject(this.alignY);
+    out.writeObject(this.posX);
+    out.writeObject(this.posY);
+    out.writeObject(this.scaleX);
+    out.writeObject(this.scaleY);
+    out.writeObject(this.rotation);
+    out.writeObject(this.attribute);
+  }
+  
+  @Override
+  public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+    this.key = ImageKey.IO.read(in);
+    this.imageFile = (File) in.readObject();
+    this.image = new SoftReference<>(null);
+    this.nullImage = new SoftReference<>(null);
+    this.imageSizeX = in.readInt();
+    this.imageSizeY = in.readInt();
+    this.modProxyFile = (File) in.readObject();
+    final int placementSize = in.readInt();
+    for (int i = 0; i < placementSize; i++) {
+      this.placement.put(in.readObject(), in.readObject());
+    }
+    this.alignX = (String) in.readObject();
+    this.alignY = (String) in.readObject();
+    this.posX = (Double) in.readObject();
+    this.posY = (Double) in.readObject();
+    this.scaleX = (Double) in.readObject();
+    this.scaleY = (Double) in.readObject();
+    this.rotation = (Double) in.readObject();
+    this.attribute = (String) in.readObject();
+  }
   
   private ImageProxy(final File imageProxyFile, final File imageFile, final BufferedImage image) {
     this.key = null;
@@ -239,6 +297,13 @@ public class ImageProxy {
     return simpleName.substring(lastIndex);
   }
   
+  protected void draw(final Graphics2D g2d, final int width, final int height) {
+    final BufferedImage img = getImage();
+    img.setAccelerationPriority(1.0f);
+    g2d.drawImage(img, getTransformation(width, height), null);
+    img.setAccelerationPriority(0.5f);
+  }
+  
   BufferedImage getImage() {
     if (this.imageFile == null) {
       BufferedImage bufferedImage = this.nullImage.get();
@@ -341,243 +406,6 @@ public class ImageProxy {
       }
       return dimCanvas - dimImage - ((dimCanvas * posVal) / 100.0d);
     }
-  }
-  
-  private int[] calculateCoordinates(final int screenWidth, final int screenHeight) {
-    final int[] coords;
-    
-    if (this.imageFile == null) {
-      coords = new int[4];
-      coords[0] = screenWidth / 4;
-      coords[1] = screenHeight / 4;
-      coords[2] = screenWidth / 2;
-      coords[3] = screenHeight / 8;
-      return coords;
-    }
-    
-    final double xScale = screenWidth / 100.0D;
-    final double yScale = screenHeight / 100.0D;
-    
-    if (this.alignX.equals("LEFT")) {
-      if (this.alignY.equals("TOP")) {
-        coords = calculateTopLeft(screenWidth, screenHeight, xScale, yScale);
-      } else if (this.alignY.equals("CENTER")) {
-        coords = calculateLeft(screenWidth, screenHeight, xScale, yScale);
-      } else /* BOTTOM */{
-        coords = calculateBottomLeft(screenWidth, screenHeight, xScale, yScale);
-      }
-    } else if (this.alignX.equals("CENTER")) {
-      if (this.alignY.equals("TOP")) {
-        coords = calculateTop(screenWidth, screenHeight, xScale, yScale);
-      } else if (this.alignY.equals("CENTER")) {
-        coords = calculateCenter(screenWidth, screenHeight, xScale, yScale);
-      } else /* BOTTOM */{
-        coords = calculateBottom(screenWidth, screenHeight, xScale, yScale);
-      }
-    } else /* RIGHT */{
-      if (this.alignY.equals("TOP")) {
-        coords = calculateTopRight(screenWidth, screenHeight, xScale, yScale);
-      } else if (this.alignY.equals("CENTER")) {
-        coords = calculateRight(screenWidth, screenHeight, xScale, yScale);
-      } else /* BOTTOM */{
-        coords = calculateBottomRight(screenWidth, screenHeight, xScale, yScale);
-      }
-    }
-    
-    return coords;
-  }
-  
-  private int[] calculateTopLeft(final int screenWidth, final int screenHeight, final double xScale, final double yScale) {
-    final int[] coords = new int[4];
-    
-    coords[0] = determinePosBefore(this.posX, xScale);
-    coords[1] = determinePosBefore(this.posY, yScale);
-    
-    final int sizes[] = determineSizes(screenWidth - coords[0], screenHeight - coords[1], xScale, yScale);
-    
-    coords[2] = sizes[0];
-    coords[3] = sizes[1];
-    return coords;
-  }
-  
-  private int[] calculateLeft(final int screenWidth, final int screenHeight, final double xScale, final double yScale) {
-    final int[] coords = new int[4];
-    
-    coords[0] = determinePosBefore(this.posX, xScale);
-    
-    final int sizes[] = determineSizes(screenWidth - coords[0], screenHeight, xScale, yScale);
-    
-    coords[1] = determinePosAfterCentered(screenHeight, sizes[1]);
-    
-    coords[2] = sizes[0];
-    coords[3] = sizes[1];
-    return coords;
-  }
-  
-  private int[] calculateBottomLeft(final int screenWidth, final int screenHeight, final double xScale,
-      final double yScale) {
-    final int[] coords = new int[4];
-    
-    coords[0] = determinePosBefore(this.posX, xScale);
-    final int prelimPosY = determinePosBefore(this.posY, yScale);
-    
-    final int sizes[] = determineSizes(screenWidth - coords[0], screenHeight - prelimPosY, xScale, yScale);
-    
-    coords[1] = determinePosAfterEdge(screenHeight, sizes[1], prelimPosY);
-    
-    coords[2] = sizes[0];
-    coords[3] = sizes[1];
-    return coords;
-  }
-  
-  private int[] calculateTop(final int screenWidth, final int screenHeight, final double xScale, final double yScale) {
-    final int[] coords = new int[4];
-    
-    coords[1] = determinePosBefore(this.posY, yScale);
-    
-    final int sizes[] = determineSizes(screenWidth, screenHeight - coords[1], xScale, yScale);
-    
-    coords[0] = determinePosAfterCentered(screenWidth, sizes[0]);
-    
-    coords[2] = sizes[0];
-    coords[3] = sizes[1];
-    return coords;
-  }
-  
-  private int[] calculateCenter(final int screenWidth, final int screenHeight, final double xScale, final double yScale) {
-    final int[] coords = new int[4];
-    
-    final int sizes[] = determineSizes(screenWidth, screenHeight, xScale, yScale);
-    
-    coords[0] = determinePosAfterCentered(screenWidth, sizes[0]);
-    coords[1] = determinePosAfterCentered(screenHeight, sizes[1]);
-    
-    coords[2] = sizes[0];
-    coords[3] = sizes[1];
-    return coords;
-  }
-  
-  private int[] calculateBottom(final int screenWidth, final int screenHeight, final double xScale, final double yScale) {
-    final int[] coords = new int[4];
-    
-    final int prelimPosY = determinePosBefore(this.posY, yScale);
-    final int sizes[] = determineSizes(screenWidth, screenHeight - prelimPosY, xScale, yScale);
-    
-    coords[0] = determinePosAfterCentered(screenWidth, sizes[0]);
-    coords[1] = determinePosAfterEdge(screenHeight, sizes[1], prelimPosY);
-    
-    coords[2] = sizes[0];
-    coords[3] = sizes[1];
-    return coords;
-  }
-  
-  private int[] calculateTopRight(final int screenWidth, final int screenHeight, final double xScale,
-      final double yScale) {
-    final int[] coords = new int[4];
-    
-    final int prelimPosX = determinePosBefore(this.posX, xScale);
-    coords[1] = determinePosBefore(this.posY, yScale);
-    
-    final int sizes[] = determineSizes(screenWidth - prelimPosX, screenHeight - coords[1], xScale, yScale);
-    
-    coords[0] = determinePosAfterEdge(screenWidth, sizes[0], prelimPosX);
-    
-    coords[2] = sizes[0];
-    coords[3] = sizes[1];
-    return coords;
-  }
-  
-  private int[] calculateRight(final int screenWidth, final int screenHeight, final double xScale, final double yScale) {
-    final int[] coords = new int[4];
-    
-    final int prelimPosX = determinePosBefore(this.posX, xScale);
-    
-    final int sizes[] = determineSizes(screenWidth - prelimPosX, screenHeight, xScale, yScale);
-    
-    coords[0] = determinePosAfterEdge(screenWidth, sizes[0], prelimPosX);
-    coords[1] = determinePosAfterCentered(screenHeight, sizes[1]);
-    
-    coords[2] = sizes[0];
-    coords[3] = sizes[1];
-    return coords;
-  }
-  
-  private int[] calculateBottomRight(final int screenWidth, final int screenHeight, final double xScale,
-      final double yScale) {
-    final int[] coords = new int[4];
-    
-    final int prelimPosX = determinePosBefore(this.posX, xScale);
-    final int prelimPosY = determinePosBefore(this.posY, yScale);
-    
-    final int sizes[] = determineSizes(screenWidth - prelimPosX, screenHeight - prelimPosY, xScale, yScale);
-    
-    coords[0] = determinePosAfterEdge(screenWidth, sizes[0], prelimPosX);
-    coords[1] = determinePosAfterEdge(screenHeight, sizes[1], prelimPosY);
-    
-    coords[2] = sizes[0];
-    coords[3] = sizes[1];
-    return coords;
-  }
-  
-  private int[] determineSizes(final int boundingX, final int boundingY, final double xScale, final double yScale) {
-    final int resultSizeX, resultSizeY;
-    
-    if (this.scaleX == null) {
-      if (this.scaleY == null) {
-        // scale proportionally, until one dimension hits the edge
-        final double scalingFactor = determineScalingFactor(boundingX, boundingY);
-        resultSizeX = (int) (this.imageSizeX * scalingFactor);
-        resultSizeY = (int) (this.imageSizeY * scalingFactor);
-      } else {
-        // scale y axis as specified; x axis proportionally
-        resultSizeY = (int) (this.scaleY.doubleValue() * yScale);
-        resultSizeX = scaleProportionately(this.imageSizeX, this.imageSizeY, resultSizeY);
-      }
-    } else {
-      if (this.scaleY == null) {
-        // scale x axis as specified; y axis proportionally
-        resultSizeX = (int) (this.scaleX.doubleValue() * xScale);
-        resultSizeY = scaleProportionately(this.imageSizeY, this.imageSizeX, resultSizeX);
-      } else {
-        // scale both dimensions as explicitly specified
-        resultSizeX = (int) (this.scaleX.doubleValue() * xScale);
-        resultSizeY = (int) (this.scaleY.doubleValue() * yScale);
-      }
-    }
-    
-    final int[] sizes = new int[2];
-    sizes[0] = resultSizeX;
-    sizes[1] = resultSizeY;
-    return sizes;
-  }
-  
-  private static int determinePosBefore(final Double pos, final double xScale) {
-    if (pos != null) {
-      return (int) (pos.doubleValue() * xScale);
-    } else {
-      return 0;
-    }
-  }
-  
-  private static int determinePosAfterCentered(final int size, final int toSubtract) {
-    return (size - toSubtract) / 2;
-  }
-  
-  private static int determinePosAfterEdge(final int size, final int toSubtract, final int offset) {
-    return size - toSubtract - offset;
-  }
-  
-  private static int scaleProportionately(final int sizeToScale, final int preScale, final int postScale) {
-    if (preScale == 0) {
-      return sizeToScale;
-    }
-    return (int) (sizeToScale * ((double) postScale) / preScale);
-  }
-  
-  private double determineScalingFactor(final int remainingScreenX, final int remainingScreenY) {
-    final double maxXFactor = remainingScreenX / (double) this.imageSizeX;
-    final double maxYFactor = remainingScreenY / (double) this.imageSizeY;
-    return maxXFactor < maxYFactor ? maxXFactor : maxYFactor;
   }
   
   public void setDeleted() {

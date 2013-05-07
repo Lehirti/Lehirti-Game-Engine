@@ -16,6 +16,7 @@ import lge.events.hooks.EventHook;
 import lge.gui.EngineMain;
 import lge.gui.Key;
 import lge.res.images.ImageKey;
+import lge.res.images.ImageWrapper;
 import lge.state.EventState;
 import lge.state.State;
 
@@ -45,6 +46,11 @@ public abstract class AbstractEvent<STATE extends Enum<?> & EventState> implemen
   
   protected void addImage(final ImageKey key) {
     EngineMain.getCurrentImageArea().addImage(key);
+    this.repaintNeeded = true;
+  }
+  
+  protected void addImage(final ImageWrapper image) {
+    EngineMain.getCurrentImageArea().addImage(image);
     this.repaintNeeded = true;
   }
   

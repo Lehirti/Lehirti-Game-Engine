@@ -47,7 +47,7 @@ public final class PreMain {
     }
     LOGGER.info("Trying to start main application with command: " + cmdString);
     try {
-      Runtime.getRuntime().exec(cmdString);
+      Runtime.getRuntime().exec(newArgs.toArray(new String[newArgs.size()]));
     } catch (final IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -76,28 +76,20 @@ public final class PreMain {
     }
     File executable = new File(f, "javaw.exe");
     if (executable.exists()) {
-      return quote(executable.getAbsolutePath());
+      return executable.getAbsolutePath();
     }
     executable = new File(f, "java.exe");
     if (executable.exists()) {
-      return quote(executable.getAbsolutePath());
+      return executable.getAbsolutePath();
     }
     executable = new File(f, "java");
     if (executable.exists()) {
-      return quote(executable.getAbsolutePath());
+      return executable.getAbsolutePath();
     }
     
     LOGGER.error("Java executable not found in \"{}\".", f.getAbsolutePath());
     printUsageAndExit();
     return null;
-  }
-  
-  private static String quote(final String absolutePathOfExecutable) {
-    if (absolutePathOfExecutable.indexOf(" ") != -1) {
-      return "\"" + absolutePathOfExecutable + "\"";
-    } else {
-      return absolutePathOfExecutable;
-    }
   }
   
   private static void printUsageAndExit() {

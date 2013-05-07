@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -134,7 +135,7 @@ public class PathFinder {
       files = proxyFiles.toArray(new File[proxyFiles.size()]);
       cache.put(key, files);
     }
-    return files;
+    return Arrays.copyOf(files, files.length);
   }
   
   private static File getDir(final File baseDir, final ImageKey key) {

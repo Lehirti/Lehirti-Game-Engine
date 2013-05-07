@@ -22,7 +22,7 @@ public class ProgressImageArea extends ImageArea {
   void drawImages(final Graphics2D g2d) {
     final ImageWrapper bgImage = this.backgroundImage.get();
     if (bgImage != null) {
-      g2d.drawImage(bgImage.getImage(), bgImage.getTransformation(getWidth(), getHeight()), null);
+      bgImage.draw(g2d, getWidth(), getHeight());
     }
     
     ProgressGraph pg = null;
