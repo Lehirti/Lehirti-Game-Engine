@@ -62,7 +62,7 @@ public class ImageProxyPath extends ImageProxy {
   protected void draw(final Graphics2D g2d, final int width, final int height) {
     Color color;
     if (this.isCurrent) {
-      color = new Color(0.8f, 0f, 0f);
+      color = new Color(0x71, 0x12, 0x04);
     } else {
       color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
     }

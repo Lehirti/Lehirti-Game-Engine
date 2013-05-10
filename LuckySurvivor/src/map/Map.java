@@ -56,23 +56,23 @@ import drycreek.MapToDryCreek;
 
 public class Map extends EventNode<NullState> {
   public static enum Location implements TextKey, ImageKey {
-    CRASH_SITE(0.55, 3.45, new StaticEventFactory(MapToCrashSite.class)),
-    CLIFF_WEST(0.45, 3.35, new StaticEventFactory(MapToCliffWest.class)),
-    JUNGLE_1_UPHILL(0.65, 3.25, new StaticEventFactory(MapToJungle1Uphill.class)),
-    CLIFF_NORTH(0.67, 3.15, new StaticEventFactory(MapToCliffNorth.class)),
-    LOOKOUT_HILL(0.60, 3.60, new StaticEventFactory(MapToLookoutHill.class)),
-    CLIFF_SOUTH(0.63, 3.65, new StaticEventFactory(MapToCliffSouth.class)),
-    JUNGLE_2_UPHILL(0.72, 3.47, new StaticEventFactory(MapToJungle2Uphill.class)),
-    PENINSULA_BASIN_JUNGLE(0.85, 3.49, new StaticEventFactory(MapToPeninsulaBasinJungle.class)),
-    PENINSULA_ISTHMUS(1, 1, new StaticEventFactory(MapToPeninsulaIsthmus.class)),
-    ISLAND_ENTRY(1, 1, new StaticEventFactory(MapToIslandEntry.class)),
-    RIDGE(1, 1, new StaticEventFactory(MapToRidge.class)),
-    CREVICE_WITH_CREEK(1, 1, new StaticEventFactory(MapToCreviceWithCreek.class)),
-    CREEK_UNDER_CLIFF(1, 1, new StaticEventFactory(MapToCreekUnderCliff.class)),
-    POND_OVERHANG(1, 1, new StaticEventFactory(MapToPondOverhang.class)),
-    DRY_CREEK(1, 1, new StaticEventFactory(MapToDryCreek.class)),
-    CLIFF_MEADOW_EDGE_WEST(1, 1, new StaticEventFactory(MapToCliffMeadowEdgeWest.class)),
-    HOLE_IN_THE_GROUND(1, 1, new StaticEventFactory(MapToHoleInTheGround.class));
+    CRASH_SITE(0.545, 3.47, new StaticEventFactory(MapToCrashSite.class)),
+    CLIFF_WEST(0.4225, 3.38, new StaticEventFactory(MapToCliffWest.class)),
+    JUNGLE_1_UPHILL(0.7275, 3.25, new StaticEventFactory(MapToJungle1Uphill.class)),
+    CLIFF_NORTH(0.7225, 3.123333, new StaticEventFactory(MapToCliffNorth.class)),
+    LOOKOUT_HILL(0.6575, 3.59333, new StaticEventFactory(MapToLookoutHill.class)),
+    CLIFF_SOUTH(0.71, 3.7333333333, new StaticEventFactory(MapToCliffSouth.class)),
+    JUNGLE_2_UPHILL(0.81, 3.446666667, new StaticEventFactory(MapToJungle2Uphill.class)),
+    PENINSULA_BASIN_JUNGLE(0.985, 3.4833333, new StaticEventFactory(MapToPeninsulaBasinJungle.class)),
+    PENINSULA_ISTHMUS(1.18, 3.47, new StaticEventFactory(MapToPeninsulaIsthmus.class)),
+    ISLAND_ENTRY(1.26, 3.4466666667, new StaticEventFactory(MapToIslandEntry.class)),
+    RIDGE(1.425, 3.73333333333, new StaticEventFactory(MapToRidge.class)),
+    CREVICE_WITH_CREEK(1.4425, 3.216666666667, new StaticEventFactory(MapToCreviceWithCreek.class)),
+    CREEK_UNDER_CLIFF(1.545, 3.283333333, new StaticEventFactory(MapToCreekUnderCliff.class)),
+    POND_OVERHANG(1.6925, 3.1466666667, new StaticEventFactory(MapToPondOverhang.class)),
+    DRY_CREEK(1.8525, 3.253333333, new StaticEventFactory(MapToDryCreek.class)),
+    CLIFF_MEADOW_EDGE_WEST(2.025, 3.19, new StaticEventFactory(MapToCliffMeadowEdgeWest.class)),
+    HOLE_IN_THE_GROUND(2.045, 3.153333333, new StaticEventFactory(MapToHoleInTheGround.class));
     
     private final EventFactory locationEventFactory;
     
@@ -369,6 +369,9 @@ public class Map extends EventNode<NullState> {
   private static void addPaths(final List<ImageWrapper> images, final Path currentPath, final double centerX,
       final double centerY) {
     for (final Path path : Path.values()) {
+      if (!is(path)) {
+        continue; // path is not accessible to the player
+      }
       final boolean isCurrent = path == currentPath;
       if (!isCurrent && (Math.abs(path.loc1.x - centerX) >= 0.5 || Math.abs(path.loc1.y - centerY) >= 0.5)
           && (Math.abs(path.loc2.x - centerX) >= 0.5 || Math.abs(path.loc2.y - centerY) >= 0.5)) {

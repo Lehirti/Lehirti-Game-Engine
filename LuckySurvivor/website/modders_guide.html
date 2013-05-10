@@ -112,5 +112,31 @@ Your commit should consist of:
 Select those and hit "commit" (with this you save the snapshot locally)</li>
 <li>Right-click LuckySurvivor Project: Team->Push to Upstream (with this you make your local changes available for others (me))</li>
 </ol>
+<h2>The Island Map</h2>
+This is current version of the entire island in one image:
+<img alt="Island Map" src="9801b72bccc4dea35c3354d653ec479522b92aa3.png"/>
+<p>Beautifications of the map should be made to this one-image version from which the in-game map is derived. Creating the game resources from the "one-image" version is currently a manual process and takes ~1 hour, so any improvements to the map should worth the effort.</p>
+In-game the map is cut into tiles. To the player the map will always look like one continuous map, but in reality the will only ever be tiles which are 4 times as large as what's visible on screen.
+<img alt="Island Map with Grid" src="IslandMapWithGrid.png"/>
+<p>One of the black rectangles in the above image is the size of what's visible on screen at a time, but the map will always be centered on the current location/path, so it looks continuous to the player. The coordinate (0,0) is where the top-most and left-most black lines meet. Some other coordinates have been drawn into the image to illustrate how the coordinate system works.</p>
+<p>When the player first enters the island map, it's on tile (0,3). Every location delimited by the rectangle (0,3), (1,3), (0,4), (1,4) uses this tile as the background image. The red rectangle shows the actual size of tile (0,3).</p>
+The formula is:
+<dl>
+<dt><b>x</b></dt>
+<dd>(X-Pixels - 200)/400</dd>
+<dt><b>y</b></dt>
+<dd>(Y-Pixels - 150)/300</dd>
+</dl>
+<p>If you want to change an existing location or add a new one, the whole tile business does not concern you. All you have to do is: open LuckySurvivor/src/map.Map and add/modify a line like this:
+<pre>
+public class Map extends EventNode&lt;NullState&gt; {
+  public static enum Location implements TextKey, ImageKey {
+    CRASH_SITE(0.55, 3.45, new StaticEventFactory(MapToCrashSite.class)),
+    CLIFF_WEST(0.45, 3.35, new StaticEventFactory(MapToCliffWest.class)),
+    JUNGLE_1_UPHILL(0.65, 3.25, new StaticEventFactory(MapToJungle1Uphill.class)),
+    ...
+</pre></p>
+The first two numbers in the Location constructor (e.g. the "0.55" and "3.45" after "CRASH_SITE(") are the x and y coordinates of the location. The game engine will take care of the rest.
+If you add an Image for the Location, this image will be used to draw the location. Note: Location images must have both a "Scale X" and a "Scale Y" value. Otherwise an X will be drawn.
 </body>
 </html>
