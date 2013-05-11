@@ -122,8 +122,10 @@ public class ImageEditor extends JFrame implements ActionListener {
   JTextField scaleY = new JTextField();
   JTextField rotation = new JTextField();
   
-  JLabel selectedImageLabel = new JLabel("Image #");
-  JButton selectedImage = new JButton();
+  JLabel selectedImageNextLabel = new JLabel("Image # (Next)");
+  JButton selectNextImage = new JButton();
+  JLabel selectedImagePrevLabel = new JLabel("Image # (Prev)");
+  JButton selectPrevImage = new JButton();
   JLabel selectedAlternativeLabel = new JLabel("Alternative #");
   JButton selectedAlternative = new JButton();
   
@@ -164,7 +166,7 @@ public class ImageEditor extends JFrame implements ActionListener {
     
     this.contentDir = new JComboBox<>(PathFinder.getContentDirs());
     
-    this.controls.setLayout(new GridLayout(13, 2));
+    this.controls.setLayout(new GridLayout(14, 2));
     this.controls.setPreferredSize(new Dimension(300, 800));
     this.controls.add(this.alignXlabel);
     this.controls.add(this.alignX);
@@ -190,8 +192,10 @@ public class ImageEditor extends JFrame implements ActionListener {
     this.controls.add(this.rotation);
     this.rotation.setInputVerifier(new NumericalInputVerifier(this));
     this.rotation.getDocument().addDocumentListener(new NumericalInputChangeListener(this.rotation));
-    this.controls.add(this.selectedImageLabel);
-    this.controls.add(this.selectedImage);
+    this.controls.add(this.selectedImageNextLabel);
+    this.controls.add(this.selectNextImage);
+    this.controls.add(this.selectedImagePrevLabel);
+    this.controls.add(this.selectPrevImage);
     this.controls.add(this.selectedAlternativeLabel);
     this.controls.add(this.selectedAlternative);
     this.controls.add(new JLabel());
@@ -212,7 +216,8 @@ public class ImageEditor extends JFrame implements ActionListener {
     this.alignX.addActionListener(this);
     this.alignY.addActionListener(this);
     this.rotation.addActionListener(this);
-    this.selectedImage.addActionListener(this);
+    this.selectNextImage.addActionListener(this);
+    this.selectPrevImage.addActionListener(this);
     this.selectedAlternative.addActionListener(this);
     this.newAlternative.addActionListener(this);
     this.attribute.addActionListener(this);
@@ -262,8 +267,12 @@ public class ImageEditor extends JFrame implements ActionListener {
     
     final ImageWrapper imageWrapper = this.allImages.get(this.selectedImageNr);
     this.imageArea.setImage(imageWrapper);
-    this.selectedImage.setText(this.allImages.get(this.selectedImageNr).toButtonString());
-    this.selectedImage.setToolTipText(this.allImages.get(this.selectedImageNr).toButtonString());
+    this.selectNextImage.setText(this.allImages.get((this.selectedImageNr + 1) % this.allImages.size())
+        .toButtonString());
+    this.selectNextImage.setToolTipText(this.allImages.get(this.selectedImageNr).toButtonString());
+    this.selectPrevImage.setText(this.allImages.get(
+        this.selectedImageNr - 1 < 0 ? this.allImages.size() - 1 : this.selectedImageNr - 1).toButtonString());
+    this.selectPrevImage.setToolTipText(this.allImages.get(this.selectedImageNr).toButtonString());
     this.selectedAlternativeNr = imageWrapper.getCurrentImageNr();
     this.selectedAlternative.setText(String.valueOf(this.selectedAlternativeNr));
     final Properties placement = imageWrapper.getPlacement();
@@ -309,12 +318,26 @@ public class ImageEditor extends JFrame implements ActionListener {
   
   private void selectNextImage() {
     if (this.allImages.isEmpty()) {
-      this.selectedImage.setText("NONE AVAILABLE");
+      this.selectNextImage.setText("NONE AVAILABLE");
+      this.selectPrevImage.setText("NONE AVAILABLE");
       return;
     }
     this.selectedImageNr++;
     if (this.selectedImageNr >= this.allImages.size()) {
       this.selectedImageNr = 0;
+    }
+    setImage();
+  }
+  
+  private void selectPrevImage() {
+    if (this.allImages.isEmpty()) {
+      this.selectNextImage.setText("NONE AVAILABLE");
+      this.selectPrevImage.setText("NONE AVAILABLE");
+      return;
+    }
+    this.selectedImageNr--;
+    if (this.selectedImageNr < 0) {
+      this.selectedImageNr = this.allImages.size() - 1;
     }
     setImage();
   }
@@ -356,9 +379,12 @@ public class ImageEditor extends JFrame implements ActionListener {
       }
     } else if (e.getSource() == this.rotation) {
       updateCanvasAndImageWrapper();
-    } else if (e.getSource() == this.selectedImage) {
+    } else if (e.getSource() == this.selectNextImage) {
       LOGGER.debug("selectNextImage()");
       selectNextImage();
+    } else if (e.getSource() == this.selectPrevImage) {
+      LOGGER.debug("selectPrevImage()");
+      selectPrevImage();
     } else if (e.getSource() == this.selectedAlternative) {
       LOGGER.debug("selectNextAlternative()");
       this.allImages.get(this.selectedImageNr).pinNextImage();

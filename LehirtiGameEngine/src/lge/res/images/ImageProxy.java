@@ -43,8 +43,10 @@ public class ImageProxy implements Externalizable {
   private SoftReference<BufferedImage> nullImage;
   private int imageSizeX;
   private int imageSizeY;
+  private File initProxyFile;
   private File modProxyFile;
   
+  private final Properties initPlacement = new Properties();
   private Properties placement = new Properties();
   
   private String alignX = null;
@@ -70,7 +72,13 @@ public class ImageProxy implements Externalizable {
     // do not save soft references
     out.writeInt(this.imageSizeX);
     out.writeInt(this.imageSizeY);
+    out.writeObject(this.initProxyFile);
     out.writeObject(this.modProxyFile);
+    out.writeInt(this.initPlacement.size());
+    for (final Map.Entry<Object, Object> entry : this.initPlacement.entrySet()) {
+      out.writeObject(entry.getKey());
+      out.writeObject(entry.getValue());
+    }
     out.writeInt(this.placement.size());
     for (final Map.Entry<Object, Object> entry : this.placement.entrySet()) {
       out.writeObject(entry.getKey());
@@ -94,7 +102,12 @@ public class ImageProxy implements Externalizable {
     this.nullImage = new SoftReference<>(null);
     this.imageSizeX = in.readInt();
     this.imageSizeY = in.readInt();
+    this.initProxyFile = (File) in.readObject();
     this.modProxyFile = (File) in.readObject();
+    final int initPlacementSize = in.readInt();
+    for (int i = 0; i < initPlacementSize; i++) {
+      this.initPlacement.put(in.readObject(), in.readObject());
+    }
     final int placementSize = in.readInt();
     for (int i = 0; i < placementSize; i++) {
       this.placement.put(in.readObject(), in.readObject());
@@ -112,6 +125,8 @@ public class ImageProxy implements Externalizable {
   private ImageProxy(final File imageProxyFile, final File imageFile, final BufferedImage image) {
     this.key = null;
     setPlacement(imageProxyFile);
+    this.initProxyFile = imageProxyFile;
+    FileUtils.readPropsFromFile(this.initPlacement, this.initProxyFile);
     this.modProxyFile = PathFinder.toModFile(imageProxyFile);
     
     this.imageFile = imageFile;
@@ -124,6 +139,7 @@ public class ImageProxy implements Externalizable {
     this.key = key;
     this.nullImage = new SoftReference<>(makeNullImage());
     this.imageFile = null;
+    this.initProxyFile = null;
     this.modProxyFile = null;
     this.imageSizeX = 800;
     this.imageSizeY = 600;
@@ -202,8 +218,27 @@ public class ImageProxy implements Externalizable {
   }
   
   public void writeProxyFile() {
+    // only write proxy file, if we have a destination file
     if (this.modProxyFile != null) {
-      FileUtils.writePropsToFile(this.placement, this.modProxyFile, null);
+      
+      // initial file was already a mod file
+      if (this.modProxyFile.equals(this.initProxyFile)) {
+        // TODO read core file properties, to compare
+        FileUtils.writePropsToFile(this.placement, this.modProxyFile, null);
+      }
+      
+      // initial file was core file
+      else {
+        // there is currently no change from the core file, so we delete the mod file
+        if (this.initPlacement.equals(this.placement)) {
+          this.modProxyFile.delete();
+        }
+        
+        // placement has changed, so we write the mod file
+        else {
+          FileUtils.writePropsToFile(this.placement, this.modProxyFile, null);
+        }
+      }
     }
   }
   
