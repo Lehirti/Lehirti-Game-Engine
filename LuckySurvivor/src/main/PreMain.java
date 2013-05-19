@@ -30,8 +30,9 @@ public final class PreMain {
   
   /**
    * @param args
+   * @throws InterruptedException
    */
-  public static void main(final String[] args) {
+  public static void main(final String[] args) throws InterruptedException {
     XMLEventsHelper.buildAll();
     
     final List<String> newArgs = new LinkedList<>();
@@ -52,7 +53,8 @@ public final class PreMain {
       pb.redirectError(Redirect.INHERIT);
       pb.redirectOutput(Redirect.INHERIT);
       pb.redirectInput(Redirect.INHERIT);
-      pb.start();
+      final Process p = pb.start();
+      p.waitFor();
     } catch (final IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
