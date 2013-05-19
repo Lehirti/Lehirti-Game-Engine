@@ -133,6 +133,7 @@ public class ImageProxy implements Externalizable {
     this.image = new SoftReference<>(image);
     this.imageSizeX = image.getWidth();
     this.imageSizeY = image.getHeight();
+    LOGGER.debug("ImageProxy instance for {} created.", imageProxyFile.getAbsolutePath());
   }
   
   ImageProxy(final ImageKey key) {
@@ -266,6 +267,7 @@ public class ImageProxy implements Externalizable {
     }
     LOGGER.debug("Reading image file {}", imageFile.getAbsolutePath());
     final BufferedImage image = ResourceCache.getRawImage(imageFile);
+    LOGGER.debug("BufferedImage {} read", imageFile.getAbsolutePath());
     return new ImageProxy(imageProxyFile, imageFile, image);
   }
   

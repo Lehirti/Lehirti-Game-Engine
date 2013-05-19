@@ -85,17 +85,21 @@ public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
     synchronized (RAW_IMAGE_CACHE) {
       BufferedImage bufferedImage = RAW_IMAGE_CACHE.get(imageFile.getName());
       if (bufferedImage != null) {
+        LOGGER.debug("Got (CACHED) BufferedImage {} for File {}", bufferedImage, imageFile);
         return bufferedImage;
       } else {
         try {
           final BufferedImage tmp = ImageIO.read(imageFile);
+          LOGGER.debug("ImageIO.read temporary BufferedImage {} for File {}", tmp, imageFile);
           bufferedImage = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
               .getDefaultConfiguration().createCompatibleImage(tmp.getWidth(), tmp.getHeight(), tmp.getTransparency());
+          LOGGER.debug("compatible buffered image created");
           final Graphics2D g2d = bufferedImage.createGraphics();
           g2d.drawImage(tmp, null, 0, 0);
           g2d.dispose();
           bufferedImage.setAccelerationPriority(0.4f);
           RAW_IMAGE_CACHE.put(imageFile.getName(), bufferedImage);
+          LOGGER.debug("Got BufferedImage {} for File {}", bufferedImage, imageFile);
           return bufferedImage;
         } catch (final IOException e) {
           LOGGER.error("Failed to read image " + imageFile.getAbsolutePath(), e);

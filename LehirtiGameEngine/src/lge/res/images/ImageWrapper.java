@@ -109,6 +109,8 @@ public final class ImageWrapper implements Externalizable {
         LOGGER.debug("Adding image proxy {} to {}", imageProxyFile.getAbsolutePath(), toString());
         this.proxies.add(imageProxy);
         ret++;
+      } else {
+        LOGGER.debug("Failed to add image proxy {}", imageProxyFile.getAbsolutePath());
       }
     }
     return ret;
