@@ -2,6 +2,7 @@ package main;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ProcessBuilder.Redirect;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -47,7 +48,11 @@ public final class PreMain {
     }
     LOGGER.info("Trying to start main application with command: " + cmdString);
     try {
-      Runtime.getRuntime().exec(newArgs.toArray(new String[newArgs.size()]));
+      final ProcessBuilder pb = new ProcessBuilder(newArgs);
+      pb.redirectError(Redirect.INHERIT);
+      pb.redirectOutput(Redirect.INHERIT);
+      pb.redirectInput(Redirect.INHERIT);
+      pb.start();
     } catch (final IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
