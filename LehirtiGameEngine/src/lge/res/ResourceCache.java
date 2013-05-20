@@ -1,7 +1,5 @@
 package lge.res;
 
-import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -89,15 +87,8 @@ public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
         return bufferedImage;
       } else {
         try {
-          final BufferedImage tmp = ImageIO.read(imageFile);
-          LOGGER.debug("ImageIO.read temporary BufferedImage {} for File {}", tmp, imageFile);
-          bufferedImage = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-              .getDefaultConfiguration().createCompatibleImage(tmp.getWidth(), tmp.getHeight(), tmp.getTransparency());
-          LOGGER.debug("compatible buffered image created");
-          final Graphics2D g2d = bufferedImage.createGraphics();
-          g2d.drawImage(tmp, null, 0, 0);
-          g2d.dispose();
-          bufferedImage.setAccelerationPriority(0.4f);
+          bufferedImage = ImageIO.read(imageFile);
+          LOGGER.debug("ImageIO.read BufferedImage {} for File {}", bufferedImage, imageFile);
           RAW_IMAGE_CACHE.put(imageFile.getName(), bufferedImage);
           LOGGER.debug("Got BufferedImage {} for File {}", bufferedImage, imageFile);
           return bufferedImage;
