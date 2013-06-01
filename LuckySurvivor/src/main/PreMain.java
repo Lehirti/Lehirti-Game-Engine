@@ -67,7 +67,8 @@ public final class PreMain {
     sb.append(FileUtils.NL);
     
     final String ownNameJar = determineNameOfOwnJar();
-    final File launchFile = new File(ownNameJar.substring(0, ownNameJar.length() - ".jar".length()) + ".sh");
+    final File launchFile = new File(ownNameJar.substring(0, ownNameJar.length() - ".jar".length()) + ".sh")
+        .getAbsoluteFile();
     FileUtils.writeContentToFile(launchFile, sb.toString());
     final boolean isExecutable = launchFile.setExecutable(true);
     if (!isExecutable) {
