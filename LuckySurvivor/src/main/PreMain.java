@@ -93,7 +93,8 @@ public final class PreMain {
     sb.append(FileUtils.NL);
     
     final String ownNameJar = determineNameOfOwnJar();
-    final File launchFile = new File(ownNameJar.substring(0, ownNameJar.length() - ".jar".length()) + ".bat");
+    final File launchFile = new File(ownNameJar.substring(0, ownNameJar.length() - ".jar".length()) + ".bat")
+        .getAbsoluteFile();
     FileUtils.writeContentToFile(launchFile, sb.toString());
     LOGGER.info("Created launch file \"{}\" for the main game. This is just a small batch file.", launchFile.getName());
   }
