@@ -388,6 +388,7 @@ public final class XMLEventsHelper {
   }
   
   public static void buildAll() {
+    LOGGER.info("Start building events from XML files.");
     final List<File> sourceFiles = new LinkedList<>();
     
     // clear classes dir
@@ -405,6 +406,7 @@ public final class XMLEventsHelper {
     
     // compile sources
     if (!sourceFiles.isEmpty()) {
+      LOGGER.info("{} XML files found.", Integer.valueOf(sourceFiles.size()));
       PathFinder.getModEventsClassDir().mkdirs();
       final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
       if (compiler == null) {
@@ -422,7 +424,10 @@ public final class XMLEventsHelper {
       if (result != 0) {
         // TODO
       }
+    } else {
+      LOGGER.info("No XML files found. Nothing to do.");
     }
+    LOGGER.info("Finished building events from XML files.");
   }
   
   /**

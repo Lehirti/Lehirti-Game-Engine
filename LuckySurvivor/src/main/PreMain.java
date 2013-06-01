@@ -1,8 +1,6 @@
 package main;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.ProcessBuilder.Redirect;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,21 +41,67 @@ public final class PreMain {
     for (final String arg : args) {
       newArgs.add(arg);
     }
-    String cmdString = "";
-    for (final String newArg : newArgs) {
-      cmdString += newArg + " ";
+    createLaunchFile(newArgs);
+  }
+  
+  private static void createLaunchFile(final List<String> args) {
+    if (System.getProperty("os.name").toLowerCase().indexOf("win") > -1) {
+      createWinLaunchFile(args);
+    } else {
+      createUnixoidLaunchFile(args);
     }
-    LOGGER.info("Trying to start main application with command: " + cmdString);
-    try {
-      final ProcessBuilder pb = new ProcessBuilder(newArgs);
-      pb.redirectError(Redirect.INHERIT);
-      pb.redirectOutput(Redirect.INHERIT);
-      pb.redirectInput(Redirect.INHERIT);
-      final Process p = pb.start();
-      p.waitFor();
-    } catch (final IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+  }
+  
+  private static void createUnixoidLaunchFile(final List<String> args) {
+    final StringBuilder sb = new StringBuilder("#!/bin/bash");
+    sb.append(FileUtils.NL);
+    boolean first = true;
+    for (final String arg : args) {
+      if (!first) {
+        sb.append(" ");
+      } else {
+        first = false;
+      }
+      sb.append(escape(arg));
+    }
+    sb.append(FileUtils.NL);
+    
+    final String ownNameJar = determineNameOfOwnJar();
+    final File launchFile = new File(ownNameJar.substring(0, ownNameJar.length() - ".jar".length()) + ".sh");
+    FileUtils.writeContentToFile(launchFile, sb.toString());
+    final boolean isExecutable = launchFile.setExecutable(true);
+    if (!isExecutable) {
+      LOGGER.warn("Failed to make launch file \"{}\" executable. You may have to do it yourself.",
+          launchFile.getAbsolutePath());
+    }
+    LOGGER.info("Created launch file \"{}\" for the main game. This is just a small shell script.",
+        launchFile.getName());
+  }
+  
+  private static void createWinLaunchFile(final List<String> args) {
+    final StringBuilder sb = new StringBuilder();
+    boolean first = true;
+    for (final String arg : args) {
+      if (!first) {
+        sb.append(" ");
+      } else {
+        first = false;
+      }
+      sb.append(escape(arg));
+    }
+    sb.append(FileUtils.NL);
+    
+    final String ownNameJar = determineNameOfOwnJar();
+    final File launchFile = new File(ownNameJar.substring(0, ownNameJar.length() - ".jar".length()) + ".bat");
+    FileUtils.writeContentToFile(launchFile, sb.toString());
+    LOGGER.info("Created launch file \"{}\" for the main game. This is just a small batch file.", launchFile.getName());
+  }
+  
+  private static String escape(final String arg) {
+    if (arg.indexOf(" ") < 0) {
+      return arg;
+    } else {
+      return "\"" + arg + "\"";
     }
   }
   

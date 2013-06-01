@@ -26,6 +26,8 @@ import org.slf4j.LoggerFactory;
 public class FileUtils {
   private static final Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);
   
+  public static final String NL = System.getProperty("line.separator");
+  
   public static boolean copyFile(final File sourceFile, final File destFile) {
     if (!destFile.getParentFile().exists()) {
       if (!destFile.getParentFile().mkdirs()) {
