@@ -3,6 +3,7 @@ package lge.res;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,14 +26,27 @@ import org.slf4j.LoggerFactory;
 public abstract class ResourceCache<KEY extends ResourceKey, VALUE> {
   private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCache.class);
   
-  private static final Map<String, BufferedImage> RAW_IMAGE_CACHE = new LinkedHashMap<String, BufferedImage>() {
-    private static final long serialVersionUID = 1L;
+  private static final class SoftCache<K, V> {
+    private final LinkedHashMap<K, SoftReference<V>> _cache;
     
-    @Override
-    protected boolean removeEldestEntry(final Map.Entry<String, BufferedImage> eldest) {
-      return size() > 50; // TODO make cache size configurable
+    public SoftCache() {
+      this._cache = new LinkedHashMap<>();
     }
-  };
+    
+    public void put(final K key, final V value) {
+      this._cache.put(key, new SoftReference<>(value));
+    }
+    
+    public V get(final K key) {
+      final SoftReference<V> value = this._cache.get(key);
+      if (value == null) {
+        return null;
+      }
+      return value.get();
+    }
+  }
+  
+  private static final SoftCache<String, BufferedImage> RAW_IMAGE_CACHE = new SoftCache<>();
   
   private static final BlockingQueue<ImageKey> IMAGES_TO_PRELOAD = new LinkedBlockingQueue<>();
   
