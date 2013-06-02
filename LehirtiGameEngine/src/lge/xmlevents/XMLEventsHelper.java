@@ -387,7 +387,7 @@ public final class XMLEventsHelper {
     sb.append(",\n");
   }
   
-  public static void buildAll() {
+  public static void main(final String... args) {
     LOGGER.info("Start building events from XML files.");
     final List<File> sourceFiles = new LinkedList<>();
     

@@ -31,13 +31,10 @@ public final class PreMain {
    * @throws InterruptedException
    */
   public static void main(final String[] args) throws InterruptedException {
-    XMLEventsHelper.buildAll();
-    
     final List<String> newArgs = new LinkedList<>();
     newArgs.add(determineJavaExecutable());
     newArgs.add("-cp");
     newArgs.add("mod/events/bin" + determineSeparator() + determineNameOfOwnJar());
-    newArgs.add(Main.class.getName());
     for (final String arg : args) {
       newArgs.add(arg);
     }
@@ -64,6 +61,20 @@ public final class PreMain {
       }
       sb.append(escape(arg));
     }
+    sb.append(" ");
+    sb.append(XMLEventsHelper.class.getName());
+    sb.append(FileUtils.NL);
+    first = true;
+    for (final String arg : args) {
+      if (!first) {
+        sb.append(" ");
+      } else {
+        first = false;
+      }
+      sb.append(escape(arg));
+    }
+    sb.append(" ");
+    sb.append(Main.class.getName());
     sb.append(FileUtils.NL);
     
     final String ownNameJar = determineNameOfOwnJar();
@@ -90,6 +101,22 @@ public final class PreMain {
       }
       sb.append(escape(arg));
     }
+    sb.append(" ");
+    sb.append(XMLEventsHelper.class.getName());
+    sb.append(FileUtils.NL);
+    first = true;
+    for (final String arg : args) {
+      if (!first) {
+        sb.append(" ");
+      } else {
+        first = false;
+      }
+      sb.append(escape(arg));
+    }
+    sb.append(" ");
+    sb.append(Main.class.getName());
+    sb.append(FileUtils.NL);
+    sb.append("pause");
     sb.append(FileUtils.NL);
     
     final String ownNameJar = determineNameOfOwnJar();

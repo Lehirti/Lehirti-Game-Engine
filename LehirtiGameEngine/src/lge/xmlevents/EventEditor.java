@@ -143,7 +143,7 @@ public class EventEditor extends JFrame implements ActionListener {
         EventEditor.this.updateEventFromScreen();
         super.windowClosing(e);
         XMLEventsHelper.writeXMLEvents(EventEditor.this.allXMLEvents, true);
-        XMLEventsHelper.buildAll();
+        XMLEventsHelper.main();
       }
     });
   }
