@@ -66,7 +66,6 @@ public abstract class EngineMain {
       @Override
       public void uncaughtException(final Thread t, final Throwable e) {
         LOGGER.error("Uncaught Exception in Thread " + t.toString(), e);
-        e.printStackTrace();
       }
     });
   }
@@ -186,6 +185,8 @@ public abstract class EngineMain {
       MAIN_WINDOW.setExtendedState(Frame.MAXIMIZED_BOTH);
     }
     MAIN_WINDOW.addWindowListener(new WindowCloseListener(MAIN_WINDOW, EngineMain.class.getSimpleName()));
+    
+    throw new RuntimeException();
   }
   
   public static void loadGame(final File sav) {

@@ -1,5 +1,7 @@
 package lge.util;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Formatter;
@@ -18,9 +20,6 @@ public class ConsoleLogFormatter extends Formatter {
       buf.append(": ");
     }
     buf.append(formatMessage(rec));
-    if (rec.getThrown() != null) {
-      buf.append(rec.getThrown().toString());
-    }
     buf.append(" ");
     buf.append(calcDate(rec.getMillis()));
     buf.append(" <");
@@ -29,6 +28,11 @@ public class ConsoleLogFormatter extends Formatter {
     buf.append(rec.getSourceMethodName());
     buf.append(">");
     buf.append("\n");
+    if (rec.getThrown() != null) {
+      final StringWriter s = new StringWriter();
+      rec.getThrown().printStackTrace(new PrintWriter(s));
+      buf.append(s.toString());
+    }
     return buf.toString();
   }
   
