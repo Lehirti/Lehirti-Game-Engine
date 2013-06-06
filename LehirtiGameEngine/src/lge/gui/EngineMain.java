@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -59,6 +60,16 @@ public abstract class EngineMain {
   }
   
   private static final Logger LOGGER = LoggerFactory.getLogger(EngineMain.class);
+  
+  static {
+    Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+      @Override
+      public void uncaughtException(final Thread t, final Throwable e) {
+        LOGGER.error("Uncaught Exception in Thread " + t.toString(), e);
+        e.printStackTrace();
+      }
+    });
+  }
   
   public static JFrame MAIN_WINDOW;
   
