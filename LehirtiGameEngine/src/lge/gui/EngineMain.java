@@ -185,8 +185,6 @@ public abstract class EngineMain {
       MAIN_WINDOW.setExtendedState(Frame.MAXIMIZED_BOTH);
     }
     MAIN_WINDOW.addWindowListener(new WindowCloseListener(MAIN_WINDOW, EngineMain.class.getSimpleName()));
-    
-    throw new RuntimeException();
   }
   
   public static void loadGame(final File sav) {
